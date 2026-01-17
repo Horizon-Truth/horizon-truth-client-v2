@@ -1,0 +1,8 @@
+name: Deploy Frontend (Caddy)
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - stage
