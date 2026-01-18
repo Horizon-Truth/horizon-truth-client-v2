@@ -30,6 +30,19 @@ This is the frontend for the **Horizon Truth** platform, built with modern web t
    ```bash
    yarn install
    ```
+3. Set up environment variables:
+   - Development: Copy `.env.development` to `.env.local`
+   - Staging: Copy `.env.staging` to `.env.staging`
+   ```bash
+   cp .env.development .env.local
+   ```
+
+## 🌍 Environment Variables
+
+The frontend uses Vite's environment variable system.
+- `VITE_API_URL`: The base URL for the backend API.
+
+During development, you can use `.env.development` (or `.env.local`). For staging builds, use `.env.staging`.
 
 ## 📜 Available Scripts
 
