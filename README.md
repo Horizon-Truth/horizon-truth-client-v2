@@ -269,5 +269,4 @@ This project is proprietary and **UNLICENSED**. All rights reserved. See the [LI
 ## 🔗 Related Repositories
 
 - **Backend API:** [horizon-truth-api-v2](https://github.com/your-org/horizon-truth-api-v2)
-- **Mobile App:** [horizon-truth-mobile](https://github.com/your-org/horizon-truth-mobile)
-- **Design System:** [horizon-truth-ui](https://github.com/your-org/horizon-truth-ui)
+- **Documentation:** [horizon-truth-docs](https://github.com/Horizon-Truth/horizon-truth-docs)
