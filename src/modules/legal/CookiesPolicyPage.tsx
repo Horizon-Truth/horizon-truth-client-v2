@@ -19,3 +19,25 @@ export default function CookiesPolicyPage() {
         { id: 'purpose', title: 'Why We Use Them', icon: ShieldCheck },
         { id: 'management', title: 'Management', icon: Settings }
     ];
+
+    const scrollToSection = (id: string) => {
+        setActiveSection(id);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const togglePreference = (key: keyof typeof preferences) => {
+        if (key === 'necessary') return;
+        setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const handleSave = () => {
+        toast.success("Preferences saved successfully!");
+    };
+
+    return (
+        <PublicLayout>
+            <div className="flex flex-col min-h-screen">
+                <section className="py-16 bg-primary/5">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <Cookie className="mx-auto mb-6 text-primary" size={48} />
+                        <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-4">Cookies <span className="text-primary">Policy</span></h1>
