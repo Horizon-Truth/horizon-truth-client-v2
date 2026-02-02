@@ -20,3 +20,24 @@ export default function ContactPage() {
         subject: "",
         message: ""
     });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            await contactService.submit(formData);
+            toast.success(t("contact.successToast"));
+            setIsSubmitted(true);
+            setFormData({
+                firstName: "",
+                lastName: "",
+                email: "",
+                subject: "",
+                message: ""
+            });
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || t("contact.errorToast"));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
