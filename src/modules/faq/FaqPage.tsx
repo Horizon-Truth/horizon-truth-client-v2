@@ -58,3 +58,39 @@ const faqs = [
         id: 'forgot-password',
         question: 'What if I forget my password?',
         answer: 'Click the "Forgot Password" link on the login page. We\'ll send a password reset code to your registered phone number. If you don\'t receive the code within 5 minutes, check your connection or contact our support team.',
+        category: 'account'
+    },
+    {
+        id: 'account-deletion',
+        question: 'Can I delete my account?',
+        answer: 'Yes, you can delete your account at any time. Go to your account settings and select "Delete Account." Please note that this action is permanent and will remove all your progress, achievements, and submitted content.',
+        category: 'account'
+    },
+
+    // Game & Learning FAQs
+    {
+        id: 'how-game-works',
+        question: 'How does the gamified learning work?',
+        answer: 'Our platform uses interactive scenarios that simulate real-world misinformation challenges. You\'ll encounter various types of false content (health myths, political manipulation, social media hoaxes) and learn to identify them through quizzes, critical thinking exercises, and immediate feedback. As you progress, you earn points, level up, and unlock new challenges.',
+        category: 'game'
+    },
+    {
+        id: 'learning-outcomes',
+        question: 'What will I learn from using Horizon Truth?',
+        answer: 'You\'ll develop essential digital literacy skills including: source verification, fact-checking techniques, bias recognition, emotional manipulation detection, and critical analysis of online content. These skills help you make informed decisions and resist misinformation in your daily digital life.',
+        category: 'game'
+    },
+    {
+        id: 'time-commitment',
+        question: 'How much time do I need to commit?',
+        answer: 'You can learn at your own pace! Each learning module takes 15-30 minutes to complete. We recommend regular practice - even 10-15 minutes daily can significantly improve your misinformation detection skills over time.',
+        category: 'game'
+    },
+    {
+        id: 'progress-tracking',
+        question: 'Can I track my learning progress?',
+        answer: 'Yes! Your dashboard shows your current level, points earned, badges achieved, and completion status for all modules. You can also see how your skills improve over time through our progress analytics.',
+        category: 'game'
+    },
+
+    // Content Verification FAQs
