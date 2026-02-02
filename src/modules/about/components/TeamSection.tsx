@@ -16,3 +16,21 @@ interface TeamMember {
     github?: string;
     other?: string;
   };
+}
+
+const teamData: TeamMember[] = [
+  {
+    id: 1,
+    name: "Abdurahman Abrar",
+    role: "Co-PI, AI & Data Science Lead",
+    image: AbdurehmanA,
+    description: "Leads AI and data science strategy, oversees model development and experimentation, and guides project planning in alignment with research goals."
+  },
+  {
+    id: 2,
+    name: "Muhammed Hassen",
+    role: "Co-PI, Data & Web Engineering Lead",
+    image: MohammedHas1,
+    description: "Back-end developer responsible for data and backend architecture, database and pipeline design, and ensuring scalability and reliability of infrastructure."
+  },
+  {
