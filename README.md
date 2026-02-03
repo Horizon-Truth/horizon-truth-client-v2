@@ -12,6 +12,11 @@
 
 **Horizon Truth Client (v2)** is the modern web interface for the Horizon Truth platform, built with cutting-edge web technologies. This client application provides users with an intuitive interface for tracking and verifying public claims, featuring real-time updates, responsive design, and seamless integration with the Horizon Truth API.
 
+## 📚 Documentation
+
+- **Project Documentation:** [docs.horizontruth.org](https://docs.horizontruth.org)
+- **Backend API Documentation (Swagger):** [api.horizontruth.org/api/v1/docs](https://api.horizontruth.org/api/v1/docs)
+
 ## 🚀 Tech Stack
 
 ### Core Framework & Language
