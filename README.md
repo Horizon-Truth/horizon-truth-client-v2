@@ -273,5 +273,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](../LICENSE
 
 ## 🔗 Related Repositories
 
-- **Backend API:** [horizon-truth-api-v2](https://github.com/your-org/horizon-truth-api-v2)
-- **Documentation:** [horizon-truth-docs](https://github.com/Horizon-Truth/horizon-truth-docs)
+- **Backend API:** [horizon-truth-api-v2](https://github.com/Horizon-Truth/horizon-truth-api-v2)
+- **Documentation Repository:** [horizon-truth-docs](https://github.com/Horizon-Truth/horizon-truth-docs)
+- **Live Documentation:** [docs.horizontruth.org](https://docs.horizontruth.org)
+- **API Reference (Swagger):** [horizontruth.org/api/v1/docs](https://horizontruth.org/api/v1/docs)
