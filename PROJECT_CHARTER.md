@@ -22,4 +22,18 @@ Horizon-Truth Frontend provides an accessible, high-performance, and intuitive p
 *   Remain backend-agnostic via APIs
 
 ## 2. Scope & Non-Goals
-
+
+### In Scope
+
+*   UI components and layouts
+*   State management and API consumption
+*   Data visualization
+*   Accessibility (WCAG-aligned)
+*   Frontend performance optimization
+
+### Out of Scope (Non-Goals)
+
+*   Backend business logic
+*   Database management
+*   AI model training
+*   Authentication implementation details (handled by backend)
