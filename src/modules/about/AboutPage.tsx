@@ -46,3 +46,32 @@ export default function AboutPage() {
                         <motion.div
                             initial={{ x: -30, opacity: 0 }}
                             whileInView={{ x: 0, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="lg:w-1/2 space-y-8"
+                        >
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
+                                <History size={16} className="text-secondary" />
+                                <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em]">{t("about.genesisEyebrow")}</span>
+                            </div>
+
+                            <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
+                                {t("about.storyTitle")} <br />
+                                <span className="text-primary italic">{t("about.storyTitleHighlight")}</span>
+                            </h2>
+
+                            <p className="text-xl text-muted-foreground leading-relaxed font-medium">
+                                {t("about.storyP1")}
+                            </p>
+
+                            <p className="text-xl text-muted-foreground leading-relaxed font-medium">
+                                {t("about.storyP2")}
+                            </p>
+
+                            <Button
+                                onClick={() => navigate("/contact")}
+                                className="rounded-2xl px-10 py-8 text-xl font-black bg-secondary text-secondary-foreground hover:shadow-2xl transition-all group"
+                            >
+                                {t("common.getInTouch")} <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={24} />
+                            </Button>
+                        </motion.div>

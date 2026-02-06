@@ -34,3 +34,24 @@ const teamData: TeamMember[] = [
     description: "Back-end developer responsible for data and backend architecture, database and pipeline design, and ensuring scalability and reliability of infrastructure."
   },
   {
+    id: 5,
+    name: "Abduljebar Sani",
+    role: "CO-PI, Technical Lead",
+    image: AbduljPhoto,
+    description: "Leads the overall technical direction of the project, manages the development team, and ensures the technical quality of the product."
+  },
+  {
+    id: 3,
+    name: "Abdurezak Yisak",
+    role: "Co-PI, UX/UI Designer",
+    image: AbdurezakIsak,
+    description: "UX/UI designer focused on user-friendly interfaces, inclusive design practices, and collaboration with engineers to ensure accessibility and usability."
+  },
+  {
+    id: 4,
+    name: "Mohammed Ibrahim",
+    role: "Co-PI & Lead Content Developer",
+    image: MohammedIb,
+    description: "Develops educational narratives and scenarios with a focus on cultural relevance and pedagogy. Oversees content review and improvement."
+  },
+  {

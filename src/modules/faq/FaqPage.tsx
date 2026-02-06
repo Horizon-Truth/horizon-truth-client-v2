@@ -94,3 +94,42 @@ const faqs = [
     },
 
     // Content Verification FAQs
+    {
+        id: 'how-verification-works',
+        question: 'How does the crowdsourced verification work?',
+        answer: 'Users can submit suspicious content they encounter online for community verification. Our system uses a combination of AI analysis and community voting to assess content credibility. Verified cases become part of our educational database, helping others learn from real examples.',
+        category: 'verification'
+    },
+    {
+        id: 'ai-detection',
+        question: 'How does the AI misinformation detection work?',
+        answer: 'Our AI system uses natural language processing and machine learning to analyze patterns commonly found in misinformation. It examines factors like sensationalism, source credibility, emotional manipulation tactics, and consistency with verified information. The AI continuously learns from new data and community feedback.',
+        category: 'verification'
+    },
+    {
+        id: 'report-misinformation',
+        question: 'How can I report misinformation I find online?',
+        answer: 'Use our "Report" feature to submit suspicious content. You\'ll need to provide the content, source, and context. Our system guides you through the verification process and helps you analyze why the content might be misleading.',
+        category: 'verification'
+    },
+    {
+        id: 'trust-scores',
+        question: 'What are trust scores and how are they calculated?',
+        answer: 'Trust scores rate the credibility of content sources based on multiple factors: historical accuracy, transparency, expertise, and community verification results. Higher scores indicate more reliable sources. These scores help users quickly assess source credibility.',
+        category: 'verification'
+    },
+
+    // Technical Support FAQs
+    {
+        id: 'browser-support',
+        question: 'Which browsers are supported?',
+        answer: 'Horizon Truth works on all modern browsers including Chrome, Firefox, Safari, and Edge. For the best experience, ensure your browser is updated to the latest version. We also have a mobile-responsive design for smartphone access.',
+        category: 'technical'
+    },
+    {
+        id: 'mobile-app',
+        question: 'Is there a mobile app?',
+        answer: 'We\'re currently web-based with a mobile-responsive design. A dedicated mobile app is in development and will be available soon. You can access our platform through your mobile browser in the meantime.',
+        category: 'technical'
+    },
+    {
