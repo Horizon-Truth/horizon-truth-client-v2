@@ -15,16 +15,16 @@ import {
 import { cn } from "@/shared/lib/utils";
 
 const navigation = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/" },
-    { name: "Organizations", icon: Building2, href: "/organizations" },
-    { name: "Users", icon: Users, href: "/users" },
-    { name: "Players", icon: Users, href: "/players" },
-    { name: "Gamification", icon: Trophy, href: "/gamification" },
-    { name: "Engine", icon: Cpu, href: "/engine" },
-    { name: "Analytics", icon: BarChart3, href: "/analytics" },
-    { name: "Incidents", icon: AlertTriangle, href: "/incidents" },
-    { name: "Audit Logs", icon: History, href: "/audit-logs" },
-    { name: "Auth", icon: Lock, href: "/auth" },
+    { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+    { name: "Organizations", icon: Building2, href: "/dashboard/organizations" },
+    { name: "Users", icon: Users, href: "/dashboard/users" },
+    { name: "Players", icon: Users, href: "/dashboard/players" },
+    { name: "Gamification", icon: Trophy, href: "/dashboard/gamification" },
+    { name: "Engine", icon: Cpu, href: "/dashboard/engine" },
+    { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
+    { name: "Incidents", icon: AlertTriangle, href: "/dashboard/incidents" },
+    { name: "Audit Logs", icon: History, href: "/dashboard/audit-logs" },
+    { name: "Auth", icon: Lock, href: "/dashboard/auth" },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -40,7 +40,11 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 )}
             >
                 <div className="flex items-center h-16 px-4 border-b justify-between">
-                    {isSidebarOpen && <span className="font-bold text-xl uppercase tracking-wider">Horizon</span>}
+                    {isSidebarOpen && (
+                        <a href="/" className="font-bold text-xl uppercase tracking-wider hover:opacity-80 transition-opacity">
+                            Horizon
+                        </a>
+                    )}
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         className="p-1 rounded-md hover:bg-accent hover:text-accent-foreground"
