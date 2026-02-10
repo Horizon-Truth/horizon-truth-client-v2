@@ -7,10 +7,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-
-        {/* Authenticated/App Routes */}
         <Route path="/dashboard/*" element={
           <MainLayout>
             <Routes>
@@ -28,8 +25,6 @@ function App() {
             </Routes>
           </MainLayout>
         } />
-
-        {/* Catch all redirecting to landing or 404 */}
         <Route path="*" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
