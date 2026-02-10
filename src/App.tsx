@@ -7,6 +7,8 @@ import { LoginForm } from "./shared/components/auth/LoginForm";
 import { RegisterForm } from "./shared/components/auth/RegisterForm";
 import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
 import { useAuthStore } from "./store/auth.store";
+import ProfilePage from "./modules/profile/ProfilePage";
+import SimulationPage from "./modules/simulation/SimulationPage";
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -23,6 +25,9 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
         </Route>
 
+        {/* Public Simulation (Guest Mode) */}
+        <Route path="/simulation" element={<SimulationPage />} />
+
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard/*" element={
           <PrivateRoute>
@@ -38,6 +43,8 @@ function App() {
                 <Route path="incidents" element={<div>Incidents Page</div>} />
                 <Route path="audit-logs" element={<div>Audit Logs Page</div>} />
                 <Route path="auth" element={<div>Auth Settings Page</div>} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="simulation" element={<SimulationPage />} />
                 <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
               </Routes>
             </MainLayout>
