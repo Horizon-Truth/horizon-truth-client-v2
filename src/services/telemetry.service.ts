@@ -12,3 +12,17 @@ export interface TelemetryPayload {
     };
     decision_outcome?: {
         player_decision_type?: 'trust' | 'distrust' | 'share' | 'ignore' | 'verify';
+        decision_confidence_level?: number;
+        decision_changed?: boolean;
+        decision_change_count?: number;
+    };
+    social_context?: {
+        social_context_exposed?: 'none' | 'peer' | 'authority' | 'famous';
+        social_metrics_visible?: boolean;
+        like_count_shown?: number;
+        share_count_shown?: number;
+        comment_count_shown?: number;
+        highlighted_comment_type?: string;
+        authority_badge_visible?: boolean;
+    };
+    dissemination?: {

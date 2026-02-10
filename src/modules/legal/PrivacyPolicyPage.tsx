@@ -34,3 +34,25 @@ export default function PrivacyPolicyPage() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col lg:flex-row gap-12">
                             {/* Sidebar */}
+                            <div className="lg:w-1/4">
+                                <div className="sticky top-32 space-y-2">
+                                    <h3 className="font-bold text-lg mb-6 px-4">Policy Sections</h3>
+                                    {sections.map((section) => (
+                                        <button
+                                            key={section.id}
+                                            onClick={() => scrollToSection(section.id)}
+                                            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all ${activeSection === section.id ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-secondary text-muted-foreground"
+                                                }`}
+                                        >
+                                            <section.icon size={18} />
+                                            <span className="font-semibold">{section.title}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="lg:w-3/4 max-w-none space-y-20">
+                                <div id="introduction" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">Introduction</h2>
+                                    <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-4">

@@ -41,3 +41,29 @@ export default function ContactPage() {
             setIsSubmitting(false);
         }
     };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    return (
+        <PublicLayout>
+            <PageHero
+                title={t("contact.heroTitle")}
+                subtitle={t("contact.heroSubtitle")}
+                description={t("contact.heroDesc")}
+            />
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    {/* Contact Information */}
+                    <div className="space-y-12">
+                        <div>
+                            <h2 className="text-3xl font-bold mb-8">{t("contact.infoTitle")}</h2>
+                            <div className="space-y-6">
+                                <div className="flex items-start gap-4 p-6 bg-secondary/10 rounded-2xl border border-border">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                        <Mail className="text-primary" size={24} />
+                                    </div>
+                                    <div>
