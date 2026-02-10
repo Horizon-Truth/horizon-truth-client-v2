@@ -1,6 +1,18 @@
 import { ArrowRight, ShieldCheck, Zap, Globe, Github } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+    const navigate = useNavigate();
+    const { isAuthenticated } = useAuthStore();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/dashboard");
+        }
+    }, [isAuthenticated, navigate]);
+
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
             {/* Navigation */}
@@ -16,9 +28,18 @@ export default function LandingPage() {
                         <div className="hidden md:flex items-center space-x-8">
                             <a href="#features" className="text-sm font-medium hover:text-primary transition-colors">Features</a>
                             <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">About</a>
-                            <a href="/dashboard" className="text-sm font-medium px-4 py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all flex items-center gap-2">
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Login
+                            </button>
+                            <button
+                                onClick={() => navigate("/dashboard")}
+                                className="text-sm font-medium px-4 py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all flex items-center gap-2"
+                            >
                                 Launch App <ArrowRight size={16} />
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -47,15 +68,22 @@ export default function LandingPage() {
                         Scale your operations with confidence and verifiable security.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2 text-lg">
+                        <button
+                            onClick={() => navigate("/register")}
+                            className="w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center justify-center gap-2 text-lg"
+                        >
                             Get Started for Free <ArrowRight size={20} />
-                        </a>
-                        <a href="https://github.com" target="_blank" className="w-full sm:w-auto px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-bold hover:bg-secondary/80 transition-all flex items-center justify-center gap-2 text-lg border border-border">
-                            <Github size={20} /> View Source
-                        </a>
+                        </button>
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="w-full sm:w-auto px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-bold hover:bg-secondary/80 transition-all flex items-center justify-center gap-2 text-lg border border-border"
+                        >
+                            Login to Account
+                        </button>
                     </div>
                 </div>
             </section>
+            ...
 
             {/* Features Grid */}
             <section id="features" className="py-24 bg-secondary/30">
