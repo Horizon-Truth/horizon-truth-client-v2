@@ -12,7 +12,6 @@ import {
     FormMessage,
 } from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { useState } from 'react';
@@ -51,53 +50,77 @@ export function LoginForm() {
     }
 
     return (
-        <Card className="w-[400px]">
-            <CardHeader>
-                <CardTitle>Login</CardTitle>
-                <CardDescription>Enter your credentials to access your account</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="email@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="••••••••" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? 'Logging in...' : 'Login'}
-                        </Button>
-                    </form>
-                </Form>
-                <div className="mt-4 text-center text-sm">
-                    Don't have an account?{' '}
-                    <Button variant="link" onClick={() => navigate('/register')} className="p-0 h-auto">
-                        Register
+        <div className="p-8">
+            <div className="space-y-1 mb-8">
+                <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
+                <p className="text-sm text-muted-foreground">Enter your details to access your dashboard</p>
+            </div>
+
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="name@example.com"
+                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <div className="flex items-center justify-between">
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Password</FormLabel>
+                                </div>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        placeholder="••••••••"
+                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    {error && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <p className="text-xs font-semibold text-destructive">{error}</p>
+                        </div>
+                    )}
+                    <Button
+                        type="submit"
+                        className="w-full h-11 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+                        disabled={loading}
+                    >
+                        {loading ? 'Authenticating...' : 'Sign In'}
                     </Button>
-                </div>
-            </CardContent>
-        </Card>
+                </form>
+            </Form>
+
+            <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                <p className="text-sm text-muted-foreground">
+                    New to Horizon?{' '}
+                    <button
+                        onClick={() => navigate('/register')}
+                        className="font-bold text-primary hover:underline underline-offset-4"
+                    >
+                        Create an account
+                    </button>
+                </p>
+            </div>
+        </div>
     );
 }

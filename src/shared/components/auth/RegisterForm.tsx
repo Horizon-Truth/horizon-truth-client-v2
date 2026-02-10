@@ -12,7 +12,6 @@ import {
     FormMessage,
 } from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { useState } from 'react';
@@ -58,48 +57,62 @@ export function RegisterForm() {
     }
 
     return (
-        <Card className="w-[400px]">
-            <CardHeader>
-                <CardTitle>Register</CardTitle>
-                <CardDescription>Create a new account to join Horizon</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="fullName"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="email@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+        <div className="p-8">
+            <div className="space-y-1 mb-8">
+                <h2 className="text-2xl font-bold tracking-tight">Create an account</h2>
+                <p className="text-sm text-muted-foreground">Join the next generation trust protocol</p>
+            </div>
+
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Full Name</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="John Doe"
+                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="name@example.com"
+                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
                         <FormField
                             control={form.control}
                             name="password"
                             render={({ field }: { field: any }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Password</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="••••••••" {...field} />
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
+                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -110,27 +123,46 @@ export function RegisterForm() {
                             name="confirmPassword"
                             render={({ field }: { field: any }) => (
                                 <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Confirm</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="••••••••" {...field} />
+                                        <Input
+                                            type="password"
+                                            placeholder="••••••••"
+                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        {error && <p className="text-sm font-medium text-destructive">{error}</p>}
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? 'Creating account...' : 'Register'}
-                        </Button>
-                    </form>
-                </Form>
-                <div className="mt-4 text-center text-sm">
-                    Already have an account?{' '}
-                    <Button variant="link" onClick={() => navigate('/login')} className="p-0 h-auto">
-                        Login
+                    </div>
+                    {error && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                            <p className="text-xs font-semibold text-destructive">{error}</p>
+                        </div>
+                    )}
+                    <Button
+                        type="submit"
+                        className="w-full h-11 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] mt-2"
+                        disabled={loading}
+                    >
+                        {loading ? 'Creating account...' : 'Create Account'}
                     </Button>
-                </div>
-            </CardContent>
-        </Card>
+                </form>
+            </Form>
+
+            <div className="mt-8 pt-6 border-t border-white/5 text-center">
+                <p className="text-sm text-muted-foreground">
+                    Already have an account?{' '}
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="font-bold text-primary hover:underline underline-offset-4"
+                    >
+                        Sign in
+                    </button>
+                </p>
+            </div>
+        </div>
     );
 }
