@@ -3,3 +3,8 @@ import { useAuthStore } from './auth.store';
 
 describe('AuthStore', () => {
     beforeEach(() => {
+        // Clear store before each test
+        useAuthStore.getState().logout();
+    });
+
+    it('should initialize with null user and token', () => {
