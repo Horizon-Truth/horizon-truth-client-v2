@@ -34,3 +34,38 @@ import {
     Globe
 } from 'lucide-react';
 import { AnonymizeConfirmModal } from '@/shared/components/modals/AnonymizeConfirmModal';
+import { LanguageSwitcher } from '@/shared/i18n/components/LanguageSwitcher';
+import { useTranslation } from '@/shared/i18n/useTranslation';
+
+
+const profileSchema = z.object({
+    fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
+    username: z.string().min(3, { message: 'Username must be at least 3 characters' }).regex(/^[a-zA-Z0-9_-]+$/, { message: 'Invalid username format' }).optional().or(z.literal('')),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
+
+const ProfilePage = () => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [isAnonymizeModalOpen, setIsAnonymizeModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { user, updateUser, logout } = useAuthStore();
+    const { t: tt } = useTranslation();
+
+    const [success, setSuccess] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const form = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileSchema),
+        defaultValues: {
+            fullName: user?.fullName || '',
+            username: user?.username || '',
+        },
+    });
+
+    if (!user) return null;
+
+    const onSubmit = async (values: ProfileFormValues) => {
+        setLoading(true);
+        setError(null);
