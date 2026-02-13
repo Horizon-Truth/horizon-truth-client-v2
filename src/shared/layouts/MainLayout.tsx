@@ -21,16 +21,17 @@ import { useAuthStore } from "@/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 
 const navigation = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-    { name: "Organizations", icon: Building2, href: "/dashboard/organizations" },
-    { name: "Users", icon: Users, href: "/dashboard/users" },
-    { name: "Players", icon: Users, href: "/dashboard/players" },
-    { name: "Gamification", icon: Trophy, href: "/dashboard/gamification" },
-    { name: "Engine", icon: Cpu, href: "/dashboard/engine" },
-    { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
-    { name: "Incidents", icon: AlertTriangle, href: "/dashboard/incidents" },
-    { name: "Audit Logs", icon: History, href: "/dashboard/audit-logs" },
-    { name: "Auth", icon: Lock, href: "/dashboard/auth" },
+    { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Game Dashboard", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
+    { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
+    { name: "Users", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Players", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Gamification", icon: Trophy, href: "/dashboard/gamification", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR", "PLAYER"] },
+    { name: "Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+    { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Incidents", icon: AlertTriangle, href: "/dashboard/incidents", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Audit Logs", icon: History, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -69,33 +70,35 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
                 <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-                    {navigation.map((item) => {
-                        const isActive = location.pathname === item.href;
-                        return (
-                            <Link
-                                key={item.name}
-                                to={item.href}
-                                className={cn(
-                                    "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors group",
-                                    isActive
-                                        ? "bg-primary text-primary-foreground"
-                                        : "hover:bg-accent hover:text-accent-foreground",
-                                    !isSidebarOpen && "justify-center"
-                                )}
-                            >
-                                <item.icon
+                    {navigation
+                        .filter(item => !item.roles || (user?.role && item.roles.includes(user.role)))
+                        .map((item) => {
+                            const isActive = location.pathname === item.href;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    to={item.href}
                                     className={cn(
-                                        "flex-shrink-0 transition-all",
-                                        isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
+                                        "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors group",
+                                        isActive
+                                            ? "bg-primary text-primary-foreground"
+                                            : "hover:bg-accent hover:text-accent-foreground",
+                                        !isSidebarOpen && "justify-center"
                                     )}
-                                />
-                                {isSidebarOpen && <span>{item.name}</span>}
-                                {isActive && isSidebarOpen && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
-                                )}
-                            </Link>
-                        );
-                    })}
+                                >
+                                    <item.icon
+                                        className={cn(
+                                            "flex-shrink-0 transition-all",
+                                            isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
+                                        )}
+                                    />
+                                    {isSidebarOpen && <span>{item.name}</span>}
+                                    {isActive && isSidebarOpen && (
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
+                                    )}
+                                </Link>
+                            );
+                        })}
                 </nav>
             </aside>
 

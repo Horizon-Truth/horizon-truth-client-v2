@@ -4,13 +4,13 @@ import { TRIAL_SCENARIO } from './data/trial-scenario';
 import type { Scene, Choice } from './data/trial-scenario';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/shared/lib/utils';
-import { ShieldCheck, ArrowRight, Share2, AlertTriangle, User, MessageCircle, Info } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Share2, AlertTriangle, User, MessageCircle, Info, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent } from '@/shared/components/ui/card';
 
 const SimulationPage = () => {
     const navigate = useNavigate();
-    useAuthStore();
+    const { isAuthenticated } = useAuthStore();
     const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
     const [trustScore, setTrustScore] = useState(50);
     const [isCompleted, setIsCompleted] = useState(false);
@@ -111,12 +111,21 @@ const SimulationPage = () => {
                                     <p className="text-sm text-muted-foreground">Registration allows you to track your growth across multiple scenarios and join the global leaderboard.</p>
                                 </div>
                                 <div className="flex flex-col gap-3 w-full md:w-auto">
-                                    <Button
-                                        onClick={() => navigate('/register')}
-                                        className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
-                                    >
-                                        Register Now <ArrowRight size={18} />
-                                    </Button>
+                                    {isAuthenticated ? (
+                                        <Button
+                                            onClick={() => navigate('/dashboard/game')}
+                                            className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
+                                        >
+                                            Enter Command Center <ArrowRight size={18} />
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            onClick={() => navigate('/register')}
+                                            className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
+                                        >
+                                            Register Now <ArrowRight size={18} />
+                                        </Button>
+                                    )}
                                     <Button
                                         variant="ghost"
                                         onClick={() => navigate('/')}
@@ -166,6 +175,18 @@ const SimulationPage = () => {
                     </div>
                 </div>
             </header>
+
+            {isAuthenticated && (
+                <div className="relative z-20 max-w-6xl w-full mx-auto mb-6">
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate('/dashboard/game')}
+                        className="bg-primary/10 border-primary/20 hover:bg-primary/20 text-primary font-bold rounded-xl"
+                    >
+                        <LayoutDashboard className="mr-2 h-4 w-4" /> Go to Pro Dashboard
+                    </Button>
+                </div>
+            )}
 
             {/* Main Content */}
             <main className="flex-1 relative z-10 max-w-4xl w-full mx-auto flex flex-col gap-8 pb-12">

@@ -9,9 +9,10 @@ import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
 import { useAuthStore } from "./store/auth.store";
 import ProfilePage from "./modules/profile/ProfilePage";
 import SimulationPage from "./modules/simulation/SimulationPage";
+import GamePage from "./modules/simulation/GamePage";
 
 function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   return (
     <BrowserRouter>
@@ -20,7 +21,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
 
         {/* Auth Routes */}
-        <Route element={!isAuthenticated ? <AuthLayout /> : <Navigate to="/dashboard" />}>
+        <Route element={!isAuthenticated ? <AuthLayout /> : <Navigate to={user?.role === 'PLAYER' ? "/dashboard/game" : "/dashboard"} replace />}>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
         </Route>
@@ -33,18 +34,23 @@ function App() {
           <PrivateRoute>
             <MainLayout>
               <Routes>
-                <Route index element={<DashboardPage />} />
-                <Route path="organizations" element={<div>Organizations Page</div>} />
-                <Route path="users" element={<div>Users Page</div>} />
-                <Route path="players" element={<div>Players Page</div>} />
+                <Route index element={
+                  user?.role === 'PLAYER'
+                    ? <Navigate to="/dashboard/game" replace />
+                    : <DashboardPage />
+                } />
+                <Route path="organizations" element={user?.role !== 'PLAYER' ? <div>Organizations Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="users" element={user?.role !== 'PLAYER' ? <div>Users Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="players" element={user?.role !== 'PLAYER' ? <div>Players Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="gamification" element={<div>Gamification Page</div>} />
-                <Route path="engine" element={<div>Engine Page</div>} />
-                <Route path="analytics" element={<div>Analytics Page</div>} />
-                <Route path="incidents" element={<div>Incidents Page</div>} />
-                <Route path="audit-logs" element={<div>Audit Logs Page</div>} />
-                <Route path="auth" element={<div>Auth Settings Page</div>} />
+                <Route path="engine" element={user?.role !== 'PLAYER' ? <div>Engine Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="audit-logs" element={user?.role !== 'PLAYER' ? <div>Audit Logs Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="simulation" element={<SimulationPage />} />
+                <Route path="game" element={<GamePage />} />
                 <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
               </Routes>
             </MainLayout>
