@@ -25,3 +25,30 @@ const registerSchema = z.object({
     confirmPassword: z.string(),
     consent: z.boolean().refine(val => val === true, {
         message: "You must agree to the privacy policy to continue",
+    }),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
+
+export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
+    const navigate = useNavigate();
+    const { setAuth, loading, setLoading, error, setError } = useAuthStore();
+
+    const form = useForm<z.infer<typeof registerSchema>>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            fullName: '',
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            consent: false,
+        },
+    });
+
+    async function onSubmit(values: z.infer<typeof registerSchema>) {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await authService.register({
