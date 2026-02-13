@@ -8,3 +8,8 @@ describe('AuthStore', () => {
     });
 
     it('should initialize with null user and token', () => {
+        const state = useAuthStore.getState();
+        expect(state.user).toBeNull();
+        expect(state.token).toBeNull();
+        expect(state.isAuthenticated).toBe(false);
+    });

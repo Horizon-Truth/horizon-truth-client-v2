@@ -69,3 +69,45 @@ const ProfilePage = () => {
     const onSubmit = async (values: ProfileFormValues) => {
         setLoading(true);
         setError(null);
+        setSuccess(null);
+        try {
+            const updated = await userService.updateProfile(values);
+            updateUser(updated);
+            setSuccess('Profile updated successfully!');
+            setIsEditing(false);
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to update profile. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCancel = () => {
+        form.reset();
+        setIsEditing(false);
+        setError(null);
+        setSuccess(null);
+    };
+
+    const handleAnonymize = async () => {
+        await userService.anonymizeAccount();
+        logout();
+        navigate('/');
+    };
+
+
+    return (
+        <div className="space-y-6 max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">User Profile</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Manage your account details and security settings.</p>
+                </div>
+            </div>
+
+            {success && (
+                <div className="flex items-center gap-2 p-4 text-sm font-medium text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-xl animate-in fade-in slide-in-from-top-4">
+                    <CheckCircle2 size={18} />
+                    {success}
+                </div>
+            )}
