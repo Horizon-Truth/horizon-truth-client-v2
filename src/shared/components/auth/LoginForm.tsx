@@ -17,7 +17,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useState } from 'react';
 
 const loginSchema = z.object({
-    email: z.string().email({ message: 'Invalid email address' }),
+    email: z.string().min(1, { message: 'Email or Username is required' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 });
 
@@ -63,10 +63,10 @@ export function LoginForm() {
                         name="email"
                         render={({ field }: { field: any }) => (
                             <FormItem>
-                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</FormLabel>
+                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email or Username</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="name@example.com"
+                                        placeholder="Email or Username"
                                         className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
                                         {...field}
                                     />

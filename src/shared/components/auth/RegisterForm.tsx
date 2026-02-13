@@ -18,12 +18,16 @@ import { useState } from 'react';
 
 const registerSchema = z.object({
     fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
-    email: z.string().email({ message: 'Invalid email address' }),
+    email: z.string().email({ message: 'Invalid email address' }).optional().or(z.literal('')),
+    username: z.string().min(3, { message: 'Username must be at least 3 characters' }).optional().or(z.literal('')),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
+}).refine((data) => data.email || data.username, {
+    message: "Either email or username is required",
+    path: ["email"],
 });
 
 export function RegisterForm() {
@@ -37,6 +41,7 @@ export function RegisterForm() {
         defaultValues: {
             fullName: '',
             email: '',
+            username: '',
             password: '',
             confirmPassword: '',
         },
@@ -82,23 +87,42 @@ export function RegisterForm() {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="name@example.com"
-                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Email Address</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="name@example.com"
+                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Username</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="johndoe"
+                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         <FormField
                             control={form.control}
