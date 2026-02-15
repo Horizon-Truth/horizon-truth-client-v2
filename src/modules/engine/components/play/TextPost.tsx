@@ -27,3 +27,21 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
             like_count_shown: 15400,
             share_count_shown: 1200,
             comment_count_shown: 42,
+            authority_badge_visible: true
+        });
+    }, [activeProgress?.id, scene.id]);
+
+    const handleShareClick = () => {
+        if (!activeProgress?.id || !scene.id) return;
+        telemetryService.trackDissemination(activeProgress.id, scene.id, {
+            share_clicked: true,
+            share_channel_type: 'public'
+        });
+    };
+
+    return (
+        <motion.div
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0.3 : 0.8, delay: 0.5 }}
+            className="w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xl"
