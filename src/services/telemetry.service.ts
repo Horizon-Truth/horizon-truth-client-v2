@@ -26,3 +26,20 @@ export interface TelemetryPayload {
         authority_badge_visible?: boolean;
     };
     dissemination?: {
+        share_clicked?: boolean;
+        share_channel_type?: 'public' | 'private' | 'group';
+        share_count?: number;
+        forward_count?: number;
+        share_with_context?: boolean;
+        estimated_audience_size?: number;
+        re_share_enabled?: boolean;
+    };
+    content_consumption?: {
+        scroll_depth_percent?: number;
+        text_dwell_time_ms?: number;
+        paragraphs_viewed?: number;
+        back_scroll_count?: number;
+    };
+    verification?: {
+        source_button_clicked_count?: number;
+        learn_more_opened?: boolean;
