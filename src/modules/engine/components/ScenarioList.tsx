@@ -52,7 +52,7 @@ export function ScenarioList() {
     }
 
     return (
-        <div className="flex-1 flex flex-col gap-6 animate-in fade-in duration-500">
+        <div className="flex flex-col gap-6 animate-in fade-in duration-500">
             <div className="space-y-2">
                 <h2 className="text-3xl font-extrabold tracking-tight">Active Operations</h2>
                 <p className="text-muted-foreground text-lg">
