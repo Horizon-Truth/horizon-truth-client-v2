@@ -10,6 +10,7 @@ import { useAuthStore } from "./store/auth.store";
 import ProfilePage from "./modules/profile/ProfilePage";
 import SimulationPage from "./modules/simulation/SimulationPage";
 import GamePage from "./modules/simulation/GamePage";
+import ScenarioManagementPage from "./modules/engine/pages/ScenarioManagementPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -43,7 +44,7 @@ function App() {
                 <Route path="users" element={user?.role !== 'PLAYER' ? <div>Users Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="players" element={user?.role !== 'PLAYER' ? <div>Players Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="gamification" element={<div>Gamification Page</div>} />
-                <Route path="engine" element={user?.role !== 'PLAYER' ? <div>Engine Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="audit-logs" element={user?.role !== 'PLAYER' ? <div>Audit Logs Page</div> : <Navigate to="/dashboard/game" replace />} />

@@ -81,6 +81,22 @@ class EngineService {
         return response.data;
     }
 
+    // Admin Methods
+    async createScenario(data: any) {
+        const response = await api.post('/engine/admin/scenarios', data);
+        return response.data;
+    }
+
+    async updateScenario(id: string, data: any) {
+        const response = await api.put(`/engine/admin/scenarios/${id}`, data);
+        return response.data;
+    }
+
+    async deleteScenario(id: string) {
+        const response = await api.delete(`/engine/admin/scenarios/${id}`);
+        return response.data;
+    }
+
     async getGameOutcome(progressId: string) {
         const response = await api.get(`/engine/game/${progressId}/outcome`);
         return response.data;
