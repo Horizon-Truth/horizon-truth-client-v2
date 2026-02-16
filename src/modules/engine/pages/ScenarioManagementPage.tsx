@@ -5,16 +5,18 @@ import { engineService, type Scenario } from "@/services/engine.service";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
+import ScenarioForm from "../components/ScenarioForm";
 
 export default function ScenarioManagementPage() {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
 
     const fetchScenarios = async () => {
         setIsLoading(true);
         try {
             const response = await engineService.getScenarios();
-            // The backend returns { data: Scenario[], meta: ... }
             setScenarios(response.data || []);
         } catch (error) {
             console.error("Failed to fetch scenarios:", error);
@@ -51,13 +53,16 @@ export default function ScenarioManagementPage() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-8 animate-in fade-in duration-500 relative min-h-full">
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-3xl font-black tracking-tight italic uppercase tracking-wider">Scenario Engine</h2>
                     <p className="text-muted-foreground mt-1">Design and manage truth-verification missions for players.</p>
                 </div>
-                <Button className="rounded-2xl h-12 px-6 font-bold gap-2">
+                <Button
+                    onClick={() => { setEditingScenario(undefined); setIsFormOpen(true); }}
+                    className="rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
+                >
                     <Plus size={20} />
                     Create New Scenario
                 </Button>
@@ -77,7 +82,13 @@ export default function ScenarioManagementPage() {
                             <h3 className="text-xl font-bold">No scenarios found</h3>
                             <p className="text-muted-foreground">Start by creating your first truth-verification mission.</p>
                         </div>
-                        <Button variant="outline" className="rounded-xl font-bold">Initialize First Protocol</Button>
+                        <Button
+                            variant="outline"
+                            className="rounded-xl font-bold"
+                            onClick={() => { setEditingScenario(undefined); setIsFormOpen(true); }}
+                        >
+                            Initialize First Protocol
+                        </Button>
                     </div>
                 ) : (
                     scenarios.map((scenario) => (
@@ -123,7 +134,12 @@ export default function ScenarioManagementPage() {
                                 >
                                     {scenario.isActive ? <XCircle size={18} /> : <CheckCircle2 size={18} />}
                                 </Button>
-                                <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-xl hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => { setEditingScenario(scenario); setIsFormOpen(true); }}
+                                >
                                     <Edit2 size={18} />
                                 </Button>
                                 <Button
@@ -139,6 +155,26 @@ export default function ScenarioManagementPage() {
                     ))
                 )}
             </div>
+
+            {/* Form Overlay */}
+            {isFormOpen && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
+                        onClick={() => setIsFormOpen(false)}
+                    />
+                    <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-primary/20">
+                        <ScenarioForm
+                            scenario={editingScenario}
+                            onSuccess={() => {
+                                setIsFormOpen(false);
+                                fetchScenarios();
+                            }}
+                            onCancel={() => setIsFormOpen(false)}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

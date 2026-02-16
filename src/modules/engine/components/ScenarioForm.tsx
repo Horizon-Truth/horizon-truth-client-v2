@@ -7,6 +7,7 @@ import { Label } from "@/shared/components/ui/label";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import SceneEditor from "./SceneEditor";
 
 const scenarioSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
@@ -84,7 +85,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                     <textarea
                         id="description"
                         {...register("description")}
-                        rows={4}
+                        rows={3}
                         className="w-full rounded-2xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary p-4 text-sm resize-none"
                         placeholder="Describe the mission objectives and context..."
                     />
@@ -129,7 +130,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                     <Label htmlFor="isActive" className="text-sm font-bold">Publish Scenario Immediately</Label>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-3 pt-4 border-b border-primary/5 pb-8">
                     <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl h-12 font-bold">
                         Cancel
                     </Button>
@@ -141,6 +142,8 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                     </Button>
                 </div>
             </form>
+
+            {scenario && <SceneEditor scenarioId={scenario.id} />}
         </div>
     );
 }
