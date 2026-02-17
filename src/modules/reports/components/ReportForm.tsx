@@ -14,7 +14,7 @@ import {
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { reportService } from "@/services/report.service";
-import type { ReportTag } from "@/services/report.service";
+import type { ReportTag, Language } from "@/services/report.service";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -23,7 +23,7 @@ const reportSchema = z.object({
     description: z.string().min(10, { message: "Description must be at least 10 characters" }),
     contentType: z.string().min(1, { message: "Content type is required" }),
     sourceUrl: z.string().url().optional().or(z.literal("")),
-    language: z.string().min(2, { message: "Language is required" }),
+    language: z.string().min(1, { message: "Language is required" }),
     tagIds: z.array(z.string()).min(1, { message: "Select at least one tag" }),
 });
 
@@ -36,8 +36,9 @@ interface ReportFormProps {
 export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormProps) {
     const { isAuthenticated } = useAuthStore();
     const [tags, setTags] = useState<ReportTag[]>([]);
+    const [languages, setLanguages] = useState<Language[]>([]);
     const [loading, setLoading] = useState(false);
-    const [fetchingTags, setFetchingTags] = useState(true);
+    const [fetchingData, setFetchingData] = useState(true);
 
     const form = useForm<z.infer<typeof reportSchema>>({
         resolver: zodResolver(reportSchema),
@@ -52,17 +53,25 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
     });
 
     useEffect(() => {
-        async function loadTags() {
+        async function loadData() {
             try {
-                const data = await reportService.getReportTags();
-                setTags(data.data);
+                const [tagsRes, langsRes] = await Promise.all([
+                    reportService.getReportTags(),
+                    reportService.getLanguages()
+                ]);
+                setTags(tagsRes.data);
+                setLanguages(langsRes.data);
+
+                if (langsRes.data.length > 0) {
+                    form.setValue("language", langsRes.data[0].code);
+                }
             } catch (error) {
-                toast.error("Failed to load report tags");
+                toast.error("Failed to load form data");
             } finally {
-                setFetchingTags(false);
+                setFetchingData(false);
             }
         }
-        loadTags();
+        loadData();
     }, []);
 
     async function onSubmit(values: z.infer<typeof reportSchema>) {
@@ -88,7 +97,7 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
         }
     }
 
-    if (fetchingTags) {
+    if (fetchingData) {
         return (
             <div className="flex items-center justify-center p-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -159,7 +168,18 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Language</FormLabel>
-                                <Input placeholder="e.g. en, fr, es" className="bg-background border-input h-11" {...field} />
+                                <FormControl>
+                                    <select
+                                        className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                                        {...field}
+                                    >
+                                        {languages.map((lang) => (
+                                            <option key={lang.id} value={lang.code}>
+                                                {lang.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}

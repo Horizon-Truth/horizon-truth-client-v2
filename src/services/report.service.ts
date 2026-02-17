@@ -17,6 +17,13 @@ export interface ReportTag {
     isActive: boolean;
 }
 
+export interface Language {
+    id: string;
+    name: string;
+    code: string;
+    isActive: boolean;
+}
+
 export const reportService = {
     async submitReport(data: CreateReportDto) {
         const response = await api.post('/reports', data);
@@ -30,6 +37,11 @@ export const reportService = {
 
     async getReports(params?: any) {
         const response = await api.get('/reports', { params });
+        return response.data;
+    },
+
+    async getLanguages() {
+        const response = await api.get('/languages', { params: { isActive: true } });
         return response.data;
     }
 };
