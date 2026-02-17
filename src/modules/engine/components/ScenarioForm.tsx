@@ -14,7 +14,7 @@ const scenarioSchema = z.object({
     description: z.string().min(10, "Description must be at least 10 characters"),
     type: z.enum(["SOCIAL_POST", "NEWS_STORY", "CHAT_CONVERSATION"]),
     difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
-    isActive: z.boolean().default(true),
+    isActive: z.boolean(),
 });
 
 type ScenarioFormValues = z.infer<typeof scenarioSchema>;

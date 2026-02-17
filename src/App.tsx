@@ -14,6 +14,7 @@ import ScenarioManagementPage from "./modules/engine/pages/ScenarioManagementPag
 import UserManagementPage from "./modules/users/pages/UserManagementPage";
 import OrganizationManagementPage from "./modules/organizations/pages/OrganizationManagementPage";
 import PlayerManagementPage from "./modules/players/pages/PlayerManagementPage";
+import ReportsPage from "./modules/reports/ReportsPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -32,6 +33,7 @@ function App() {
 
         {/* Public Simulation (Guest Mode) */}
         <Route path="/simulation" element={<SimulationPage />} />
+        <Route path="/report" element={<ReportsPage />} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard/*" element={
@@ -55,6 +57,7 @@ function App() {
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="simulation" element={<SimulationPage />} />
                 <Route path="game" element={<GamePage />} />
+                <Route path="reports" element={user?.role !== 'PLAYER' ? <div>Reports Admin Page</div> : <ReportsPage />} />
                 <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
               </Routes>
             </MainLayout>

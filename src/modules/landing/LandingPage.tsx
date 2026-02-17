@@ -29,6 +29,12 @@ export default function LandingPage() {
                             <a href="#features" className="text-sm font-medium hover:text-primary transition-colors">Features</a>
                             <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">About</a>
                             <button
+                                onClick={() => navigate("/report")}
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                            >
+                                Crowdsourcing
+                            </button>
+                            <button
                                 onClick={() => navigate("/login")}
                                 className="text-sm font-medium hover:text-primary transition-colors"
                             >

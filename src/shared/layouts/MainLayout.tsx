@@ -24,6 +24,7 @@ import { authService } from "@/services/auth.service";
 const navigation = [
     { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
+    { name: "Submit Report", icon: AlertTriangle, href: "/report", roles: ["PLAYER", "SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
     { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
     { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
@@ -53,6 +54,12 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const filteredNav = navigation.filter(item => {
+        if (!item.roles) return true;
+        if (item.roles.includes("GUEST")) return true;
+        return user?.role && item.roles.includes(user.role);
+    });
+
     return (
         <div className="flex h-screen bg-background text-foreground">
             {/* Sidebar */}
@@ -77,8 +84,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
                 <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-                    {navigation
-                        .filter(item => !item.roles || (user?.role && item.roles.includes(user.role)))
+                    {filteredNav
                         .map((item) => {
                             const isActive = location.pathname === item.href;
                             return (

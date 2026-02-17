@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Building2, Globe, CheckCircle2, XCircle, Trash2, Search, Filter, MoreVertical, Plus, MapPin } from "lucide-react";
+import { Building2, Globe, CheckCircle2, XCircle, Search, MoreVertical, Plus, MapPin } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";

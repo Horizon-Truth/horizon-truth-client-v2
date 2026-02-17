@@ -106,6 +106,27 @@ class EngineService {
         const response = await api.get('/engine/game/history/me', { params: { scenarioId } });
         return response.data;
     }
+
+    // Scene Management
+    async getScenes(scenarioId: string) {
+        const response = await api.get(`/engine/admin/scenarios/${scenarioId}/scenes`);
+        return response.data;
+    }
+
+    async createScene(scenarioId: string, data: any) {
+        const response = await api.post(`/engine/admin/scenarios/${scenarioId}/scenes`, data);
+        return response.data;
+    }
+
+    async updateScene(id: string, data: any) {
+        const response = await api.put(`/engine/admin/scenes/${id}`, data);
+        return response.data;
+    }
+
+    async deleteScene(id: string) {
+        const response = await api.delete(`/engine/admin/scenes/${id}`);
+        return response.data;
+    }
 }
 
 export const engineService = new EngineService();
