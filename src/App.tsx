@@ -15,6 +15,7 @@ import UserManagementPage from "./modules/users/pages/UserManagementPage";
 import OrganizationManagementPage from "./modules/organizations/pages/OrganizationManagementPage";
 import PlayerManagementPage from "./modules/players/pages/PlayerManagementPage";
 import ReportsPage from "./modules/reports/ReportsPage";
+import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -57,7 +58,9 @@ function App() {
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="simulation" element={<SimulationPage />} />
                 <Route path="game" element={<GamePage />} />
+                <Route path="game" element={<GamePage />} />
                 <Route path="reports" element={user?.role !== 'PLAYER' ? <div>Reports Admin Page</div> : <ReportsPage />} />
+                <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
               </Routes>
             </MainLayout>

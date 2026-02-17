@@ -30,8 +30,24 @@ export const reportService = {
         return response.data;
     },
 
-    async getReportTags() {
-        const response = await api.get('/report-tags', { params: { isActive: true } });
+    async getReportTags(all = false) {
+        const params = all ? {} : { isActive: true };
+        const response = await api.get('/report-tags', { params });
+        return response.data;
+    },
+
+    async createReportTag(data: { name: string; slug: string; isActive?: boolean }) {
+        const response = await api.post('/report-tags', data);
+        return response.data;
+    },
+
+    async updateReportTag(id: string, data: { name?: string; slug?: string; isActive?: boolean }) {
+        const response = await api.patch(`/report-tags/${id}`, data);
+        return response.data;
+    },
+
+    async deleteReportTag(id: string) {
+        const response = await api.delete(`/report-tags/${id}`);
         return response.data;
     },
 
@@ -40,8 +56,24 @@ export const reportService = {
         return response.data;
     },
 
-    async getLanguages() {
-        const response = await api.get('/languages', { params: { isActive: true } });
+    async getLanguages(all = false) {
+        const params = all ? {} : { isActive: true };
+        const response = await api.get('/languages', { params });
+        return response.data;
+    },
+
+    async createLanguage(data: { name: string; code: string; isActive?: boolean }) {
+        const response = await api.post('/languages', data);
+        return response.data;
+    },
+
+    async updateLanguage(id: string, data: { name?: string; code?: string; isActive?: boolean }) {
+        const response = await api.patch(`/languages/${id}`, data);
+        return response.data;
+    },
+
+    async deleteLanguage(id: string) {
+        const response = await api.delete(`/languages/${id}`);
         return response.data;
     }
 };
