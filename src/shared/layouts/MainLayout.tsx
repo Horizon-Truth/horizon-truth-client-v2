@@ -6,7 +6,7 @@ import {
     Building2,
     Trophy,
     Cpu,
-    Shield,
+
     FileText,
     Settings,
     BarChart3,

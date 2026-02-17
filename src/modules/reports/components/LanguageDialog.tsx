@@ -28,7 +28,7 @@ import { reportService, type Language } from "@/services/report.service";
 const languageSchema = z.object({
     name: z.string().min(1, "Name is required"),
     code: z.string().min(2, "Code must be at least 2 characters").max(10, "Code is too long"),
-    isActive: z.boolean().default(true),
+    isActive: z.boolean(),
 });
 
 interface LanguageDialogProps {
@@ -41,7 +41,9 @@ interface LanguageDialogProps {
 export function LanguageDialog({ open, onOpenChange, language, onSuccess }: LanguageDialogProps) {
     const [loading, setLoading] = useState(false);
 
-    const form = useForm<z.infer<typeof languageSchema>>({
+    type LanguageFormValues = z.infer<typeof languageSchema>;
+
+    const form = useForm<LanguageFormValues>({
         resolver: zodResolver(languageSchema),
         defaultValues: {
             name: "",

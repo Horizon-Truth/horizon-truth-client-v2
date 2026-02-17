@@ -28,7 +28,7 @@ import { reportService, type ReportTag } from "@/services/report.service";
 const tagSchema = z.object({
     name: z.string().min(1, "Name is required"),
     slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
-    isActive: z.boolean().default(true),
+    isActive: z.boolean(),
 });
 
 interface TagDialogProps {
@@ -41,7 +41,9 @@ interface TagDialogProps {
 export function TagDialog({ open, onOpenChange, tag, onSuccess }: TagDialogProps) {
     const [loading, setLoading] = useState(false);
 
-    const form = useForm<z.infer<typeof tagSchema>>({
+    type TagFormValues = z.infer<typeof tagSchema>;
+
+    const form = useForm<TagFormValues>({
         resolver: zodResolver(tagSchema),
         defaultValues: {
             name: "",
