@@ -30,9 +30,10 @@ const reportSchema = z.object({
 interface ReportFormProps {
     onSuccess: () => void;
     onRequireAuth: () => void;
+    onCancel: () => void;
 }
 
-export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
+export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormProps) {
     const { isAuthenticated } = useAuthStore();
     const [tags, setTags] = useState<ReportTag[]>([]);
     const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-card/50 p-6 rounded-2xl border border-white/5 backdrop-blur-xl">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-card p-6 rounded-2xl border shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                         control={form.control}
@@ -106,7 +107,7 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
                             <FormItem className="md:col-span-2">
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Title</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="What are you reporting?" className="bg-background/50 border-white/10 h-11" {...field} />
+                                    <Input placeholder="What are you reporting?" className="bg-background border-input h-11" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -121,7 +122,7 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Description</FormLabel>
                                 <FormControl>
                                     <textarea
-                                        className="flex min-h-[120px] w-full rounded-xl border border-white/10 bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex min-h-[120px] w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
                                         placeholder="Provide more details..."
                                         {...field}
                                     />
@@ -138,7 +139,7 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
                             <FormItem>
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Content Type</FormLabel>
                                 <select
-                                    className="flex h-11 w-full rounded-xl border border-white/10 bg-background/50 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                                     {...field}
                                 >
                                     <option value="ARTICLE">Article</option>
@@ -158,7 +159,7 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Language</FormLabel>
-                                <Input placeholder="e.g. en, fr, es" className="bg-background/50 border-white/10 h-11" {...field} />
+                                <Input placeholder="e.g. en, fr, es" className="bg-background border-input h-11" {...field} />
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -171,56 +172,71 @@ export function ReportForm({ onSuccess, onRequireAuth }: ReportFormProps) {
                             <FormItem className="md:col-span-2">
                                 <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Source URL (Optional)</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="https://..." className="bg-background/50 border-white/10 h-11" {...field} />
+                                    <Input placeholder="https://..." className="bg-background border-input h-11" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    <div className="md:col-span-2">
-                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 block">Tags</FormLabel>
-                        <div className="flex flex-wrap gap-2">
-                            {tags.map((tag) => (
-                                <button
-                                    key={tag.id}
-                                    type="button"
-                                    onClick={() => {
-                                        const currentTags = form.getValues("tagIds");
-                                        const newTags = currentTags.includes(tag.id)
-                                            ? currentTags.filter((id) => id !== tag.id)
-                                            : [...currentTags, tag.id];
-                                        form.setValue("tagIds", newTags, { shouldValidate: true });
-                                    }}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${form.watch("tagIds").includes(tag.id)
-                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                        : "bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/5"
-                                        }`}
-                                >
-                                    {tag.name}
-                                </button>
-                            ))}
-                        </div>
-                        <FormMessage className="mt-2">
-                            {form.formState.errors.tagIds?.message}
-                        </FormMessage>
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="tagIds"
+                        render={() => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 block">Tags</FormLabel>
+                                <div className="flex flex-wrap gap-2">
+                                    {tags.map((tag) => (
+                                        <button
+                                            key={tag.id}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentTags = form.getValues("tagIds");
+                                                const newTags = currentTags.includes(tag.id)
+                                                    ? currentTags.filter((id) => id !== tag.id)
+                                                    : [...currentTags, tag.id];
+                                                form.setValue("tagIds", newTags, { shouldValidate: true });
+                                            }}
+                                            className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${form.watch("tagIds").includes(tag.id)
+                                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                                : "bg-muted text-muted-foreground hover:bg-muted/80 border border-transparent"
+                                                }`}
+                                        >
+                                            {tag.name}
+                                        </button>
+                                    ))}
+                                </div>
+                                <FormMessage className="mt-2" />
+                            </FormItem>
+                        )}
+                    />
                 </div>
 
-                <Button
-                    type="submit"
-                    className="w-full h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Submitting Report...
-                        </>
-                    ) : (
-                        "Submit Report"
-                    )}
-                </Button>
+                <div className="flex gap-4">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onCancel}
+                        className="flex-1 h-12 rounded-xl font-bold border-input hover:bg-muted transition-all"
+                        disabled={loading}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="flex-[2] h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Submitting...
+                            </>
+                        ) : (
+                            "Submit Report"
+                        )}
+                    </Button>
+                </div>
             </form>
         </Form>
     );
