@@ -11,6 +11,9 @@ import ProfilePage from "./modules/profile/ProfilePage";
 import SimulationPage from "./modules/simulation/SimulationPage";
 import GamePage from "./modules/simulation/GamePage";
 import ScenarioManagementPage from "./modules/engine/pages/ScenarioManagementPage";
+import UserManagementPage from "./modules/users/pages/UserManagementPage";
+import OrganizationManagementPage from "./modules/organizations/pages/OrganizationManagementPage";
+import PlayerManagementPage from "./modules/players/pages/PlayerManagementPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -40,9 +43,9 @@ function App() {
                     ? <Navigate to="/dashboard/game" replace />
                     : <DashboardPage />
                 } />
-                <Route path="organizations" element={user?.role !== 'PLAYER' ? <div>Organizations Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="users" element={user?.role !== 'PLAYER' ? <div>Users Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="players" element={user?.role !== 'PLAYER' ? <div>Players Page</div> : <Navigate to="/dashboard/game" replace />} />
+                <Route path="organizations" element={user?.role === 'SYSTEM_ADMIN' ? <OrganizationManagementPage /> : <Navigate to="/dashboard" replace />} />
+                <Route path="users" element={user?.role === 'SYSTEM_ADMIN' ? <UserManagementPage /> : <Navigate to="/dashboard" replace />} />
+                <Route path="players" element={user?.role === 'SYSTEM_ADMIN' ? <PlayerManagementPage /> : <Navigate to="/dashboard" replace />} />
                 <Route path="gamification" element={<div>Gamification Page</div>} />
                 <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />

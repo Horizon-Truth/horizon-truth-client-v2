@@ -22,17 +22,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avat
 import { authService } from "@/services/auth.service";
 
 const navigation = [
-    { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
-    { name: "Game Dashboard", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
+    { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
     { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
-    { name: "Users", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
-    { name: "Players", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
+    { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
+    { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
     { name: "Gamification", icon: Trophy, href: "/dashboard/gamification", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR", "PLAYER"] },
-    { name: "Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
-    { name: "Incidents", icon: AlertTriangle, href: "/dashboard/incidents", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
-    { name: "Audit Logs", icon: History, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
-    { name: "Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Cloud Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Incident Log", icon: AlertTriangle, href: "/dashboard/incidents", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Audit Protocol", icon: History, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Security Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
