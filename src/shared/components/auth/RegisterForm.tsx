@@ -30,7 +30,7 @@ const registerSchema = z.object({
     path: ["email"],
 });
 
-export function RegisterForm() {
+export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
     const navigate = useNavigate();
     const setAuth = useAuthStore((state) => state.setAuth);
     const [error, setError] = useState<string | null>(null);
@@ -53,7 +53,11 @@ export function RegisterForm() {
         try {
             const data = await authService.register(values);
             setAuth(data.user, data.access_token);
-            navigate('/dashboard');
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
         } finally {
@@ -79,7 +83,7 @@ export function RegisterForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="John Doe"
-                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl"
                                         {...field}
                                     />
                                 </FormControl>
@@ -97,7 +101,7 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             placeholder="name@example.com"
-                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                            className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl"
                                             {...field}
                                         />
                                     </FormControl>
@@ -114,7 +118,7 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             placeholder="johndoe"
-                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                            className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl"
                                             {...field}
                                         />
                                     </FormControl>
@@ -134,7 +138,7 @@ export function RegisterForm() {
                                         <Input
                                             type="password"
                                             placeholder="••••••••"
-                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
+                                            className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
                                             {...field}
                                         />
                                     </FormControl>
@@ -152,7 +156,7 @@ export function RegisterForm() {
                                         <Input
                                             type="password"
                                             placeholder="••••••••"
-                                            className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
+                                            className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl text-sm"
                                             {...field}
                                         />
                                     </FormControl>
@@ -176,7 +180,7 @@ export function RegisterForm() {
                 </form>
             </Form>
 
-            <div className="mt-8 pt-6 border-t border-white/5 text-center">
+            <div className="mt-8 pt-6 border-t border-border text-center">
                 <p className="text-sm text-muted-foreground">
                     Already have an account?{' '}
                     <button

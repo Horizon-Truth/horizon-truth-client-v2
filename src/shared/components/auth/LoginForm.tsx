@@ -21,7 +21,7 @@ const loginSchema = z.object({
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 });
 
-export function LoginForm() {
+export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     const navigate = useNavigate();
     const setAuth = useAuthStore((state) => state.setAuth);
     const [error, setError] = useState<string | null>(null);
@@ -41,7 +41,11 @@ export function LoginForm() {
         try {
             const data = await authService.login(values);
             setAuth(data.user, data.access_token);
-            navigate('/dashboard');
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {
@@ -67,7 +71,7 @@ export function LoginForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="Email or Username"
-                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl"
                                         {...field}
                                     />
                                 </FormControl>
@@ -87,7 +91,7 @@ export function LoginForm() {
                                     <Input
                                         type="password"
                                         placeholder="••••••••"
-                                        className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                        className="bg-background border-input focus-visible:ring-primary/30 h-11 rounded-xl"
                                         {...field}
                                     />
                                 </FormControl>
@@ -110,7 +114,7 @@ export function LoginForm() {
                 </form>
             </Form>
 
-            <div className="mt-8 pt-6 border-t border-white/5 text-center">
+            <div className="mt-8 pt-6 border-t border-border text-center">
                 <p className="text-sm text-muted-foreground">
                     New to Horizon?{' '}
                     <button

@@ -21,6 +21,10 @@ export default function ReportsPage() {
         setIsAuthModalOpen(true);
     };
 
+    const handleAuthSuccess = () => {
+        setIsAuthModalOpen(false);
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
@@ -93,6 +97,7 @@ export default function ReportsPage() {
                 isOpen={isAuthModalOpen}
                 onClose={() => setIsAuthModalOpen(false)}
                 initialMode={authMode}
+                onSuccess={handleAuthSuccess}
             />
         </div>
     );
