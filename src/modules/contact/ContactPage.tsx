@@ -67,3 +67,30 @@ export default function ContactPage() {
                                         <Mail className="text-primary" size={24} />
                                     </div>
                                     <div>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.emailUs")}</h4>
+                                        <p className="text-muted-foreground">info@horizontruth.com</p>
+                                        <p className="text-muted-foreground">support@horizontruth.com</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4 p-6 bg-secondary/10 rounded-2xl border border-border">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                        <Phone className="text-primary" size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.callUs")}</h4>
+                                        <p className="text-muted-foreground">+251 941 667 729</p>
+                                        <p className="text-muted-foreground">+251 921 859 449</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4 p-6 bg-secondary/10 rounded-2xl border border-border">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                        <MapPin className="text-primary" size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.visitUs")}</h4>
+                                        <p className="text-muted-foreground">{t("contact.visitLine1")}</p>
+                                        <p className="text-muted-foreground">{t("contact.visitLine2")}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
