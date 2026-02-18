@@ -1,7 +1,9 @@
-import { ArrowRight, ShieldCheck, Zap, Globe, Github } from "lucide-react";
+import { ArrowRight, ShieldCheck, Zap, Globe, Github, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/auth.store";
 import { useEffect } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
+import { Button } from "@/shared/components/ui/button";
 
 export default function LandingPage() {
     const navigate = useNavigate();
@@ -25,6 +27,8 @@ export default function LandingPage() {
                             </div>
                             <span className="text-xl font-bold tracking-tight">HORIZON TRUTH</span>
                         </div>
+
+                        {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-8">
                             <a href="#features" className="text-sm font-medium hover:text-primary transition-colors">Features</a>
                             <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">About</a>
@@ -46,6 +50,48 @@ export default function LandingPage() {
                             >
                                 Launch App <ArrowRight size={16} />
                             </button>
+                        </div>
+
+                        {/* Mobile Navigation Trigger */}
+                        <div className="md:hidden flex items-center">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Menu className="w-6 h-6" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="right" className="w-[300px] flex flex-col p-6">
+                                    <div className="flex items-center gap-2 mb-8">
+                                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                                            <ShieldCheck className="text-primary-foreground w-5 h-5" />
+                                        </div>
+                                        <span className="text-xl font-bold tracking-tight">HORIZON</span>
+                                    </div>
+                                    <div className="flex flex-col gap-6">
+                                        <a href="#features" className="text-lg font-medium hover:text-primary transition-colors">Features</a>
+                                        <a href="#about" className="text-lg font-medium hover:text-primary transition-colors">About</a>
+                                        <button
+                                            onClick={() => navigate("/report")}
+                                            className="text-left text-lg font-medium hover:text-primary transition-colors"
+                                        >
+                                            Crowdsourcing
+                                        </button>
+                                        <hr className="border-border" />
+                                        <button
+                                            onClick={() => navigate("/login")}
+                                            className="text-left text-lg font-medium hover:text-primary transition-colors"
+                                        >
+                                            Login
+                                        </button>
+                                        <button
+                                            onClick={() => navigate("/dashboard")}
+                                            className="w-full px-4 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            Launch App <ArrowRight size={18} />
+                                        </button>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
                         </div>
                     </div>
                 </div>

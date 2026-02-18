@@ -6,7 +6,6 @@ import {
     Building2,
     Trophy,
     Cpu,
-
     FileText,
     Settings,
     BarChart3,
@@ -25,6 +24,8 @@ import { cn } from "@/shared/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import { authService } from "@/services/auth.service";
+import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
+import { Button } from "@/shared/components/ui/button";
 
 const navigation = [
     { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
@@ -66,153 +67,173 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         return user?.role && item.roles.includes(user.role);
     });
 
-    return (
-        <div className="flex h-screen bg-background text-foreground">
-            {/* Sidebar */}
-            <aside
-                className={cn(
-                    "bg-card border-r transition-all duration-300 ease-in-out flex flex-col z-20",
-                    isSidebarOpen ? "w-64" : "w-16"
-                )}
-            >
-                <div className="flex items-center h-16 px-4 border-b justify-between">
-                    {isSidebarOpen && (
-                        <Link to="/" className="font-bold text-xl uppercase tracking-wider hover:opacity-80 transition-opacity">
-                            Horizon
-                        </Link>
-                    )}
+    const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
+        <div className="flex flex-col h-full">
+            <div className={cn("flex items-center h-16 px-4 border-b justify-between", mobile && "px-6")}>
+                <Link to="/" className="font-bold text-xl uppercase tracking-wider hover:opacity-80 transition-opacity flex items-center gap-2">
+                    Horizon
+                </Link>
+                {!mobile && (
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         className="p-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
                     >
                         {isSidebarOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}
                     </button>
-                </div>
+                )}
+            </div>
 
-                <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-                    {filteredNav
-                        .map((item) => {
-                            const isActive = location.pathname === item.href;
-                            return (
-                                <Link
-                                    key={item.name}
-                                    to={item.href}
-                                    className={cn(
-                                        "flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors group",
-                                        isActive
-                                            ? "bg-primary text-primary-foreground"
-                                            : "hover:bg-accent hover:text-accent-foreground",
-                                        !isSidebarOpen && "justify-center"
-                                    )}
-                                >
-                                    <item.icon
-                                        className={cn(
-                                            "flex-shrink-0 transition-all",
-                                            isSidebarOpen ? "mr-3 h-5 w-5" : "h-6 w-6"
-                                        )}
-                                    />
-                                    {isSidebarOpen && <span>{item.name}</span>}
-                                    {isActive && isSidebarOpen && (
-                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
-                                    )}
-                                </Link>
-                            );
-                        })}
-                </nav>
+            <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+                {filteredNav.map((item) => {
+                    const isActive = location.pathname === item.href;
+                    return (
+                        <Link
+                            key={item.name}
+                            to={item.href}
+                            className={cn(
+                                "flex items-center px-2 py-2.5 text-sm font-medium rounded-md transition-colors group",
+                                isActive
+                                    ? "bg-primary text-primary-foreground"
+                                    : "hover:bg-accent hover:text-accent-foreground",
+                                !isSidebarOpen && !mobile && "justify-center"
+                            )}
+                        >
+                            <item.icon
+                                className={cn(
+                                    "flex-shrink-0 transition-all",
+                                    isSidebarOpen || mobile ? "mr-3 h-5 w-5" : "h-6 w-6"
+                                )}
+                            />
+                            {(isSidebarOpen || mobile) && <span>{item.name}</span>}
+                            {isActive && (isSidebarOpen || mobile) && (
+                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
+                            )}
+                        </Link>
+                    );
+                })}
+            </nav>
+        </div>
+    );
+
+    return (
+        <div className="flex h-screen bg-background text-foreground overflow-hidden">
+            {/* Desktop Sidebar */}
+            <aside
+                className={cn(
+                    "bg-card border-r transition-all duration-300 ease-in-out hidden md:flex flex-col z-20",
+                    isSidebarOpen ? "w-64" : "w-16"
+                )}
+            >
+                <NavContent />
             </aside>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-hidden relative">
-                <header className="h-16 bg-card border-b flex items-center justify-between px-8 z-10">
-                    <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                        {navigation.find(n => location.pathname === n.href)?.name || "Dashboard"}
-                    </h1>
+            {/* Mobile Sidebar (Sheet) */}
+            <Sheet>
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col overflow-hidden relative w-full">
+                    <header className="h-16 bg-card border-b flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
+                        <div className="flex items-center gap-4">
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="md:hidden">
+                                    <Menu size={20} />
+                                </Button>
+                            </SheetTrigger>
+                            <h1 className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 truncate max-w-[200px] md:max-w-none">
+                                {navigation.find(n => location.pathname === n.href)?.name || "Dashboard"}
+                            </h1>
+                        </div>
 
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                            className="flex items-center gap-3 p-1.5 pr-3 rounded-full hover:bg-accent transition-all group border border-transparent hover:border-border"
-                        >
-                            <Avatar className="h-8 w-8 border-2 border-primary/20">
-                                <AvatarImage src={user?.avatarUrl} alt={user?.fullName || "User"} />
-                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                    {user?.fullName?.split(" ").map(n => n[0]).join("").toUpperCase() || "U"}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="hidden md:block text-left">
-                                <p className="text-sm font-bold leading-none">{user?.fullName}</p>
-                                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter mt-1">{user?.role}</p>
-                            </div>
-                            <ChevronDown size={14} className={cn("text-muted-foreground transition-transform duration-200", isUserMenuOpen && "rotate-180")} />
-                        </button>
-
-                        {isUserMenuOpen && (
-                            <>
-                                <div
-                                    className="fixed inset-0 z-10"
-                                    onClick={() => setIsUserMenuOpen(false)}
-                                />
-                                <div className="absolute right-0 mt-2 w-56 bg-card border rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                                    <div className="px-4 py-2 border-b mb-1">
-                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account</p>
-                                    </div>
-                                    {user?.role !== 'PLAYER' && (
-                                        <>
-                                            <Link
-                                                to="/dashboard/reports"
-                                                className={cn(
-                                                    "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                    location.pathname === "/dashboard/reports"
-                                                        ? "bg-primary/10 text-primary"
-                                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                )}
-                                            >
-                                                <FileText size={18} />
-                                                Reports
-                                            </Link>
-                                            <Link
-                                                to="/dashboard/reports-config"
-                                                className={cn(
-                                                    "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                    location.pathname === "/dashboard/reports-config"
-                                                        ? "bg-primary/10 text-primary"
-                                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                )}
-                                            >
-                                                <Settings size={18} />
-                                                Reports Config
-                                            </Link>
-                                            <div className="pt-4 pb-2">
-                                                <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                                    System
-                                                </p>
-                                            </div>
-                                        </>
-                                    )}
-                                    <Link
-                                        to="/dashboard/profile"
-                                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
-                                        onClick={() => setIsUserMenuOpen(false)}
-                                    >
-                                        <UserIcon size={16} className="text-muted-foreground" />
-                                        <span>My Profile</span>
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 w-full transition-colors"
-                                    >
-                                        <LogOut size={16} />
-                                        <span>Logout</span>
-                                    </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                className="flex items-center gap-2 md:gap-3 p-1 md:p-1.5 md:pr-3 rounded-full hover:bg-accent transition-all group border border-transparent hover:border-border"
+                            >
+                                <Avatar className="h-8 w-8 border-2 border-primary/20">
+                                    <AvatarImage src={user?.avatarUrl} alt={user?.fullName || "User"} />
+                                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                        {user?.fullName?.split(" ").map(n => n[0]).join("").toUpperCase() || "U"}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="hidden md:block text-left">
+                                    <p className="text-sm font-bold leading-none">{user?.fullName}</p>
+                                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter mt-1">{user?.role}</p>
                                 </div>
-                            </>
-                        )}
-                    </div>
-                </header>
-                <main className="flex-1 overflow-y-auto p-8 bg-muted/20">
-                    {children}
-                </main>
-            </div>
+                                <ChevronDown size={14} className={cn("text-muted-foreground transition-transform duration-200 hidden md:block", isUserMenuOpen && "rotate-180")} />
+                            </button>
+
+                            {isUserMenuOpen && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setIsUserMenuOpen(false)}
+                                    />
+                                    <div className="absolute right-0 mt-2 w-56 bg-card border rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                        <div className="px-4 py-2 border-b mb-1">
+                                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account</p>
+                                            <p className="md:hidden text-sm font-medium mt-1">{user?.fullName}</p>
+                                        </div>
+                                        {user?.role !== 'PLAYER' && (
+                                            <>
+                                                <Link
+                                                    to="/dashboard/reports"
+                                                    className={cn(
+                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                                                        location.pathname === "/dashboard/reports"
+                                                            ? "bg-primary/10 text-primary"
+                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                                    )}
+                                                >
+                                                    <FileText size={18} />
+                                                    Reports
+                                                </Link>
+                                                <Link
+                                                    to="/dashboard/reports-config"
+                                                    className={cn(
+                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                                                        location.pathname === "/dashboard/reports-config"
+                                                            ? "bg-primary/10 text-primary"
+                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                                    )}
+                                                >
+                                                    <Settings size={18} />
+                                                    Reports Config
+                                                </Link>
+                                                <div className="pt-4 pb-2">
+                                                    <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                        System
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
+                                        <Link
+                                            to="/dashboard/profile"
+                                            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
+                                            onClick={() => setIsUserMenuOpen(false)}
+                                        >
+                                            <UserIcon size={16} className="text-muted-foreground" />
+                                            <span>My Profile</span>
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 w-full transition-colors"
+                                        >
+                                            <LogOut size={16} />
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </header>
+                    <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/20 w-full">
+                        {children}
+                    </main>
+                </div>
+
+                <SheetContent side="left" className="p-0 w-72">
+                    <NavContent mobile />
+                </SheetContent>
+            </Sheet>
         </div>
     );
 };
