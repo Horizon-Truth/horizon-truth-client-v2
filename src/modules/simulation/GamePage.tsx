@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { cn } from '@/shared/lib/utils';
 import {
@@ -9,14 +9,18 @@ import {
     History,
     AlertCircle,
     LayoutDashboard,
-    Activity
+    Activity,
+    MessageSquare
 } from 'lucide-react';
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { GameSession } from '../engine/components/GameSession';
 import { GameOutcome } from '../engine/components/GameOutcome';
+import { Button } from '@/shared/components/ui/button';
+import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 
 export default function GamePage() {
     const { stats, activeProgress, currentOutcome, fetchGameHistory } = useGameStore();
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
     useEffect(() => {
         fetchGameHistory();
@@ -61,9 +65,21 @@ export default function GamePage() {
                     {/* Main Content Area */}
                     <main className="flex-1 flex gap-8">
                         <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden backdrop-blur-2xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.02]">
+                            <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                                 <LayoutDashboard size={240} />
                             </div>
+
+                            <div className="flex items-center justify-between mb-2 relative z-10">
+                                <h1 className="text-4xl font-black italic uppercase tracking-wider">Mission Command</h1>
+                                <Button
+                                    onClick={() => setIsFeedbackOpen(true)}
+                                    className="rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all bg-indigo-500 hover:bg-indigo-600 relative z-10"
+                                >
+                                    <MessageSquare size={20} />
+                                    Give Feedback
+                                </Button>
+                            </div>
+
                             <ScenarioList />
                         </div>
 
@@ -119,6 +135,22 @@ export default function GamePage() {
                             {activeProgress && <GameSession />}
                             {currentOutcome && <GameOutcome />}
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Feedback Modal Overlay */}
+            {isFeedbackOpen && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-background/90 backdrop-blur-md animate-in fade-in duration-300"
+                        onClick={() => setIsFeedbackOpen(false)}
+                    />
+                    <div className="relative z-[210] w-full max-w-lg">
+                        <AddFeedbackModal
+                            onSuccess={() => setIsFeedbackOpen(false)}
+                            onCancel={() => setIsFeedbackOpen(false)}
+                        />
                     </div>
                 </div>
             )}
