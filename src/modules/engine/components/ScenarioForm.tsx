@@ -15,6 +15,11 @@ const scenarioSchema = z.object({
     type: z.enum(["SOCIAL_POST", "NEWS_STORY", "CHAT_CONVERSATION"]),
     difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
     isActive: z.boolean(),
+    learningObjective: z.string().optional(),
+    behavioralRisk: z.string().optional(),
+    psychologicalTrigger: z.string().optional(),
+    preventionLesson: z.string().optional(),
+    theme: z.string().optional(),
 });
 
 type ScenarioFormValues = z.infer<typeof scenarioSchema>;
@@ -128,6 +133,54 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                         className="w-4 h-4 rounded-md border-primary text-primary focus:ring-primary"
                     />
                     <Label htmlFor="isActive" className="text-sm font-bold">Publish Scenario Immediately</Label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-primary/5">
+                    <div className="space-y-2">
+                        <Label htmlFor="learningObjective" className="text-[10px] font-black uppercase tracking-widest ml-1">Learning Objective</Label>
+                        <Input
+                            id="learningObjective"
+                            {...register("learningObjective")}
+                            placeholder="e.g. Critical Thinking"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="behavioralRisk" className="text-[10px] font-black uppercase tracking-widest ml-1">Behavioral Risk</Label>
+                        <Input
+                            id="behavioralRisk"
+                            {...register("behavioralRisk")}
+                            placeholder="e.g. Social Engineering"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="psychologicalTrigger" className="text-[10px] font-black uppercase tracking-widest ml-1">Psychological Trigger</Label>
+                        <Input
+                            id="psychologicalTrigger"
+                            {...register("psychologicalTrigger")}
+                            placeholder="e.g. Fear of Missing Out"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="preventionLesson" className="text-[10px] font-black uppercase tracking-widest ml-1">Prevention Lesson</Label>
+                        <Input
+                            id="preventionLesson"
+                            {...register("preventionLesson")}
+                            placeholder="e.g. Verify before sharing"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="theme" className="text-[10px] font-black uppercase tracking-widest ml-1">Broad Theme</Label>
+                        <Input
+                            id="theme"
+                            {...register("theme")}
+                            placeholder="e.g. Health, Financial Fraud, etc."
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex gap-3 pt-4 border-b border-primary/5 pb-8">

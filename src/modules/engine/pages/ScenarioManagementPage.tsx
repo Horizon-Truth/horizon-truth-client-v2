@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info } from "lucide-react";
+import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info, MessageSquare } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
 import ScenarioForm from "../components/ScenarioForm";
+import AddFeedbackModal from "../components/AddFeedbackModal";
+import ScenarioFeedbackList from "../components/ScenarioFeedbackList";
 
 export default function ScenarioManagementPage() {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [isFeedbackListOpen, setIsFeedbackListOpen] = useState(false);
     const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
+    const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
 
     const fetchScenarios = async () => {
         setIsLoading(true);
@@ -138,6 +143,24 @@ export default function ScenarioManagementPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="rounded-xl hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => { setActiveScenarioId(scenario.id); setIsFeedbackListOpen(true); }}
+                                    title="View Feedback"
+                                >
+                                    <MessageSquare size={18} />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-xl hover:bg-indigo-500/10 hover:text-indigo-500"
+                                    onClick={() => { setActiveScenarioId(scenario.id); setIsFeedbackOpen(true); }}
+                                    title="Add Internal Feedback"
+                                >
+                                    <Plus size={18} />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-xl hover:bg-primary/10 hover:text-primary"
                                     onClick={() => { setEditingScenario(scenario); setIsFormOpen(true); }}
                                 >
                                     <Edit2 size={18} />
@@ -155,6 +178,45 @@ export default function ScenarioManagementPage() {
                     ))
                 )}
             </div>
+
+            {/* Feedback List Overlay */}
+            {isFeedbackListOpen && activeScenarioId && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
+                        onClick={() => setIsFeedbackListOpen(false)}
+                    />
+                    <div className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto bg-card border rounded-[2rem] p-8 shadow-2xl">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-black uppercase tracking-wider italic">Scenario Feedback</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setIsFeedbackListOpen(false)} className="rounded-full">
+                                <XCircle size={24} />
+                            </Button>
+                        </div>
+                        <ScenarioFeedbackList scenarioId={activeScenarioId} />
+                    </div>
+                </div>
+            )}
+
+            {/* Add Feedback Modal Overlay */}
+            {isFeedbackOpen && activeScenarioId && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-background/90 backdrop-blur-md animate-in fade-in duration-300"
+                        onClick={() => setIsFeedbackOpen(false)}
+                    />
+                    <div className="relative z-[130] w-full max-w-lg">
+                        <AddFeedbackModal
+                            scenarioId={activeScenarioId}
+                            onSuccess={() => {
+                                setIsFeedbackOpen(false);
+                                // Optionally refresh list if it's open
+                            }}
+                            onCancel={() => setIsFeedbackOpen(false)}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Form Overlay */}
             {isFormOpen && (

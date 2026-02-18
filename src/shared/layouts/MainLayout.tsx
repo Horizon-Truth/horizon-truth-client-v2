@@ -17,7 +17,8 @@ import {
     ChevronLeft,
     LogOut,
     User as UserIcon,
-    ChevronDown
+    ChevronDown,
+    MessageSquare
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
@@ -38,6 +39,7 @@ const navigation = [
     { name: "Incident Log", icon: AlertTriangle, href: "/dashboard/incidents", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Audit Protocol", icon: History, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
     { name: "Security Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+    { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {

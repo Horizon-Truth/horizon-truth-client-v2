@@ -12,6 +12,11 @@ export interface Scenario {
         level: number;
         requiredXp: number;
     };
+    learningObjective?: string;
+    behavioralRisk?: string;
+    psychologicalTrigger?: string;
+    preventionLesson?: string;
+    theme?: string;
 }
 
 export interface Scene {
