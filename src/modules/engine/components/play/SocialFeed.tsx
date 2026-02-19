@@ -1,14 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal } from 'lucide-react';
+import { cn } from '@/shared/lib/utils';
 import { type Scene } from '@/services/engine.service';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 
 interface SocialFeedProps {
     scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
 }
 
-export const SocialFeed: React.FC<SocialFeedProps> = ({ scene }) => {
+export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoading }) => {
     const feedItems = scene.content?.feedItems || [];
 
     return (
@@ -20,6 +23,43 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene }) => {
             {feedItems.sort((a: any, b: any) => a.itemOrder - b.itemOrder).map((item: any, idx: number) => (
                 <FeedItem key={item.id || idx} item={item} index={idx} />
             ))}
+
+            {/* Contextual Options Menu */}
+            {scene.availableChoices.length > 0 && (
+                <div className="sticky bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent">
+                    <div className="p-4 rounded-2xl bg-[#1A1D21] border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Contextual Actions</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {scene.availableChoices.map((choice) => (
+                                <motion.button
+                                    key={choice}
+                                    disabled={isLoading}
+                                    whileHover={{
+                                        scale: 1.05,
+                                        backgroundColor: "rgba(var(--primary), 0.1)",
+                                        borderColor: "rgba(var(--primary), 0.4)"
+                                    }}
+                                    whileTap={{
+                                        scale: 0.95,
+                                        y: [0, -1, 1, -1, 1, 0], // Micro vibration
+                                    }}
+                                    onClick={() => onChoice?.(choice)}
+                                    className={cn(
+                                        "px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-bold transition-all relative overflow-hidden",
+                                        "hover:text-primary",
+                                        isLoading && "opacity-50 cursor-not-allowed"
+                                    )}
+                                >
+                                    {choice}
+                                </motion.button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

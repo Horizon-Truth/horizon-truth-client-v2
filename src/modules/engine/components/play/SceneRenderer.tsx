@@ -7,16 +7,20 @@ import { VideoPlayer } from './VideoPlayer';
 
 interface SceneRendererProps {
     scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
 }
 
-export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene }) => {
-    switch (scene.contentType) {
+export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, isLoading }) => {
+    const contentType = scene.contentType || (scene as any).content?.contentType;
+
+    switch (contentType) {
         case 'TEXT':
-            return <TextPost scene={scene} />;
+            return <TextPost scene={scene} onChoice={onChoice} isLoading={isLoading} />;
         case 'CHAT':
-            return <ChatStream scene={scene} />;
+            return <ChatStream scene={scene} onChoice={onChoice} isLoading={isLoading} />;
         case 'FEED':
-            return <SocialFeed scene={scene} />;
+            return <SocialFeed scene={scene} onChoice={onChoice} isLoading={isLoading} />;
         case 'IMAGE':
             return (
                 <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">

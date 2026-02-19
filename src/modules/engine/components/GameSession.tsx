@@ -125,7 +125,11 @@ export function GameSession() {
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Intercepted {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
 
-                            <SceneRenderer scene={currentScene} />
+                            <SceneRenderer
+                                scene={currentScene}
+                                onChoice={handleChoice}
+                                isLoading={isLoading}
+                            />
                         </div>
 
                         {/* Error Handling */}
@@ -136,41 +140,46 @@ export function GameSession() {
                             </div>
                         )}
 
-                        {/* Choices / Actions */}
-                        <div className="space-y-6 pt-8 border-t border-white/5">
-                            <div className="flex items-center justify-between px-2">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Select Response Node</span>
-                                <span className="text-[10px] font-mono text-muted-foreground opacity-40">PHASE_{currentScene.order}</span>
-                            </div>
+                        {/* Choices / Actions - Only show if not handled natively by the scene */}
+                        {(() => {
+                            const contentType = (currentScene as any).contentType || (currentScene as any).content?.contentType;
+                            return !['CHAT', 'TEXT', 'FEED'].includes(contentType);
+                        })() && (
+                                <div className="space-y-6 pt-8 border-t border-white/5">
+                                    <div className="flex items-center justify-between px-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Select Response Node</span>
+                                        <span className="text-[10px] font-mono text-muted-foreground opacity-40">PHASE_{currentScene.order}</span>
+                                    </div>
 
-                            <div className="grid grid-cols-1 gap-4">
-                                {currentScene.availableChoices.map((choice) => (
-                                    <button
-                                        key={choice}
-                                        disabled={isLoading}
-                                        onClick={() => handleChoice(choice)}
-                                        className={cn(
-                                            "group p-6 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
-                                            "bg-[#1A1D21] border-white/5 hover:border-primary/40 hover:bg-[#1E2227] hover:shadow-[0_10px_30px_rgba(var(--primary),0.1)]",
-                                            isLoading && "opacity-50 cursor-not-allowed grayscale"
-                                        )}
-                                    >
-                                        <div className="absolute inset-y-0 left-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
-                                        <div className="flex items-center justify-between">
-                                            <div className="space-y-1">
-                                                <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
-                                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-50">Transmit Override Protocol</p>
-                                            </div>
-                                            {isLoading ? (
-                                                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                                            ) : (
-                                                <ShieldCheck size={24} className="text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
-                                            )}
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {currentScene.availableChoices.map((choice) => (
+                                            <button
+                                                key={choice}
+                                                disabled={isLoading}
+                                                onClick={() => handleChoice(choice)}
+                                                className={cn(
+                                                    "group p-6 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
+                                                    "bg-[#1A1D21] border-white/5 hover:border-primary/40 hover:bg-[#1E2227] hover:shadow-[0_10px_30px_rgba(var(--primary),0.1)]",
+                                                    isLoading && "opacity-50 cursor-not-allowed grayscale"
+                                                )}
+                                            >
+                                                <div className="absolute inset-y-0 left-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
+                                                <div className="flex items-center justify-between">
+                                                    <div className="space-y-1">
+                                                        <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
+                                                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-50">Transmit Override Protocol</p>
+                                                    </div>
+                                                    {isLoading ? (
+                                                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                                    ) : (
+                                                        <ShieldCheck size={24} className="text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
+                                                    )}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                     </div>
                 </div>
             </main>

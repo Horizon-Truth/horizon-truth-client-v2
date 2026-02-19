@@ -6,9 +6,11 @@ import { cn } from '@/shared/lib/utils';
 
 interface ChatStreamProps {
     scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
 }
 
-export const ChatStream: React.FC<ChatStreamProps> = ({ scene }) => {
+export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoading }) => {
     const [visibleMessages, setVisibleMessages] = useState<any[]>([]);
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,39 @@ export const ChatStream: React.FC<ChatStreamProps> = ({ scene }) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Inline Choice Buttons */}
+                {!isTyping && scene.availableChoices.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4"
+                    >
+                        {scene.availableChoices.map((choice) => (
+                            <motion.button
+                                key={choice}
+                                disabled={isLoading}
+                                whileHover={{
+                                    scale: 1.02,
+                                    backgroundColor: "rgba(59, 130, 246, 0.2)",
+                                    boxShadow: "0 0 15px rgba(59, 130, 246, 0.3)"
+                                }}
+                                whileTap={{
+                                    scale: 0.98,
+                                    x: [0, -1, 1, -1, 1, 0], // Micro vibration
+                                    transition: { duration: 0.2 }
+                                }}
+                                onClick={() => onChoice?.(choice)}
+                                className={cn(
+                                    "p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-blue-400 transition-colors relative overflow-hidden",
+                                    isLoading && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                {choice}
+                            </motion.button>
+                        ))}
+                    </motion.div>
+                )}
             </div>
 
             <div className="p-2 px-4 bg-white/5 border-t border-white/5 flex items-center justify-between">

@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import { MoreHorizontal, MessageCircle, Share2, Heart } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { cn } from '@/shared/lib/utils';
 
 interface TextPostProps {
     scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
 }
 
-export const TextPost: React.FC<TextPostProps> = ({ scene }) => {
+export const TextPost: React.FC<TextPostProps> = ({ scene, onChoice, isLoading }) => {
     const { content } = scene;
 
     return (
@@ -36,6 +39,36 @@ export const TextPost: React.FC<TextPostProps> = ({ scene }) => {
                         <p className="text-[17px] text-white/90 leading-normal whitespace-pre-wrap">
                             {content?.textBody || scene.description}
                         </p>
+
+                        {/* Reaction-style Choices */}
+                        {scene.availableChoices.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
+                                {scene.availableChoices.map((choice) => (
+                                    <motion.button
+                                        key={choice}
+                                        disabled={isLoading}
+                                        whileHover={{
+                                            scale: 1.1,
+                                            y: -2,
+                                            backgroundColor: "rgba(255, 255, 255, 0.08)"
+                                        }}
+                                        whileTap={{
+                                            scale: 0.95,
+                                            rotate: [0, -2, 2, -2, 2, 0], // Micro vibration
+                                        }}
+                                        onClick={() => onChoice?.(choice)}
+                                        className={cn(
+                                            "flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm font-medium transition-all relative overflow-hidden",
+                                            "hover:border-primary/50 hover:text-primary",
+                                            isLoading && "opacity-50 cursor-not-allowed"
+                                        )}
+                                    >
+                                        <div className="w-2 h-2 rounded-full bg-primary/40 animate-pulse" />
+                                        {choice}
+                                    </motion.button>
+                                ))}
+                            </div>
+                        )}
 
                         <div className="flex items-center justify-between pt-2 max-w-sm text-muted-foreground">
                             <div className="flex items-center gap-2 group cursor-pointer hover:text-blue-400 transition-colors">
