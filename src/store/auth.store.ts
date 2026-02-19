@@ -17,6 +17,7 @@ interface User {
     role: UserRole;
     username?: string;
     avatarUrl?: string;
+    onboardingCompleted?: boolean;
 }
 
 interface AuthState {

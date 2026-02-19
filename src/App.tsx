@@ -17,6 +17,7 @@ import PlayerManagementPage from "./modules/players/pages/PlayerManagementPage";
 import FeedbackDashboardPage from "./modules/engine/pages/FeedbackDashboardPage";
 import ReportsPage from "./modules/reports/ReportsPage";
 import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
+import OnboardingPage from "./modules/players/pages/OnboardingPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -28,10 +29,16 @@ function App() {
         <Route path="/" element={<LandingPage />} />
 
         {/* Auth Routes */}
-        <Route element={!isAuthenticated ? <AuthLayout /> : <Navigate to={user?.role === 'PLAYER' ? "/dashboard/game" : "/dashboard"} replace />}>
+        <Route element={!isAuthenticated ? <AuthLayout /> : <Navigate to={user?.role === 'PLAYER' ? (user?.onboardingCompleted ? "/dashboard/game" : "/onboarding") : "/dashboard"} replace />}>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
         </Route>
+
+        <Route path="/onboarding" element={
+          <PrivateRoute>
+            {user?.onboardingCompleted ? <Navigate to="/dashboard/game" replace /> : <OnboardingPage />}
+          </PrivateRoute>
+        } />
 
         {/* Public Simulation (Guest Mode) */}
         <Route path="/simulation" element={<SimulationPage />} />
@@ -44,7 +51,7 @@ function App() {
               <Routes>
                 <Route index element={
                   user?.role === 'PLAYER'
-                    ? <Navigate to="/dashboard/game" replace />
+                    ? (user?.onboardingCompleted ? <Navigate to="/dashboard/game" replace /> : <Navigate to="/onboarding" replace />)
                     : <DashboardPage />
                 } />
                 <Route path="organizations" element={user?.role === 'SYSTEM_ADMIN' ? <OrganizationManagementPage /> : <Navigate to="/dashboard" replace />} />

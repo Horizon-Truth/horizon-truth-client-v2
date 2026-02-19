@@ -1,0 +1,215 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { onboardingService, type Avatar, type Region } from '../services/onboarding.service';
+import { useAuthStore } from '../../../store/auth.store';
+import { User, Compass, ChevronRight, Check } from 'lucide-react';
+import { toast } from 'sonner';
+
+const OnboardingPage: React.FC = () => {
+    const [nickname, setNickname] = useState('');
+    const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
+    const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const navigate = useNavigate();
+    const { updateUser } = useAuthStore();
+
+    const { data: avatars, isLoading: loadingAvatars } = useQuery({
+        queryKey: ['avatars'],
+        queryFn: onboardingService.getAvatars
+    });
+
+    const { data: regions } = useQuery({
+        queryKey: ['regions'],
+        queryFn: onboardingService.getRegions
+    });
+
+    const mutation = useMutation({
+        mutationFn: onboardingService.initializeProfile,
+        onSuccess: () => {
+            updateUser({ onboardingCompleted: true });
+            toast.success('Identity initialized. Welcome to the digital world.');
+            navigate('/dashboard/game');
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Failed to initialize profile');
+            setIsSubmitting(false);
+        }
+    });
+
+    const handleSubmit = () => {
+        if (!nickname || !selectedAvatar) {
+            toast.error('Please complete your identity profile');
+            return;
+        }
+        setIsSubmitting(true);
+        mutation.mutate({
+            nickname,
+            avatarId: selectedAvatar.id,
+            fictionalRegionId: selectedRegion?.id
+        });
+    };
+
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+        exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-[#050505] flex items-center justify-center overflow-hidden font-sans text-white">
+            {/* Background Soft Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+            <div className="relative z-10 w-full max-w-lg px-6">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key="onboarding-card"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="bg-[#111111]/80 backdrop-blur-xl border border-white/5 rounded-3xl p-10 shadow-2xl relative overflow-hidden"
+                    >
+                        {/* Glow Border Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
+
+                        <div className="mb-8 text-center">
+                            <h1 className="text-3xl font-light tracking-tight mb-2">Initialize Identity</h1>
+                            <p className="text-white/40 text-sm">Level 0: Creating your digital signature</p>
+                        </div>
+
+                        <div className="space-y-8">
+                            {/* Nickname Input */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Nickname</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-blue-400/50 transition-colors">
+                                        <User size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={nickname}
+                                        onChange={(e) => setNickname(e.target.value)}
+                                        placeholder="Enter your alias..."
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-white/10"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Avatar Selection */}
+                            <div className="space-y-3">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1 flex justify-between">
+                                    <span>Select Avatar</span>
+                                    <span className="text-blue-400/50 font-normal">Youth Division</span>
+                                </label>
+                                <div className="grid grid-cols-5 gap-3">
+                                    {loadingAvatars ? (
+                                        [...Array(5)].map((_, i) => (
+                                            <div key={i} className="aspect-square bg-white/5 rounded-2xl animate-pulse" />
+                                        ))
+                                    ) : (
+                                        avatars?.filter(a => a.ageGroup === 'YOUTH').map((avatar) => (
+                                            <motion.button
+                                                key={avatar.id}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => setSelectedAvatar(avatar)}
+                                                className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${selectedAvatar?.id === avatar.id
+                                                    ? 'border-blue-500 bg-blue-500/10'
+                                                    : 'border-white/5 hover:border-white/20'
+                                                    }`}
+                                            >
+                                                <div className={`absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity ${selectedAvatar?.id === avatar.id ? 'opacity-100' : ''}`} />
+                                                <img
+                                                    src={avatar.imageUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + avatar.name}
+                                                    alt={avatar.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                {selectedAvatar?.id === avatar.id && (
+                                                    <div className="absolute bottom-1 right-1 bg-blue-500 rounded-full p-0.5">
+                                                        <Check size={10} strokeWidth={4} />
+                                                    </div>
+                                                )}
+                                            </motion.button>
+                                        ))
+                                    )}
+                                </div>
+                                {selectedAvatar && (
+                                    <motion.p
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="text-center text-xs text-white/40 italic"
+                                    >
+                                        Chosen: {selectedAvatar.name}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Region Selection */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Digital Region</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-purple-400/50 transition-colors">
+                                        <Compass size={18} />
+                                    </div>
+                                    <select
+                                        value={selectedRegion?.id || ''}
+                                        onChange={(e) => {
+                                            const region = regions?.find(r => r.id === e.target.value);
+                                            setSelectedRegion(region || null);
+                                        }}
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all appearance-none cursor-pointer"
+                                    >
+                                        <option value="" disabled className="bg-[#111111]">Select your sector...</option>
+                                        {regions?.map((region) => (
+                                            <option key={region.id} value={region.id} className="bg-[#111111]">
+                                                {region.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-white/10">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-12 transition-all">
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={handleSubmit}
+                                disabled={isSubmitting || !nickname || !selectedAvatar}
+                                className={`group w-full relative h-16 rounded-2xl flex items-center justify-center font-medium tracking-wide transition-all ${isSubmitting || !nickname || !selectedAvatar
+                                    ? 'bg-white/5 text-white/20'
+                                    : 'bg-white text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]'
+                                    }`}
+                            >
+                                <span className={`flex items-center gap-2 ${isSubmitting ? 'opacity-0' : 'opacity-100'}`}>
+                                    Enter The Digital World
+                                    <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
+                                </span>
+                                {isSubmitting && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                    </div>
+                                )}
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            {/* Micro Animation Background Elements */}
+            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+                <div className="h-full w-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            </div>
+        </div>
+    );
+};
+
+export default OnboardingPage;
