@@ -12,3 +12,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(({ scene }) => {
     const shouldReduceMotion = useReducedMotion();
     const { stats } = useGameStore();
     const [isPlaying, setIsPlaying] = useState(true);
+    const [isMuted, setIsMuted] = useState(true);
+    const [scanProgress, setScanProgress] = useState(0);
+    const videoUrl = scene.content?.videoUrl;
+
+    // Simulate AI scanning progress
+    useEffect(() => {
+        if (stats.level >= 2) {
+            const interval = setInterval(() => {
+                setScanProgress(p => (p + 0.5) % 100);
+            }, 50);
+            return () => clearInterval(interval);
+        }
+    }, [stats.level]);
