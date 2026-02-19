@@ -27,7 +27,7 @@ export default function GamePage() {
     }, [fetchGameHistory]);
 
     return (
-        <div className="flex flex-col min-h-full gap-8 p-8 overflow-y-auto bg-background/50 selection:bg-primary/20">
+        <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20">
             {/* Standard Dashboard View (Scenario List) */}
             {!activeProgress && !currentOutcome && (
                 <>
@@ -64,16 +64,16 @@ export default function GamePage() {
 
                     {/* Main Content Area */}
                     <main className="flex-1 flex gap-8">
-                        <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden backdrop-blur-2xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden">
+                        <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden backdrop-blur-2xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden">
                             <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                                 <LayoutDashboard size={240} />
                             </div>
 
-                            <div className="flex items-center justify-between mb-2 relative z-10">
-                                <h1 className="text-4xl font-black italic uppercase tracking-wider">Mission Command</h1>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 relative z-10">
+                                <h1 className="text-2xl sm:text-4xl font-black italic uppercase tracking-wider">Mission Command</h1>
                                 <Button
                                     onClick={() => setIsFeedbackOpen(true)}
-                                    className="rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all bg-indigo-500 hover:bg-indigo-600 relative z-10"
+                                    className="w-full sm:w-auto rounded-xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all bg-indigo-500 hover:bg-indigo-600 relative z-10"
                                 >
                                     <MessageSquare size={20} />
                                     Give Feedback
@@ -131,7 +131,7 @@ export default function GamePage() {
                     <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
                     <div className="w-full max-w-6xl max-h-[100vh] md:max-h-[90vh] overflow-y-auto custom-scrollbar relative">
-                        <div className="bg-card/30 border border-white/10 rounded-[3rem] p-8 md:p-12 shadow-2xl backdrop-blur-2xl isolation-isolate [transform:translateZ(0)]">
+                        <div className="bg-card/30 border border-white/10 rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-12 shadow-2xl backdrop-blur-2xl isolation-isolate [transform:translateZ(0)]">
                             {activeProgress && <GameSession />}
                             {currentOutcome && <GameOutcome />}
                         </div>
@@ -168,7 +168,7 @@ function StatCard({ label, value, subValue, icon, progress, color }: { label: st
                 </div>
             </div>
             <div className="space-y-1.5">
-                <h4 className="text-4xl font-black tracking-tighter">{value}</h4>
+                <h4 className="text-2xl sm:text-4xl font-black tracking-tighter">{value}</h4>
                 {subValue && <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{subValue}</p>}
             </div>
             {progress !== undefined && (

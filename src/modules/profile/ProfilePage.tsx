@@ -78,10 +78,10 @@ const ProfilePage = () => {
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-extrabold tracking-tight">User Profile</h2>
-                    <p className="text-muted-foreground mt-1">Manage your account details and security settings.</p>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">User Profile</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Manage your account details and security settings.</p>
                 </div>
             </div>
 

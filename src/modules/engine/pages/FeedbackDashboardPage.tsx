@@ -83,9 +83,11 @@ export default function FeedbackDashboardPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <div>
-                <h2 className="text-3xl font-black tracking-tight italic uppercase tracking-wider">Feedback Dashboard</h2>
-                <p className="text-muted-foreground mt-1">Track, measure, and resolve internal and player feedback.</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Feedback Dashboard</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Track, measure, and resolve internal and player feedback.</p>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -109,11 +111,11 @@ export default function FeedbackDashboardPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <Card className="lg:col-span-2 border-none shadow-sm rounded-[2rem]">
-                    <CardHeader className="flex flex-row items-center justify-between px-8 pt-8">
-                        <CardTitle className="text-xl font-black uppercase tracking-wider italic">Recent Feedback Activity</CardTitle>
-                        <div className="flex items-center gap-4">
+                    <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 sm:px-8 pt-8">
+                        <CardTitle className="text-lg sm:text-xl font-black uppercase tracking-wider italic">Recent Feedback Activity</CardTitle>
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
                             <select
-                                className="bg-muted/50 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-widest"
+                                className="w-full sm:w-auto bg-muted/50 rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-widest"
                                 value={filter.status}
                                 onChange={(e) => setFilter(prev => ({ ...prev, status: e.target.value }))}
                             >
@@ -136,27 +138,31 @@ export default function FeedbackDashboardPage() {
                         ) : (
                             <div className="space-y-4">
                                 {recentFeedback.map((item) => (
-                                    <div key={item.id} className="flex items-start gap-4 p-4 rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors group">
-                                        <div className={cn(
-                                            "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
-                                            item.priority === 'HIGH' ? "bg-red-500/10 text-red-500" :
-                                                item.priority === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" :
-                                                    "bg-emerald-500/10 text-emerald-500"
-                                        )}>
-                                            <AlertCircle size={24} />
-                                        </div>
-                                        <div className="flex-1 space-y-1">
-                                            <div className="flex items-center justify-between">
-                                                <h4 className="font-bold flex items-center gap-2">
-                                                    {item.scenario?.title || item.commentSource}
-                                                    <Badge variant="outline" className="text-[10px] font-black uppercase rounded-md border-primary/20">
-                                                        {item.type}
-                                                    </Badge>
-                                                </h4>
-                                                <span className="text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</span>
+                                    <div key={item.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 rounded-2xl bg-muted/30 hover:bg-muted/50 transition-colors group">
+                                        <div className="flex items-start gap-4 w-full">
+                                            <div className={cn(
+                                                "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0",
+                                                item.priority === 'HIGH' ? "bg-red-500/10 text-red-500" :
+                                                    item.priority === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" :
+                                                        "bg-emerald-500/10 text-emerald-500"
+                                            )}>
+                                                <AlertCircle size={20} className="sm:size-24" />
                                             </div>
+                                            <div className="flex-1 min-w-0 space-y-1">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+                                                    <h4 className="font-bold flex flex-wrap items-center gap-2">
+                                                        <span className="truncate max-w-[150px] sm:max-w-none">{item.scenario?.title || item.commentSource}</span>
+                                                        <Badge variant="outline" className="text-[10px] font-black uppercase rounded-md border-primary/20">
+                                                            {item.type}
+                                                        </Badge>
+                                                    </h4>
+                                                    <span className="text-[10px] sm:text-xs text-muted-foreground">{new Date(item.createdAt).toLocaleDateString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 w-full sm:w-auto space-y-2 mt-1 sm:mt-0">
                                             <p className="text-sm line-clamp-2">{item.commentText}</p>
-                                            <div className="flex items-center gap-4 mt-2">
+                                            <div className="flex items-center justify-between sm:justify-start gap-4 mt-2">
                                                 <Badge className={cn(
                                                     "rounded-md text-[10px] font-black uppercase",
                                                     item.status === 'RESOLVED' ? "bg-emerald-500" :
@@ -170,7 +176,7 @@ export default function FeedbackDashboardPage() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button variant="ghost" size="icon" className="rounded-xl self-center group-hover:translate-x-1 transition-transform">
+                                        <Button variant="ghost" size="icon" className="rounded-xl self-end sm:self-center group-hover:translate-x-1 transition-transform">
                                             <ArrowRight size={18} />
                                         </Button>
                                     </div>

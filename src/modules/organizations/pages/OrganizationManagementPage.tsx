@@ -47,29 +47,29 @@ export default function OrganizationManagementPage() {
 
     return (
         <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tighter italic uppercase">Registry of Entities</h2>
-                    <p className="text-muted-foreground mt-1 font-medium italic">Authorized organizations and institutional partners.</p>
+                    <h2 className="text-3xl sm:text-4xl font-black tracking-tighter italic uppercase">Registry of Entities</h2>
+                    <p className="text-sm text-muted-foreground mt-1 font-medium italic">Authorized organizations and institutional partners.</p>
                 </div>
-                <Button className="rounded-full h-14 px-8 font-black uppercase tracking-widest gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all shadow-xl shadow-foreground/10">
+                <Button className="w-full sm:w-auto rounded-full h-14 px-8 font-black uppercase tracking-widest gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all shadow-xl shadow-foreground/10">
                     <Plus size={20} />
                     Register Unit
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <div className="md:col-span-2 relative">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                     <Input
                         placeholder="Filter by Unit Name or Territory..."
-                        className="pl-14 h-16 rounded-[2rem] bg-card border-border/40 focus-visible:ring-offset-0 focus-visible:ring-primary/20 text-lg font-bold italic"
+                        className="pl-14 h-16 rounded-[2rem] bg-card border-border/40 focus-visible:ring-offset-0 focus-visible:ring-primary/20 text-base sm:text-lg font-bold italic"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="bg-card border border-border/40 rounded-[2rem] flex items-center px-8 gap-4 shadow-sm">
-                    <Globe size={20} className="text-primary" />
+                <div className="bg-card border border-border/40 rounded-[2rem] flex items-center px-8 py-4 sm:py-0 gap-4 shadow-sm">
+                    <Globe size={20} className="text-primary flex-shrink-0" />
                     <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Active Nodes</p>
                         <p className="text-2xl font-black italic tracking-tighter">{organizations.filter(o => o.status === 'ACTIVE').length}</p>
@@ -94,11 +94,11 @@ export default function OrganizationManagementPage() {
 
                         <div className="flex flex-col h-full gap-6">
                             <div className="flex items-start justify-between relative z-10">
-                                <div className="p-4 bg-muted/50 rounded-2xl group-hover:bg-primary/10 transition-colors">
-                                    <Building2 className="text-primary" size={28} />
+                                <div className="p-3 sm:p-4 bg-muted/50 rounded-2xl group-hover:bg-primary/10 transition-colors">
+                                    <Building2 className="text-primary" size={24} />
                                 </div>
                                 <Badge className={cn(
-                                    "rounded-full px-4 h-7 font-black tracking-widest text-[9px] uppercase",
+                                    "rounded-full px-3 sm:px-4 h-6 sm:h-7 font-black tracking-widest text-[8px] sm:text-[9px] uppercase",
                                     org.status === 'ACTIVE' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
                                 )}>
                                     {org.status}

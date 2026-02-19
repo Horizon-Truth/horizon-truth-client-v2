@@ -94,34 +94,34 @@ const SimulationPage = () => {
                 <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
 
-                <div className="w-full max-w-2xl z-10 text-center space-y-8 animate-in zoom-in-95 duration-700">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+                <div className="w-full max-w-2xl z-10 text-center space-y-6 sm:space-y-8 animate-in zoom-in-95 duration-700">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2 sm:mb-4">
                         <ShieldCheck size={14} /> Simulation Ended
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Final Trust Score: {trustScore}</h1>
-                    <p className="text-xl text-muted-foreground max-w-lg mx-auto">
+                    <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Final Trust Score: {trustScore}</h1>
+                    <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto px-4">
                         Your skills are sharp, but the protocol demands more. Join the Horizon Network to unlock full training capabilities.
                     </p>
 
-                    <Card className="bg-card/50 backdrop-blur-2xl border-white/10 shadow-2xl overflow-hidden">
-                        <CardContent className="p-8">
+                    <Card className="bg-card/50 backdrop-blur-2xl border-white/10 shadow-2xl overflow-hidden mx-auto max-w-[90vw] sm:max-w-none">
+                        <CardContent className="p-6 sm:p-8">
                             <div className="flex flex-col md:flex-row gap-6 items-center">
-                                <div className="flex-1 text-left">
-                                    <h3 className="text-2xl font-bold mb-2">Save Your Progress</h3>
-                                    <p className="text-sm text-muted-foreground">Registration allows you to track your growth across multiple scenarios and join the global leaderboard.</p>
+                                <div className="flex-1 text-center md:text-left">
+                                    <h3 className="text-xl sm:text-2xl font-bold mb-2">Save Your Progress</h3>
+                                    <p className="text-xs sm:text-sm text-muted-foreground">Registration allows you to track your growth across multiple scenarios and join the global leaderboard.</p>
                                 </div>
                                 <div className="flex flex-col gap-3 w-full md:w-auto">
                                     {isAuthenticated ? (
                                         <Button
                                             onClick={() => navigate('/dashboard/game')}
-                                            className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
+                                            className="w-full sm:w-auto h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
                                         >
                                             Enter Command Center <ArrowRight size={18} />
                                         </Button>
                                     ) : (
                                         <Button
                                             onClick={() => navigate('/register')}
-                                            className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
+                                            className="w-full sm:w-auto h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 gap-2"
                                         >
                                             Register Now <ArrowRight size={18} />
                                         </Button>
@@ -129,7 +129,7 @@ const SimulationPage = () => {
                                     <Button
                                         variant="ghost"
                                         onClick={() => navigate('/')}
-                                        className="h-12 px-8 rounded-xl font-bold"
+                                        className="w-full sm:w-auto h-12 px-8 rounded-xl font-bold"
                                     >
                                         Back to Home
                                     </Button>
@@ -149,19 +149,19 @@ const SimulationPage = () => {
             <div className="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-primary/5 blur-[100px] rounded-full" />
 
             {/* Header */}
-            <header className="relative z-10 flex items-center justify-between mb-12 max-w-6xl w-full mx-auto">
+            <header className="relative z-10 flex items-center justify-between mb-8 sm:mb-12 max-w-6xl w-full mx-auto">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 flex-shrink-0">
                         <ShieldCheck className="text-primary-foreground h-6 w-6" />
                     </div>
                     <h2 className="font-bold tracking-tight text-xl hidden sm:block">HORIZON SIMULATOR</h2>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 sm:gap-6">
                     <div className="flex flex-col items-end">
                         <span className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase">Protocol Trust</span>
                         <div className="flex items-center gap-2">
-                            <div className="w-32 h-2 bg-muted rounded-full overflow-hidden hidden sm:block">
+                            <div className="w-24 sm:w-32 h-2 bg-muted rounded-full overflow-hidden hidden xs:block">
                                 <div
                                     className={cn(
                                         "h-full transition-all duration-1000",
@@ -170,7 +170,7 @@ const SimulationPage = () => {
                                     style={{ width: `${trustScore}%` }}
                                 />
                             </div>
-                            <span className="font-bold text-lg tabular-nums">{trustScore}</span>
+                            <span className="font-bold text-base sm:text-lg tabular-nums">{trustScore}</span>
                         </div>
                     </div>
                 </div>
@@ -190,9 +190,9 @@ const SimulationPage = () => {
 
             {/* Main Content */}
             <main className="flex-1 relative z-10 max-w-4xl w-full mx-auto flex flex-col gap-8 pb-12">
-                <div className="space-y-2">
-                    <p className="text-primary font-bold text-xs uppercase tracking-widest">Scenario trial {currentSceneIndex + 1}/{TRIAL_SCENARIO.scenes.length}</p>
-                    <h3 className="text-3xl font-extrabold tracking-tight">{TRIAL_SCENARIO.title}</h3>
+                <div className="space-y-2 px-2 sm:px-0 text-center sm:text-left">
+                    <p className="text-primary font-bold text-[10px] sm:text-xs uppercase tracking-widest">Scenario trial {currentSceneIndex + 1}/{TRIAL_SCENARIO.scenes.length}</p>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{TRIAL_SCENARIO.title}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 flex-1">

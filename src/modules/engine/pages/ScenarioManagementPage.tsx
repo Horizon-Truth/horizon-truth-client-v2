@@ -59,14 +59,14 @@ export default function ScenarioManagementPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 relative min-h-full">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-black tracking-tight italic uppercase tracking-wider">Scenario Engine</h2>
-                    <p className="text-muted-foreground mt-1">Design and manage truth-verification missions for players.</p>
+                    <h2 className="text-xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Scenario Engine</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Design and manage truth-verification missions for players.</p>
                 </div>
                 <Button
                     onClick={() => { setEditingScenario(undefined); setIsFormOpen(true); }}
-                    className="rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
+                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
                 >
                     <Plus size={20} />
                     Create New Scenario
@@ -97,29 +97,29 @@ export default function ScenarioManagementPage() {
                     </div>
                 ) : (
                     scenarios.map((scenario) => (
-                        <div key={scenario.id} className="group bg-card border border-border/50 rounded-[2rem] p-6 hover:border-primary/50 transition-all hover:bg-accent/5 flex items-center justify-between shadow-sm">
-                            <div className="flex items-center gap-6">
+                        <div key={scenario.id} className="group bg-card border border-border/50 rounded-[2rem] p-4 sm:p-6 hover:border-primary/50 transition-all hover:bg-accent/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                            <div className="flex items-start sm:items-center gap-4 sm:gap-6 w-full">
                                 <div className={cn(
-                                    "w-16 h-16 rounded-2xl flex items-center justify-center bg-muted transition-colors group-hover:bg-primary/10",
+                                    "w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex-shrink-0 flex items-center justify-center bg-muted transition-colors group-hover:bg-primary/10",
                                     scenario.isActive ? "text-primary" : "text-muted-foreground"
                                 )}>
-                                    <Play size={24} className={scenario.isActive ? "fill-primary" : ""} />
+                                    <Play size={20} className={cn("sm:w-6 sm:h-6", scenario.isActive ? "fill-primary" : "")} />
                                 </div>
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-3">
-                                        <h3 className="text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors">{scenario.title}</h3>
+                                <div className="space-y-1 flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <h3 className="text-lg sm:text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors truncate">{scenario.title}</h3>
                                         <Badge variant={scenario.isActive ? "default" : "secondary"} className="rounded-lg font-black tracking-[0.1em] text-[10px] uppercase">
                                             {scenario.isActive ? "Active" : "Inactive"}
                                         </Badge>
                                     </div>
-                                    <p className="text-sm text-muted-foreground line-clamp-1 max-w-xl">{scenario.description}</p>
-                                    <div className="flex items-center gap-4 pt-1">
-                                        <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 bg-muted/30 px-2.5 py-1 rounded-md">
-                                            <Info size={12} />
+                                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 sm:line-clamp-1 max-w-xl">{scenario.description}</p>
+                                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-1">
+                                        <div className="flex items-center gap-1.5 text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground/80 bg-muted/30 px-2 sm:px-2.5 py-1 rounded-md">
+                                            <Info size={10} className="sm:w-3 sm:h-3" />
                                             {scenario.scenarioType}
                                         </div>
                                         <div className={cn(
-                                            "flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md",
+                                            "flex items-center gap-1.5 text-[8px] sm:text-[10px] font-black uppercase tracking-widest px-2 sm:px-2.5 py-1 rounded-md",
                                             scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-500" :
                                                 scenario.difficulty === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" :
                                                     "bg-red-500/10 text-red-500"
@@ -130,7 +130,7 @@ export default function ScenarioManagementPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-4 sm:pt-0">
                                 <Button
                                     variant="ghost"
                                     size="icon"

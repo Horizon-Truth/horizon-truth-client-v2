@@ -45,6 +45,7 @@ const navigation = [
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
@@ -67,7 +68,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         return user?.role && item.roles.includes(user.role);
     });
 
-    const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
+    const NavContent = ({ mobile = false, onSelect }: { mobile?: boolean, onSelect?: () => void }) => (
         <div className="flex flex-col h-full">
             <div className={cn("flex items-center h-16 px-4 border-b justify-between", mobile && "px-6")}>
                 <Link to="/" className="font-bold text-xl uppercase tracking-wider hover:opacity-80 transition-opacity flex items-center gap-2">
@@ -90,6 +91,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                         <Link
                             key={item.name}
                             to={item.href}
+                            onClick={onSelect}
                             className={cn(
                                 "flex items-center px-2 py-2.5 text-sm font-medium rounded-md transition-colors group",
                                 isActive
@@ -128,7 +130,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             </aside>
 
             {/* Mobile Sidebar (Sheet) */}
-            <Sheet>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col overflow-hidden relative w-full">
                     <header className="h-16 bg-card border-b flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
@@ -138,7 +140,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                                     <Menu size={20} />
                                 </Button>
                             </SheetTrigger>
-                            <h1 className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 truncate max-w-[200px] md:max-w-none">
+                            <h1 className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 truncate max-w-[150px] sm:max-w-[300px] md:max-w-none">
                                 {navigation.find(n => location.pathname === n.href)?.name || "Dashboard"}
                             </h1>
                         </div>
@@ -231,7 +233,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
                 <SheetContent side="left" className="p-0 w-72">
-                    <NavContent mobile />
+                    <NavContent mobile onSelect={() => setIsMobileMenuOpen(false)} />
                 </SheetContent>
             </Sheet>
         </div>

@@ -107,7 +107,7 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-card p-6 rounded-2xl border shadow-sm">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-card p-4 sm:p-8 rounded-2xl border shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                         control={form.control}
@@ -232,19 +232,19 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
                     />
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={onCancel}
-                        className="flex-1 h-12 rounded-xl font-bold border-input hover:bg-muted transition-all"
+                        className="w-full sm:flex-1 h-12 rounded-xl font-bold border-input hover:bg-muted transition-all"
                         disabled={loading}
                     >
                         Cancel
                     </Button>
                     <Button
                         type="submit"
-                        className="flex-[2] h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
+                        className="w-full sm:flex-[2] h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]"
                         disabled={loading}
                     >
                         {loading ? (

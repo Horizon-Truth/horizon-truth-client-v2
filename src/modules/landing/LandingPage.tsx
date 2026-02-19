@@ -112,7 +112,7 @@ export default function LandingPage() {
                         </span>
                         <span className="text-xs font-semibold text-primary uppercase tracking-wider">v2.0 is now live</span>
                     </div>
-                    <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
+                    <h1 className="text-4xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
                         Trust Infrastructure <br className="hidden md:block" /> for the Next Generation
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">

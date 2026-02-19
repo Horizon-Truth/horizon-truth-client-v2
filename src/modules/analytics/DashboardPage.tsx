@@ -5,12 +5,12 @@ import { AlertTriangle } from "lucide-react";
 export default function DashboardPage() {
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
-                    <p className="text-muted-foreground mt-1">Welcome to the Horizon Truth management console.</p>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard Overview</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Welcome to the Horizon Truth management console.</p>
                 </div>
-                <Button asChild className="rounded-xl h-11 px-6 font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
+                <Button asChild className="w-full sm:w-auto rounded-xl h-11 px-6 font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
                     <Link to="/report">
                         <AlertTriangle className="mr-2 h-4 w-4" />
                         Report Incident

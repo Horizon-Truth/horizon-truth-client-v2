@@ -72,9 +72,11 @@ export default function ReportingConfigPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <div>
-                <h2 className="text-3xl font-black tracking-tight italic uppercase tracking-wider">Reports Configuration</h2>
-                <p className="text-muted-foreground mt-1">Manage standard languages and classification tags for reports.</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Reports Configuration</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Manage standard languages and classification tags for reports.</p>
+                </div>
             </div>
 
             <Tabs defaultValue="languages" className="w-full">
@@ -90,134 +92,138 @@ export default function ReportingConfigPage() {
                 </TabsList>
 
                 <TabsContent value="languages" className="mt-6 space-y-4">
-                    <div className="flex justify-between items-center bg-card border border-border/50 p-4 rounded-2xl shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-card border border-border/50 p-4 rounded-2xl shadow-sm">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                            <div className="p-2 bg-primary/10 rounded-lg text-primary flex-shrink-0">
                                 <Languages size={20} />
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg">Supported Languages</h3>
-                                <p className="text-sm text-muted-foreground">Languages available for report submission and translation.</p>
+                                <p className="text-xs sm:text-sm text-muted-foreground">Languages available for report submission and translation.</p>
                             </div>
                         </div>
-                        <Button onClick={() => { setSelectedLanguage(null); setLanguageDialogOpen(true); }} className="font-bold">
+                        <Button onClick={() => { setSelectedLanguage(null); setLanguageDialogOpen(true); }} className="w-full sm:w-auto font-bold h-11">
                             <Plus size={16} className="mr-2" />
                             Add Language
                         </Button>
                     </div>
 
                     <div className="rounded-2xl border bg-card overflow-hidden shadow-sm">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="bg-muted/30">
-                                    <TableHead className="font-bold uppercase text-xs">Name</TableHead>
-                                    <TableHead className="font-bold uppercase text-xs">Code</TableHead>
-                                    <TableHead className="font-bold uppercase text-xs">Status</TableHead>
-                                    <TableHead className="text-right font-bold uppercase text-xs">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">Loading...</TableCell>
+                        <div className="overflow-x-auto">
+                            <Table className="min-w-[700px]">
+                                <TableHeader>
+                                    <TableRow className="bg-muted/30">
+                                        <TableHead className="font-bold uppercase text-xs">Name</TableHead>
+                                        <TableHead className="font-bold uppercase text-xs">Code</TableHead>
+                                        <TableHead className="font-bold uppercase text-xs">Status</TableHead>
+                                        <TableHead className="text-right font-bold uppercase text-xs">Actions</TableHead>
                                     </TableRow>
-                                ) : languages.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">No languages found.</TableCell>
-                                    </TableRow>
-                                ) : (
-                                    languages.map((lang) => (
-                                        <TableRow key={lang.id}>
-                                            <TableCell className="font-medium">{lang.name}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="font-mono text-xs">{lang.code}</Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={lang.isActive ? "default" : "secondary"} className={lang.isActive ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
-                                                    {lang.isActive ? "Active" : "Inactive"}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => { setSelectedLanguage(lang); setLanguageDialogOpen(true); }}>
-                                                        <Pencil size={16} />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/90 hover:bg-destructive/10" onClick={() => handleDeleteLanguage(lang.id)}>
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
+                                </TableHeader>
+                                <TableBody>
+                                    {isLoading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center">Loading...</TableCell>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                    ) : languages.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">No languages found.</TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        languages.map((lang) => (
+                                            <TableRow key={lang.id}>
+                                                <TableCell className="font-medium">{lang.name}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant="outline" className="font-mono text-xs">{lang.code}</Badge>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge variant={lang.isActive ? "default" : "secondary"} className={lang.isActive ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
+                                                        {lang.isActive ? "Active" : "Inactive"}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="icon" onClick={() => { setSelectedLanguage(lang); setLanguageDialogOpen(true); }}>
+                                                            <Pencil size={16} />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/90 hover:bg-destructive/10" onClick={() => handleDeleteLanguage(lang.id)}>
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </TabsContent>
 
                 <TabsContent value="tags" className="mt-6 space-y-4">
-                    <div className="flex justify-between items-center bg-card border border-border/50 p-4 rounded-2xl shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-card border border-border/50 p-4 rounded-2xl shadow-sm">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                            <div className="p-2 bg-primary/10 rounded-lg text-primary flex-shrink-0">
                                 <Tag size={20} />
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg">Report Tags</h3>
-                                <p className="text-sm text-muted-foreground">Categories used to classify and filter reports.</p>
+                                <p className="text-xs sm:text-sm text-muted-foreground">Categories used to classify and filter reports.</p>
                             </div>
                         </div>
-                        <Button onClick={() => { setSelectedTag(null); setTagDialogOpen(true); }} className="font-bold">
+                        <Button onClick={() => { setSelectedTag(null); setTagDialogOpen(true); }} className="w-full sm:w-auto font-bold h-11">
                             <Plus size={16} className="mr-2" />
                             Add Tag
                         </Button>
                     </div>
 
                     <div className="rounded-2xl border bg-card overflow-hidden shadow-sm">
-                        <Table>
-                            <TableHeader>
-                                <TableRow className="bg-muted/30">
-                                    <TableHead className="font-bold uppercase text-xs">Name</TableHead>
-                                    <TableHead className="font-bold uppercase text-xs">Slug</TableHead>
-                                    <TableHead className="font-bold uppercase text-xs">Status</TableHead>
-                                    <TableHead className="text-right font-bold uppercase text-xs">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">Loading...</TableCell>
+                        <div className="overflow-x-auto">
+                            <Table className="min-w-[700px]">
+                                <TableHeader>
+                                    <TableRow className="bg-muted/30">
+                                        <TableHead className="font-bold uppercase text-xs">Name</TableHead>
+                                        <TableHead className="font-bold uppercase text-xs">Slug</TableHead>
+                                        <TableHead className="font-bold uppercase text-xs">Status</TableHead>
+                                        <TableHead className="text-right font-bold uppercase text-xs">Actions</TableHead>
                                     </TableRow>
-                                ) : tags.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">No tags found.</TableCell>
-                                    </TableRow>
-                                ) : (
-                                    tags.map((tag) => (
-                                        <TableRow key={tag.id}>
-                                            <TableCell className="font-medium">{tag.name}</TableCell>
-                                            <TableCell>
-                                                <code className="text-xs bg-muted px-1 py-0.5 rounded">{tag.slug}</code>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={tag.isActive ? "default" : "secondary"} className={tag.isActive ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
-                                                    {tag.isActive ? "Active" : "Inactive"}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => { setSelectedTag(tag); setTagDialogOpen(true); }}>
-                                                        <Pencil size={16} />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/90 hover:bg-destructive/10" onClick={() => handleDeleteTag(tag.id)}>
-                                                        <Trash2 size={16} />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
+                                </TableHeader>
+                                <TableBody>
+                                    {isLoading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center">Loading...</TableCell>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                    ) : tags.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">No tags found.</TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        tags.map((tag) => (
+                                            <TableRow key={tag.id}>
+                                                <TableCell className="font-medium">{tag.name}</TableCell>
+                                                <TableCell>
+                                                    <code className="text-xs bg-muted px-1 py-0.5 rounded">{tag.slug}</code>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge variant={tag.isActive ? "default" : "secondary"} className={tag.isActive ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
+                                                        {tag.isActive ? "Active" : "Inactive"}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="icon" onClick={() => { setSelectedTag(tag); setTagDialogOpen(true); }}>
+                                                            <Pencil size={16} />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/90 hover:bg-destructive/10" onClick={() => handleDeleteTag(tag.id)}>
+                                                            <Trash2 size={16} />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>

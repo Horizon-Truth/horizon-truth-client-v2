@@ -63,9 +63,9 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
     };
 
     return (
-        <div className="bg-card border rounded-[2rem] p-8 shadow-2xl animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-black uppercase tracking-wider italic">
+        <div className="bg-card border rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-8 shadow-2xl animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+                <h3 className="text-xl sm:text-2xl font-black uppercase tracking-wider italic">
                     {scenario ? "Edit Scenario" : "New Scenario Protocol"}
                 </h3>
                 <Button variant="ghost" size="icon" onClick={onCancel} className="rounded-full">
@@ -97,7 +97,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                     {errors.description && <p className="text-xs text-destructive font-medium ml-1">{errors.description.message}</p>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="type" className="text-[10px] font-black uppercase tracking-widest ml-1">Type</Label>
                         <select
@@ -183,11 +183,11 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                     </div>
                 </div>
 
-                <div className="flex gap-3 pt-4 border-b border-primary/5 pb-8">
-                    <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-xl h-12 font-bold">
+                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-b border-primary/5 pb-8">
+                    <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:flex-1 rounded-xl h-12 font-bold">
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} className="flex-1 rounded-xl h-12 font-bold gap-2">
+                    <Button type="submit" disabled={isSubmitting} className="w-full sm:flex-1 rounded-xl h-12 font-bold gap-2">
                         {isSubmitting ? (
                             <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
                         ) : null}

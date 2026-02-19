@@ -36,22 +36,22 @@ export default function PlayerManagementPage() {
 
     return (
         <div className="space-y-10 animate-in fade-in zoom-in-95 duration-500">
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
                 <div>
-                    <h2 className="text-5xl font-black tracking-tighter uppercase italic leading-none">Vanguard Personnel</h2>
-                    <p className="text-muted-foreground mt-3 font-semibold tracking-wide flex items-center gap-2">
-                        <Target size={18} className="text-primary" />
+                    <h2 className="text-3xl sm:text-5xl font-black tracking-tighter uppercase italic leading-none">Vanguard Personnel</h2>
+                    <p className="text-sm sm:text-muted-foreground mt-3 font-semibold tracking-wide flex items-center gap-2">
+                        <Target size={18} className="text-primary flex-shrink-0" />
                         Monitoring cognitive performance and trust metrics across the player network.
                     </p>
                 </div>
-                <div className="hidden md:flex gap-4">
-                    <div className="bg-card border border-border/40 p-4 rounded-3xl flex flex-col items-center justify-center min-w-[120px]">
-                        <span className="text-xs font-black text-muted-foreground uppercase mb-1">Total Assets</span>
-                        <span className="text-3xl font-black italic">{players.length}</span>
+                <div className="flex gap-4 w-full sm:w-auto">
+                    <div className="flex-1 sm:flex-none bg-card border border-border/40 p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center min-w-[80px] sm:min-w-[120px]">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total Assets</span>
+                        <span className="text-xl sm:text-3xl font-black italic">{players.length}</span>
                     </div>
-                    <div className="bg-card border border-border/40 p-4 rounded-3xl flex flex-col items-center justify-center min-w-[120px]">
-                        <span className="text-xs font-black text-muted-foreground uppercase mb-1">Onboarded</span>
-                        <span className="text-3xl font-black italic text-emerald-500">{players.filter(p => p.onboardingCompleted).length}</span>
+                    <div className="flex-1 sm:flex-none bg-card border border-border/40 p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center min-w-[80px] sm:min-w-[120px]">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase mb-1">Onboarded</span>
+                        <span className="text-xl sm:text-3xl font-black italic text-emerald-500">{players.filter(p => p.onboardingCompleted).length}</span>
                     </div>
                 </div>
             </div>
@@ -82,16 +82,25 @@ export default function PlayerManagementPage() {
                         <h3 className="text-2xl font-black italic uppercase text-muted-foreground">No Operatives Located</h3>
                     </div>
                 ) : filteredPlayers.map((player) => (
-                    <div key={player.id} className="group bg-card border border-border/40 rounded-[2.5rem] p-4 pr-8 flex items-center gap-6 hover:border-primary/60 transition-all duration-300 hover:translate-x-2">
-                        <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden relative border border-primary/20">
-                            <span className="text-2xl font-black text-primary italic z-10">{player.nickname.charAt(0)}</span>
-                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div key={player.id} className="group bg-card border border-border/40 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:pr-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 hover:border-primary/60 transition-all duration-300 hover:translate-x-1 sm:hover:translate-x-2 shadow-sm">
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-[1rem] sm:rounded-[1.5rem] bg-gradient-to-br from-primary/20 to-primary/5 flex-shrink-0 flex items-center justify-center overflow-hidden relative border border-primary/20">
+                                <span className="text-xl sm:text-2xl font-black text-primary italic z-10">{player.nickname.charAt(0)}</span>
+                                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                            <div className="sm:hidden flex-1 min-w-0">
+                                <h3 className="text-lg font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors leading-tight truncate">{player.nickname}</h3>
+                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground italic truncate">
+                                    <Mail size={10} />
+                                    {player.user?.email || "N/A"}
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-4 items-center gap-6">
-                            <div className="col-span-1">
-                                <h3 className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors leading-tight">{player.nickname}</h3>
-                                <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground italic">
+                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 items-center gap-4 sm:gap-6 w-full">
+                            <div className="hidden sm:block col-span-1 min-w-0">
+                                <h3 className="text-xl font-black italic tracking-tighter uppercase group-hover:text-primary transition-colors leading-tight truncate">{player.nickname}</h3>
+                                <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground italic truncate">
                                     <Mail size={12} />
                                     {player.user?.email || "N/A"}
                                 </div>
@@ -123,15 +132,15 @@ export default function PlayerManagementPage() {
                                 </Badge>
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 px-4">
-                                <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-red-500/10 hover:text-red-500">
-                                    <Ban size={18} />
+                            <div className="flex items-center justify-end gap-3 sm:px-4 border-t sm:border-t-0 pt-4 sm:pt-0">
+                                <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl hover:bg-red-500/10 hover:text-red-500">
+                                    <Ban size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="rounded-2xl hover:bg-emerald-500/10 hover:text-emerald-500">
-                                    <Unlock size={18} />
+                                <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl hover:bg-emerald-500/10 hover:text-emerald-500">
+                                    <Unlock size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 </Button>
-                                <Button variant="ghost" size="icon" className="rounded-2xl">
-                                    <MoreHorizontal size={18} />
+                                <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl sm:rounded-2xl">
+                                    <MoreHorizontal size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 </Button>
                             </div>
                         </div>
