@@ -25,6 +25,7 @@ export interface Scene {
     description: string;
     order: number;
     sceneType: 'NARRATIVE' | 'CHOICE' | 'CHALLENGE';
+    contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CHAT' | 'FEED';
     content: any;
     chatMessages: any[];
     feedItems: any[];
