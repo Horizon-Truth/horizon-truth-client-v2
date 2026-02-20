@@ -15,6 +15,42 @@ interface SceneRendererProps {
 export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, isLoading }) => {
     const contentType = scene.contentType || (scene as any).content?.contentType;
 
+    if (isLoading) {
+        return (
+            <div className="min-h-[400px] w-full flex flex-col items-center justify-center p-8 border border-white/5 rounded-3xl bg-black/40 backdrop-blur-sm relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0%,transparent_70%)]" />
+
+                <div className="relative z-10 space-y-8 flex flex-col items-center">
+                    <div className="relative">
+                        <div className="w-16 h-16 border-t-2 border-r-2 border-primary rounded-full animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-8 h-8 bg-primary/20 rounded-full animate-pulse flex items-center justify-center">
+                                <div className="w-2 h-2 bg-primary rounded-full" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2 text-center">
+                        <p className="text-xs font-black uppercase tracking-[0.5em] text-primary animate-pulse">System Initializing</p>
+                        <div className="flex items-center gap-2 justify-center">
+                            <span className="text-[10px] font-mono text-white/40 uppercase">Decrypting Uplink...</span>
+                            <span className="w-8 h-[1px] bg-white/20 animate-pulse" />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-1">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Scannline Effect */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,128,0.06))] bg-[length:100%_2px,3px_100%]" />
+            </div>
+        );
+    }
+
     switch (contentType) {
         case 'TEXT':
             return <TextPost scene={scene} onChoice={onChoice} isLoading={isLoading} />;

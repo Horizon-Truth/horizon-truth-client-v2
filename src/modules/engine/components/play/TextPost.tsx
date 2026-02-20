@@ -18,6 +18,7 @@ export const TextPost: React.FC<TextPostProps> = ({ scene, onChoice, isLoading }
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
             className="w-full bg-[#15181C] border border-white/5 rounded-2xl overflow-hidden shadow-xl"
         >
             <div className="p-4 flex gap-3">

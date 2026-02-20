@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal } from 'lucide-react';
+import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal, Redo2 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { type Scene } from '@/services/engine.service';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
@@ -76,7 +76,7 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
         <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: 0.8 + (index * 0.2) }}
             className="group relative border-b border-white/5 last:border-0 pb-6 mb-6"
         >
             <div className="flex gap-4">
@@ -98,6 +98,12 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                     </div>
 
                     <div className="mt-1 space-y-3">
+                        {/* Forwarded Tag */}
+                        <div className="flex items-center gap-1 text-muted-foreground/60 italic">
+                            <Redo2 size={12} className="-scale-x-100" />
+                            <span className="text-[10px] font-bold uppercase tracking-tight">Forwarded many times</span>
+                        </div>
+
                         <p className="text-sm text-white/90 leading-relaxed font-medium">
                             {item.description}
                         </p>
@@ -127,6 +133,30 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                                 <span className="text-xs">{likes}</span>
                             </div>
                             <Bookmark size={16} className="hover:text-primary transition-colors cursor-pointer" />
+                        </div>
+
+                        {/* Fake Comment Thread */}
+                        <div className="pt-2 space-y-3 border-t border-white/5">
+                            <div className="flex gap-2">
+                                <div className="w-6 h-6 rounded-full bg-white/10 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold">anon_operative</span>
+                                        <span className="text-[10px] text-muted-foreground">· 1m</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-tight">Can anyone verify the source of this intel? Looks suspicious.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 opacity-60">
+                                <div className="w-6 h-6 rounded-full bg-white/5 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold">sector_7_bot</span>
+                                        <span className="text-[10px] text-muted-foreground">· 34s</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-tight">Confirmed through secondary uplink. Proceed with caution.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

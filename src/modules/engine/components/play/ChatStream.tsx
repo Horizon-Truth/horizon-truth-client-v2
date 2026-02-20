@@ -24,16 +24,20 @@ export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoadi
             for (let i = 0; i < messages.length; i++) {
                 if (!mounted) break;
 
-                setIsTyping(true);
-                // Simulate typing delay
-                await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
+                // Only show typing for non-user messages
+                if (messages[i].sender !== 'USER') {
+                    setIsTyping(true);
+                    // Simulate realistic typing delay
+                    const typingTime = 1000 + Math.random() * 1500;
+                    await new Promise(resolve => setTimeout(resolve, typingTime));
+                }
 
                 if (!mounted) break;
                 setIsTyping(false);
                 setVisibleMessages(prev => [...prev, messages[i]]);
 
-                // Gap between messages
-                await new Promise(resolve => setTimeout(resolve, 300));
+                // Realistic gap between messages
+                await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
             }
         };
 
