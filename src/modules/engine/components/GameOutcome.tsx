@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
 import { Trophy, Star, ArrowLeft, LayoutDashboard, Zap, ShieldCheck } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { InvestigationReveal } from './play/InvestigationReveal';
 
 export function GameOutcome() {
     const { currentOutcome, resetGame } = useGameStore();
+    const [view, setView] = useState<'reveal' | 'summary'>('reveal');
 
     if (!currentOutcome) return null;
 
     const isSuccess = currentOutcome.outcomeType === 'SUCCESS';
+
+    if (view === 'reveal' && currentOutcome.progressId) {
+        return (
+            <InvestigationReveal
+                progressId={currentOutcome.progressId}
+                onComplete={() => setView('summary')}
+            />
+        );
+    }
 
     return (
         <div className="flex flex-col items-center justify-center py-12 text-center space-y-16 animate-in zoom-in-95 duration-700">

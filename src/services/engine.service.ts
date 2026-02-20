@@ -51,6 +51,7 @@ export interface ChoicePayload {
 }
 
 export interface GameOutcome {
+    progressId?: string;
     outcomeType: string;
     score: number;
     feedback: string;
@@ -110,6 +111,11 @@ class EngineService {
 
     async getMyGameHistory(scenarioId?: string) {
         const response = await api.get('/engine/game/history/me', { params: { scenarioId } });
+        return response.data;
+    }
+
+    async getScenarioSummary(progressId: string) {
+        const response = await api.get(`/engine/game/${progressId}/summary`);
         return response.data;
     }
 
