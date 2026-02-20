@@ -16,12 +16,14 @@ import {
     Maximize,
     Minimize,
     Eye,
-    EyeOff
+    EyeOff,
+    ShieldAlert
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
 import { BadgeAwardOverlay } from './play/BadgeAwardOverlay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Progress } from '@/shared/components/ui/progress';
+import { TrustMeter } from './play/TrustMeter';
 
 export function GameSession() {
     const { activeProgress, submitChoice, isLoading, error, stats, pendingBadges, removePendingBadge } = useGameStore();
@@ -108,45 +110,32 @@ export function GameSession() {
                     </div>
 
                     {/* Stats Section */}
-                    <div className="space-y-6 pt-4">
+                    <div className="space-y-8 pt-4 flex flex-col items-center">
                         <div className={cn(
-                            "space-y-2 relative transition-all duration-500",
-                            trustPulse === 'increase' && "scale-[1.02]",
-                            trustPulse === 'decrease' && "scale-[0.98] opacity-80"
+                            "relative transition-all duration-500",
+                            trustPulse === 'increase' && "scale-[1.05]",
+                            trustPulse === 'decrease' && "scale-[0.95] opacity-80"
                         )}>
-                            <div className="flex justify-between items-end">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Protocol Trust</span>
-                                <span className={cn(
-                                    "text-sm font-black transition-colors duration-500",
-                                    trustPulse === 'increase' ? "text-emerald-400" : trustPulse === 'decrease' ? "text-red-400" : "text-emerald-500"
-                                )}>
-                                    {stats.trustScore}%
-                                </span>
-                            </div>
-                            <Progress
-                                value={stats.trustScore}
-                                className="h-1.5 bg-white/5"
-                                indicatorClassName={cn(
-                                    "transition-all duration-700",
-                                    trustPulse === 'increase' ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]" :
-                                        trustPulse === 'decrease' ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]" :
-                                            "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                                )}
-                            />
+                            <TrustMeter score={stats.trustScore} size={160} strokeWidth={10} />
 
-                            {/* Subtle Floating Icon Animation */}
+                            {/* Floating Protocol Icon on change */}
                             <AnimatePresence>
                                 {trustPulse !== 'none' && (
                                     <motion.div
-                                        initial={{ opacity: 0, y: 10, x: 20 }}
-                                        animate={{ opacity: 1, y: -20, x: 40 }}
+                                        initial={{ opacity: 0, y: 10, scale: 0.5 }}
+                                        animate={{ opacity: 1, y: -40, scale: 1 }}
                                         exit={{ opacity: 0 }}
                                         className={cn(
-                                            "absolute right-0 top-0",
+                                            "absolute -right-4 top-0",
                                             trustPulse === 'increase' ? "text-emerald-400" : "text-red-400"
                                         )}
                                     >
-                                        <ShieldCheck size={16} className={trustPulse === 'increase' ? "animate-bounce" : "animate-pulse"} />
+                                        <div className="bg-black/50 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-2xl">
+                                            {trustPulse === 'increase' ?
+                                                <ShieldCheck size={24} className="animate-bounce" /> :
+                                                <ShieldAlert size={24} className="animate-pulse" />
+                                            }
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
