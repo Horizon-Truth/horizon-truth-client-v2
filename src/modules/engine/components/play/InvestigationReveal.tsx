@@ -96,7 +96,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                         <div className="text-right space-y-4">
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Your Action</span>
                                             <div className={cn(
-                                                "p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md transition-all duration-700",
+                                                "p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-md transition-all duration-700",
                                                 choice.trustDelta < 0 && "border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20"
                                             )}>
                                                 <p className="text-lg font-bold text-white mb-2">{choice.action}</p>

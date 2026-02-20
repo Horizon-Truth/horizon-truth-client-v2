@@ -115,7 +115,7 @@ class EngineService {
     }
 
     async getScenarioSummary(progressId: string) {
-        const response = await api.get(`/engine/game/${progressId}/summary`);
+        const response = await api.get(`/engine/game/progress/${progressId}/summary`);
         return response.data;
     }
 
