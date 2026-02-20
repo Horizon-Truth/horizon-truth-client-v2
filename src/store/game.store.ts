@@ -143,7 +143,11 @@ export const useGameStore = create<GameState>()(
         }),
         {
             name: 'horizon-game-storage',
-            partialize: (state) => ({ stats: state.stats }), // Only persist stats
+            partialize: (state) => ({
+                stats: state.stats,
+                activeProgress: state.activeProgress,
+                currentOutcome: state.currentOutcome
+            }),
         }
     )
 );

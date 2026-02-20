@@ -12,10 +12,16 @@ interface SceneRendererProps {
     isLoading?: boolean;
 }
 
+import { ChatSkeleton, SocialSkeleton } from './ImmersiveSkeleton';
+
 export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, isLoading }) => {
     const contentType = scene.contentType || (scene as any).content?.contentType;
 
     if (isLoading) {
+        // Use specific skeletons for in-place loading if we know the type
+        if (contentType === 'CHAT') return <ChatSkeleton />;
+        if (contentType === 'FEED') return <SocialSkeleton />;
+
         return (
             <div className="min-h-[400px] w-full flex flex-col items-center justify-center p-8 border border-white/5 rounded-3xl bg-black/40 backdrop-blur-sm relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.05)_0%,transparent_70%)]" />
