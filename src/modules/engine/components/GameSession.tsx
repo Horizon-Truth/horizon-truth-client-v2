@@ -38,6 +38,33 @@ export function GameSession() {
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Phase 17: Navigation Guard & Integrity
+    useEffect(() => {
+        // Push current state to history to create a "barrier"
+        window.history.pushState(null, '', window.location.href);
+
+        const handlePopState = (_e: PopStateEvent) => {
+            // Immediately push back if they try to go back
+            window.history.pushState(null, '', window.location.href);
+            // Optionally show a non-intrusive toast or hint
+        };
+
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (activeProgress) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [activeProgress]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
     const shouldReduceMotion = useReducedMotion();

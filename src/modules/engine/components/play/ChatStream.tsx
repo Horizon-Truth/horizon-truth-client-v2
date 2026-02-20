@@ -142,8 +142,12 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                                     <div className="absolute inset-0 bg-blue-400/10 scale-0 group-active/btn:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active/btn:opacity-100 pointer-events-none" />
 
                                     <div className="relative z-10 flex items-center justify-center gap-3">
-                                        <span className="text-[10px] opacity-40">[{index + 1}]</span>
-                                        <span>{choice}</span>
+                                        {isLoading ? (
+                                            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-ping" />
+                                        ) : (
+                                            <span className="text-[10px] opacity-40">[{index + 1}]</span>
+                                        )}
+                                        <span className={cn(isLoading && "opacity-50")}>{choice}</span>
                                     </div>
                                 </motion.button>
                             ))}

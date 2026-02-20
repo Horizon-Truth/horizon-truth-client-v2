@@ -114,8 +114,8 @@ export const useGameStore = create<GameState>()(
             },
 
             submitChoice: async (sceneId: string, choiceKey: string) => {
-                const { activeProgress } = get();
-                if (!activeProgress) return;
+                const { activeProgress, isLoading } = get();
+                if (!activeProgress || isLoading) return;
 
                 set({ isLoading: true, error: null });
                 try {

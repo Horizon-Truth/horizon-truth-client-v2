@@ -53,8 +53,16 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
                                     isLoading && "opacity-50 cursor-not-allowed"
                                 )}
                             >
-                                <span className="w-2 h-2 rounded-full bg-primary/40" />
+                                <span className={cn(
+                                    "w-2 h-2 rounded-full",
+                                    isLoading ? "bg-primary animate-pulse" : "bg-primary/40"
+                                )} />
                                 {choice}
+                                {isLoading && (
+                                    <div className="absolute inset-0 bg-primary/5 flex items-center justify-center backdrop-blur-[1px]">
+                                        <div className="w-1 h-4 bg-primary animate-[stretch_1s_infinite]" />
+                                    </div>
+                                )}
                             </motion.button>
                         ))}
                     </motion.div>

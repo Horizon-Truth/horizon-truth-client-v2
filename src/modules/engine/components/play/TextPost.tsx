@@ -51,31 +51,38 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contextual Response</span>
                                 </div>
                                 <div className="space-y-2">
-                                    {scene.availableChoices.map((choice, index) => (
+                                    {scene.availableChoices.map((choice: string, index: number) => (
                                         <motion.button
                                             key={choice}
                                             disabled={isLoading}
-                                            whileHover={shouldReduceMotion ? {} : {
-                                                x: 5,
-                                                backgroundColor: "rgba(255, 255, 255, 0.03)"
-                                            }}
-                                            whileTap={{
-                                                scale: 0.98,
-                                                x: shouldReduceMotion ? 0 : [0, -2, 2, -2, 2, 0],
-                                            }}
+                                            whileHover={{ scale: 1.02, x: 5 }}
+                                            whileTap={{ scale: 0.98 }}
                                             onClick={() => onChoice?.(choice)}
                                             className={cn(
-                                                "w-full flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/10 text-base font-bold transition-all relative overflow-hidden group",
-                                                "hover:border-primary/40 hover:text-primary",
+                                                "w-full p-6 h-auto rounded-3xl text-left transition-all relative overflow-hidden group/btn",
+                                                "bg-white/5 border border-white/5 hover:border-primary/40 hover:bg-primary/5",
                                                 "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                                 isLoading && "opacity-50 cursor-not-allowed"
                                             )}
                                         >
-                                            <div className="relative z-10 flex items-center gap-3">
-                                                <span className="text-[10px] opacity-40">[{index + 1}]</span>
-                                                <span>{choice}</span>
+                                            <div className="flex items-center gap-4 relative z-10">
+                                                <div className={cn(
+                                                    "w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center font-black text-sm transition-colors group-hover/btn:bg-primary group-hover/btn:text-white",
+                                                    isLoading && "animate-pulse bg-primary/20"
+                                                )}>
+                                                    {isLoading ? "..." : index + 1}
+                                                </div>
+                                                <span className="text-base font-bold text-white/90">{choice}</span>
                                             </div>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary/20 group-hover:bg-primary group-hover:scale-150 transition-all shadow-[0_0_10px_transparent] group-hover:shadow-primary/50" />
+
+                                            <span className={cn(
+                                                "absolute left-0 top-0 bottom-0 w-1 bg-primary/40 scale-y-0 transition-transform origin-top group-hover/btn:scale-y-100",
+                                                isLoading && "scale-y-100 animate-pulse"
+                                            )} />
+
+                                            {isLoading && (
+                                                <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
+                                            )}
                                         </motion.button>
                                     ))}
                                 </div>
