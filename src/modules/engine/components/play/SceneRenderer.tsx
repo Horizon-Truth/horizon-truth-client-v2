@@ -4,6 +4,7 @@ import { TextPost } from './TextPost';
 import { ChatStream } from './ChatStream';
 import { SocialFeed } from './SocialFeed';
 import { VideoPlayer } from './VideoPlayer';
+import { NetworkPropagationMap } from './NetworkPropagationMap';
 
 interface SceneRendererProps {
     scene: Scene;
@@ -21,6 +22,8 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, i
             return <ChatStream scene={scene} onChoice={onChoice} isLoading={isLoading} />;
         case 'FEED':
             return <SocialFeed scene={scene} onChoice={onChoice} isLoading={isLoading} />;
+        case 'PROPAGATION':
+            return <NetworkPropagationMap scene={scene} />;
         case 'IMAGE':
             return (
                 <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
