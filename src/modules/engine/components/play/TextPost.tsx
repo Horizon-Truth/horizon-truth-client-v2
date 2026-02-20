@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { MoreHorizontal, MessageCircle, Share2, Heart } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
@@ -10,7 +11,7 @@ interface TextPostProps {
     isLoading?: boolean;
 }
 
-export const TextPost: React.FC<TextPostProps> = ({ scene, onChoice, isLoading }) => {
+export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoading }) => {
     const shouldReduceMotion = useReducedMotion();
     const { content } = scene;
 
@@ -106,4 +107,6 @@ export const TextPost: React.FC<TextPostProps> = ({ scene, onChoice, isLoading }
             </div>
         </motion.div>
     );
-};
+});
+
+TextPost.displayName = 'TextPost';

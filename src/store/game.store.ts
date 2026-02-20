@@ -27,6 +27,7 @@ export interface GameState {
     resetGame: () => void;
     clearError: () => void;
     removePendingBadge: (badgeId: string) => void;
+    prefetchAssets: (scene: any) => void;
 }
 
 const INITIAL_STATS: GameStats = {
@@ -46,6 +47,33 @@ export const useGameStore = create<GameState>()(
             isLoading: false,
             error: null,
             pendingBadges: [],
+
+            prefetchAssets: (scene: any) => {
+                if (!scene || !scene.content) return;
+
+                const assetsToPreload: string[] = [];
+                if (scene.content.imageUrl) assetsToPreload.push(scene.content.imageUrl);
+                if (scene.content.videoUrl) assetsToPreload.push(scene.content.videoUrl);
+                if (scene.content.mediaUrl) assetsToPreload.push(scene.content.mediaUrl);
+                if (scene.content.feedItems) {
+                    scene.content.feedItems.forEach((item: any) => {
+                        if (item.mediaUrl) assetsToPreload.push(item.mediaUrl);
+                    });
+                }
+
+                assetsToPreload.forEach(url => {
+                    if (url.endsWith('.mp4') || url.endsWith('.webm')) {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.as = 'video';
+                        link.href = url;
+                        document.head.appendChild(link);
+                    } else {
+                        const img = new Image();
+                        img.src = url;
+                    }
+                });
+            },
 
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
@@ -105,6 +133,8 @@ export const useGameStore = create<GameState>()(
                             },
                             isLoading: false
                         });
+                        // Phase 16: Prefetch next scene assets
+                        get().prefetchAssets(result.nextScene);
                     } else if (result.status === 'game_completed') {
                         set({
                             activeProgress: null,

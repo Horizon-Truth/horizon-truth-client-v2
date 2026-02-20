@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize, Activity, Scan } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
@@ -8,7 +8,7 @@ interface VideoPlayerProps {
     scene: Scene;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = memo(({ scene }) => {
     const shouldReduceMotion = useReducedMotion();
     const { stats } = useGameStore();
     const [isPlaying, setIsPlaying] = useState(true);
@@ -132,4 +132,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
             </div>
         </div>
     );
-};
+});
+
+VideoPlayer.displayName = 'VideoPlayer';

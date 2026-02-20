@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Suspense, lazy, memo } from 'react';
 import { type Scene } from '@/services/engine.service';
-import { TextPost } from './TextPost';
-import { ChatStream } from './ChatStream';
-import { SocialFeed } from './SocialFeed';
-import { VideoPlayer } from './VideoPlayer';
-import { NetworkPropagationMap } from './NetworkPropagationMap';
+import { ChatSkeleton, SocialSkeleton, ScenarioSkeleton } from './ImmersiveSkeleton';
+
+// Phase 16: Lazy load scene components for code-splitting
+const TextPost = lazy(() => import('./TextPost').then(m => ({ default: m.TextPost })));
+const ChatStream = lazy(() => import('./ChatStream').then(m => ({ default: m.ChatStream })));
+const SocialFeed = lazy(() => import('./SocialFeed').then(m => ({ default: m.SocialFeed })));
+const VideoPlayer = lazy(() => import('./VideoPlayer').then(m => ({ default: m.VideoPlayer })));
+const NetworkPropagationMap = lazy(() => import('./NetworkPropagationMap').then(m => ({ default: m.NetworkPropagationMap })));
 
 interface SceneRendererProps {
     scene: Scene;
@@ -12,9 +15,7 @@ interface SceneRendererProps {
     isLoading?: boolean;
 }
 
-import { ChatSkeleton, SocialSkeleton } from './ImmersiveSkeleton';
-
-export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, isLoading }) => {
+export const SceneRenderer: React.FC<SceneRendererProps> = memo(({ scene, onChoice, isLoading }) => {
     const contentType = scene.contentType || (scene as any).content?.contentType;
 
     if (isLoading) {
@@ -57,30 +58,46 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({ scene, onChoice, i
         );
     }
 
-    switch (contentType) {
-        case 'TEXT':
-            return <TextPost scene={scene} onChoice={onChoice} isLoading={isLoading} />;
-        case 'CHAT':
-            return <ChatStream scene={scene} onChoice={onChoice} isLoading={isLoading} />;
-        case 'FEED':
-            return <SocialFeed scene={scene} onChoice={onChoice} isLoading={isLoading} />;
-        case 'PROPAGATION':
-            return <NetworkPropagationMap scene={scene} />;
-        case 'IMAGE':
-            return (
-                <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                    <img src={scene.content?.imageUrl} alt={scene.title} className="w-full h-auto" />
-                </div>
-            );
-        case 'VIDEO':
-            return <VideoPlayer scene={scene} />;
-        default:
-            return (
-                <div className="p-8 rounded-3xl bg-black/40 border border-white/5 space-y-6 shadow-inner">
-                    <p className="text-2xl font-medium leading-relaxed italic text-white/90 border-l-4 border-primary/60 pl-8 py-2">
-                        "{scene.description}"
-                    </p>
-                </div>
-            );
-    }
-};
+    const renderContent = () => {
+        switch (contentType) {
+            case 'TEXT':
+                return <TextPost scene={scene} onChoice={onChoice} isLoading={isLoading} />;
+            case 'CHAT':
+                return <ChatStream scene={scene} onChoice={onChoice} isLoading={isLoading} />;
+            case 'FEED':
+                return <SocialFeed scene={scene} onChoice={onChoice} isLoading={isLoading} />;
+            case 'PROPAGATION':
+                return <NetworkPropagationMap scene={scene} />;
+            case 'IMAGE':
+                return (
+                    <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                        <img src={scene.content?.imageUrl} alt={scene.title} className="w-full h-auto" />
+                    </div>
+                );
+            case 'VIDEO':
+                return <VideoPlayer scene={scene} />;
+            default:
+                return (
+                    <div className="p-8 rounded-3xl bg-black/40 border border-white/5 space-y-6 shadow-inner">
+                        <p className="text-2xl font-medium leading-relaxed italic text-white/90 border-l-4 border-primary/60 pl-8 py-2">
+                            "{scene.description}"
+                        </p>
+                    </div>
+                );
+        }
+    };
+
+    const getFallback = () => {
+        if (contentType === 'CHAT') return <ChatSkeleton />;
+        if (contentType === 'FEED') return <SocialSkeleton />;
+        return <ScenarioSkeleton />;
+    };
+
+    return (
+        <Suspense fallback={getFallback()}>
+            {renderContent()}
+        </Suspense>
+    );
+});
+
+SceneRenderer.displayName = 'SceneRenderer';

@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal, Redo2 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
@@ -10,7 +11,7 @@ interface SocialFeedProps {
     isLoading?: boolean;
 }
 
-export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoading }) => {
+export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, isLoading }) => {
     const feedItems = scene.content?.feedItems || [];
 
     return (
@@ -31,7 +32,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoadi
                         animate={{ y: 0, opacity: 1 }}
                         className="p-1.5 rounded-full bg-[#1A1D21]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-1"
                     >
-                        {scene.availableChoices.map((choice) => (
+                        {scene.availableChoices.map((choice: string) => (
                             <motion.button
                                 key={choice}
                                 disabled={isLoading}
@@ -61,7 +62,9 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoadi
             )}
         </div>
     );
-};
+});
+
+SocialFeed.displayName = 'SocialFeed';
 
 const FeedItem = ({ item, index }: { item: any, index: number }) => {
     const shouldReduceMotion = useReducedMotion();

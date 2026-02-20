@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
@@ -26,7 +26,15 @@ import { Progress } from '@/shared/components/ui/progress';
 import { TrustMeter } from './play/TrustMeter';
 
 export function GameSession() {
-    const { activeProgress, submitChoice, isLoading, error, stats, pendingBadges, removePendingBadge } = useGameStore();
+    // Phase 16: Granular selectors to prevent broad rerenders
+    const activeProgress = useGameStore(s => s.activeProgress);
+    const stats = useGameStore(s => s.stats);
+    const isLoading = useGameStore(s => s.isLoading);
+    const error = useGameStore(s => s.error);
+    const pendingBadges = useGameStore(s => s.pendingBadges);
+    const submitChoice = useGameStore(s => s.submitChoice);
+    const removePendingBadge = useGameStore(s => s.removePendingBadge);
+
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -372,7 +380,7 @@ export function GameSession() {
     );
 }
 
-function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
+const NavItem = memo(({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => {
     return (
         <div className={cn(
             "flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer group",
@@ -382,9 +390,10 @@ function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label
             <span className="text-xs font-black uppercase tracking-wider">{label}</span>
         </div>
     );
-}
+});
+NavItem.displayName = 'NavItem';
 
-function NotificationCard({ icon, title, desc, time, highlight = false }: { icon: React.ReactNode, title: string, desc: string, time: string, highlight?: boolean }) {
+const NotificationCard = memo(({ icon, title, desc, time, highlight = false }: { icon: React.ReactNode, title: string, desc: string, time: string, highlight?: boolean }) => {
     return (
         <div className={cn(
             "p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.02]",
@@ -402,4 +411,5 @@ function NotificationCard({ icon, title, desc, time, highlight = false }: { icon
             <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
         </div>
     );
-}
+});
+NotificationCard.displayName = 'NotificationCard';

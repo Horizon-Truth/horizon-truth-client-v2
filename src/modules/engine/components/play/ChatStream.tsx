@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Check, CheckCheck, Eye } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
@@ -10,7 +10,7 @@ interface ChatStreamProps {
     isLoading?: boolean;
 }
 
-export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoading }) => {
+export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, isLoading }) => {
     const shouldReduceMotion = useReducedMotion();
     const [visibleMessages, setVisibleMessages] = useState<any[]>([]);
     const [isTyping, setIsTyping] = useState(false);
@@ -118,7 +118,7 @@ export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoadi
                             <div className="h-[1px] flex-1 bg-blue-400/20" />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            {scene.availableChoices.map((choice, index) => (
+                            {scene.availableChoices.map((choice: string, index: number) => (
                                 <motion.button
                                     key={choice}
                                     disabled={isLoading}
@@ -161,4 +161,6 @@ export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoadi
             </div>
         </div>
     );
-};
+});
+
+ChatStream.displayName = 'ChatStream';
