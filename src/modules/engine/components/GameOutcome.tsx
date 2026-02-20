@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, Star, ArrowLeft, LayoutDashboard, Zap, ShieldCheck, Activity } from 'lucide-react';
+import { Trophy, Star, LayoutDashboard, Zap, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
 
