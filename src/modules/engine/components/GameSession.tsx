@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/shared/lib/utils';
@@ -11,7 +11,11 @@ import {
     TrendingUp,
     Zap,
     Clock,
-    User
+    User,
+    Maximize,
+    Minimize,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
@@ -21,6 +25,31 @@ export function GameSession() {
     const { activeProgress, submitChoice, isLoading, error, stats } = useGameStore();
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isFocusMode, setIsFocusMode] = useState(false);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, []);
+
+    const toggleFullscreen = async () => {
+        if (!containerRef.current) return;
+
+        try {
+            if (!document.fullscreenElement) {
+                await containerRef.current.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (err) {
+            console.error('Error attempting to toggle fullscreen:', err);
+        }
+    };
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -37,9 +66,15 @@ export function GameSession() {
     };
 
     return (
-        <div className="flex h-screen bg-[#0B0E11] text-white overflow-hidden font-sans selection:bg-primary/30">
+        <div
+            ref={containerRef}
+            className="flex h-screen bg-[#0B0E11] text-white overflow-hidden font-sans selection:bg-primary/30"
+        >
             {/* 1. Left Sidebar - Profile & Stats */}
-            <aside className="w-[300px] border-r border-white/5 flex flex-col pt-8 bg-[#0B0E11]/80 backdrop-blur-xl hidden md:flex">
+            <aside className={cn(
+                "w-[300px] border-r border-white/5 flex flex-col pt-8 bg-[#0B0E11]/80 backdrop-blur-xl transition-all duration-500",
+                (isFullscreen || isFocusMode) ? "w-0 opacity-0 -translate-x-full overflow-hidden border-none" : "flex hidden md:flex"
+            )}>
                 <div className="px-6 space-y-8">
                     {/* Profile Section */}
                     <div className="flex flex-col items-center text-center gap-4">
@@ -106,9 +141,30 @@ export function GameSession() {
                         <div className="h-4 w-[1px] bg-white/10" />
                         <span className="text-xs font-bold text-muted-foreground truncate max-w-[200px]">{activeProgress.scenarioTitle}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Encrypted Stream</span>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-2">
+                            <button
+                                onClick={() => setIsFocusMode(!isFocusMode)}
+                                className={cn(
+                                    "p-2 rounded-lg transition-all duration-300",
+                                    isFocusMode ? "bg-primary/20 text-primary" : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                                )}
+                                title={isFocusMode ? "Exit Focus Mode" : "Enter Focus Mode"}
+                            >
+                                {isFocusMode ? <Eye size={18} /> : <EyeOff size={18} />}
+                            </button>
+                            <button
+                                onClick={toggleFullscreen}
+                                className="p-2 rounded-lg text-muted-foreground hover:bg-white/5 hover:text-white transition-all duration-300"
+                                title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                            >
+                                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Encrypted Stream</span>
+                        </div>
                     </div>
                 </header>
 
@@ -117,7 +173,10 @@ export function GameSession() {
                     ref={scrollRef}
                     className="flex-1 overflow-y-auto p-4 md:p-8 space-y-12 custom-scrollbar"
                 >
-                    <div className="max-w-2xl mx-auto w-full space-y-12 pb-32">
+                    <div className={cn(
+                        "mx-auto w-full space-y-12 pb-32 transition-all duration-500",
+                        (isFullscreen || isFocusMode) ? "max-w-4xl" : "max-w-2xl"
+                    )}>
                         {/* Dynamic Scene Content */}
                         <div className="space-y-6">
                             <div className="flex items-center gap-3 mb-2">
@@ -185,7 +244,10 @@ export function GameSession() {
             </main>
 
             {/* 3. Right Panel - Notifications & Intel */}
-            <aside className="w-[350px] border-l border-white/5 flex flex-col bg-[#0B0E11]/80 backdrop-blur-xl hidden lg:flex">
+            <aside className={cn(
+                "w-[350px] border-l border-white/5 flex flex-col bg-[#0B0E11]/80 backdrop-blur-xl transition-all duration-500",
+                (isFullscreen || isFocusMode) ? "w-0 opacity-0 translate-x-full overflow-hidden border-none" : "flex hidden lg:flex"
+            )}>
                 <div className="p-6 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-2">
