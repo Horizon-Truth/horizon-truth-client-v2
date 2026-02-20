@@ -39,17 +39,22 @@ export function GameSession() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Phase 17: Navigation Guard & Integrity
+    // Phase 17: Navigation Guard (Sticky History)
     useEffect(() => {
-        // Push current state to history to create a "barrier"
+        // Create an initial barrier
         window.history.pushState(null, '', window.location.href);
 
         const handlePopState = (_e: PopStateEvent) => {
-            // Immediately push back if they try to go back
+            // Force state back to prevent navigation
             window.history.pushState(null, '', window.location.href);
-            // Optionally show a non-intrusive toast or hint
         };
 
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []); // Empty dependency array ensures it persists throughout the game session
+
+    // Unload Protection
+    useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (activeProgress) {
                 e.preventDefault();
@@ -57,13 +62,8 @@ export function GameSession() {
             }
         };
 
-        window.addEventListener('popstate', handlePopState);
         window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState);
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [activeProgress]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);

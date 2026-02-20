@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, Star, ArrowLeft, LayoutDashboard, Zap, ShieldCheck } from 'lucide-react';
+import { Trophy, Star, ArrowLeft, LayoutDashboard, Zap, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
 
@@ -89,11 +89,11 @@ export function GameOutcome() {
                 <Button
                     size="lg"
                     variant="outline"
-                    onClick={resetGame}
+                    onClick={() => setView('reveal')}
                     className="h-20 flex-1 rounded-[1.5rem] font-black text-xl border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
                 >
-                    <ArrowLeft className="mr-4" size={28} />
-                    Command Center
+                    <Activity className="mr-4" size={28} />
+                    Reality Check
                 </Button>
             </div>
         </div>
