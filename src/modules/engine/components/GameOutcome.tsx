@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, Star, ArrowLeft, LayoutDashboard, Zap, ShieldCheck } from 'lucide-react';
+import { Trophy, Star, LayoutDashboard, Zap, ShieldCheck, Activity } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { InvestigationReveal } from './play/InvestigationReveal';
 
 export function GameOutcome() {
     const { currentOutcome, resetGame } = useGameStore();
+    const [view, setView] = useState<'reveal' | 'summary'>('reveal');
 
     if (!currentOutcome) return null;
 
     const isSuccess = currentOutcome.outcomeType === 'SUCCESS';
+
+    if (view === 'reveal' && currentOutcome.progressId) {
+        return (
+            <InvestigationReveal
+                progressId={currentOutcome.progressId}
+                onComplete={() => setView('summary')}
+            />
+        );
+    }
 
     return (
         <div className="flex flex-col items-center justify-center py-12 text-center space-y-16 animate-in zoom-in-95 duration-700">
@@ -47,18 +59,20 @@ export function GameOutcome() {
                 <div className="p-10 rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-emerald-500/10 shadow-xl">
                     <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4 flex items-center justify-center gap-3">
                         <ShieldCheck size={16} />
-                        Efficiency Rating
+                        Trust Score
                     </p>
-                    <p className="text-5xl font-black text-emerald-500">+{currentOutcome.score}</p>
-                    <p className="text-xs text-emerald-500/60 font-black uppercase mt-3 tracking-widest">Trust Gain Secured</p>
+                    <p className="text-5xl font-black text-emerald-500">{currentOutcome.score > 0 ? '+' : ''}{currentOutcome.score}</p>
+                    <p className="text-xs text-emerald-500/60 font-black uppercase mt-3 tracking-widest">Protocol Integrity Verified</p>
                 </div>
                 <div className="p-10 rounded-[2.5rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10 shadow-xl">
                     <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4 flex items-center justify-center gap-3">
                         <Zap size={16} />
-                        Network Experience
+                        Societal Impact
                     </p>
-                    <p className="text-5xl font-black text-amber-500">+{currentOutcome.score * 5}</p>
-                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">XP Uplink Verified</p>
+                    <p className="text-5xl font-black text-amber-500">
+                        {Math.abs(currentOutcome.score) > 15 ? 'HIGH' : Math.abs(currentOutcome.score) > 5 ? 'MEDIUM' : 'LOW'}
+                    </p>
+                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">Global Network Analysis</p>
                 </div>
             </div>
 
@@ -75,11 +89,11 @@ export function GameOutcome() {
                 <Button
                     size="lg"
                     variant="outline"
-                    onClick={resetGame}
+                    onClick={() => setView('reveal')}
                     className="h-20 flex-1 rounded-[1.5rem] font-black text-xl border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
                 >
-                    <ArrowLeft className="mr-4" size={28} />
-                    Command Center
+                    <Activity className="mr-4" size={28} />
+                    Reality Check
                 </Button>
             </div>
         </div>

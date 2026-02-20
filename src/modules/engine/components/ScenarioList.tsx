@@ -5,6 +5,7 @@ import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
 import { Play, Loader2, Gauge, Info } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
+import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
 export function ScenarioList() {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -19,7 +20,8 @@ export function ScenarioList() {
             } catch (err) {
                 console.error('Failed to fetch scenarios', err);
             } finally {
-                setLocalLoading(false);
+                // Add a small delay for immersion
+                setTimeout(() => setLocalLoading(false), 800);
             }
         };
 
@@ -28,9 +30,16 @@ export function ScenarioList() {
 
     if (localLoading) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center p-12">
-                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <p className="text-muted-foreground font-medium">Loading available missions...</p>
+            <div className="flex flex-col gap-6">
+                <div className="space-y-2 opacity-40">
+                    <h2 className="text-3xl font-extrabold tracking-tight">Active Operations</h2>
+                    <p className="text-lg">Scanning network for available protocols...</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ScenarioSkeleton />
+                    <ScenarioSkeleton />
+                    <ScenarioSkeleton />
+                </div>
             </div>
         );
     }

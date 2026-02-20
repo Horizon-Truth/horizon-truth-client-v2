@@ -17,6 +17,7 @@ export interface GameState {
     currentOutcome: GameOutcome | null;
     isLoading: boolean;
     error: string | null;
+    pendingBadges: any[];
 
     // Actions
     fetchGameHistory: () => Promise<void>;
@@ -25,6 +26,8 @@ export interface GameState {
     loadProgress: (progressId: string) => Promise<void>;
     resetGame: () => void;
     clearError: () => void;
+    removePendingBadge: (badgeId: string) => void;
+    prefetchAssets: (scene: any) => void;
 }
 
 const INITIAL_STATS: GameStats = {
@@ -43,6 +46,34 @@ export const useGameStore = create<GameState>()(
             currentOutcome: null,
             isLoading: false,
             error: null,
+            pendingBadges: [],
+
+            prefetchAssets: (scene: any) => {
+                if (!scene || !scene.content) return;
+
+                const assetsToPreload: string[] = [];
+                if (scene.content.imageUrl) assetsToPreload.push(scene.content.imageUrl);
+                if (scene.content.videoUrl) assetsToPreload.push(scene.content.videoUrl);
+                if (scene.content.mediaUrl) assetsToPreload.push(scene.content.mediaUrl);
+                if (scene.content.feedItems) {
+                    scene.content.feedItems.forEach((item: any) => {
+                        if (item.mediaUrl) assetsToPreload.push(item.mediaUrl);
+                    });
+                }
+
+                assetsToPreload.forEach(url => {
+                    if (url.endsWith('.mp4') || url.endsWith('.webm')) {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.as = 'video';
+                        link.href = url;
+                        document.head.appendChild(link);
+                    } else {
+                        const img = new Image();
+                        img.src = url;
+                    }
+                });
+            },
 
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
@@ -83,8 +114,8 @@ export const useGameStore = create<GameState>()(
             },
 
             submitChoice: async (sceneId: string, choiceKey: string) => {
-                const { activeProgress } = get();
-                if (!activeProgress) return;
+                const { activeProgress, isLoading } = get();
+                if (!activeProgress || isLoading) return;
 
                 set({ isLoading: true, error: null });
                 try {
@@ -102,6 +133,8 @@ export const useGameStore = create<GameState>()(
                             },
                             isLoading: false
                         });
+                        // Phase 16: Prefetch next scene assets
+                        get().prefetchAssets(result.nextScene);
                     } else if (result.status === 'game_completed') {
                         set({
                             activeProgress: null,
@@ -112,8 +145,13 @@ export const useGameStore = create<GameState>()(
                                 // Optimistic update, ideally should fetch fresh stats
                                 missionsCompleted: get().stats.missionsCompleted + 1,
                                 experience: get().stats.experience + result.outcome.score
-                            }
+                            },
+                            pendingBadges: result.badgesAwarded || []
                         });
+                    } else if (result.status === 'scene_completed' && result.awardedBadges) {
+                        set(state => ({
+                            pendingBadges: [...state.pendingBadges, ...result.awardedBadges]
+                        }));
                     }
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to submit choice', isLoading: false });
@@ -127,11 +165,19 @@ export const useGameStore = create<GameState>()(
                 isLoading: false
             }),
 
-            clearError: () => set({ error: null })
+            clearError: () => set({ error: null }),
+
+            removePendingBadge: (badgeId: string) => set(state => ({
+                pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)
+            }))
         }),
         {
             name: 'horizon-game-storage',
-            partialize: (state) => ({ stats: state.stats }), // Only persist stats
+            partialize: (state) => ({
+                stats: state.stats,
+                activeProgress: state.activeProgress,
+                currentOutcome: state.currentOutcome
+            }),
         }
     )
 );

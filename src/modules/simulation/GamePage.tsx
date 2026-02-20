@@ -15,19 +15,28 @@ import {
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { GameSession } from '../engine/components/GameSession';
 import { GameOutcome } from '../engine/components/GameOutcome';
+import { GlitchError } from '../engine/components/play/GlitchError';
 import { Button } from '@/shared/components/ui/button';
 import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 
 export default function GamePage() {
-    const { stats, activeProgress, currentOutcome, fetchGameHistory } = useGameStore();
+    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory } = useGameStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
 
+    // Ensure store is hydrated from localStorage before rendering
     useEffect(() => {
+        setIsHydrated(true);
         fetchGameHistory();
     }, [fetchGameHistory]);
 
+    if (!isHydrated) return null;
+
     return (
         <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20">
+            {/* Global Glitch Error Overlay */}
+            {error && <GlitchError message={error} onRetry={clearError} />}
+
             {/* Standard Dashboard View (Scenario List) */}
             {!activeProgress && !currentOutcome && (
                 <>
