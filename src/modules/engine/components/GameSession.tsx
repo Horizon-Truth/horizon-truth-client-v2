@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/shared/lib/utils';
@@ -32,6 +32,7 @@ export function GameSession() {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
+    const shouldReduceMotion = useReducedMotion();
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -54,6 +55,21 @@ export function GameSession() {
             console.error('Error attempting to toggle fullscreen:', err);
         }
     };
+
+    // Keyboard Hotkeys
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!activeProgress) return;
+            const key = parseInt(e.key);
+            if (key >= 1 && key <= activeProgress.currentScene.availableChoices.length) {
+                if (!isLoading) {
+                    handleChoice(activeProgress.currentScene.availableChoices[key - 1]);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [activeProgress, isLoading]);
 
     // Emotional Feedback State
     const [prevTrust, setPrevTrust] = useState(stats.trustScore);
@@ -90,7 +106,8 @@ export function GameSession() {
             {/* 1. Left Sidebar - Profile & Stats */}
             <aside className={cn(
                 "w-[300px] border-r border-white/5 flex flex-col pt-8 bg-[#0B0E11]/80 backdrop-blur-xl transition-all duration-500",
-                (isFullscreen || isFocusMode) ? "w-0 opacity-0 -translate-x-full overflow-hidden border-none" : "flex hidden md:flex"
+                (isFullscreen || isFocusMode) ? "w-0 opacity-0 -translate-x-full overflow-hidden border-none" : "flex hidden md:flex",
+                shouldReduceMotion && "transition-none"
             )}>
                 <div className="px-6 space-y-8">
                     {/* Profile Section */}
@@ -210,11 +227,11 @@ export function GameSession() {
                 {/* Content Area */}
                 <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto p-4 md:p-8 space-y-12 custom-scrollbar"
+                    className="flex-1 overflow-y-auto p-4 md:p-8 space-y-12 custom-scrollbar flex flex-col items-center"
                 >
                     <div className={cn(
-                        "mx-auto w-full space-y-12 pb-32 transition-all duration-500",
-                        (isFullscreen || isFocusMode) ? "max-w-4xl" : "max-w-2xl"
+                        "w-full space-y-12 pb-32 transition-all duration-500",
+                        (isFullscreen || isFocusMode) ? "max-w-3xl" : "max-w-xl"
                     )}>
                         {/* Dynamic Scene Content */}
                         <div className="space-y-6">
@@ -250,22 +267,26 @@ export function GameSession() {
                                     </div>
 
                                     <div className="grid grid-cols-1 gap-3">
-                                        {currentScene.availableChoices.map((choice) => (
+                                        {currentScene.availableChoices.map((choice, index) => (
                                             <button
                                                 key={choice}
                                                 disabled={isLoading}
                                                 onClick={() => handleChoice(choice)}
                                                 className={cn(
-                                                    "group p-4 text-left rounded-xl border transition-all duration-300 relative overflow-hidden",
+                                                    "group p-5 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
                                                     "bg-white/5 border-white/5 hover:border-primary/40 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(var(--primary),0.05)]",
+                                                    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                                     isLoading && "opacity-50 cursor-not-allowed grayscale"
                                                 )}
                                             >
                                                 <div className="absolute inset-y-0 left-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
                                                 <div className="flex items-center justify-between">
-                                                    <div className="space-y-0.5">
-                                                        <span className="font-bold text-base group-hover:text-primary transition-colors">{choice}</span>
-                                                        <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-40">System Directive Alpha</p>
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-[10px] font-black text-primary/40 leading-none">[{index + 1}]</span>
+                                                            <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
+                                                        </div>
+                                                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">System Directive Alpha</p>
                                                     </div>
                                                     {isLoading ? (
                                                         <Loader2 className="w-4 h-4 animate-spin text-primary" />

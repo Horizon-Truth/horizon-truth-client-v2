@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize, Activity, Scan } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
@@ -9,6 +9,7 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
+    const shouldReduceMotion = useReducedMotion();
     const { stats } = useGameStore();
     const [isPlaying, setIsPlaying] = useState(true);
     const [isMuted, setIsMuted] = useState(true);
@@ -56,6 +57,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
                     <motion.div
                         className="absolute inset-x-0 h-1 bg-red-500/40 shadow-[0_0_15px_rgba(239,68,68,0.5)] z-40"
                         style={{ top: `${scanProgress}%` }}
+                        animate={shouldReduceMotion ? { opacity: [0.3, 0.6] } : {}}
+                        transition={shouldReduceMotion ? { duration: 2, repeat: Infinity, repeatType: 'reverse' } : {}}
                     />
 
                     {/* Bounding Boxes */}
@@ -81,6 +84,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
                 </div>
             )}
 
+            {/* Subtitles Overlay (Accessibility) */}
+            <div className="absolute bottom-12 inset-x-0 z-40 flex justify-center px-12 pointer-events-none">
+                <div className="bg-black/80 backdrop-blur-md px-6 py-2 border border-white/10 rounded-xl max-w-2xl text-center">
+                    <p className="text-base font-bold text-white/90 italic leading-relaxed">
+                        {scene.content?.subtitle || `[Atmospheric ${scene.contentType.toLowerCase()} noise / Signal noise]`}
+                    </p>
+                </div>
+            </div>
+
             {/* UI Overlays */}
             <div className="absolute top-6 left-6 z-40 flex items-center gap-3">
                 <div className="px-3 py-1 bg-red-600 rounded text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2 animate-pulse">
@@ -93,10 +105,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ scene }) => {
 
             <div className="absolute inset-x-0 bottom-0 z-40 p-6 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="flex items-center gap-4">
-                    <button onClick={() => setIsPlaying(!isPlaying)} className="text-white hover:text-primary transition-colors">
+                    <button onClick={() => setIsPlaying(!isPlaying)} className="text-white hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md">
                         {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
                     </button>
-                    <button onClick={() => setIsMuted(!isMuted)} className="text-white hover:text-primary transition-colors">
+                    <button onClick={() => setIsMuted(!isMuted)} className="text-white hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md">
                         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                     </button>
                     <div className="w-64 h-1 bg-white/20 rounded-full overflow-hidden">

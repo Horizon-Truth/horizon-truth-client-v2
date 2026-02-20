@@ -1,5 +1,4 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal, Redo2 } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { type Scene } from '@/services/engine.service';
@@ -43,18 +42,16 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoadi
                                 }}
                                 whileTap={{
                                     scale: 0.9,
-                                    rotate: [0, -5, 5, -5, 5, 0], // Micro vibration
+                                    rotate: [0, -5, 5, -5, 5, 0],
                                 }}
                                 onClick={() => onChoice?.(choice)}
                                 className={cn(
-                                    "px-4 py-2 rounded-full text-xs font-bold transition-all relative overflow-hidden flex items-center gap-2",
+                                    "px-4 py-2 rounded-full text-base font-bold transition-all relative overflow-hidden flex items-center gap-2",
                                     "text-white/80 hover:text-primary",
+                                    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                     isLoading && "opacity-50 cursor-not-allowed"
                                 )}
                             >
-                                {/* Ripple Simulation */}
-                                <div className="absolute inset-0 bg-primary/20 scale-0 group-active:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active:opacity-100 pointer-events-none" />
-
                                 <span className="w-2 h-2 rounded-full bg-primary/40" />
                                 {choice}
                             </motion.button>
@@ -67,6 +64,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoadi
 };
 
 const FeedItem = ({ item, index }: { item: any, index: number }) => {
+    const shouldReduceMotion = useReducedMotion();
     // Generate realistic engagement numbers
     const views = (Math.random() * 50 + 10).toFixed(1) + 'K';
     const likes = Math.floor(Math.random() * 2000 + 100);
@@ -74,9 +72,9 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8 + (index * 0.2) }}
+            transition={{ delay: shouldReduceMotion ? 0.1 : 0.8 + (index * 0.2) }}
             className="group relative border-b border-white/5 last:border-0 pb-6 mb-6"
         >
             <div className="flex gap-4">
@@ -99,12 +97,12 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
 
                     <div className="mt-1 space-y-3">
                         {/* Forwarded Tag */}
-                        <div className="flex items-center gap-1 text-muted-foreground/60 italic">
-                            <Redo2 size={12} className="-scale-x-100" />
-                            <span className="text-[10px] font-bold uppercase tracking-tight">Forwarded many times</span>
+                        <div className="flex items-center gap-1 text-primary brightness-125 italic">
+                            <Redo2 size={14} className="-scale-x-100" />
+                            <span className="text-xs font-black uppercase tracking-tight">Forwarded many times</span>
                         </div>
 
-                        <p className="text-sm text-white/90 leading-relaxed font-medium">
+                        <p className="text-base text-white/90 leading-relaxed font-medium">
                             {item.description}
                         </p>
 
@@ -120,19 +118,21 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                         )}
 
                         <div className="flex items-center justify-between text-muted-foreground pt-1 pr-8">
-                            <div className="flex items-center gap-1.5 hover:text-blue-400 transition-colors cursor-pointer">
-                                <MessageSquare size={16} />
-                                <span className="text-xs">{shares}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors cursor-pointer">
-                                <BarChart3 size={16} />
-                                <span className="text-xs">{views}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer text-rose-400/80">
-                                <Heart size={16} fill="currentColor" className="fill-rose-400/20" />
-                                <span className="text-xs">{likes}</span>
-                            </div>
-                            <Bookmark size={16} className="hover:text-primary transition-colors cursor-pointer" />
+                            <button className="flex items-center gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1">
+                                <MessageSquare size={18} />
+                                <span className="text-sm font-bold">{shares}</span>
+                            </button>
+                            <button className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1">
+                                <BarChart3 size={18} />
+                                <span className="text-sm font-bold">{views}</span>
+                            </button>
+                            <button className="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer text-rose-400/80 focus-visible:ring-1 focus-visible:ring-rose-400 rounded-md p-1 -m-1">
+                                <Heart size={18} fill="currentColor" className="fill-rose-400/20" />
+                                <span className="text-sm font-bold">{likes}</span>
+                            </button>
+                            <button className="hover:text-primary transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1 -m-1">
+                                <Bookmark size={18} />
+                            </button>
                         </div>
 
                         {/* Fake Comment Thread */}
