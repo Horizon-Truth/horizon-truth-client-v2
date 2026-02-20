@@ -19,11 +19,12 @@ import {
     EyeOff
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
+import { BadgeAwardOverlay } from './play/BadgeAwardOverlay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Progress } from '@/shared/components/ui/progress';
 
 export function GameSession() {
-    const { activeProgress, submitChoice, isLoading, error, stats } = useGameStore();
+    const { activeProgress, submitChoice, isLoading, error, stats, pendingBadges, removePendingBadge } = useGameStore();
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -346,6 +347,17 @@ export function GameSession() {
                     </div>
                 </div>
             </aside>
+
+            {/* 4. Badge Award Overlay */}
+            <AnimatePresence>
+                {pendingBadges.length > 0 && (
+                    <BadgeAwardOverlay
+                        key={pendingBadges[0].id}
+                        badge={pendingBadges[0]}
+                        onClose={() => removePendingBadge(pendingBadges[0].id)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

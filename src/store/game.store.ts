@@ -17,6 +17,7 @@ export interface GameState {
     currentOutcome: GameOutcome | null;
     isLoading: boolean;
     error: string | null;
+    pendingBadges: any[];
 
     // Actions
     fetchGameHistory: () => Promise<void>;
@@ -25,6 +26,7 @@ export interface GameState {
     loadProgress: (progressId: string) => Promise<void>;
     resetGame: () => void;
     clearError: () => void;
+    removePendingBadge: (badgeId: string) => void;
 }
 
 const INITIAL_STATS: GameStats = {
@@ -43,6 +45,7 @@ export const useGameStore = create<GameState>()(
             currentOutcome: null,
             isLoading: false,
             error: null,
+            pendingBadges: [],
 
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
@@ -112,8 +115,13 @@ export const useGameStore = create<GameState>()(
                                 // Optimistic update, ideally should fetch fresh stats
                                 missionsCompleted: get().stats.missionsCompleted + 1,
                                 experience: get().stats.experience + result.outcome.score
-                            }
+                            },
+                            pendingBadges: result.badgesAwarded || []
                         });
+                    } else if (result.status === 'scene_completed' && result.awardedBadges) {
+                        set(state => ({
+                            pendingBadges: [...state.pendingBadges, ...result.awardedBadges]
+                        }));
                     }
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to submit choice', isLoading: false });
@@ -127,7 +135,11 @@ export const useGameStore = create<GameState>()(
                 isLoading: false
             }),
 
-            clearError: () => set({ error: null })
+            clearError: () => set({ error: null }),
+
+            removePendingBadge: (badgeId: string) => set(state => ({
+                pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)
+            }))
         }),
         {
             name: 'horizon-game-storage',
