@@ -24,40 +24,42 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({ scene, onChoice, isLoadi
                 <FeedItem key={item.id || idx} item={item} index={idx} />
             ))}
 
-            {/* Contextual Options Menu */}
+            {/* Social Reaction-style Choice Bar */}
             {scene.availableChoices.length > 0 && (
-                <div className="sticky bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/90 to-transparent">
-                    <div className="p-4 rounded-2xl bg-[#1A1D21] border border-white/10 shadow-2xl space-y-4">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Contextual Actions</span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {scene.availableChoices.map((choice) => (
-                                <motion.button
-                                    key={choice}
-                                    disabled={isLoading}
-                                    whileHover={{
-                                        scale: 1.05,
-                                        backgroundColor: "rgba(var(--primary), 0.1)",
-                                        borderColor: "rgba(var(--primary), 0.4)"
-                                    }}
-                                    whileTap={{
-                                        scale: 0.95,
-                                        y: [0, -1, 1, -1, 1, 0], // Micro vibration
-                                    }}
-                                    onClick={() => onChoice?.(choice)}
-                                    className={cn(
-                                        "px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-xs font-bold transition-all relative overflow-hidden",
-                                        "hover:text-primary",
-                                        isLoading && "opacity-50 cursor-not-allowed"
-                                    )}
-                                >
-                                    {choice}
-                                </motion.button>
-                            ))}
-                        </div>
-                    </div>
+                <div className="sticky bottom-4 left-0 right-0 flex justify-center px-4">
+                    <motion.div
+                        initial={{ y: 50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="p-1.5 rounded-full bg-[#1A1D21]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-1"
+                    >
+                        {scene.availableChoices.map((choice) => (
+                            <motion.button
+                                key={choice}
+                                disabled={isLoading}
+                                whileHover={{
+                                    scale: 1.2,
+                                    y: -8,
+                                    backgroundColor: "rgba(255, 255, 255, 0.05)"
+                                }}
+                                whileTap={{
+                                    scale: 0.9,
+                                    rotate: [0, -5, 5, -5, 5, 0], // Micro vibration
+                                }}
+                                onClick={() => onChoice?.(choice)}
+                                className={cn(
+                                    "px-4 py-2 rounded-full text-xs font-bold transition-all relative overflow-hidden flex items-center gap-2",
+                                    "text-white/80 hover:text-primary",
+                                    isLoading && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                {/* Ripple Simulation */}
+                                <div className="absolute inset-0 bg-primary/20 scale-0 group-active:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active:opacity-100 pointer-events-none" />
+
+                                <span className="w-2 h-2 rounded-full bg-primary/40" />
+                                {choice}
+                            </motion.button>
+                        ))}
+                    </motion.div>
                 </div>
             )}
         </div>

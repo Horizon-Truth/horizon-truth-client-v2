@@ -101,36 +101,44 @@ export const ChatStream: React.FC<ChatStreamProps> = ({ scene, onChoice, isLoadi
                     )}
                 </AnimatePresence>
 
-                {/* Inline Choice Buttons */}
+                {/* Telegram-style Inline Choice Keyboard */}
                 {!isTyping && scene.availableChoices.length > 0 && (
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="grid grid-cols-1 gap-1.5 pt-4"
                     >
-                        {scene.availableChoices.map((choice) => (
-                            <motion.button
-                                key={choice}
-                                disabled={isLoading}
-                                whileHover={{
-                                    scale: 1.02,
-                                    backgroundColor: "rgba(59, 130, 246, 0.2)",
-                                    boxShadow: "0 0 15px rgba(59, 130, 246, 0.3)"
-                                }}
-                                whileTap={{
-                                    scale: 0.98,
-                                    x: [0, -1, 1, -1, 1, 0], // Micro vibration
-                                    transition: { duration: 0.2 }
-                                }}
-                                onClick={() => onChoice?.(choice)}
-                                className={cn(
-                                    "p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-blue-400 transition-colors relative overflow-hidden",
-                                    isLoading && "opacity-50 cursor-not-allowed"
-                                )}
-                            >
-                                {choice}
-                            </motion.button>
-                        ))}
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                            <span className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest">Select Operation</span>
+                            <div className="h-[1px] flex-1 bg-blue-400/20" />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            {scene.availableChoices.map((choice) => (
+                                <motion.button
+                                    key={choice}
+                                    disabled={isLoading}
+                                    whileHover={{
+                                        backgroundColor: "rgba(59, 130, 246, 0.15)",
+                                    }}
+                                    whileTap={{
+                                        scale: 0.98,
+                                        x: [0, -2, 2, -2, 2, 0], // Micro vibration
+                                        transition: { duration: 0.1 }
+                                    }}
+                                    onClick={() => onChoice?.(choice)}
+                                    className={cn(
+                                        "w-full p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 text-sm font-bold text-blue-400 transition-all duration-200 text-center relative overflow-hidden group/btn",
+                                        "hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+                                        isLoading && "opacity-50 cursor-not-allowed"
+                                    )}
+                                >
+                                    {/* Subtle Ripple Effect Simulation */}
+                                    <div className="absolute inset-0 bg-blue-400/10 scale-0 group-active/btn:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active/btn:opacity-100 pointer-events-none" />
+
+                                    <span className="relative z-10">{choice}</span>
+                                </motion.button>
+                            ))}
+                        </div>
                     </motion.div>
                 )}
             </div>

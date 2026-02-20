@@ -40,33 +40,40 @@ export const TextPost: React.FC<TextPostProps> = ({ scene, onChoice, isLoading }
                             {content?.textBody || scene.description}
                         </p>
 
-                        {/* Reaction-style Choices */}
+                        {/* Contextual Action Menu */}
                         {scene.availableChoices.length > 0 && (
-                            <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
-                                {scene.availableChoices.map((choice) => (
-                                    <motion.button
-                                        key={choice}
-                                        disabled={isLoading}
-                                        whileHover={{
-                                            scale: 1.1,
-                                            y: -2,
-                                            backgroundColor: "rgba(255, 255, 255, 0.08)"
-                                        }}
-                                        whileTap={{
-                                            scale: 0.95,
-                                            rotate: [0, -2, 2, -2, 2, 0], // Micro vibration
-                                        }}
-                                        onClick={() => onChoice?.(choice)}
-                                        className={cn(
-                                            "flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm font-medium transition-all relative overflow-hidden",
-                                            "hover:border-primary/50 hover:text-primary",
-                                            isLoading && "opacity-50 cursor-not-allowed"
-                                        )}
-                                    >
-                                        <div className="w-2 h-2 rounded-full bg-primary/40 animate-pulse" />
-                                        {choice}
-                                    </motion.button>
-                                ))}
+                            <div className="pt-6 border-t border-white/5 space-y-3">
+                                <div className="flex items-center justify-between px-1">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contextual Response</span>
+                                </div>
+                                <div className="space-y-2">
+                                    {scene.availableChoices.map((choice) => (
+                                        <motion.button
+                                            key={choice}
+                                            disabled={isLoading}
+                                            whileHover={{
+                                                x: 5,
+                                                backgroundColor: "rgba(255, 255, 255, 0.03)"
+                                            }}
+                                            whileTap={{
+                                                scale: 0.98,
+                                                x: [0, -2, 2, -2, 2, 0], // Micro vibration
+                                            }}
+                                            onClick={() => onChoice?.(choice)}
+                                            className={cn(
+                                                "w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 text-sm font-bold transition-all relative overflow-hidden group",
+                                                "hover:border-primary/40 hover:text-primary",
+                                                isLoading && "opacity-50 cursor-not-allowed"
+                                            )}
+                                        >
+                                            {/* Ripple Simulation */}
+                                            <div className="absolute inset-0 bg-primary/10 scale-0 group-active:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active:opacity-100 pointer-events-none" />
+
+                                            <span className="relative z-10">{choice}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary/20 group-hover:bg-primary group-hover:scale-150 transition-all shadow-[0_0_10px_transparent] group-hover:shadow-primary/50" />
+                                        </motion.button>
+                                    ))}
+                                </div>
                             </div>
                         )}
 

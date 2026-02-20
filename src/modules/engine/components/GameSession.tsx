@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/shared/lib/utils';
@@ -51,6 +52,19 @@ export function GameSession() {
         }
     };
 
+    // Emotional Feedback State
+    const [prevTrust, setPrevTrust] = useState(stats.trustScore);
+    const [trustPulse, setTrustPulse] = useState<'none' | 'increase' | 'decrease'>('none');
+
+    useEffect(() => {
+        if (stats.trustScore !== prevTrust) {
+            setTrustPulse(stats.trustScore > prevTrust ? 'increase' : 'decrease');
+            setPrevTrust(stats.trustScore);
+            const timer = setTimeout(() => setTrustPulse('none'), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [stats.trustScore, prevTrust]);
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -94,12 +108,47 @@ export function GameSession() {
 
                     {/* Stats Section */}
                     <div className="space-y-6 pt-4">
-                        <div className="space-y-2">
+                        <div className={cn(
+                            "space-y-2 relative transition-all duration-500",
+                            trustPulse === 'increase' && "scale-[1.02]",
+                            trustPulse === 'decrease' && "scale-[0.98] opacity-80"
+                        )}>
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Protocol Trust</span>
-                                <span className="text-sm font-black text-emerald-500">{stats.trustScore}%</span>
+                                <span className={cn(
+                                    "text-sm font-black transition-colors duration-500",
+                                    trustPulse === 'increase' ? "text-emerald-400" : trustPulse === 'decrease' ? "text-red-400" : "text-emerald-500"
+                                )}>
+                                    {stats.trustScore}%
+                                </span>
                             </div>
-                            <Progress value={stats.trustScore} className="h-1.5 bg-white/5" indicatorClassName="bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                            <Progress
+                                value={stats.trustScore}
+                                className="h-1.5 bg-white/5"
+                                indicatorClassName={cn(
+                                    "transition-all duration-700",
+                                    trustPulse === 'increase' ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.8)]" :
+                                        trustPulse === 'decrease' ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]" :
+                                            "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                                )}
+                            />
+
+                            {/* Subtle Floating Icon Animation */}
+                            <AnimatePresence>
+                                {trustPulse !== 'none' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, x: 20 }}
+                                        animate={{ opacity: 1, y: -20, x: 40 }}
+                                        exit={{ opacity: 0 }}
+                                        className={cn(
+                                            "absolute right-0 top-0",
+                                            trustPulse === 'increase' ? "text-emerald-400" : "text-red-400"
+                                        )}
+                                    >
+                                        <ShieldCheck size={16} className={trustPulse === 'increase' ? "animate-bounce" : "animate-pulse"} />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between group hover:bg-white/10 transition-colors">
@@ -210,28 +259,28 @@ export function GameSession() {
                                         <span className="text-[10px] font-mono text-muted-foreground opacity-40">PHASE_{currentScene.order}</span>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-4">
+                                    <div className="grid grid-cols-1 gap-3">
                                         {currentScene.availableChoices.map((choice) => (
                                             <button
                                                 key={choice}
                                                 disabled={isLoading}
                                                 onClick={() => handleChoice(choice)}
                                                 className={cn(
-                                                    "group p-6 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
-                                                    "bg-[#1A1D21] border-white/5 hover:border-primary/40 hover:bg-[#1E2227] hover:shadow-[0_10px_30px_rgba(var(--primary),0.1)]",
+                                                    "group p-4 text-left rounded-xl border transition-all duration-300 relative overflow-hidden",
+                                                    "bg-white/5 border-white/5 hover:border-primary/40 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(var(--primary),0.05)]",
                                                     isLoading && "opacity-50 cursor-not-allowed grayscale"
                                                 )}
                                             >
                                                 <div className="absolute inset-y-0 left-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-500" />
                                                 <div className="flex items-center justify-between">
-                                                    <div className="space-y-1">
-                                                        <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
-                                                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-50">Transmit Override Protocol</p>
+                                                    <div className="space-y-0.5">
+                                                        <span className="font-bold text-base group-hover:text-primary transition-colors">{choice}</span>
+                                                        <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-40">System Directive Alpha</p>
                                                     </div>
                                                     {isLoading ? (
-                                                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                                                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
                                                     ) : (
-                                                        <ShieldCheck size={24} className="text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
+                                                        <ShieldCheck size={20} className="text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
                                                     )}
                                                 </div>
                                             </button>

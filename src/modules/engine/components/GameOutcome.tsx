@@ -47,18 +47,20 @@ export function GameOutcome() {
                 <div className="p-10 rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-emerald-500/10 shadow-xl">
                     <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4 flex items-center justify-center gap-3">
                         <ShieldCheck size={16} />
-                        Efficiency Rating
+                        Trust Score
                     </p>
-                    <p className="text-5xl font-black text-emerald-500">+{currentOutcome.score}</p>
-                    <p className="text-xs text-emerald-500/60 font-black uppercase mt-3 tracking-widest">Trust Gain Secured</p>
+                    <p className="text-5xl font-black text-emerald-500">{currentOutcome.score > 0 ? '+' : ''}{currentOutcome.score}</p>
+                    <p className="text-xs text-emerald-500/60 font-black uppercase mt-3 tracking-widest">Protocol Integrity Verified</p>
                 </div>
                 <div className="p-10 rounded-[2.5rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10 shadow-xl">
                     <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4 flex items-center justify-center gap-3">
                         <Zap size={16} />
-                        Network Experience
+                        Societal Impact
                     </p>
-                    <p className="text-5xl font-black text-amber-500">+{currentOutcome.score * 5}</p>
-                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">XP Uplink Verified</p>
+                    <p className="text-5xl font-black text-amber-500">
+                        {Math.abs(currentOutcome.score) > 15 ? 'HIGH' : Math.abs(currentOutcome.score) > 5 ? 'MEDIUM' : 'LOW'}
+                    </p>
+                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">Global Network Analysis</p>
                 </div>
             </div>
 
