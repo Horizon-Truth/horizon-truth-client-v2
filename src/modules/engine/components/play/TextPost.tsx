@@ -64,3 +64,22 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                     </div>
 
                     <div className="mt-2 space-y-4">
+                        <p className="text-[15px] sm:text-[17px] text-slate-800 leading-normal whitespace-pre-wrap">
+                            {content?.textBody || scene.description}
+                        </p>
+
+                        {/* Contextual Action Menu */}
+                        {scene.availableChoices.length > 0 && (
+                            <div className="pt-4 sm:pt-6 border-t border-white/5 space-y-3">
+                                <div className="flex items-center justify-between px-1">
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contextual Response</span>
+                                </div>
+                                <div className="space-y-2">
+                                    {scene.availableChoices.map((choice: string, index: number) => (
+                                        <motion.button
+                                            key={choice}
+                                            disabled={isLoading}
+                                            whileHover={{ scale: 1.01, x: 2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => onChoice?.(choice)}
+                                            className={cn(
