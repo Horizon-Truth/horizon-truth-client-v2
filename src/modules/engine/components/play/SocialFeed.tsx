@@ -20,3 +20,25 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
     // Track social context exposure when feed mounts
     React.useEffect(() => {
         if (!activeProgress?.id || !scene.id) return;
+        telemetryService.trackSocialContext(activeProgress.id, scene.id, {
+            social_context_exposed: 'peer',
+            social_metrics_visible: true,
+            like_count_shown: feedItems.length * 500, // Aggregate fake numbers
+            share_count_shown: feedItems.length * 100,
+            comment_count_shown: feedItems.length * 20,
+            authority_badge_visible: false
+        });
+    }, [activeProgress?.id, scene.id, feedItems.length]);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLDivElement;
+        const scrollPercent = Math.round((target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100);
+
+        if (!activeProgress?.id || !scene.id || isNaN(scrollPercent)) return;
+
+        // Track Scroll Depth
+        telemetryService.trackConsumption(activeProgress.id, scene.id, {
+            scroll_depth_percent: scrollPercent,
+            paragraphs_viewed: Math.floor((scrollPercent / 100) * feedItems.length),
+        });
+    };
