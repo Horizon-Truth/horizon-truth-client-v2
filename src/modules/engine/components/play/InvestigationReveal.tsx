@@ -21,3 +21,27 @@ interface SummaryChoice {
 }
 
 export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progressId, onComplete }) => {
+    const [summary, setSummary] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [visibleCount, setVisibleCount] = useState(0);
+
+    useEffect(() => {
+        const fetchSummary = async () => {
+            try {
+                const data = await engineService.getScenarioSummary(progressId);
+                setSummary(data);
+                setLoading(false);
+
+                // Staggered reveals
+                for (let i = 0; i < data.choices.length; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    setVisibleCount(i + 1);
+                }
+            } catch (err) {
+                console.error('Failed to fetch summary:', err);
+                setLoading(false);
+            }
+        };
+        fetchSummary();
+
+        // Start verification timer

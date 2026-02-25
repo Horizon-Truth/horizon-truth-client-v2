@@ -15,3 +15,20 @@ const feedbackSchema = z.object({
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
     status: z.enum(["OPEN", "IN_PROGRESS", "RESOLVED"]),
     deadline: z.string().optional(),
+});
+
+type FeedbackFormValues = z.infer<typeof feedbackSchema>;
+
+interface AddFeedbackModalProps {
+    scenarioId?: string;
+    isGuest?: boolean;
+    onSuccess: () => void;
+    onCancel: () => void;
+}
+
+export default function AddFeedbackModal({ scenarioId, isGuest, onSuccess, onCancel }: AddFeedbackModalProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<FeedbackFormValues>({

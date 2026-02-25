@@ -7,3 +7,13 @@
  * change is required: the world state is the story-level consequence of how
  * well the player has handled the campaign's missions so far.
  */
+
+import type { Scenario } from '@/services/engine.service';
+
+export interface CampaignWorldState {
+    completed: number;
+    total: number;
+    /** 0–100 completion of the arc. */
+    pct: number;
+    /** Average best accuracy across completed missions, or null before any. */
+    avgAccuracy: number | null;

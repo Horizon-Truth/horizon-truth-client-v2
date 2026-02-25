@@ -45,3 +45,41 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0.3 : 0.8, delay: 0.5 }}
             className="w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xl"
+        >
+            <div className="p-4 flex gap-3">
+                <Avatar className="w-12 h-12 border border-white/10">
+                    <AvatarImage src={`https://ui-avatars.com/api/?name=HS&background=0D8ABC&color=fff`} />
+                    <AvatarFallback>HS</AvatarFallback>
+                </Avatar>
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                        <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-slate-900 hover:underline cursor-pointer truncate">Horizon Systems</span>
+                            <span className="text-[10px] sm:text-xs md:text-sm text-slate-500 truncate">@horizon_intel · 12m</span>
+                        </div>
+                        <button className="text-muted-foreground hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1 flex-shrink-0">
+                            <MoreHorizontal className="w-5 h-5 cursor-pointer" />
+                        </button>
+                    </div>
+
+                    <div className="mt-2 space-y-4">
+                        <p className="text-[15px] sm:text-[17px] text-slate-800 leading-normal whitespace-pre-wrap">
+                            {content?.textBody || scene.description}
+                        </p>
+
+                        {/* Contextual Action Menu */}
+                        {scene.availableChoices.length > 0 && (
+                            <div className="pt-4 sm:pt-6 border-t border-white/5 space-y-3">
+                                <div className="flex items-center justify-between px-1">
+                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Contextual Response</span>
+                                </div>
+                                <div className="space-y-2">
+                                    {scene.availableChoices.map((choice: string, index: number) => (
+                                        <motion.button
+                                            key={choice}
+                                            disabled={isLoading}
+                                            whileHover={{ scale: 1.01, x: 2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => onChoice?.(choice)}
+                                            className={cn(

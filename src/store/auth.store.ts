@@ -24,3 +24,13 @@ interface User {
 
 interface AuthState {
     user: User | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    isGuest: boolean;
+    loading: boolean;
+    error: string | null;
+    setAuth: (user: User, token: string) => void;
+    setGuest: (isGuest: boolean) => void;
+    updateUser: (user: Partial<User>) => void;
+    logout: () => void;
+    setLoading: (loading: boolean) => void;
