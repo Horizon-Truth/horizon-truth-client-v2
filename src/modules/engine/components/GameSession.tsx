@@ -146,3 +146,91 @@ export function GameSession() {
                             // a guess (lowest confidence).
                             performChoice(pendingChoiceRef.current?.key ?? choices[0], 1);
                         }
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } else {
+            setTimeLeft(null);
+        }
+        return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentScene?.id]);
+
+    // Telemetry: scene context + timing
+    useEffect(() => {
+        if (!activeProgress?.currentScene?.id) return;
+        const progressId = activeProgress.id;
+        const sceneId = activeProgress.currentScene.id;
+
+        telemetryService.trackContext(progressId, sceneId, {
+            player_id: user?.id || 'anonymous',
+            level_id: activeProgress.scenarioId,
+            content_id: sceneId,
+            device_type: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop',
+            network_state: (navigator as any)?.connection?.effectiveType === '4g' ? 'good' : 'poor',
+        });
+        telemetryService.trackTiming(progressId, sceneId, {
+            content_shown_timestamp: new Date().toISOString(),
+        });
+    }, [activeProgress?.currentScene?.id, activeProgress?.id, activeProgress?.scenarioId, user?.id]);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, []);
+
+    const toggleFullscreen = async () => {
+        if (!containerRef.current) return;
+        try {
+            if (!document.fullscreenElement) {
+                await containerRef.current.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (err) {
+            console.error('Error attempting to toggle fullscreen:', err);
+        }
+    };
+
+    // Trust pulse feedback
+    const [prevTrust, setPrevTrust] = useState(stats.trustScore);
+    const [trustPulse, setTrustPulse] = useState<'none' | 'increase' | 'decrease'>('none');
+
+    const totalScenes = (activeProgress as any)?.totalScenes || 5;
+
+    // Keyboard hotkeys (1-9) — ignored while typing or holding modifiers
+    useEffect(() => {
+        if (!activeProgress || pendingChoice) return; // confidence check owns the keys while open
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+            const target = e.target as HTMLElement | null;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+            const key = parseInt(e.key);
+            if (key >= 1 && key <= activeProgress.currentScene.availableChoices.length) {
+                if (!isLoading) {
+                    handleChoice(activeProgress.currentScene.availableChoices[key - 1]);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [activeProgress, isLoading, handleChoice, pendingChoice]);
+
+    // Floating impact numbers
+    const [impacts, setImpacts] = useState<{
+        id: string;
+        label: string;
+        value: number;
+        type: 'trust' | 'influence';
+        x: number;
+        y: number;
+        rotation: number;
+    }[]>([]);
+
+    useEffect(() => {
+        if (stats.trustScore !== prevTrust) {
+            const diff = stats.trustScore - prevTrust;
+            const id = Math.random().toString(36).substring(2, 9);

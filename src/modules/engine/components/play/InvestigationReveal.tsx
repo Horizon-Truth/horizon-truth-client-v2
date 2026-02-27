@@ -45,3 +45,31 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
         fetchSummary();
 
         // Start verification timer
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            verification_start_timestamp: new Date().toISOString()
+        });
+    }, [progressId]);
+
+    /* 
+    const handleLearnMore = () => {
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            learn_more_opened: true,
+            source_button_clicked_count: 1
+        });
+        // In a real app, open a modal with more info
+        alert('Opening detailed verification logs...');
+    };
+    */
+
+    const handleComplete = () => {
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            verification_end_timestamp: new Date().toISOString()
+        });
+        telemetryService.flush(progressId, 'investigation_reveal');
+        onComplete();
+    };
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[600px] space-y-4">
+                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center border border-border">
