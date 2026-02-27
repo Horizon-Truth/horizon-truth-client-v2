@@ -6,14 +6,12 @@ import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
 import ScenarioForm from "../components/ScenarioForm";
-import AddFeedbackModal from "../components/AddFeedbackModal";
 import ScenarioFeedbackList from "../components/ScenarioFeedbackList";
 
 export default function ScenarioManagementPage() {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isFeedbackListOpen, setIsFeedbackListOpen] = useState(false);
     const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
     const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
@@ -148,15 +146,7 @@ export default function ScenarioManagementPage() {
                                 >
                                     <MessageSquare size={18} />
                                 </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="rounded-xl hover:bg-indigo-500/10 hover:text-indigo-500"
-                                    onClick={() => { setActiveScenarioId(scenario.id); setIsFeedbackOpen(true); }}
-                                    title="Add Internal Feedback"
-                                >
-                                    <Plus size={18} />
-                                </Button>
+
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -198,25 +188,7 @@ export default function ScenarioManagementPage() {
                 </div>
             )}
 
-            {/* Add Feedback Modal Overlay */}
-            {isFeedbackOpen && activeScenarioId && (
-                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-background/90 backdrop-blur-md animate-in fade-in duration-300"
-                        onClick={() => setIsFeedbackOpen(false)}
-                    />
-                    <div className="relative z-[130] w-full max-w-lg">
-                        <AddFeedbackModal
-                            scenarioId={activeScenarioId}
-                            onSuccess={() => {
-                                setIsFeedbackOpen(false);
-                                // Optionally refresh list if it's open
-                            }}
-                            onCancel={() => setIsFeedbackOpen(false)}
-                        />
-                    </div>
-                </div>
-            )}
+
 
             {/* Form Overlay */}
             {isFormOpen && (

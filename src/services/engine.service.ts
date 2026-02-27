@@ -30,6 +30,20 @@ export interface Scene {
     chatMessages: any[];
     feedItems: any[];
     availableChoices: string[];
+    choices?: {
+        id?: string;
+        label: string;
+        actionType?: string;
+        nextSceneId?: string;
+        outcomes?: {
+            id?: string;
+            outcomeType: string;
+            score?: number;
+            trustScoreDelta?: number;
+            message?: string;
+            endScenario?: boolean;
+        }[];
+    }[];
 }
 
 export interface GameProgress {
