@@ -23,8 +23,37 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     const [contentType, setContentType] = useState("TEXT");
     const [order, setOrder] = useState(1);
     const [isTerminal, setIsTerminal] = useState(false);
-    const [choices, setChoices] = useState<string[]>([]);
-    const [newChoice, setNewChoice] = useState("");
+
+    // Rich Choices State
+    interface ChoiceOutcome {
+        outcomeType: string;
+        score: number;
+        trustScoreDelta: number;
+        message: string;
+        endScenario: boolean;
+    }
+
+    interface SceneChoice {
+        id?: string;
+        label: string;
+        actionType: string;
+        nextSceneId?: string;
+        outcomes: ChoiceOutcome[];
+    }
+
+    const [choices, setChoices] = useState<SceneChoice[]>([]);
+
+    // New choice form
+    const [newChoiceLabel, setNewChoiceLabel] = useState("");
+    const [showChoiceForm, setShowChoiceForm] = useState(false);
+    const [currentOutcome, setCurrentOutcome] = useState<ChoiceOutcome>({
+        outcomeType: "NEUTRAL",
+        score: 0,
+        trustScoreDelta: 0,
+        message: "",
+        endScenario: false
+    });
+
     const [textBody, setTextBody] = useState("");
     const [mediaUrl, setMediaUrl] = useState("");
 
@@ -52,7 +81,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setSceneType("INVESTIGATION");
         setContentType("TEXT");
         setChoices([]);
-        setNewChoice("");
+        setNewChoiceLabel("");
+        setShowChoiceForm(false);
         setTextBody("");
         setMediaUrl("");
         setIsTerminal(false);
@@ -67,7 +97,15 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setContentType(scene.contentType || "TEXT");
         setOrder(scene.order || 1);
         setIsTerminal(scene.isTerminal || false);
-        setChoices(scene.availableChoices || []);
+
+        // Migrate old simple string choices to rich choices if needed
+        const loadedChoices = scene.choices || scene.availableChoices?.map((label: string) => ({
+            label,
+            actionType: "VERIFY",
+            outcomes: []
+        })) || [];
+
+        setChoices(loadedChoices);
         setTextBody(scene.content?.textBody || "");
         setMediaUrl(scene.content?.imageUrl || scene.content?.videoUrl || "");
         setIsFormOpen(true);
@@ -85,7 +123,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             contentType,
             order,
             isTerminal,
-            availableChoices: choices,
+            choices, // Replaces availableChoices
             content: {
                 contentType,
                 textBody,
@@ -121,14 +159,28 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     };
 
     const addChoice = () => {
-        if (newChoice.trim() && !choices.includes(newChoice.trim())) {
-            setChoices([...choices, newChoice.trim()]);
-            setNewChoice("");
-        }
+        if (!newChoiceLabel.trim()) return;
+
+        const newChoice: SceneChoice = {
+            label: newChoiceLabel.trim(),
+            actionType: "VERIFY",
+            outcomes: currentOutcome.message ? [currentOutcome] : []
+        };
+
+        setChoices([...choices, newChoice]);
+        setNewChoiceLabel("");
+        setCurrentOutcome({
+            outcomeType: "NEUTRAL",
+            score: 0,
+            trustScoreDelta: 0,
+            message: "",
+            endScenario: false
+        });
+        setShowChoiceForm(false);
     };
 
-    const removeChoice = (choice: string) => {
-        setChoices(choices.filter(c => c !== choice));
+    const removeChoice = (indexToRemove: number) => {
+        setChoices(choices.filter((_, idx) => idx !== indexToRemove));
     };
 
     return (
@@ -214,24 +266,89 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-4">
-                            <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Available Choices</Label>
-                            <div className="flex gap-2">
-                                <Input
-                                    value={newChoice}
-                                    onChange={(e) => setNewChoice(e.target.value)}
-                                    placeholder="Enter decision option..."
-                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addChoice())}
-                                    className="rounded-xl h-10 bg-background border-none shadow-sm"
-                                />
-                                <Button onClick={addChoice} size="sm" className="rounded-xl h-10 font-bold px-4">Add</Button>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {choices.map(choice => (
-                                    <div key={choice} className="flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-tighter transition-all hover:bg-primary/20">
-                                        {choice}
-                                        <button onClick={() => removeChoice(choice)} className="hover:text-destructive transition-colors">
-                                            <X size={14} />
-                                        </button>
+                            <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Available Choices & Consequences</Label>
+
+                            {!showChoiceForm ? (
+                                <Button onClick={() => setShowChoiceForm(true)} className="w-full rounded-xl border border-dashed border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 h-10">
+                                    <Plus size={16} className="mr-2" /> Add Decision Option
+                                </Button>
+                            ) : (
+                                <div className="space-y-3 bg-muted/50 p-3 rounded-2xl border border-primary/20">
+                                    <div>
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Choice Text</Label>
+                                        <Input
+                                            value={newChoiceLabel}
+                                            onChange={(e) => setNewChoiceLabel(e.target.value)}
+                                            placeholder="e.g. Trust the informant"
+                                            className="h-9 mt-1"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Outcome Score</Label>
+                                            <Input
+                                                type="number"
+                                                value={currentOutcome.score}
+                                                onChange={(e) => setCurrentOutcome({ ...currentOutcome, score: parseInt(e.target.value) || 0 })}
+                                                className="h-9 mt-1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Trust Impact</Label>
+                                            <Input
+                                                type="number"
+                                                value={currentOutcome.trustScoreDelta}
+                                                onChange={(e) => setCurrentOutcome({ ...currentOutcome, trustScoreDelta: parseInt(e.target.value) || 0 })}
+                                                className="h-9 mt-1"
+                                                placeholder="-10"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Feedback Message</Label>
+                                        <textarea
+                                            value={currentOutcome.message}
+                                            onChange={(e) => setCurrentOutcome({ ...currentOutcome, message: e.target.value })}
+                                            className="w-full h-16 rounded-xl border-input bg-background px-3 py-2 text-sm mt-1"
+                                            placeholder="Feedback shown after they make this choice"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2 pb-2">
+                                        <input
+                                            type="checkbox"
+                                            id="end-scenario-choice"
+                                            checked={currentOutcome.endScenario}
+                                            onChange={(e) => setCurrentOutcome({ ...currentOutcome, endScenario: e.target.checked })}
+                                            className="w-4 h-4 rounded"
+                                        />
+                                        <Label htmlFor="end-scenario-choice" className="text-xs">End scenario if chosen</Label>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" variant="ghost" className="flex-1" onClick={() => setShowChoiceForm(false)}>Cancel</Button>
+                                        <Button size="sm" className="flex-1" onClick={addChoice}>Save Choice</Button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="space-y-2 mt-4">
+                                {choices.map((choice, index) => (
+                                    <div key={index} className="flex flex-col bg-background border border-border/60 rounded-xl overflow-hidden text-sm">
+                                        <div className="flex items-center justify-between p-2.5 bg-muted/30">
+                                            <span className="font-bold text-primary">{choice.label}</span>
+                                            <button onClick={() => removeChoice(index)} className="text-muted-foreground hover:text-destructive">
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                        {choice.outcomes.length > 0 && choice.outcomes[0].message && (
+                                            <div className="p-2.5 pt-0 mt-2 border-t border-border/30">
+                                                <div className="flex gap-2 mb-1">
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.outcomes[0].score}</span>
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent text-accent-foreground">Trust: {choice.outcomes[0].trustScoreDelta}</span>
+                                                    {choice.outcomes[0].endScenario && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">Terminates</span>}
+                                                </div>
+                                                <p className="text-xs text-muted-foreground italic line-clamp-2">"{choice.outcomes[0].message}"</p>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>

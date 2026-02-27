@@ -1,13 +1,16 @@
+
 import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, Star, LayoutDashboard, Zap, ShieldCheck, Activity } from 'lucide-react';
+import { Trophy, Star, LayoutDashboard, Zap, ShieldCheck, Activity, MessageSquarePlus } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
+import PlayerFeedbackModal from './play/PlayerFeedbackModal';
 
 export function GameOutcome() {
     const { currentOutcome, resetGame } = useGameStore();
     const [view, setView] = useState<'reveal' | 'summary'>('reveal');
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
     if (!currentOutcome) return null;
 
@@ -95,7 +98,25 @@ export function GameOutcome() {
                     <Activity className="mr-4" size={28} />
                     Reality Check
                 </Button>
+                <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => setIsFeedbackOpen(true)}
+                    className="h-20 flex-1 rounded-[1.5rem] font-black text-xl border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
+                >
+                    <MessageSquarePlus className="mr-4" size={28} />
+                    Feedback
+                </Button>
             </div>
+
+            {isFeedbackOpen && currentOutcome?.scenario?.id && (
+                <PlayerFeedbackModal
+                    scenarioId={currentOutcome.scenario.id}
+                    onSuccess={() => setIsFeedbackOpen(false)}
+                    onCancel={() => setIsFeedbackOpen(false)}
+                />
+            )}
         </div>
     );
 }
+
