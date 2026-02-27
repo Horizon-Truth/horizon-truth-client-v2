@@ -70,3 +70,75 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
     const fetchScenes = async () => {
         setIsLoading(true);
+        try {
+            const data = await engineService.getScenes(scenarioId);
+            setScenes(data);
+            if (data.length > 0) {
+                setOrder(Math.max(...data.map((s: any) => s.order)) + 1);
+            }
+        } catch (error) {
+            toast.error("Failed to load scenes");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (scenarioId) fetchScenes();
+    }, [scenarioId]);
+
+    const resetForm = () => {
+        setTitle("");
+        setSceneType("INVESTIGATION");
+        setContentType("TEXT");
+        setChoices([]);
+        setNewChoiceLabel("");
+        setShowChoiceForm(false);
+        setTextBody("");
+        setMediaUrl("");
+        setChallengeJson("");
+        setIsTerminal(false);
+        setEditingScene(null);
+        setIsFormOpen(false);
+        setSelectedNextSceneId("");
+        setNewChoiceScoreImpact(0);
+        setNewChoiceInfluenceImpact(0);
+        setNewChoiceActionType("CHOICE");
+        setEditingChoiceIndex(null);
+        setFormSubmitted(false);
+    };
+
+    const handleEdit = (scene: any) => {
+        setEditingScene(scene);
+        setTitle(scene.title || "");
+        setSceneType(scene.sceneType || "INVESTIGATION");
+        setContentType(scene.contentType || "TEXT");
+        setOrder(scene.order || 1);
+        setIsTerminal(scene.isTerminal || false);
+
+        // Migrate old simple string choices to rich choices if needed
+        const loadedChoices = scene.choices || scene.availableChoices?.map((label: string) => ({
+            label,
+            actionType: "VERIFY",
+            outcomes: []
+        })) || [];
+
+        setChoices(loadedChoices);
+        setTextBody(scene.content?.textBody || "");
+        setMediaUrl(scene.content?.imageUrl || scene.content?.videoUrl || "");
+        if (isChallengeType(scene.contentType)) {
+            const { contentType: _ct, textBody: _tb, ...challenge } = scene.content ?? {};
+            setChallengeJson(Object.keys(challenge).length ? JSON.stringify(challenge, null, 2) : "");
+        } else {
+            setChallengeJson("");
+        }
+        setIsFormOpen(true);
+    };
+
+    const handleSave = async () => {
+        setFormSubmitted(true);
+        if (!title.trim()) {
+            toast.error("Stage Title is required");
+            return;
+        }
+        if (choices.length === 0) {
