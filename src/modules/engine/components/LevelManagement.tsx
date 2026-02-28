@@ -21,3 +21,27 @@ interface LevelManagementProps {
 }
 
 export default function LevelManagement({ onClose }: LevelManagementProps) {
+    const [levels, setLevels] = useState<GameLevel[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingLevel, setEditingLevel] = useState<GameLevel | null>(null);
+
+    const [formData, setFormData] = useState({
+        levelNumber: 1,
+        name: "",
+        description: "",
+        estimatedDurationMinutes: 15,
+        isActive: true
+    });
+
+    const fetchLevels = async () => {
+        setIsLoading(true);
+        try {
+            const data = await engineService.getLevels();
+            setLevels(data || []);
+        } catch (error) {
+            toast.error("Failed to load levels");
+        } finally {
+            setIsLoading(false);
+        }
+    };

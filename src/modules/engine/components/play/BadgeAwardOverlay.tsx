@@ -46,3 +46,23 @@ export const BadgeAwardOverlay: React.FC<BadgeAwardOverlayProps> = ({ badge, onC
                 <motion.div
                     key={i}
                     initial={{
+                        opacity: 1,
+                        x: 0,
+                        y: 0,
+                        scale: Math.random() * 0.5 + 0.5,
+                        rotate: 0
+                    }}
+                    animate={{
+                        x: (Math.random() - 0.5) * 1000,
+                        y: (Math.random() - 0.5) * 1000,
+                        opacity: 0,
+                        rotate: Math.random() * 720
+                    }}
+                    transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
+                    className={cn(
+                        "absolute w-2 h-2 rounded-sm",
+                        ["bg-blue-500", "bg-purple-500", "bg-emerald-500", "bg-amber-500", "bg-pink-500"][i % 5]
+                    )}
+                    style={{ left: '50%', top: '50%' }}
+                />
+            ))}

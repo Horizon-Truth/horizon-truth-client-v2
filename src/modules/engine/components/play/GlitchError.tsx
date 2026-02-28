@@ -20,3 +20,12 @@ export const GlitchError: React.FC<GlitchErrorProps> = ({ message, onRetry }) =>
                 animate={{ scale: 1, opacity: 1 }}
                 className="w-full max-w-lg bg-[#0F0F0F] border border-red-500/30 rounded-3xl p-8 relative overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.2)]"
             >
+                {/* Glitch Overlay */}
+                <motion.div
+                    animate={{ opacity: [0, 0.2, 0, 0.1, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.2 }}
+                    className="absolute inset-0 bg-red-500/5 pointer-events-none"
+                />
+
+                <div className="relative z-10 space-y-6">
+                    <div className="flex items-center gap-4 text-red-500">

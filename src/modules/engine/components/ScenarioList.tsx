@@ -44,3 +44,48 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
             meta.set(s.id, {
                 title: campaignTitle(s.campaignTag),
                 chapter,
+                total: byTag.get(s.campaignTag)!.length,
+                isArcStart: chapter === 1,
+                state: campaignWorldState(byTag.get(s.campaignTag)!),
+            });
+        }
+        return meta;
+    }, [scenarios]);
+
+    const lastElementRef = useCallback((node: HTMLDivElement | null) => {
+        if (loadingMore || !hasMore) return;
+        if (observer.current) observer.current.disconnect();
+        
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        
+        if (node) observer.current.observe(node);
+    }, [loadingMore, hasMore]);
+
+    const fetchScenarios = useCallback(async (pageNum: number) => {
+        if (pageNum > 1) setLoadingMore(true);
+        try {
+            const response = await engineService.getScenarios({
+                isActive: true,
+                page: pageNum,
+                limit: 10
+            } as any);
+
+            const newData = Array.isArray(response) ? response : (response.data || []);
+            const totalCount = response.total || newData.length;
+
+            setScenarios(prev => {
+                const combined = [...prev, ...newData];
+                // De-duplicate just in case
+                const deduped = Array.from(new Map(combined.map(item => [item.id, item])).values());
+                setHasMore(deduped.length < totalCount);
+                return deduped;
+            });
+        } catch (err) {
+            console.error('Failed to fetch scenarios', err);
+            setHasMore(false);
+        } finally {
+            if (pageNum === 1) {
