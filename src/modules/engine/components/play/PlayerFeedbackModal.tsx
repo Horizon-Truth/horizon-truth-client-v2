@@ -18,3 +18,15 @@ type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 interface PlayerFeedbackModalProps {
     scenarioId?: string;
     onSuccess: () => void;
+    onCancel: () => void;
+}
+
+export default function PlayerFeedbackModal({ scenarioId, onSuccess, onCancel }: PlayerFeedbackModalProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<FeedbackFormValues>({
+        resolver: zodResolver(feedbackSchema),
+        defaultValues: {
+            commentText: "",

@@ -142,3 +142,89 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             return;
         }
         if (choices.length === 0) {
+            toast.error("At least one decision choice is required");
+            return;
+        }
+
+        let challengeContent: Record<string, any> = {};
+        if (isChallengeType(contentType) && challengeJson.trim()) {
+            try {
+                challengeContent = JSON.parse(challengeJson);
+            } catch {
+                toast.error("Challenge content is not valid JSON");
+                return;
+            }
+        }
+
+        const sceneData = {
+            title,
+            sceneType,
+            contentType,
+            order,
+            isTerminal,
+            choices, // Replaces availableChoices
+            content: {
+                ...challengeContent,
+                contentType,
+                textBody,
+                imageUrl: contentType === "IMAGE" ? mediaUrl : undefined,
+                videoUrl: contentType === "VIDEO" ? mediaUrl : undefined,
+            }
+        };
+
+        try {
+            if (editingScene) {
+                await engineService.updateScene(editingScene.id, sceneData);
+                toast.success("Scene updated");
+            } else {
+                await engineService.createScene(scenarioId, sceneData);
+                toast.success("Scene created");
+            }
+            fetchScenes();
+            resetForm();
+        } catch (error) {
+            toast.error("Failed to save scene");
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure?")) return;
+        try {
+            await engineService.deleteScene(id);
+            toast.success("Scene removed");
+            fetchScenes();
+        } catch (error) {
+            toast.error("Failed to delete scene");
+        }
+    };
+
+    const saveChoice = () => {
+        if (!newChoiceLabel.trim()) return;
+
+        const updatedChoice: SceneChoice = {
+            label: newChoiceLabel.trim(),
+            actionType: newChoiceActionType,
+            nextSceneId: selectedNextSceneId || undefined,
+            scoreImpact: newChoiceScoreImpact,
+            influenceImpact: newChoiceInfluenceImpact,
+            outcomes: currentOutcome.message ? [currentOutcome] : []
+        };
+
+        if (editingChoiceIndex !== null) {
+            const updatedChoices = [...choices];
+            updatedChoices[editingChoiceIndex] = updatedChoice;
+            setChoices(updatedChoices);
+        } else {
+            setChoices([...choices, updatedChoice]);
+        }
+
+        setNewChoiceLabel("");
+        setSelectedNextSceneId("");
+        setCurrentOutcome({
+            outcomeType: "NEUTRAL",
+            score: 0,
+            trustScoreDelta: 0,
+            message: "",
+            endScenario: false
+        });
+        setEditingChoiceIndex(null);

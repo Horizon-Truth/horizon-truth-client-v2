@@ -79,3 +79,51 @@ const INITIAL_STATS: GameStats = {
 
 export const useGameStore = create<GameState>()(
     persist(
+        (set, get) => ({
+            stats: INITIAL_STATS,
+            activeProgress: null,
+            currentOutcome: null,
+            history: [],
+            isLoading: false,
+            error: null,
+            pendingBadges: [],
+            lastSpreadSimulation: null,
+            lastChoiceLabel: null,
+            lastChoiceFeedback: null,
+            lastChoiceCorrect: null,
+            lastTrustDelta: 0,
+            lastChoiceTrap: null,
+            reputationRole: 'OBSERVER',
+            currentStreak: 0,
+            skillBook: {},
+            calibration: EMPTY_CALIBRATION,
+            lastConfidence: null,
+            missionImpact: null,
+            dailyLedger: null,
+            lifetimeImpact: { reached: 0, preventedReach: 0 },
+
+            prefetchAssets: (scene: any) => {
+                if (!scene || !scene.content) return;
+
+                const assetsToPreload: string[] = [];
+                if (scene.content.imageUrl) assetsToPreload.push(scene.content.imageUrl);
+                if (scene.content.videoUrl) assetsToPreload.push(scene.content.videoUrl);
+                if (scene.content.mediaUrl) assetsToPreload.push(scene.content.mediaUrl);
+                if (scene.content.feedItems) {
+                    scene.content.feedItems.forEach((item: any) => {
+                        if (item.mediaUrl) assetsToPreload.push(item.mediaUrl);
+                    });
+                }
+
+                assetsToPreload.forEach(url => {
+                    if (url.endsWith('.mp4') || url.endsWith('.webm')) {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.as = 'video';
+                        link.href = url;
+                        document.head.appendChild(link);
+                    } else {
+                        const img = new Image();
+                        img.src = url;
+                    }
+                });

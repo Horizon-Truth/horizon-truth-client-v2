@@ -16,3 +16,19 @@ import { telemetryService } from '@/services/telemetry.service';
  * as verification telemetry.
  *
  * scene.content contract:
+ * {
+ *   prompt?: string,
+ *   sources: [{
+ *     name: string, handle?: string, avatarUrl?: string,
+ *     verified?: boolean, timestamp?: string,
+ *     headline: string, excerpt?: string,
+ *     signals?: { label: string; detail: string; suspicious?: boolean }[]
+ *   }]
+ * }
+ */
+
+interface SourceComparisonProps {
+    scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
+}

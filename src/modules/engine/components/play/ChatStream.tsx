@@ -16,3 +16,21 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const messages = scene.content?.chatMessages || [];
+
+    useEffect(() => {
+        setVisibleMessages([]);
+        let mounted = true;
+
+        const showMessages = async () => {
+            for (let i = 0; i < messages.length; i++) {
+                if (!mounted) break;
+
+                // Only show typing for non-user messages
+                if (messages[i].sender !== 'USER') {
+                    setIsTyping(true);
+                    // Simulate realistic typing delay
+                    const typingTime = 1000 + Math.random() * 1500;
+                    await new Promise(resolve => setTimeout(resolve, typingTime));
+                }
+
+                if (!mounted) break;

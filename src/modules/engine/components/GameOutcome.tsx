@@ -30,3 +30,36 @@ const NARRATIVE_CONFIG: Record<string, {
         subtitle: 'Good work — you slowed the spread significantly, though some misinformation still reached the network.',
         surface: 'bg-blue-500/10 border-blue-500/25',
         icon: <ShieldCheck size={40} className="text-blue-500" aria-hidden />,
+    },
+    VIRAL_MISINFORMATION: {
+        title: 'Viral Misinformation',
+        subtitle: 'The false claim reached thousands before fact-checkers could intervene. The damage is significant.',
+        surface: 'bg-orange-500/10 border-orange-500/25',
+        icon: <Globe size={40} className="text-orange-500" aria-hidden />,
+    },
+    COMMUNITY_CRISIS: {
+        title: 'Community Crisis',
+        subtitle: 'Your decisions amplified the narrative. The community is divided and trust in institutions has fallen.',
+        surface: 'bg-red-500/10 border-red-500/25',
+        icon: <TrendingDown size={40} className="text-red-500" aria-hidden />,
+    },
+};
+
+export function GameOutcome() {
+    const { currentOutcome, resetGame, stats, missionImpact } = useGameStore();
+    const [view, setView] = useState<'reveal' | 'summary'>('reveal');
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [scenario, setScenario] = useState<Scenario | null>(null);
+
+    // Enrich the result screen with the scenario's educational content
+    useEffect(() => {
+        const scenarioId = currentOutcome?.scenario?.id;
+        if (!scenarioId) return;
+        engineService.getScenarioById(scenarioId)
+            .then(setScenario)
+            .catch(() => setScenario(null));
+    }, [currentOutcome?.scenario?.id]);
+
+    if (!currentOutcome) return null;
+
+    const isSuccess = currentOutcome.passed ?? (currentOutcome.outcomeType === 'SUCCESS' || currentOutcome.outcomeType === 'PASS' || currentOutcome.outcomeType === 'PERFECT_PASS' || (currentOutcome.accuracyRate !== undefined && currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate >= 70));
