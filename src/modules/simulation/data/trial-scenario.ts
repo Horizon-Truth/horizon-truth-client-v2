@@ -25,3 +25,31 @@ export interface Scene {
     author: string;
     handle?: string;
     content: string;
+    mediaUrl?: string;
+    timestamp: string;
+    /** Technique key from learning-content.ts this scene teaches. */
+    techniqueKey: string;
+    choices: Choice[];
+}
+
+export interface Scenario {
+    id: string;
+    title: string;
+    description: string;
+    learningObjective: string;
+    psychologicalTrigger: string;
+    preventionLesson: string;
+    scenes: Scene[];
+}
+
+export const TRIAL_SCENARIO: Scenario = {
+    id: 'trial-002',
+    title: 'One Day in the Feed',
+    description: 'A normal day online — except every post is trying to fool you in a different way. Spot all seven manipulation techniques to protect your community.',
+    learningObjective: 'Recognize the seven most common manipulation techniques — emotional manipulation, false urgency, fake authority, context manipulation, manufactured consensus, misleading statistics, and impersonation — before you react.',
+    psychologicalTrigger: 'Misinformation rarely lies to your logic first. It targets your emotions, your trust in experts, and your instinct to follow the crowd — and pressures you to act before you think.',
+    preventionLesson: 'One habit defeats most techniques: pause, then verify. Check the original source, the date, the account, and the numbers before you share, reply, or believe.',
+    scenes: [
+        {
+            id: 'scene-emotional',
+            type: 'SOCIAL_POST',
