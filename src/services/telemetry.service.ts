@@ -43,3 +43,21 @@ export interface TelemetryPayload {
     verification?: {
         source_button_clicked_count?: number;
         learn_more_opened?: boolean;
+        fact_panel_views?: number;
+        external_link_clicked?: boolean;
+        profile_checked?: boolean;
+        verification_start_timestamp?: string;
+        verification_end_timestamp?: string;
+        verification_time_ms?: number;
+        verification_sequence_length?: number;
+    };
+    response_timing?: {
+        content_shown_timestamp?: string;
+        first_action_timestamp?: string;
+        final_decision_timestamp?: string;
+        time_to_first_action_ms?: number;
+        time_to_final_decision_ms?: number;
+    };
+}
+
+class TelemetryService {
