@@ -15,6 +15,8 @@ export interface ReportTag {
     name: string;
     slug: string;
     isActive: boolean;
+    icon?: string;
+    color?: string;
 }
 
 export interface Language {
@@ -36,12 +38,12 @@ export const reportService = {
         return response.data;
     },
 
-    async createReportTag(data: { name: string; slug: string; isActive?: boolean }) {
+    async createReportTag(data: { name: string; slug: string; isActive?: boolean; icon?: string; color?: string }) {
         const response = await api.post('/report-tags', data);
         return response.data;
     },
 
-    async updateReportTag(id: string, data: { name?: string; slug?: string; isActive?: boolean }) {
+    async updateReportTag(id: string, data: { name?: string; slug?: string; isActive?: boolean; icon?: string; color?: string }) {
         const response = await api.patch(`/report-tags/${id}`, data);
         return response.data;
     },
@@ -53,6 +55,16 @@ export const reportService = {
 
     async getReports(params?: any) {
         const response = await api.get('/reports', { params });
+        return response.data;
+    },
+
+    async getReportById(id: string) {
+        const response = await api.get(`/reports/${id}`);
+        return response.data;
+    },
+
+    async addVerification(reportId: string, data: { comment: string; status: string; rating?: number }) {
+        const response = await api.post(`/reports/${reportId}/verify`, data);
         return response.data;
     },
 
