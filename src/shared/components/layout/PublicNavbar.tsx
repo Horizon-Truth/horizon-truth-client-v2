@@ -21,9 +21,7 @@ export const PublicNavbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <ShieldCheck className="text-primary-foreground w-5 h-5" />
-                        </div>
+                        <img src="/src/assets/logo.png" alt="Horizon Truth Logo" className="h-10 w-auto" />
                         <span className="text-xl font-bold tracking-tight">HORIZON TRUTH</span>
                     </div>
 

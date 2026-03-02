@@ -88,7 +88,7 @@ export default function LandingPage() {
                                 ))}
                             </div>
                         </div>
-                        <div className="lg:w-1/2 bg-blue-100 rounded-3xl p-8 aspect-video flex items-center justify-center relative overflow-hidden group">
+                        <div className="lg:w-1/2 bg-primary/10 rounded-3xl p-8 aspect-video flex items-center justify-center relative overflow-hidden group">
                             <ShieldCheck size={120} className="text-primary/20 group-hover:scale-110 transition-transform" />
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
                         </div>

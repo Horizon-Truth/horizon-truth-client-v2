@@ -1,7 +1,8 @@
-import { ShieldCheck, Target, Eye, Lightbulb, Users, GraduationCap, Linkedin, Twitter } from "lucide-react";
+import { ShieldCheck, Target, Eye, Lightbulb, Users, GraduationCap } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
+import TeamSection from "./components/TeamSection";
 
 export default function AboutPage() {
     const navigate = useNavigate();
@@ -169,39 +170,7 @@ export default function AboutPage() {
             </section>
 
             {/* Team Section */}
-            <section id="our-team" className="py-24 bg-background">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <span className="text-primary font-semibold uppercase tracking-widest text-sm">Our Team</span>
-                        <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4">Meet The Horizon Truth Team</h2>
-                        <p className="text-muted-foreground text-lg">Dedicated professionals working together to combat misinformation.</p>
-                    </div>
-                    <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
-                        {[
-                            { name: "Abdurahman Abrar", role: "PI, AI & Data Science Lead" },
-                            { name: "Muhammed Hassen", role: "Co-PI, Data Engineering Lead" },
-                            { name: "Abdurezak Yisak", role: "Co-PI, UX/UI Designer" },
-                            { name: "Mohammed Ibrahim", role: "Co-PI & Lead Content Developer" },
-                            { name: "Getahun Assefa", role: "Community Manager" },
-                            { name: "Ajaib Mohammed", role: "DevOps Manager" },
-                            { name: "Bilkes Elias", role: "AI & ML Expert" },
-                            { name: "Dr. Muhammed Mumtaz", role: "ICT Consultant" }
-                        ].map((member, i) => (
-                            <div key={i} className="p-6 bg-card border rounded-2xl text-center shadow-sm hover:shadow-md transition-all">
-                                <div className="w-24 h-24 bg-secondary rounded-full mx-auto mb-4 flex items-center justify-center text-secondary-foreground font-bold text-xl">
-                                    {member.name.split(' ').map(n => n[0]).join('')}
-                                </div>
-                                <h4 className="text-xl font-bold mb-1">{member.name}</h4>
-                                <p className="text-primary font-medium text-sm mb-4">{member.role}</p>
-                                <div className="flex justify-center gap-3">
-                                    <button className="text-muted-foreground hover:text-primary transition-colors"><Linkedin size={18} /></button>
-                                    <button className="text-muted-foreground hover:text-primary transition-colors"><Twitter size={18} /></button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <TeamSection />
 
             {/* CTA Section */}
             <section className="py-24 bg-secondary/20">

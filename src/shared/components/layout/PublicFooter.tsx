@@ -9,11 +9,9 @@ export const PublicFooter = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b pb-12">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div className="col-span-2">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-                                <ShieldCheck className="text-primary-foreground w-4 h-4" />
-                            </div>
-                            <span className="font-bold italic">HORIZON TRUTH</span>
+                        <div className="flex items-center gap-3 mb-6">
+                            <img src="/src/assets/logo.png" alt="Horizon Truth Logo" className="h-8 w-auto" />
+                            <span className="font-bold italic text-lg tracking-tight">HORIZON TRUTH</span>
                         </div>
                         <p className="text-sm text-muted-foreground max-w-xs">
                             Empowering minds through gamified digital literacy. Building a more truthful digital space.
