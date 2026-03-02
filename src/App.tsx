@@ -3,7 +3,10 @@ import { MainLayout } from "./shared/layouts/MainLayout";
 import DashboardPage from "./modules/analytics/DashboardPage";
 import LandingPage from "./modules/landing/LandingPage";
 import AboutPage from "./modules/about/AboutPage";
-import ResourcesPage from "./modules/resources/ResourcesPage";
+import BlogResourcePage from "./modules/resources/BlogResourcePage";
+import ResourceLibraryPage from "./modules/resources/ResourceLibraryPage";
+import BlogDetailPage from "./modules/resources/BlogDetailPage";
+import ResourceDetailPage from "./modules/resources/ResourceDetailPage";
 import FaqPage from "./modules/faq/FaqPage";
 import ContactPage from "./modules/contact/ContactPage";
 import PrivacyPolicyPage from "./modules/legal/PrivacyPolicyPage";
@@ -41,7 +44,10 @@ function App() {
         {/* Public Landing Page */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/resources" element={<BlogResourcePage />} />
+        <Route path="/resources/library" element={<ResourceLibraryPage />} />
+        <Route path="/blog/:id" element={<BlogDetailPage />} />
+        <Route path="/resource/:id" element={<ResourceDetailPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />

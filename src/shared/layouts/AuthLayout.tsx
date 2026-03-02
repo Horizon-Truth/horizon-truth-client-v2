@@ -7,6 +7,18 @@ export function AuthLayout() {
 
     return (
         <div className="min-h-screen relative flex items-center justify-center bg-background overflow-hidden p-4">
+            {/* Back to Home Button */}
+            <div className="absolute top-8 left-8 z-50">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 text-muted-foreground hover:text-foreground backdrop-blur-md bg-white/5 border border-white/5 rounded-full px-4 h-10"
+                    onClick={() => navigate('/')}
+                >
+                    <ArrowLeft size={16} /> Back to Home
+                </Button>
+            </div>
+
             {/* Background Decorative Elements */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
@@ -15,15 +27,6 @@ export function AuthLayout() {
 
             <div className="w-full max-w-md relative z-10">
                 <div className="mb-8 flex flex-col items-center">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="mb-8 self-start gap-2 text-muted-foreground hover:text-foreground"
-                        onClick={() => navigate('/')}
-                    >
-                        <ArrowLeft size={16} /> Back to Home
-                    </Button>
-
                     <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
                         <ShieldCheck className="text-primary-foreground w-7 h-7" />
                     </div>
