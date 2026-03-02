@@ -13,6 +13,7 @@ import CrowdsourcingListingPage from "./modules/reports/CrowdsourcingListingPage
 import CrowdsourcingDetailPage from "./modules/reports/CrowdsourcingDetailPage";
 import { PublicLayout } from "./shared/layouts/PublicLayout";
 import { AuthLayout } from "./shared/layouts/AuthLayout";
+import { ScrollToTop } from "./shared/components/layout/ScrollToTop";
 import { LoginForm } from "./shared/components/auth/LoginForm";
 import { RegisterForm } from "./shared/components/auth/RegisterForm";
 import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
@@ -35,6 +36,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Landing Page */}
         <Route path="/" element={<LandingPage />} />
