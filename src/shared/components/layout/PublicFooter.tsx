@@ -11,7 +11,7 @@ export const PublicFooter = () => {
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-6">
                             <img src="/src/assets/logo.png" alt="Horizon Truth Logo" className="h-8 w-auto" />
-                            <span className="font-bold italic text-lg tracking-tight">HORIZON TRUTH</span>
+                            {/* <span className="font-bold italic text-lg tracking-tight">HORIZON TRUTH</span> */}
                         </div>
                         <p className="text-sm text-muted-foreground max-w-xs">
                             Empowering minds through gamified digital literacy. Building a more truthful digital space.
