@@ -83,3 +83,64 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                                             whileTap={{ scale: 0.98 }}
                                             onClick={() => onChoice?.(choice)}
                                             className={cn(
+                                                "w-full p-4 sm:p-6 h-auto rounded-2xl sm:rounded-3xl text-left transition-all relative overflow-hidden group/btn",
+                                                "bg-slate-50 border border-slate-200 hover:border-primary/40 hover:bg-primary/5",
+                                                "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                                                isLoading && "opacity-50 cursor-not-allowed"
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-3 sm:gap-4 relative z-10">
+                                                <div className={cn(
+                                                    "w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center font-black text-xs sm:text-sm transition-colors group-hover/btn:bg-primary group-hover/btn:text-white",
+                                                    isLoading && "animate-pulse bg-primary/20"
+                                                )}>
+                                                    {isLoading ? "..." : index + 1}
+                                                </div>
+                                                <span className="text-sm sm:text-base font-bold text-slate-700 leading-tight">{choice}</span>
+                                            </div>
+
+                                            <span className={cn(
+                                                "absolute left-0 top-0 bottom-0 w-1 bg-primary/40 scale-y-0 transition-transform origin-top group-hover/btn:scale-y-100",
+                                                isLoading && "scale-y-100 animate-pulse"
+                                            )} />
+
+                                            {isLoading && (
+                                                <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
+                                            )}
+                                        </motion.button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex flex-wrap items-center justify-between pt-4 max-w-sm text-slate-500 font-black gap-y-4 gap-x-4 sm:gap-x-6">
+                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-blue-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-blue-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
+                                <div className="p-1.5 sm:p-2 group-hover:bg-blue-600/10 rounded-full transition-colors">
+                                    <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </div>
+                                <span className="text-xs sm:text-sm">42</span>
+                            </button>
+                            <button
+                                onClick={handleShareClick}
+                                className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-emerald-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3"
+                            >
+                                <div className="p-1.5 sm:p-2 group-hover:bg-emerald-600/10 rounded-full transition-colors">
+                                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </div>
+                                <span className="text-xs sm:text-sm">1.2K</span>
+                            </button>
+                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-rose-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-rose-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
+                                <div className="p-1.5 sm:p-2 group-hover:bg-rose-600/10 rounded-full transition-colors">
+                                    <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </div>
+                                <span className="text-xs sm:text-sm">15.4K</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+});
+
+TextPost.displayName = 'TextPost';

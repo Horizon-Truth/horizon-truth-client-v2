@@ -9,3 +9,13 @@ const SocialFeed = lazy(() => import('./SocialFeed').then(m => ({ default: m.Soc
 const VideoPlayer = lazy(() => import('./VideoPlayer').then(m => ({ default: m.VideoPlayer })));
 const NetworkPropagationMap = lazy(() => import('./NetworkPropagationMap').then(m => ({ default: m.NetworkPropagationMap })));
 const UrlInspection = lazy(() => import('./UrlInspection').then(m => ({ default: m.UrlInspection })));
+const SourceComparison = lazy(() => import('./SourceComparison').then(m => ({ default: m.SourceComparison })));
+
+interface SceneRendererProps {
+    scene: Scene;
+    onChoice?: (choice: string) => void;
+    isLoading?: boolean;
+}
+
+export const SceneRenderer: React.FC<SceneRendererProps> = memo(({ scene, onChoice, isLoading }) => {
+    const contentType = scene.contentType || (scene as any).content?.contentType;

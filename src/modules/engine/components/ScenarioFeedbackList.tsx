@@ -12,3 +12,17 @@ interface ScenarioFeedbackListProps {
 export default function ScenarioFeedbackList({ scenarioId }: ScenarioFeedbackListProps) {
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState<string | null>(null);
+
+    const fetchFeedbacks = async () => {
+        setIsLoading(true);
+        try {
+            const response = await feedbackService.getFeedbacks({ scenarioId, status: statusFilter || undefined });
+            setFeedbacks(response.data || []);
+        } catch (error) {
+            console.error("Failed to fetch feedbacks:", error);
+            toast.error("Failed to load feedbacks");
+        } finally {
+            setIsLoading(false);
+        }
+    };

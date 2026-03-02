@@ -44,3 +44,48 @@ export default function ScenarioManagementPage() {
     };
 
     useEffect(() => {
+        fetchScenarios();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, languageFilter]);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this scenario? This will remove all associated scenes.")) return;
+
+        try {
+            await engineService.deleteScenario(id);
+            toast.success("Scenario deleted successfully");
+            fetchScenarios();
+        } catch (error) {
+            toast.error("Failed to delete scenario");
+        }
+    };
+
+    const toggleStatus = async (scenario: Scenario) => {
+        try {
+            await engineService.updateScenario(scenario.id, { isActive: !scenario.isActive });
+            toast.success(`Scenario ${!scenario.isActive ? 'activated' : 'deactivated'} successfully`);
+            fetchScenarios();
+        } catch (error) {
+            toast.error("Failed to update status");
+        }
+    };
+
+    const toggleArchive = async (scenario: Scenario) => {
+        try {
+            const newArchivedStatus = !scenario.isArchived;
+            await engineService.updateScenario(scenario.id, { isArchived: newArchivedStatus });
+            toast.success(`Scenario ${newArchivedStatus ? 'archived' : 'restored'} successfully`);
+            fetchScenarios();
+        } catch (error) {
+            toast.error("Failed to update archive status");
+        }
+    };
+
+    const handleExport = async () => {
+        if (selectedIds.length === 0) {
+            toast.error("Please select at least one scenario to export");
+            return;
+        }
+
+        try {
+            const data = await engineService.exportScenarios(selectedIds);

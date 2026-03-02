@@ -42,3 +42,31 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
             paragraphs_viewed: Math.floor((scrollPercent / 100) * feedItems.length),
         });
     };
+
+    return (
+        <div
+            className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar pb-8"
+            onScroll={handleScroll}
+        >
+            <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 pb-2 mb-4">
+                <h3 className="text-sm font-bold tracking-tight uppercase px-4 pt-2 text-slate-900">Global Live Feed</h3>
+            </div>
+
+            {feedItems.sort((a: any, b: any) => a.itemOrder - b.itemOrder).map((item: any, idx: number) => (
+                <FeedItem key={item.id || idx} item={item} index={idx} />
+            ))}
+
+            {/* Social Reaction-style Choice Bar */}
+            {scene.availableChoices.length > 0 && (
+                <div className="sticky bottom-4 left-0 right-0 flex justify-center px-2 sm:px-4">
+                    <motion.div
+                        initial={{ y: 50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="p-1.5 rounded-3xl sm:rounded-full bg-slate-50/90 backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-wrap justify-center items-center gap-1"
+                    >
+                        {scene.availableChoices.map((choice: string) => (
+                            <motion.button
+                                key={choice}
+                                disabled={isLoading}
+                                whileHover={{
+                                    scale: 1.05,
