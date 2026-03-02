@@ -36,7 +36,7 @@ export default function LandingPage() {
                         <ShieldCheck size={16} className="text-primary" />
                         <span className="text-xs font-semibold text-primary uppercase tracking-wider">Verified community content</span>
                     </div>
-                    <h1 className="text-4xl lg:text-7xl font-extrabold tracking-tight mb-6">
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6">
                         Empowering Minds,<br />
                         <span className="text-primary">Fighting Misinformation</span>
                     </h1>

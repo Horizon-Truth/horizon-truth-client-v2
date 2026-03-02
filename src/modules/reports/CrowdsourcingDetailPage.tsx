@@ -49,7 +49,7 @@ export default function CrowdsourcingDetailPage() {
                 </div>
 
                 <section className="py-12 bg-background">
-                    <div className="max-max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid lg:grid-cols-3 gap-12">
 
                             {/* Left Column: Report Details */}
@@ -74,7 +74,7 @@ export default function CrowdsourcingDetailPage() {
                                                 <p className="font-bold">{report.author}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 border-l pl-6 md:border-l md:pl-6 border-transparent">
                                             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border font-bold text-primary">
                                                 <Clock size={18} />
                                             </div>
@@ -128,10 +128,10 @@ export default function CrowdsourcingDetailPage() {
                                                 <p className="text-muted-foreground leading-relaxed mb-6 italic">"{v.comment}"</p>
                                                 <div className="flex items-center gap-6 pt-6 border-t">
                                                     <button onClick={() => handleVote('up')} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
-                                                        <ThumbsUp size={16} /> Helpfull
+                                                        <ThumbsUp size={16} /> Helpful
                                                     </button>
                                                     <button onClick={() => handleVote('down')} className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-red-500 transition-colors">
-                                                        <ThumbsDown size={16} /> Not Helpfull
+                                                        <ThumbsDown size={16} /> Not Helpful
                                                     </button>
                                                     <span className="text-xs text-muted-foreground ml-auto">{new Date(v.date).toLocaleDateString()}</span>
                                                 </div>

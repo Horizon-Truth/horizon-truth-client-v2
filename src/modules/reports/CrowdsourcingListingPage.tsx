@@ -79,8 +79,8 @@ export default function CrowdsourcingListingPage() {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'RESOLVED': return 'bg-green-500/10 text-green-500 border-green-500/20';
-            case 'UNDER_REVIEW': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-            case 'PENDING': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+            case 'UNDER_REVIEW': return 'bg-primary/10 text-primary border-primary/20';
+            case 'PENDING': return 'bg-accent/10 text-accent-foreground border-accent/20';
             default: return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
         }
     };
@@ -88,8 +88,8 @@ export default function CrowdsourcingListingPage() {
     const getSeverityColor = (severity: string) => {
         switch (severity) {
             case 'high': return 'text-red-500';
-            case 'medium': return 'text-yellow-500';
-            case 'low': return 'text-blue-500';
+            case 'medium': return 'text-accent-foreground';
+            case 'low': return 'text-secondary';
             default: return 'text-gray-500';
         }
     };
@@ -185,7 +185,7 @@ export default function CrowdsourcingListingPage() {
                                                             <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${getSeverityColor(report.severity).replace('text-', 'bg-').replace('500', '500/10')} ${getSeverityColor(report.severity)}`}>
                                                                 {report.severity} Severity
                                                             </span>
-                                                            <span className="text-xs text-muted-foreground">• {new Date(report.date).toLocaleDateString()}</span>
+                                                            <span className="text-xs text-muted-foreground">{new Date(report.date).toLocaleDateString()}</span>
                                                         </div>
 
                                                         <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">{report.title}</h3>
