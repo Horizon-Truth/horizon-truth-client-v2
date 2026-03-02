@@ -1,7 +1,7 @@
 import api from './api';
 
 export const authService = {
-    async login(credentials: any) {
+    async login(credentials: { phone?: string; email?: string; password: string }) {
         const response = await api.post('/auth/login', credentials);
         return response.data;
     },
@@ -13,5 +13,10 @@ export const authService = {
 
     async logout() {
         await api.post('/auth/logout');
+    },
+
+    async initGuestSession(sessionId: string, userId: string) {
+        const response = await api.post('/guest/session', { sessionId, userId });
+        return response.data;
     }
 };
