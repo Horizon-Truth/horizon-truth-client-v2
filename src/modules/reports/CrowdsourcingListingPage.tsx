@@ -96,7 +96,7 @@ export default function CrowdsourcingListingPage() {
 
     return (
         <PublicLayout>
-            <div className="flex flex-col min-h-screen pt-16">
+            <div className="flex flex-col min-h-screen">
                 {/* Hero Section */}
                 <section className="py-20 bg-primary/5 border-b">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

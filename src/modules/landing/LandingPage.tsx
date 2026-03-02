@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ShieldCheck, Mail, Users, Gamepad, Trophy, BookOpen, Megaphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/auth.store";
@@ -5,6 +6,121 @@ import { useEffect, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
+
+const carouselSlides = [
+    {
+        id: 1,
+        title: "Empowering Minds,",
+        subtitle: "Fighting Misinformation",
+        description: "Horizon Truth provides interactive tools and resources to help individuals identify and combat misinformation. Through gamified learning and community-driven verification, we are building a more informed and transparent society.",
+        image: "/src/assets/hero-1.png",
+        ctaText: "Start the Game",
+        ctaLink: "/dashboard/game",
+        badge: "Verified community content"
+    },
+    {
+        id: 2,
+        title: "Collective Intelligence,",
+        subtitle: "Community Verification",
+        description: "Join thousands of users in reporting and verifying suspicious content. Our crowdsourced platform leverages the power of the community to ensure information integrity in the digital age.",
+        image: "/src/assets/hero-2.png",
+        ctaText: "Explore Reports",
+        ctaLink: "/crowdsourcing",
+        badge: "Crowdsourced Integrity"
+    },
+    {
+        id: 3,
+        title: "Future-Ready Skills,",
+        subtitle: "Gamified Education",
+        description: "Learn to navigate the complex information landscape through fun and engaging challenges. Earn rewards as you master the art of critical thinking and digital literacy.",
+        image: "/src/assets/hero-3.png",
+        ctaText: "Get Started",
+        ctaLink: "/about",
+        badge: "Learn & Earn"
+    }
+];
+
+const HeroCarousel = () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % carouselSlides.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const slide = carouselSlides[currentIndex];
+
+    return (
+        <section className="relative min-h-[600px] lg:h-[80vh] flex items-center overflow-hidden bg-background">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={currentIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent z-10" />
+                    <img
+                        src={slide.image}
+                        alt={slide.subtitle}
+                        className="w-full h-full object-cover"
+                    />
+                </motion.div>
+            </AnimatePresence>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
+                <div className="max-w-2xl">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentIndex}
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -20, opacity: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
+                                <ShieldCheck size={16} className="text-primary" />
+                                <span className="text-xs font-semibold text-primary uppercase tracking-wider">{slide.badge}</span>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6">
+                                {slide.title}<br />
+                                <span className="text-primary">{slide.subtitle}</span>
+                            </h1>
+                            <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+                                {slide.description}
+                            </p>
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                                <Button
+                                    onClick={() => navigate(slide.ctaLink)}
+                                    className="w-full sm:w-auto px-8 py-6 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
+                                >
+                                    {slide.ctaText} <ArrowRight size={20} />
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Carousel Indicators */}
+                    <div className="flex items-center gap-3 mt-16">
+                        {carouselSlides.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentIndex(index)}
+                                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-12 bg-primary" : "w-3 bg-primary/20 hover:bg-primary/40"
+                                    }`}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
 
 export default function LandingPage() {
     const navigate = useNavigate();
@@ -27,40 +143,7 @@ export default function LandingPage() {
 
     return (
         <PublicLayout>
-            {/* Hero Section */}
-
-            {/* Hero Section */}
-            <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-primary/5">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
-                        <ShieldCheck size={16} className="text-primary" />
-                        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Verified community content</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6">
-                        Empowering Minds,<br />
-                        <span className="text-primary">Fighting Misinformation</span>
-                    </h1>
-                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                        Horizon Truth provides interactive tools and resources to help individuals identify and combat misinformation.
-                        Through gamified learning and community-driven verification, we are building a more informed and transparent society.
-                    </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Button
-                            onClick={() => navigate("/dashboard/game")}
-                            className="w-full sm:w-auto px-8 py-6 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
-                        >
-                            Start the Game <ArrowRight size={20} />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => navigate("/about")}
-                            className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
-                        >
-                            Learn More
-                        </Button>
-                    </div>
-                </div>
-            </section>
+            <HeroCarousel />
 
             {/* About Mission Section */}
             <section id="about" className="py-24 bg-background">
