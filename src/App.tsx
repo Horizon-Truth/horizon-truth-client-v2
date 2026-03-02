@@ -33,6 +33,8 @@ import ReportsPage from "./modules/reports/ReportsPage";
 import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
 import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
+import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManagementPage";
+import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
 import { lazy, Suspense } from "react";
 
 const BlogManagementPage = lazy(() => import('./modules/resources/admin/BlogManagementPage'));
@@ -111,7 +113,8 @@ function App() {
                   <Route path="simulation" element={<SimulationPage />} />
                   <Route path="game" element={<GamePage />} />
                   <Route path="feedback" element={user?.role !== 'PLAYER' ? <FeedbackDashboardPage /> : <Navigate to="/dashboard/game" replace />} />
-                  <Route path="reports" element={user?.role !== 'PLAYER' ? <div>Reports Admin Page</div> : <ReportsPage />} />
+                  <Route path="reports" element={user?.role !== 'PLAYER' ? <ReportAdminManagementPage /> : <ReportsPage />} />
+                  <Route path="reports/:id" element={user?.role !== 'PLAYER' ? <ReportAdminDetailPage /> : <Navigate to="/dashboard/reports" replace />} />
                   <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
                 </Routes>

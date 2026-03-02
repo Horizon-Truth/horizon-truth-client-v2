@@ -63,6 +63,16 @@ export const reportService = {
         return response.data;
     },
 
+    async updateReport(id: string, data: any) {
+        const response = await api.patch(`/reports/${id}`, data);
+        return response.data;
+    },
+
+    async deleteReport(id: string) {
+        const response = await api.delete(`/reports/${id}`);
+        return response.data;
+    },
+
     async addVerification(reportId: string, data: { comment: string; status: string; rating?: number }) {
         const response = await api.post(`/reports/${reportId}/verify`, data);
         return response.data;

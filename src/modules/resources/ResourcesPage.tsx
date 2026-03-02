@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Search, Video, GraduationCap, FileText, CheckCircle, Clock, ArrowRight, Mail } from "lucide-react";
+import { BookOpen, Search, Clock, ArrowRight, Mail } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { adminService, type Resource } from "@/services/admin.service";
 import { Button } from "@/shared/components/ui/button";

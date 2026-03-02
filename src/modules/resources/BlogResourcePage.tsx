@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Search, Clock, ArrowRight, GraduationCap, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { Button } from "@/shared/components/ui/button";
