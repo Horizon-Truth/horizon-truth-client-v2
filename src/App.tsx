@@ -33,6 +33,8 @@ import ReportsPage from "./modules/reports/ReportsPage";
 import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
 import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
+import BlogManagementPage from "./modules/resources/admin/BlogManagementPage";
+import ResourceManagementPage from "./modules/resources/admin/ResourceManagementPage";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -86,6 +88,8 @@ function App() {
                 <Route path="users" element={user?.role === 'SYSTEM_ADMIN' ? <UserManagementPage /> : <Navigate to="/dashboard" replace />} />
                 <Route path="players" element={user?.role === 'SYSTEM_ADMIN' ? <PlayerManagementPage /> : <Navigate to="/dashboard" replace />} />
                 <Route path="players/avatars" element={user?.role === 'SYSTEM_ADMIN' ? <AvatarManagementPage /> : <Navigate to="/dashboard" replace />} />
+                <Route path="resources/blogs" element={user?.role === 'SYSTEM_ADMIN' || user?.role === 'MODERATOR' ? <BlogManagementPage /> : <Navigate to="/dashboard" replace />} />
+                <Route path="resources/library" element={user?.role === 'SYSTEM_ADMIN' || user?.role === 'MODERATOR' ? <ResourceManagementPage /> : <Navigate to="/dashboard" replace />} />
                 <Route path="gamification" element={<div>Gamification Page</div>} />
                 <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
                 <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />

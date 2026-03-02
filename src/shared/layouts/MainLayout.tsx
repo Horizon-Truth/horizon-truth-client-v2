@@ -17,7 +17,8 @@ import {
     LogOut,
     User as UserIcon,
     ChevronDown,
-    MessageSquare
+    MessageSquare,
+    BookOpen
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
@@ -42,6 +43,8 @@ const navigation = [
     { name: "Security Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
     { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
     { name: "Avatar Manager", icon: Settings, href: "/dashboard/players/avatars", roles: ["SYSTEM_ADMIN"] },
+    { name: "Blogs", icon: FileText, href: "/dashboard/resources/blogs", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+    { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {

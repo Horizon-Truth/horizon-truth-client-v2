@@ -20,6 +20,36 @@ export interface Organization {
     createdAt: string;
 }
 
+export interface Blog {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    authorName: string;
+    authorRole: string;
+    authorAvatar?: string;
+    imageUrl?: string;
+    category: string;
+    readTime: string;
+    publishedAt: string;
+    createdAt: string;
+}
+
+export interface Resource {
+    id: string;
+    title: string;
+    slug: string;
+    type: 'guide' | 'video' | 'course';
+    description: string;
+    duration: string;
+    badge?: string;
+    icon: string;
+    fullContent?: string;
+    linkUrl?: string;
+    createdAt: string;
+}
+
 export interface PlayerProfile {
     id: string;
     nickname: string;
@@ -56,6 +86,48 @@ class AdminService {
 
     async getPlayerProfiles() {
         const response = await api.get('/admin/players');
+        return response.data;
+    }
+
+    // Blog Methods
+    async getBlogs() {
+        const response = await api.get('/blogs');
+        return response.data;
+    }
+
+    async createBlog(data: Partial<Blog>) {
+        const response = await api.post('/blogs', data);
+        return response.data;
+    }
+
+    async updateBlog(id: string, data: Partial<Blog>) {
+        const response = await api.patch(`/blogs/${id}`, data);
+        return response.data;
+    }
+
+    async deleteBlog(id: string) {
+        const response = await api.delete(`/blogs/${id}`);
+        return response.data;
+    }
+
+    // Resource Methods
+    async getResources() {
+        const response = await api.get('/resources');
+        return response.data;
+    }
+
+    async createResource(data: Partial<Resource>) {
+        const response = await api.post('/resources', data);
+        return response.data;
+    }
+
+    async updateResource(id: string, data: Partial<Resource>) {
+        const response = await api.patch(`/resources/${id}`, data);
+        return response.data;
+    }
+
+    async deleteResource(id: string) {
+        const response = await api.delete(`/resources/${id}`);
         return response.data;
     }
 }
