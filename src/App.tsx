@@ -33,8 +33,14 @@ import ReportsPage from "./modules/reports/ReportsPage";
 import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
 import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
-import BlogManagementPage from "./modules/resources/admin/BlogManagementPage";
-import ResourceManagementPage from "./modules/resources/admin/ResourceManagementPage";
+import { lazy, Suspense } from "react";
+
+const BlogManagementPage = lazy(() => import('./modules/resources/admin/BlogManagementPage'));
+const BlogCreatePage = lazy(() => import('./modules/resources/admin/BlogCreatePage'));
+const BlogEditPage = lazy(() => import('./modules/resources/admin/BlogEditPage'));
+const ResourceManagementPage = lazy(() => import('./modules/resources/admin/ResourceManagementPage'));
+const ResourceCreatePage = lazy(() => import('./modules/resources/admin/ResourceCreatePage'));
+const ResourceEditPage = lazy(() => import('./modules/resources/admin/ResourceEditPage'));
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -78,32 +84,38 @@ function App() {
         <Route path="/dashboard/*" element={
           <PrivateRoute>
             <MainLayout>
-              <Routes>
-                <Route index element={
-                  user?.role === 'PLAYER'
-                    ? (user?.onboardingCompleted ? <Navigate to="/dashboard/game" replace /> : <Navigate to="/onboarding" replace />)
-                    : <DashboardPage />
-                } />
-                <Route path="organizations" element={user?.role === 'SYSTEM_ADMIN' ? <OrganizationManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="users" element={user?.role === 'SYSTEM_ADMIN' ? <UserManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="players" element={user?.role === 'SYSTEM_ADMIN' ? <PlayerManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="players/avatars" element={user?.role === 'SYSTEM_ADMIN' ? <AvatarManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="resources/blogs" element={user?.role === 'SYSTEM_ADMIN' || user?.role === 'MODERATOR' ? <BlogManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="resources/library" element={user?.role === 'SYSTEM_ADMIN' || user?.role === 'MODERATOR' ? <ResourceManagementPage /> : <Navigate to="/dashboard" replace />} />
-                <Route path="gamification" element={<div>Gamification Page</div>} />
-                <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="audit-logs" element={user?.role !== 'PLAYER' ? <div>Audit Logs Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="simulation" element={<SimulationPage />} />
-                <Route path="game" element={<GamePage />} />
-                <Route path="feedback" element={user?.role !== 'PLAYER' ? <FeedbackDashboardPage /> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="reports" element={user?.role !== 'PLAYER' ? <div>Reports Admin Page</div> : <ReportsPage />} />
-                <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
-                <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
-              </Routes>
+              <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>}>
+                <Routes>
+                  <Route index element={
+                    user?.role === 'PLAYER'
+                      ? (user?.onboardingCompleted ? <Navigate to="/dashboard/game" replace /> : <Navigate to="/onboarding" replace />)
+                      : <DashboardPage />
+                  } />
+                  <Route path="organizations" element={user?.role === 'SYSTEM_ADMIN' ? <OrganizationManagementPage /> : <Navigate to="/dashboard" replace />} />
+                  <Route path="users" element={user?.role === 'SYSTEM_ADMIN' ? <UserManagementPage /> : <Navigate to="/dashboard" replace />} />
+                  <Route path="players" element={user?.role === 'SYSTEM_ADMIN' ? <PlayerManagementPage /> : <Navigate to="/dashboard" replace />} />
+                  <Route path="players/avatars" element={user?.role === 'SYSTEM_ADMIN' ? <AvatarManagementPage /> : <Navigate to="/dashboard" replace />} />
+                  <Route path="resources/blogs" element={<BlogManagementPage />} />
+                  <Route path="resources/blogs/create" element={<BlogCreatePage />} />
+                  <Route path="resources/blogs/edit/:id" element={<BlogEditPage />} />
+                  <Route path="resources/library" element={<ResourceManagementPage />} />
+                  <Route path="resources/library/create" element={<ResourceCreatePage />} />
+                  <Route path="resources/library/edit/:id" element={<ResourceEditPage />} />
+                  <Route path="gamification" element={<div>Gamification Page</div>} />
+                  <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="audit-logs" element={user?.role !== 'PLAYER' ? <div>Audit Logs Page</div> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="simulation" element={<SimulationPage />} />
+                  <Route path="game" element={<GamePage />} />
+                  <Route path="feedback" element={user?.role !== 'PLAYER' ? <FeedbackDashboardPage /> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="reports" element={user?.role !== 'PLAYER' ? <div>Reports Admin Page</div> : <ReportsPage />} />
+                  <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
+                </Routes>
+              </Suspense>
             </MainLayout>
           </PrivateRoute>
         } />

@@ -95,6 +95,11 @@ class AdminService {
         return response.data;
     }
 
+    async getBlogById(id: string) {
+        const response = await api.get(`/blogs/${id}`);
+        return response.data;
+    }
+
     async createBlog(data: Partial<Blog>) {
         const response = await api.post('/blogs', data);
         return response.data;
@@ -113,6 +118,11 @@ class AdminService {
     // Resource Methods
     async getResources() {
         const response = await api.get('/resources');
+        return response.data;
+    }
+
+    async getResourceById(id: string) {
+        const response = await api.get(`/resources/${id}`);
         return response.data;
     }
 

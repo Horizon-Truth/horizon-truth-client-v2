@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BookOpen, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, Tag, Clock, ExternalLink } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -7,6 +8,7 @@ import { adminService, type Resource } from "@/services/admin.service";
 import { toast } from "sonner";
 
 export default function ResourceManagementPage() {
+    const navigate = useNavigate();
     const [resources, setResources] = useState<Resource[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +59,10 @@ export default function ResourceManagementPage() {
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider text-secondary">Asset <span className="text-foreground">Library</span></h2>
                     <p className="text-sm text-muted-foreground mt-1">Manage educational toolkits, guides, and multimeda training assets.</p>
                 </div>
-                <Button className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-secondary/20 hover:shadow-secondary/40 transition-all bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                <Button
+                    onClick={() => navigate("/dashboard/resources/library/create")}
+                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-black uppercase tracking-widest text-[10px] gap-2 shadow-lg shadow-secondary/20 hover:shadow-secondary/40 transition-all bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                >
                     <Plus size={20} />
                     Onboard New Asset
                 </Button>
@@ -173,6 +178,7 @@ export default function ResourceManagementPage() {
                                                 size="icon"
                                                 className="rounded-xl hover:bg-secondary/10 transition-colors"
                                                 title="Edit Asset"
+                                                onClick={() => navigate(`/dashboard/resources/library/edit/${resource.id}`)}
                                             >
                                                 <Edit2 size={18} />
                                             </Button>

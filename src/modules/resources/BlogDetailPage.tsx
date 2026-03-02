@@ -25,9 +25,8 @@ export default function BlogDetailPage() {
             if (!id) return;
             setIsLoading(true);
             try {
-                const dataArray = await adminService.getBlogs();
-                const found = dataArray.find((b: Blog) => b.id === id);
-                setBlog(found || null);
+                const data = await adminService.getBlogById(id);
+                setBlog(data);
             } catch (error) {
                 console.error("Failed to fetch blog:", error);
                 toast.error("Failed to load blog post");

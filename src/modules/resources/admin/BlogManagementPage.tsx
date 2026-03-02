@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FileText, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, User, Tag, Clock } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -7,6 +8,7 @@ import { adminService, type Blog } from "@/services/admin.service";
 import { toast } from "sonner";
 
 export default function BlogManagementPage() {
+    const navigate = useNavigate();
     const [blogs, setBlogs] = useState<Blog[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +59,10 @@ export default function BlogManagementPage() {
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider text-primary">Content <span className="text-foreground">Engine</span></h2>
                     <p className="text-sm text-muted-foreground mt-1">Manage platform blog posts and informative articles.</p>
                 </div>
-                <Button className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all">
+                <Button
+                    onClick={() => navigate("/dashboard/resources/blogs/create")}
+                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all font-black uppercase tracking-widest text-[10px]"
+                >
                     <Plus size={20} />
                     Create New Article
                 </Button>
@@ -160,6 +165,7 @@ export default function BlogManagementPage() {
                                                 size="icon"
                                                 className="rounded-xl hover:bg-primary/10 transition-colors"
                                                 title="Edit Article"
+                                                onClick={() => navigate(`/dashboard/resources/blogs/edit/${blog.id}`)}
                                             >
                                                 <Edit2 size={18} />
                                             </Button>

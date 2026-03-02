@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Download, BookOpen, ShieldCheck, FileText, Clock } from "lucide-react";
+import { Download, BookOpen, ShieldCheck, FileText } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { Button } from "@/shared/components/ui/button";
@@ -19,9 +19,8 @@ export default function ResourceDetailPage() {
             if (!id) return;
             setIsLoading(true);
             try {
-                const dataArray = await adminService.getResources();
-                const found = dataArray.find((r: Resource) => r.id === id);
-                setResource(found || null);
+                const data = await adminService.getResourceById(id);
+                setResource(data);
             } catch (error) {
                 console.error("Failed to fetch resource:", error);
                 toast.error("Failed to load resource");
