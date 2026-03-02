@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, Globe, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AbduljPhoto, AbdurehmanA, AbdurezakIsak, AjaibMoh, BilkesEl, Getahun, MohammedHas1, MohammedIb, MohammedMum, RemlaHa, worknehD } from "@/assets/photos";
+import { AbduljPhoto, AbdurehmanA, AbdurezakIsak, AjaibMoh, BilkesEl, Getahun, MohammedHas1, MohammedIb, MohammedMum, RemlaHa } from "@/assets/photos";
 import { Button } from "@/shared/components/ui/button";
 
 interface TeamMember {
@@ -88,13 +88,6 @@ const teamData: TeamMember[] = [
     role: "Community Manager",
     image: Getahun,
     description: "Leads community outreach, gathers user feedback for product improvement, and coordinates communication between users and the development team."
-  },
-  {
-    id: 11,
-    name: "Workineh Diribsa",
-    role: "Language Expert (Localization Advisor)",
-    image: worknehD,
-    description: "Translates content and validates localization accuracy, supports regional dialects, and ensures inclusive language use."
   }
 ];
 
