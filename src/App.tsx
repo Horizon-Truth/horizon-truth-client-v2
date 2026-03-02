@@ -2,7 +2,21 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./shared/layouts/MainLayout";
 import DashboardPage from "./modules/analytics/DashboardPage";
 import LandingPage from "./modules/landing/LandingPage";
+import AboutPage from "./modules/about/AboutPage";
+import BlogResourcePage from "./modules/resources/BlogResourcePage";
+import ResourceLibraryPage from "./modules/resources/ResourceLibraryPage";
+import BlogDetailPage from "./modules/resources/BlogDetailPage";
+import ResourceDetailPage from "./modules/resources/ResourceDetailPage";
+import FaqPage from "./modules/faq/FaqPage";
+import ContactPage from "./modules/contact/ContactPage";
+import PrivacyPolicyPage from "./modules/legal/PrivacyPolicyPage";
+import TermsOfServicePage from "./modules/legal/TermsOfServicePage";
+import CookiesPolicyPage from "./modules/legal/CookiesPolicyPage";
+import CrowdsourcingListingPage from "./modules/reports/CrowdsourcingListingPage";
+import CrowdsourcingDetailPage from "./modules/reports/CrowdsourcingDetailPage";
+import { PublicLayout } from "./shared/layouts/PublicLayout";
 import { AuthLayout } from "./shared/layouts/AuthLayout";
+import { ScrollToTop } from "./shared/components/layout/ScrollToTop";
 import { LoginForm } from "./shared/components/auth/LoginForm";
 import { RegisterForm } from "./shared/components/auth/RegisterForm";
 import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
@@ -25,9 +39,22 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Landing Page */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/resources" element={<BlogResourcePage />} />
+        <Route path="/resources/library" element={<ResourceLibraryPage />} />
+        <Route path="/blog/:id" element={<BlogDetailPage />} />
+        <Route path="/resource/:id" element={<ResourceDetailPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+        <Route path="/cookies-policy" element={<CookiesPolicyPage />} />
+        <Route path="/crowdsourcing" element={<CrowdsourcingListingPage />} />
+        <Route path="/crowdsourcing/:id" element={<CrowdsourcingDetailPage />} />
 
         {/* Auth Routes */}
         <Route element={!isAuthenticated ? <AuthLayout /> : <Navigate to={user?.role === 'PLAYER' ? (user?.onboardingCompleted ? "/dashboard/game" : "/onboarding") : "/dashboard"} replace />}>
@@ -43,7 +70,7 @@ function App() {
 
         {/* Public Simulation (Guest Mode) */}
         <Route path="/simulation" element={<SimulationPage />} />
-        <Route path="/report" element={<ReportsPage />} />
+        <Route path="/report" element={<PublicLayout><ReportsPage /></PublicLayout>} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard/*" element={
