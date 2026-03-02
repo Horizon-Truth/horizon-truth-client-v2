@@ -132,42 +132,6 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Partners & Impact Section */}
-            <section className="py-24 bg-primary text-primary-foreground overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-5xl font-bold mb-6">Our Trusted Partners</h2>
-                        <p className="text-xl opacity-90 max-w-3xl mx-auto">Working together with leading institutions to build digital literacy across Ethiopia.</p>
-                    </div>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { title: "Jimma University", desc: "Integrating digital literacy into academic curricula and conducting groundbreaking research." },
-                            { title: "Ministry of Peace", desc: "Training youth ambassadors to promote truth and transparency nationwide." },
-                            { title: "Sheger City", desc: "Bringing digital literacy programs directly to local communities and schools." }
-                        ].map((partner, i) => (
-                            <div key={i} className="p-8 bg-white/10 backdrop-blur rounded-2xl border border-white/20">
-                                <h4 className="text-2xl font-bold mb-4">{partner.title}</h4>
-                                <p className="opacity-80 leading-relaxed">{partner.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="mt-16 text-center">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                            {[
-                                { label: "Active Users", value: "5,247+" },
-                                { label: "Reports Submitted", value: "2,847+" },
-                                { label: "Content Verified", value: "1,592+" },
-                                { label: "User Satisfaction", value: "98%" }
-                            ].map((stat, i) => (
-                                <div key={i}>
-                                    <div className="text-4xl font-extrabold mb-2">{stat.value}</div>
-                                    <div className="opacity-80 font-medium">{stat.label}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Team Section */}
             <TeamSection />

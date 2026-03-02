@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ShieldCheck, Mail, Users, Gamepad, Trophy, BookOpen, Megaphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
-import { useEffect, useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
@@ -10,33 +10,33 @@ import { PublicLayout } from "@/shared/layouts/PublicLayout";
 const carouselSlides = [
     {
         id: 1,
-        title: "Empowering Minds,",
-        subtitle: "Fighting Misinformation",
-        description: "Horizon Truth provides interactive tools and resources to help individuals identify and combat misinformation. Through gamified learning and community-driven verification, we are building a more informed and transparent society.",
-        image: "/src/assets/hero-1.png",
-        ctaText: "Start the Game",
+        title: "Defending Truth in the Digital Age",
+        subtitle: "Together Against Misinformation",
+        description: "Horizon Truth equips you with interactive, real-world simulations to detect fake news, analyze sources, and outsmart digital deception through engaging gamified experiences.",
+        image: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=2070", // Person analyzing news on laptop
+        ctaText: "Start Your Training",
         ctaLink: "/dashboard/game",
-        badge: "Verified community content"
+        badge: "Community Verified Content"
     },
     {
         id: 2,
-        title: "Collective Intelligence,",
-        subtitle: "Community Verification",
-        description: "Join thousands of users in reporting and verifying suspicious content. Our crowdsourced platform leverages the power of the community to ensure information integrity in the digital age.",
-        image: "/src/assets/hero-2.png",
-        ctaText: "Explore Reports",
+        title: "Power of Collective Intelligence",
+        subtitle: "Community-Driven Verification",
+        description: "Join a growing network of digital defenders reporting, reviewing, and validating suspicious content. Together, we create a safer and more trustworthy information ecosystem.",
+        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2070", // Team collaboration discussion
+        ctaText: "View Community Reports",
         ctaLink: "/crowdsourcing",
-        badge: "Crowdsourced Integrity"
+        badge: "Crowdsourced Transparency"
     },
     {
         id: 3,
-        title: "Future-Ready Skills,",
-        subtitle: "Gamified Education",
-        description: "Learn to navigate the complex information landscape through fun and engaging challenges. Earn rewards as you master the art of critical thinking and digital literacy.",
-        image: "/src/assets/hero-3.png",
-        ctaText: "Get Started",
+        title: "Learn. Play. Protect.",
+        subtitle: "Gamified Digital Literacy",
+        description: "Sharpen your critical thinking skills through interactive challenges, quizzes, and scenario-based missions designed to make media literacy engaging and rewarding.",
+        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=2070", // Student learning with digital tools
+        ctaText: "Begin the Journey",
         ctaLink: "/about",
-        badge: "Learn & Earn"
+        badge: "Skill Up & Earn Rewards"
     }
 ];
 
@@ -54,64 +54,75 @@ const HeroCarousel = () => {
     const slide = carouselSlides[currentIndex];
 
     return (
-        <section className="relative min-h-[600px] lg:h-[80vh] flex items-center overflow-hidden bg-background">
-            <AnimatePresence mode="wait">
+        <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-black">
+            <AnimatePresence initial={false}>
                 <motion.div
                     key={currentIndex}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 1, ease: "easeInOut" }}
                     className="absolute inset-0"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-black/60 z-10" />
                     <img
                         src={slide.image}
-                        alt={slide.subtitle}
+                        alt={slide.title}
                         className="w-full h-full object-cover"
                     />
                 </motion.div>
             </AnimatePresence>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
-                <div className="max-w-2xl">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full py-16">
+                <div className="max-w-3xl mx-auto text-center">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentIndex}
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -20, opacity: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
+                            transition={{ duration: 0.5 }}
+                            className="space-y-6"
                         >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
-                                <ShieldCheck size={16} className="text-primary" />
-                                <span className="text-xs font-semibold text-primary uppercase tracking-wider">{slide.badge}</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/30 backdrop-blur-md border border-white/20 mb-2">
+                                <ShieldCheck size={14} className="text-primary-foreground" />
+                                <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">{slide.badge}</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6">
-                                {slide.title}<br />
-                                <span className="text-primary">{slide.subtitle}</span>
+
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white leading-tight">
+                                {slide.title} <br />
+                                <span className="text-primary-foreground italic text-3xl md:text-4xl lg:text-5xl opacity-90">{slide.subtitle}</span>
                             </h1>
-                            <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+
+                            <p className="text-lg text-white/80 max-w-xl mx-auto leading-relaxed font-medium">
                                 {slide.description}
                             </p>
-                            <div className="flex flex-col sm:flex-row items-center gap-4">
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                 <Button
                                     onClick={() => navigate(slide.ctaLink)}
-                                    className="w-full sm:w-auto px-8 py-6 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 text-lg"
+                                    className="w-full sm:w-auto px-8 py-6 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl transition-all text-lg group"
                                 >
-                                    {slide.ctaText} <ArrowRight size={20} />
+                                    {slide.ctaText} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => navigate("/about")}
+                                    className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold border-2 border-white text-white hover:bg-white/10 transition-all text-lg backdrop-blur-sm"
+                                >
+                                    Learn More
                                 </Button>
                             </div>
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Carousel Indicators */}
-                    <div className="flex items-center gap-3 mt-16">
+                    {/* Indicators */}
+                    <div className="flex items-center justify-center gap-2 mt-12">
                         {carouselSlides.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentIndex(index)}
-                                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "w-12 bg-primary" : "w-3 bg-primary/20 hover:bg-primary/40"
+                                className={`h-1 rounded-full transition-all duration-500 ${index === currentIndex ? "w-10 bg-primary" : "w-3 bg-white/20 hover:bg-white/40"
                                     }`}
                             />
                         ))}
@@ -145,158 +156,268 @@ export default function LandingPage() {
         <PublicLayout>
             <HeroCarousel />
 
-            {/* About Mission Section */}
-            <section id="about" className="py-24 bg-background">
+            {/* Game Explanation Section */}
+            <section className="py-24 bg-background overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col lg:flex-row items-center gap-16">
-                        <div className="lg:w-1/2">
-                            <span className="text-primary font-semibold tracking-wider uppercase text-sm">About Horizon Truth</span>
-                            <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-6">Our Mission to Fight Misinformation</h2>
-                            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                                Horizon Truth is dedicated to empowering individuals, especially youth, to navigate the digital world responsibly.
-                                We believe that in today's fast-paced information age, digital literacy is key to making informed decisions.
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="lg:w-1/2"
+                        >
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Interactive Learning</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Master Digital Literacy <br /><span className="text-primary">Through Play</span></h2>
+                            <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
+                                Our gamified platform transforms complex media literacy concepts into engaging challenges. Learn to spot deepfakes, verify sources, and understand viral mechanics in a safe, simulated environment.
                             </p>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid sm:grid-cols-2 gap-6">
                                 {[
-                                    { icon: Gamepad, title: "Gamified Learning", desc: "Interactive games to teach literacy skills." },
-                                    { icon: Users, title: "Community Power", desc: "Crowdsourced verification for everyone." },
-                                    { icon: BookOpen, title: "Educational Resources", desc: "Materials to improve media literacy." },
-                                    { icon: Trophy, title: "Reward System", desc: "Earn points for your contributions." }
+                                    { title: "Real Scenarios", desc: "Face actual misinformation cases reconstructed for learning." },
+                                    { title: "Instant Feedback", desc: "Understand why content is misleading as you play." },
+                                    { title: "Skill Progression", desc: "Level up your 'Truth-Seeker' rank as you master new skills." },
+                                    { title: "Earn Rewards", desc: "Get recognized for your growth with badges and points." }
                                 ].map((item, i) => (
-                                    <div key={i} className="flex flex-col gap-2 p-4 rounded-xl bg-secondary/20">
-                                        <item.icon className="text-primary w-6 h-6 mb-2" />
-                                        <h4 className="font-bold">{item.title}</h4>
+                                    <div key={i} className="flex flex-col gap-2 p-4 rounded-3xl bg-primary/5 border border-primary/10">
+                                        <h4 className="font-extrabold text-foreground">{item.title}</h4>
                                         <p className="text-sm text-muted-foreground">{item.desc}</p>
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                        <div className="lg:w-1/2 bg-primary/10 rounded-3xl p-8 aspect-video flex items-center justify-center relative overflow-hidden group">
-                            <ShieldCheck size={120} className="text-primary/20 group-hover:scale-110 transition-transform" />
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Features (Game + Crowdsource) */}
-            <section id="features" className="py-24 bg-secondary/10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <span className="text-primary font-semibold uppercase tracking-widest text-sm">Explore Our Tools</span>
-                        <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4">Key Features of Horizon Truth</h2>
-                        <p className="text-muted-foreground text-lg">Powerful tools designed to combat misinformation effectively.</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { icon: Gamepad, title: "Gamified Learning Platform", desc: "Engage in fun, interactive games to boost digital literacy skills and learn to spot misinformation." },
-                            { icon: Megaphone, title: "Crowdsourced Reporting", desc: "Flag and verify content through our community-driven reporting system leveraging collective intelligence." },
-                            { icon: Users, title: "Community Engagement", desc: "Earn rewards and recognition for actively contributing to a more truthful digital space." }
-                        ].map((feature, i) => (
-                            <div key={i} className="p-8 bg-card border rounded-2xl hover:border-primary transition-all shadow-sm hover:shadow-md">
-                                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                                    <feature.icon className="text-primary w-8 h-8" />
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="lg:w-1/2 relative"
+                        >
+                            <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-[4rem] flex items-center justify-center p-8 relative">
+                                <div className="absolute inset-0 border-2 border-primary/20 rounded-[4rem] animate-pulse" />
+                                <Gamepad size={200} className="text-primary drop-shadow-2xl" />
+                                <div className="absolute -top-4 -right-4 p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl animate-bounce">
+                                    <Trophy size={40} className="text-yellow-500" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
-                                <p className="text-muted-foreground leading-relaxed mb-6">{feature.desc}</p>
-                                <button className="text-primary font-bold flex items-center gap-2 group">
-                                    Read more <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                                </button>
                             </div>
-                        ))}
+                        </motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* Mission Section / How It Works */}
-            <section className="py-24 bg-primary text-primary-foreground">
+            {/* Crowdsourcing Explanation Section */}
+            <section className="py-24 bg-secondary/5 relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <span className="font-semibold uppercase tracking-widest text-sm opacity-80">How It Works</span>
-                        <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4 text-white">Start Fighting Misinformation Today</h2>
-                        <p className="text-lg opacity-90 max-w-2xl mx-auto">Simple steps to become a misinformation warrior and earn rewards.</p>
+                    <div className="text-center mb-20">
+                        <span className="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Collective Intelligence</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6">Together Against Deception</h2>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                            Harness the power of thousands. Our community-driven reporting system allows every user to be a guardian of the digital truth.
+                        </p>
                     </div>
+
                     <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { step: "01", title: "Engage in Scenarios", desc: "Navigate real-world challenges to understand how false content spreads." },
-                            { step: "02", title: "Evaluate Content", desc: "Analyze health myths and manipulation using critical thinking tools." },
-                            { step: "03", title: "Earn Rewards", desc: "Identifying misinformation earns you points and valuable rewards." }
-                        ].map((item, i) => (
-                            <div key={i} className="p-8 bg-white/10 backdrop-blur rounded-2xl border border-white/10 hover:bg-white/15 transition-all">
-                                <div className="text-4xl font-bold mb-4 opacity-50">{item.step}</div>
-                                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                                <p className="opacity-80 leading-relaxed">{item.desc}</p>
-                            </div>
+                            {
+                                icon: Megaphone,
+                                title: "Report Suspicious Content",
+                                desc: "Find something fishy? Flag it instantly for community review with our simple reporting tools.",
+                                color: "text-primary"
+                            },
+                            {
+                                icon: Users,
+                                title: "Community Verification",
+                                desc: "Join the 'Truth Nodes'—users who vote and provide evidence to verify or debunk reported content.",
+                                color: "text-secondary"
+                            },
+                            {
+                                icon: ShieldCheck,
+                                title: "Consensus Credibility",
+                                desc: "Our algorithm calculates a credibility score based on community consensus and expert verification.",
+                                color: "text-green-500"
+                            }
+                        ].map((card, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: i * 0.2 }}
+                                className="group p-10 bg-card border rounded-[3rem] hover:border-primary/50 transition-all hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden"
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 -rotate-45 translate-x-12 -translate-y-12 group-hover:bg-primary/10 transition-all" />
+                                <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-8">
+                                    <card.icon className={`${card.color}`} size={32} />
+                                </div>
+                                <h3 className="text-2xl font-black mb-4">{card.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">
+                                    {card.desc}
+                                </p>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Impact Section / Stats */}
-            <section className="py-24 bg-background">
+            {/* Redesigned Mission Section */}
+            <section className="py-24 bg-background relative overflow-hidden">
+                <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -translate-x-1/2" />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid md:grid-cols-4 gap-8 text-center">
+                    <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="lg:w-1/2"
+                        >
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Our North Star</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Why Horizon <br /><span className="text-primary">Truth Matters</span></h2>
+                            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                                In an era where information can be weaponized, truth is our most valuable asset. We believe that empowering citizens with critical thinking is more effective than any censorship.
+                            </p>
+                            <div className="space-y-6">
+                                {[
+                                    { title: "Radical Transparency", desc: "Every verification is backed by community consensus and open data." },
+                                    { title: "Empowerment First", desc: "We don't tell you what to believe; we give you the tools to decide." }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex gap-4 p-6 rounded-3xl bg-secondary/5 border border-secondary/10 hover:border-secondary transition-all">
+                                        <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0">
+                                            <ShieldCheck className="text-secondary" size={24} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-foreground text-lg">{item.title}</h4>
+                                            <p className="text-muted-foreground">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="lg:w-1/2"
+                        >
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75" />
+                                <div className="relative z-10 p-1 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/30">
+                                    <div className="bg-background rounded-[2.8rem] p-12 aspect-square flex flex-col justify-center">
+                                        <h3 className="text-6xl font-black text-center mb-4">98%</h3>
+                                        <p className="text-center text-muted-foreground font-bold uppercase tracking-widest text-sm">User Confidence Score</p>
+                                        <div className="mt-8 flex justify-center gap-2">
+                                            {[1, 2, 3, 4, 5].map(star => (
+                                                <Trophy key={star} className="text-yellow-500" size={32} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Redesigned Partners Section (Migrated from About) */}
+            <section className="py-24 bg-secondary/5">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Trusted Ecosystem</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6">Our Foundational Partners</h2>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                            Collaborating with leading institutions to build digital resilience across the nation.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { label: "Accounts Verified", value: "50k+" },
-                            { label: "Reports Analyzed", value: "1.2M+" },
-                            { label: "Truth Nodes", value: "40+" },
-                            { label: "Community Members", value: "100k+" }
-                        ].map((stat, i) => (
-                            <div key={i}>
-                                <div className="text-4xl font-extrabold text-primary mb-2">{stat.value}</div>
-                                <div className="text-muted-foreground font-medium">{stat.label}</div>
-                            </div>
+                            { title: "Jimma University", desc: "Academic curriculum integration & research." },
+                            { title: "Ministry of Peace", desc: "National youth ambassador programs." },
+                            { title: "Sheger City", desc: "Community-driven digital literacy workshops." }
+                        ].map((partner, i) => (
+                            <motion.div
+                                key={i}
+                                whileHover={{ scale: 1.05 }}
+                                className="p-10 rounded-[3rem] bg-background border-2 border-transparent hover:border-primary/20 shadow-xl transition-all flex flex-col items-center text-center"
+                            >
+                                <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 text-2xl font-black text-primary">
+                                    {partner.title[0]}
+                                </div>
+                                <h4 className="text-2xl font-black mb-4">{partner.title}</h4>
+                                <p className="text-muted-foreground font-medium">{partner.desc}</p>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Partners */}
-            <section className="py-16 border-y bg-secondary/5">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-wrap justify-center items-center gap-12 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all">
-                        {/* Placeholder for Partners */}
-                        <div className="text-2xl font-bold tracking-tighter">PARTNER-1</div>
-                        <div className="text-2xl font-bold tracking-tighter">PARTNER-2</div>
-                        <div className="text-2xl font-bold tracking-tighter">PARTNER-3</div>
-                        <div className="text-2xl font-bold tracking-tighter">PARTNER-4</div>
-                        <div className="text-2xl font-bold tracking-tighter">PARTNER-5</div>
+            {/* Redesigned Stats Section */}
+            <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                        {[
+                            { label: "Active Users", value: "5,247+" },
+                            { label: "Reports Debunked", value: "2,847+" },
+                            { label: "Community Verifiers", value: "1,592+" },
+                            { label: "Accuracy Rate", value: "99.8%" }
+                        ].map((stat, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                            >
+                                <div className="text-5xl md:text-6xl font-black mb-4 tracking-tight">{stat.value}</div>
+                                <div className="text-sm font-bold uppercase tracking-[0.2em] opacity-80">{stat.label}</div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* FAQ Section */}
+            {/* Redesigned FAQ Section */}
             <section id="faq" className="py-24 bg-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <span className="text-primary font-semibold uppercase tracking-widest text-sm">Got Questions?</span>
-                        <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4">Frequently Asked Questions</h2>
-                        <p className="text-muted-foreground text-lg">Quick answers to common questions about Horizon Truth.</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
-                        {[
-                            { q: "What is Horizon Truth?", a: "A gamified digital literacy platform designed to combat misinformation through interactive learning and community verification." },
-                            { q: "How does the game work?", a: "You engage in simulated real-world misinformation challenges, learning to spot fake news through quizzes and critical exercises." },
-                            { q: "Is my data secure?", a: "Absolutely. We use industry-standard encryption and collect minimal data necessary for your learning progress." },
-                            { q: "How can I contribute?", a: "By reporting suspicious content you find online and participating in community verification votes." }
-                        ].map((faq, i) => (
-                            <div key={i} className="p-6 bg-secondary/10 rounded-2xl border border-border">
-                                <h4 className="font-bold text-lg mb-2">{faq.q}</h4>
-                                <p className="text-muted-foreground text-sm">{faq.a}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="text-center">
-                        <Button
-                            variant="outline"
-                            onClick={() => navigate("/faq")}
-                            className="px-8 py-6 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg mx-auto"
-                        >
-                            View All FAQs <ArrowRight size={20} />
-                        </Button>
+                    <div className="flex flex-col lg:flex-row gap-16">
+                        <div className="lg:w-1/3">
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Help Center</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6">Expert <br />Answers</h2>
+                            <p className="text-lg text-muted-foreground mb-8">
+                                Quick guide to understanding how Horizon Truth protects the digital frontier.
+                            </p>
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate("/faq")}
+                                className="px-8 py-6 rounded-2xl font-bold border-2 flex items-center gap-2 group"
+                            >
+                                Full Knowledge Base <ArrowRight size={20} className="group-hover:translate-x-1 transition-all" />
+                            </Button>
+                        </div>
+                        <div className="lg:w-2/3 space-y-4">
+                            {[
+                                { q: "What is Horizon Truth?", a: "A gamified digital literacy platform designed to combat misinformation through interactive learning and community verification." },
+                                { q: "How does the game work?", a: "You engage in simulated real-world misinformation challenges, learning to spot fake news through quizzes and critical exercises." },
+                                { q: "Is my data secure?", a: "Absolutely. We use industry-standard encryption and collect minimal data necessary for your learning progress." },
+                                { q: "How can I contribute?", a: "By reporting suspicious content you find online and participating in community verification votes." }
+                            ].map((faq, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-8 bg-secondary/5 border rounded-[2rem] hover:border-primary/30 transition-all group"
+                                >
+                                    <h4 className="text-xl font-black mb-3 flex items-center justify-between">
+                                        {faq.q}
+                                    </h4>
+                                    <p className="text-muted-foreground leading-relaxed">{faq.a}</p>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
