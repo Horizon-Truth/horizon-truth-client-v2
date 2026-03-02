@@ -35,3 +35,40 @@ const SimulationPage = () => {
         if (currentSceneIndex < totalScenes - 1) {
             setCurrentSceneIndex(prev => prev + 1);
         } else {
+            setIsCompleted(true);
+        }
+    };
+
+    const accuracy = Math.round((bestChoices / totalScenes) * 100);
+
+    // Techniques the player has faced so far (for the results screen)
+    const coveredTechniques = useMemo(
+        () => TRIAL_SCENARIO.scenes
+            .map(s => TECHNIQUES.find(t => t.key === s.techniqueKey))
+            .filter((t): t is NonNullable<typeof t> => !!t),
+        []
+    );
+
+    const renderSceneContent = (scene: Scene) => {
+        if (scene.type === 'SOCIAL_POST') {
+            return (
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="p-4 flex items-center gap-3 border-b border-border">
+                        <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary font-bold" aria-hidden>
+                            {scene.author[0]}
+                        </div>
+                        <div>
+                            <p className="font-bold text-sm tracking-tight">{scene.author}</p>
+                            <p className="text-[11px] text-muted-foreground">
+                                {scene.handle ? `${scene.handle} · ` : ''}{scene.timestamp}
+                            </p>
+                        </div>
+                        <div className="ml-auto">
+                            <Share2 size={16} className="text-muted-foreground" aria-hidden />
+                        </div>
+                    </div>
+                    {scene.mediaUrl && (
+                        <div className="aspect-video overflow-hidden bg-muted">
+                            <img src={scene.mediaUrl} alt="Attached to the post — treat with suspicion" className="w-full h-full object-cover" loading="lazy" />
+                        </div>
+                    )}
