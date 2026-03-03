@@ -1,69 +1,37 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Search, Video, GraduationCap, FileText, CheckCircle, Clock, ArrowRight, Mail } from "lucide-react";
+import { BookOpen, Search, Clock, ArrowRight, Mail } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+import { adminService, type Resource } from "@/services/admin.service";
 import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
-
-const resourcesData = [
-    {
-        id: 1,
-        title: "The Misinformation Handbook",
-        type: "guide",
-        description: "Learn essential steps to verify social media posts and identify fake news effectively.",
-        duration: "15 min read",
-        badge: "Most Popular",
-        icon: FileText
-    },
-    {
-        id: 2,
-        title: "Solution Overview",
-        type: "guide",
-        description: "How gamified learning and crowdsource reporting combine to protect digital integrity.",
-        duration: "10 min read",
-        badge: "New",
-        icon: CheckCircle
-    },
-    {
-        id: 3,
-        title: "Empowering Youth with Truth",
-        type: "guide",
-        description: "Why Horizon Truth focuses on youth and how we're building a more resilient generation.",
-        duration: "5 min read",
-        icon: GraduationCap
-    },
-    {
-        id: 4,
-        title: "How Fake News Spreads",
-        type: "video",
-        description: "A visual guide to the viral nature of misinformation across digital platforms.",
-        duration: "6 min",
-        icon: Video
-    },
-    {
-        id: 5,
-        title: "Defending Truth",
-        type: "course",
-        description: "A comprehensive course on why digital honesty matters in the modern era.",
-        duration: "45 min",
-        icon: BookOpen
-    },
-    {
-        id: 6,
-        title: "Think Before You Share",
-        type: "course",
-        description: "Practical exercises to build the habit of verification before social interaction.",
-        duration: "30 min",
-        icon: GraduationCap
-    }
-];
+import { useNavigate } from "react-router-dom";
 
 export default function ResourcesPage() {
+    const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredResources, setFilteredResources] = useState(resourcesData);
+    const [resources, setResources] = useState<Resource[]>([]);
+    const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        let results = resourcesData;
+        const fetchResources = async () => {
+            setIsLoading(true);
+            try {
+                const data = await adminService.getResources();
+                setResources(data || []);
+            } catch (error) {
+                console.error("Failed to fetch resources:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchResources();
+    }, []);
+
+    useEffect(() => {
+        let results = resources;
         if (activeFilter !== "all") {
             results = results.filter((r) => r.type === activeFilter);
         }
@@ -74,7 +42,20 @@ export default function ResourcesPage() {
             );
         }
         setFilteredResources(results);
-    }, [activeFilter, searchQuery]);
+    }, [activeFilter, searchQuery, resources]);
+
+    if (isLoading) {
+        return (
+            <PublicLayout>
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Restoring Asset Archive...</p>
+                    </div>
+                </div>
+            </PublicLayout>
+        );
+    }
 
     return (
         <PublicLayout>
@@ -139,9 +120,12 @@ export default function ResourcesPage() {
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {filteredResources.length > 0 ? (
                                 filteredResources.map((resource) => (
-                                    <div key={resource.id} className="group bg-card border rounded-2xl overflow-hidden hover:border-primary transition-all shadow-sm hover:shadow-md">
+                                    <div key={resource.id} className="group bg-card border rounded-2xl overflow-hidden hover:border-primary transition-all shadow-sm hover:shadow-md cursor-pointer" onClick={() => navigate(`/resource/${resource.id}`)}>
                                         <div className="h-48 bg-secondary/20 flex items-center justify-center relative overflow-hidden">
-                                            <resource.icon size={64} className="text-primary/20 group-hover:scale-110 transition-transform" />
+                                            {(() => {
+                                                const Icon = (LucideIcons as any)[resource.icon] || LucideIcons.FileText;
+                                                return <Icon size={64} className="text-primary/20 group-hover:scale-110 transition-transform" />;
+                                            })()}
                                             {resource.badge && (
                                                 <span className="absolute top-4 left-4 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
                                                     {resource.badge}

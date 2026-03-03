@@ -1,12 +1,48 @@
 import { motion } from "framer-motion";
-import { Search, Clock, ArrowRight, GraduationCap, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { Button } from "@/shared/components/ui/button";
-import { blogs, resources } from "./mockData";
+import { adminService, type Blog, type Resource } from "@/services/admin.service";
+import * as LucideIcons from "lucide-react";
 
 export default function BlogResourcePage() {
     const navigate = useNavigate();
+    const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [resources, setResources] = useState<Resource[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const [blogsData, resourcesData] = await Promise.all([
+                    adminService.getBlogs(),
+                    adminService.getResources()
+                ]);
+                setBlogs(blogsData || []);
+                setResources(resourcesData || []);
+            } catch (error) {
+                console.error("Failed to fetch knowledge hub data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <PublicLayout>
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Synchronizing Knowledge Base...</p>
+                    </div>
+                </div>
+            </PublicLayout>
+        );
+    }
 
     return (
         <PublicLayout>
@@ -30,7 +66,7 @@ export default function BlogResourcePage() {
                             <div className="flex items-center justify-between border-b pb-8">
                                 <h2 className="text-4xl font-black tracking-tighter">Latest <span className="text-primary italic">Articles</span></h2>
                                 <div className="relative w-full max-w-xs hidden md:block">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                                    <LucideIcons.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                                     <input
                                         type="text"
                                         placeholder="Search articles..."
@@ -53,7 +89,7 @@ export default function BlogResourcePage() {
                                         <div className="flex flex-col md:flex-row gap-8">
                                             <div className="md:w-1/3 aspect-[4/3] rounded-[2rem] overflow-hidden shadow-xl">
                                                 <img
-                                                    src={blog.image}
+                                                    src={blog.imageUrl}
                                                     alt={blog.title}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />
@@ -71,10 +107,10 @@ export default function BlogResourcePage() {
                                                     {blog.excerpt}
                                                 </p>
                                                 <div className="flex items-center gap-3 pt-2">
-                                                    <img src={blog.author.avatar} alt={blog.author.name} className="w-8 h-8 rounded-full object-cover" />
-                                                    <span className="text-sm font-black">{blog.author.name}</span>
+                                                    {blog.authorAvatar && <img src={blog.authorAvatar} alt={blog.authorName} className="w-8 h-8 rounded-full object-cover" />}
+                                                    <span className="text-sm font-black">{blog.authorName}</span>
                                                     <span className="text-sm text-muted-foreground ml-auto flex items-center gap-1">
-                                                        Read More <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                                        Read More <LucideIcons.ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                                     </span>
                                                 </div>
                                             </div>
@@ -89,40 +125,43 @@ export default function BlogResourcePage() {
                             <div className="sticky top-32 space-y-12">
                                 <div className="p-10 rounded-[2.5rem] bg-secondary/5 border-2 border-secondary/10 backdrop-blur-xl">
                                     <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
-                                        <GraduationCap className="text-secondary" size={24} />
+                                        <LucideIcons.GraduationCap className="text-secondary" size={24} />
                                         Resources
                                     </h3>
 
                                     <div className="space-y-6">
-                                        {resources.map((resource, i) => (
-                                            <motion.div
-                                                key={resource.id}
-                                                initial={{ opacity: 0, x: 20 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ duration: 0.5, delay: i * 0.1 }}
-                                                className="group p-5 rounded-2xl bg-white dark:bg-white/5 border border-transparent hover:border-primary/20 hover:shadow-lg transition-all cursor-pointer"
-                                                onClick={() => navigate(`/resource/${resource.id}`)}
-                                            >
-                                                <div className="flex items-start gap-4">
-                                                    <div className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 group-hover:scale-110 transition-transform">
-                                                        <resource.icon size={20} />
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">{resource.type}</span>
-                                                            {resource.badge && (
-                                                                <span className="text-[10px] bg-secondary/20 text-secondary font-black px-1.5 py-0.5 rounded leading-none">{resource.badge}</span>
-                                                            )}
+                                        {resources.slice(0, 4).map((resource, i) => {
+                                            const Icon = (LucideIcons as any)[resource.icon] || LucideIcons.FileText;
+                                            return (
+                                                <motion.div
+                                                    key={resource.id}
+                                                    initial={{ opacity: 0, x: 20 }}
+                                                    whileInView={{ opacity: 1, x: 0 }}
+                                                    viewport={{ once: true }}
+                                                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                                                    className="group p-5 rounded-2xl bg-white dark:bg-white/5 border border-transparent hover:border-primary/20 hover:shadow-lg transition-all cursor-pointer"
+                                                    onClick={() => navigate(`/resource/${resource.id}`)}
+                                                >
+                                                    <div className="flex items-start gap-4">
+                                                        <div className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 group-hover:scale-110 transition-transform">
+                                                            <Icon size={20} />
                                                         </div>
-                                                        <h4 className="font-black text-sm group-hover:text-primary transition-colors line-clamp-1">{resource.title}</h4>
-                                                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1 font-medium">
-                                                            <Clock size={10} /> {resource.duration}
-                                                        </p>
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <span className="text-[10px] font-black uppercase tracking-widest text-primary">{resource.type}</span>
+                                                                {resource.badge && (
+                                                                    <span className="text-[10px] bg-secondary/20 text-secondary font-black px-1.5 py-0.5 rounded leading-none">{resource.badge}</span>
+                                                                )}
+                                                            </div>
+                                                            <h4 className="font-black text-sm group-hover:text-primary transition-colors line-clamp-1">{resource.title}</h4>
+                                                            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1 font-medium">
+                                                                <LucideIcons.Clock size={10} /> {resource.duration}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </motion.div>
-                                        ))}
+                                                </motion.div>
+                                            );
+                                        })}
                                     </div>
 
                                     <Button
@@ -130,7 +169,7 @@ export default function BlogResourcePage() {
                                         className="w-full mt-10 rounded-2xl py-6 font-black border-2 group"
                                         onClick={() => navigate("/resources/library")}
                                     >
-                                        View All Library <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
+                                        View All Library <LucideIcons.ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
                                     </Button>
                                 </div>
 

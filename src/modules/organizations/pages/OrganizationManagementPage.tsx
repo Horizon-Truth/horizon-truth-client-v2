@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Building2, Globe, CheckCircle2, XCircle, Search, MoreVertical, Plus, MapPin } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -8,9 +9,12 @@ import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 
 export default function OrganizationManagementPage() {
+    const navigate = useNavigate();
     const [organizations, setOrganizations] = useState<Organization[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [newOrg, setNewOrg] = useState({ name: '', country: 'Ethiopia', description: '', type: 'CROWDSOURCED' });
 
     const fetchOrganizations = async () => {
         setIsLoading(true);
@@ -28,6 +32,19 @@ export default function OrganizationManagementPage() {
     useEffect(() => {
         fetchOrganizations();
     }, []);
+
+    const handleCreateOrg = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await adminService.createOrganization(newOrg);
+            toast.success("Organization registered successfully");
+            setIsCreateModalOpen(false);
+            setNewOrg({ name: '', country: 'Ethiopia', description: '', type: 'CROWDSOURCED' });
+            fetchOrganizations();
+        } catch (error) {
+            toast.error("Failed to create organization");
+        }
+    };
 
     const handleStatusToggle = async (org: Organization) => {
         try {
@@ -52,11 +69,79 @@ export default function OrganizationManagementPage() {
                     <h2 className="text-3xl sm:text-4xl font-black tracking-tighter italic uppercase">Registry of Entities</h2>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic">Authorized organizations and institutional partners.</p>
                 </div>
-                <Button className="w-full sm:w-auto rounded-full h-14 px-8 font-black uppercase tracking-widest gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all shadow-xl shadow-foreground/10">
+                <Button
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="w-full sm:w-auto rounded-full h-14 px-8 font-black uppercase tracking-widest gap-2 bg-foreground text-background hover:bg-foreground/90 transition-all shadow-xl shadow-foreground/10"
+                >
                     <Plus size={20} />
                     Register Unit
                 </Button>
             </div>
+
+            {/* Create Modal */}
+            {isCreateModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+                    <div className="bg-card border border-border/50 w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-3xl font-black italic uppercase tracking-tighter decoration-primary decoration-4 underline-offset-8 underline">Onboard Entity</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setIsCreateModalOpen(false)} className="rounded-full">
+                                <XCircle size={24} />
+                            </Button>
+                        </div>
+
+                        <form onSubmit={handleCreateOrg} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Entity Name</label>
+                                <Input
+                                    required
+                                    className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                    value={newOrg.name}
+                                    onChange={e => setNewOrg({ ...newOrg, name: e.target.value })}
+                                    placeholder="e.g. TRUTH WATCH"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Territory</label>
+                                    <Input
+                                        required
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={newOrg.country}
+                                        onChange={e => setNewOrg({ ...newOrg, country: e.target.value })}
+                                        placeholder="Ethiopia"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Sector Class</label>
+                                    <select
+                                        className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none"
+                                        value={newOrg.type}
+                                        onChange={e => setNewOrg({ ...newOrg, type: e.target.value })}
+                                    >
+                                        <option value="CROWDSOURCED">Crowdsourced</option>
+                                        <option value="GOVERNMENT">Government</option>
+                                        <option value="NGO">NGO</option>
+                                        <option value="ACADEMIC">Academic</option>
+                                        <option value="MEDIA">Media</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Mission Narrative</label>
+                                <textarea
+                                    className="w-full min-h-[120px] rounded-2xl bg-muted/30 border-none p-4 font-bold italic outline-none resize-none"
+                                    value={newOrg.description}
+                                    onChange={e => setNewOrg({ ...newOrg, description: e.target.value })}
+                                    placeholder="Describe the entity's mandate and scope of operations..."
+                                />
+                            </div>
+                            <Button type="submit" className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                Verify and Register
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <div className="md:col-span-2 relative">
@@ -106,7 +191,12 @@ export default function OrganizationManagementPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-black tracking-tighter italic uppercase group-hover:text-primary transition-colors">{org.name}</h3>
+                                <button
+                                    onClick={() => navigate(`/dashboard/organizations/${org.id}`)}
+                                    className="text-2xl font-black tracking-tighter italic uppercase group-hover:text-primary transition-colors text-left hover:underline underline-offset-4"
+                                >
+                                    {org.name}
+                                </button>
                                 <div className="flex items-center gap-2 text-muted-foreground font-bold italic text-sm">
                                     <MapPin size={14} className="text-primary" />
                                     {org.country}

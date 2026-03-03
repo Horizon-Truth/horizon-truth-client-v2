@@ -4,20 +4,18 @@ import {
     LayoutDashboard,
     Users,
     Building2,
-    Trophy,
     Cpu,
     FileText,
     Settings,
-    BarChart3,
     AlertTriangle,
-    History,
-    Lock,
     Menu,
     ChevronLeft,
     LogOut,
     User as UserIcon,
     ChevronDown,
-    MessageSquare
+    MessageSquare,
+    BookOpen,
+    Megaphone
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
@@ -30,18 +28,19 @@ import { Button } from "@/shared/components/ui/button";
 const navigation = [
     { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
-    { name: "Submit Report", icon: AlertTriangle, href: "/report", roles: ["PLAYER", "SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
+    { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+    { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
     { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
     { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
     { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
     { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Gamification", icon: Trophy, href: "/dashboard/gamification", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR", "PLAYER"] },
-    { name: "Cloud Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
-    { name: "Incident Log", icon: AlertTriangle, href: "/dashboard/incidents", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
-    { name: "Audit Protocol", icon: History, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
-    { name: "Security Auth", icon: Lock, href: "/dashboard/auth", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
     { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
     { name: "Avatar Manager", icon: Settings, href: "/dashboard/players/avatars", roles: ["SYSTEM_ADMIN"] },
+    { name: "Blogs", icon: FileText, href: "/dashboard/resources/blogs", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+    { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+    { name: "Contact Comms", icon: MessageSquare, href: "/dashboard/contacts", roles: ["SYSTEM_ADMIN"] },
+    { name: "Newsletter Base", icon: Megaphone, href: "/dashboard/newsletter", roles: ["SYSTEM_ADMIN"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {

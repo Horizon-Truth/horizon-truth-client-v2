@@ -15,11 +15,11 @@ import { Input } from '@/shared/components/ui/input';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { GuestSessionManager } from '@/shared/utils/guest-session';
-import { Phone, Lock, User as UserIcon, LogIn, Sparkles } from 'lucide-react';
+import { Lock, User as UserIcon, LogIn, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 const loginSchema = z.object({
-    phone: z.string().min(10, { message: 'Enter a valid phone number' }),
+    email: z.string().min(3, { message: 'Enter a valid email or username' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
 });
 
@@ -30,7 +30,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            phone: '',
+            email: '',
             password: '',
         },
     });
@@ -91,16 +91,16 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="email"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
-                                        <Phone size={12} /> Phone Number
+                                        <UserIcon size={12} /> Email or Username
                                     </FormLabel>
                                     <FormControl>
                                         <div className="group relative">
                                             <Input
-                                                placeholder="+1 (555) 000-0000"
+                                                placeholder="Enter your email or username"
                                                 className="bg-background/50 backdrop-blur-sm border-input group-focus-within:border-primary/50 group-focus-within:ring-4 group-focus-within:ring-primary/5 h-12 rounded-2xl transition-all duration-300 pl-4"
                                                 {...field}
                                             />

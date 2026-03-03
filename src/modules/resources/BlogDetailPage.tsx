@@ -1,15 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { Button } from "@/shared/components/ui/button";
-import { blogs } from "./mockData";
+import { adminService, type Blog } from "@/services/admin.service";
 import { toast } from "sonner";
 
 export default function BlogDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const blog = blogs.find(b => b.id === id);
+    const [blog, setBlog] = useState<Blog | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const { scrollYProgress } = useScroll();
     const scaleX = useSpring(scrollYProgress, {
@@ -17,6 +19,36 @@ export default function BlogDetailPage() {
         damping: 30,
         restDelta: 0.001
     });
+
+    useEffect(() => {
+        const fetchBlog = async () => {
+            if (!id) return;
+            setIsLoading(true);
+            try {
+                const data = await adminService.getBlogById(id);
+                setBlog(data);
+            } catch (error) {
+                console.error("Failed to fetch blog:", error);
+                toast.error("Failed to load blog post");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchBlog();
+    }, [id]);
+
+    if (isLoading) {
+        return (
+            <PublicLayout>
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Decrypting Narrative...</p>
+                    </div>
+                </div>
+            </PublicLayout>
+        );
+    }
 
     if (!blog) {
         return (
@@ -63,7 +95,7 @@ export default function BlogDetailPage() {
 
                         <div className="flex items-center gap-4 text-sm font-black text-primary uppercase tracking-[0.2em]">
                             <span className="px-3 py-1 bg-primary/10 rounded-full">{blog.category}</span>
-                            <span className="flex items-center gap-1"><Calendar size={14} /> {blog.date}</span>
+                            <span className="flex items-center gap-1"><Calendar size={14} /> {new Date(blog.publishedAt).toLocaleDateString()}</span>
                             <span className="flex items-center gap-1"><Clock size={14} /> {blog.readTime}</span>
                         </div>
 
@@ -72,10 +104,10 @@ export default function BlogDetailPage() {
                         </h1>
 
                         <div className="flex items-center gap-4 py-8 border-y">
-                            <img src={blog.author.avatar} className="w-12 h-12 rounded-full object-cover shadow-lg" alt={blog.author.name} />
+                            {blog.authorAvatar && <img src={blog.authorAvatar} className="w-12 h-12 rounded-full object-cover shadow-lg" alt={blog.authorName} />}
                             <div>
-                                <p className="font-black text-foreground">{blog.author.name}</p>
-                                <p className="text-sm text-muted-foreground font-medium">{blog.author.role}</p>
+                                <p className="font-black text-foreground">{blog.authorName}</p>
+                                <p className="text-sm text-muted-foreground font-medium">{blog.authorRole}</p>
                             </div>
                             <div className="ml-auto flex gap-2">
                                 <Button variant="ghost" size="icon" className="rounded-full" onClick={copyLink}>
@@ -98,7 +130,7 @@ export default function BlogDetailPage() {
                         transition={{ delay: 0.2 }}
                         className="my-12 rounded-[3rem] overflow-hidden shadow-2xl"
                     >
-                        <img src={blog.image} alt={blog.title} className="w-full aspect-video object-cover" />
+                        <img src={blog.imageUrl} alt={blog.title} className="w-full aspect-video object-cover" />
                     </motion.div>
 
                     {/* Content */}
