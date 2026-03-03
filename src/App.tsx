@@ -35,6 +35,9 @@ import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
 import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManagementPage";
 import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
+import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
+import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
+import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 
 const BlogManagementPage = lazy(() => import('./modules/resources/admin/BlogManagementPage'));
@@ -50,6 +53,7 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <Toaster position="top-center" richColors />
       <Routes>
         {/* Public Landing Page */}
         <Route path="/" element={<LandingPage />} />
@@ -117,6 +121,8 @@ function App() {
                   <Route path="reports" element={user?.role !== 'PLAYER' ? <ReportAdminManagementPage /> : <Navigate to="/crowdsourcing/submit" replace />} />
                   <Route path="reports/:id" element={user?.role !== 'PLAYER' ? <ReportAdminDetailPage /> : <Navigate to="/dashboard/reports" replace />} />
                   <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="contacts" element={user?.role === 'SYSTEM_ADMIN' ? <ContactSubmissionsPage /> : <Navigate to="/dashboard" replace />} />
+                  <Route path="newsletter" element={user?.role === 'SYSTEM_ADMIN' ? <NewsletterSubscriptionsPage /> : <Navigate to="/dashboard" replace />} />
                   <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
                 </Routes>
               </Suspense>

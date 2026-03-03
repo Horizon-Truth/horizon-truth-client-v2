@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ShieldCheck, Mail, Users, Gamepad, Trophy, Megaphone } from "lucide-react";
+import { ArrowRight, ShieldCheck, Mail, Users, Gamepad, Trophy, Megaphone, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
+import { newsletterService } from "@/services/newsletter.service";
 
 const carouselSlides = [
     {
@@ -137,6 +138,8 @@ export default function LandingPage() {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuthStore();
     const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -144,11 +147,20 @@ export default function LandingPage() {
         }
     }, [isAuthenticated, navigate]);
 
-    const handleSubscribe = (e: React.FormEvent) => {
+    const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
         if (email) {
-            toast.success("Newsletter Subscription Successful! You will receive an email reservation notification.");
-            setEmail("");
+            setLoading(true);
+            try {
+                await newsletterService.subscribe(email);
+                toast.success("Newsletter Subscription Successful! You will receive an email reservation notification.");
+                setIsSubscribed(true);
+                setEmail("");
+            } catch (error: any) {
+                toast.error(error.response?.data?.message || "Failed to subscribe. Please try again.");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -423,22 +435,72 @@ export default function LandingPage() {
             </section>
 
             {/* Newsletter Section */}
-            <section className="py-24 bg-primary/5 border-t">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <Mail className="w-12 h-12 text-primary mx-auto mb-6" />
-                    <h2 className="text-3xl font-bold mb-4">Stay Informed</h2>
-                    <p className="text-muted-foreground mb-8 text-lg">Subscribe to our newsletter and receive an email reservation notification for upcoming platform features.</p>
-                    <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="flex-1 h-12 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary bg-background"
-                        />
-                        <Button type="submit" size="lg" className="rounded-xl px-8">Subscribe</Button>
-                    </form>
+            <section className="py-24 relative overflow-hidden">
+                <div className="absolute inset-0 bg-primary/5 -skew-y-3 origin-right transform scale-110" />
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="bg-gradient-to-br from-card to-background border border-primary/20 rounded-[3rem] p-8 md:p-16 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-all duration-700" />
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 group-hover:bg-secondary/20 transition-all duration-700" />
+
+                        <div className="relative z-10 flex flex-col items-center text-center">
+                            {isSubscribed ? (
+                                <div className="animate-in fade-in zoom-in duration-500 py-4 flex flex-col items-center">
+                                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 relative">
+                                        <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-20" />
+                                        <CheckCircle size={40} className="text-primary relative z-10" />
+                                    </div>
+                                    <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">Welcome to the Frontline</h2>
+                                    <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
+                                        Your subscription is confirmed. You are now part of a global network of digital defenders. Watch your inbox for high-priority updates.
+                                    </p>
+                                    <Button
+                                        onClick={() => setIsSubscribed(false)}
+                                        variant="ghost"
+                                        className="text-primary font-bold hover:bg-primary/5 rounded-xl"
+                                    >
+                                        Subscribe another email
+                                    </Button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 transform group-hover:rotate-12 transition-transform duration-500">
+                                        <Mail className="w-8 h-8 text-primary" />
+                                    </div>
+                                    <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Stay Ahead of Deception</h2>
+                                    <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+                                        Join our community of digital defenders. Subscribe to get the latest insights on media literacy, platform updates, and verified news straight to your inbox.
+                                    </p>
+
+                                    <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 w-full max-w-xl">
+                                        <div className="relative flex-1">
+                                            <input
+                                                type="email"
+                                                placeholder="Enter your email address"
+                                                required
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className="w-full h-14 px-6 rounded-2xl border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary bg-background/50 backdrop-blur-sm transition-all"
+                                            />
+                                        </div>
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={loading}
+                                            className="h-14 rounded-2xl px-10 font-bold text-lg shadow-lg hover:shadow-primary/30 transition-all"
+                                        >
+                                            {loading ? "Subscribing..." : "Subscribe Now"}
+                                            <ArrowRight size={20} className="ml-2" />
+                                        </Button>
+                                    </form>
+                                </>
+                            )}
+                            {!isSubscribed && (
+                                <p className="mt-6 text-xs text-muted-foreground opacity-70">
+                                    By subscribing, you agree to our <span className="underline cursor-pointer">Privacy Policy</span>. No spam, just truth.
+                                </p>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </section>
 
