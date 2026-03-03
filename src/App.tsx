@@ -37,7 +37,7 @@ import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManage
 import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
 import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
-import GuestGamePage from "./modules/simulation/GuestGamePage";
+import GuestGamePage from "@/modules/simulation/GuestGamePage";
 import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 

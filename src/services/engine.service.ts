@@ -17,6 +17,7 @@ export interface Scenario {
     psychologicalTrigger?: string;
     preventionLesson?: string;
     theme?: string;
+    scenes?: Scene[];
 }
 
 export interface Scene {

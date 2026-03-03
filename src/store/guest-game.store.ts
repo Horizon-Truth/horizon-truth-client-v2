@@ -34,23 +34,37 @@ export const useGuestGameStore = create<GuestGameState>()(
             error: null,
 
             fetchScenarios: async () => {
-                set({ isLoading: true });
+                set({ isLoading: true, error: null });
                 try {
-                    const response = await engineService.getScenarios();
-                    set({ scenarios: response.data, isLoading: false });
+                    const response = await engineService.getScenarios({ isActive: true } as any);
+                    const data = Array.isArray(response) ? response : (response.data || []);
+                    set({ scenarios: data, isLoading: false });
                 } catch (error: any) {
+                    console.error('Guest store failed to fetch scenarios', error);
                     set({ error: error.message, isLoading: false });
                 }
             },
 
             startGuestGame: async (scenario: Scenario) => {
-                set({ isLoading: true, activeScenario: scenario, choicesLog: [], trustScore: 50, isCompleted: false });
+                set({ isLoading: true, activeScenario: scenario, choicesLog: [], trustScore: 50, isCompleted: false, error: null });
                 try {
                     // Fetch full scenario with scenes for local play
                     const fullScenario = await engineService.getScenarioById(scenario.id);
-                    const firstScene = fullScenario.scenes.sort((a: any, b: any) => a.order - b.order)[0];
-                    set({ currentScene: firstScene, isLoading: false });
+                    // Sort scenes by order to find the first one
+                    const sortedScenes = [...(fullScenario.scenes || [])].sort((a: any, b: any) => a.order - b.order);
+                    const firstScene = sortedScenes[0];
+
+                    if (!firstScene) {
+                        throw new Error('This scenario has no scenes configured.');
+                    }
+
+                    set({
+                        activeScenario: fullScenario,
+                        currentScene: firstScene,
+                        isLoading: false
+                    });
                 } catch (error: any) {
+                    console.error('Failed to start guest game', error);
                     set({ error: error.message, isLoading: false });
                 }
             },
@@ -79,7 +93,9 @@ export const useGuestGameStore = create<GuestGameState>()(
 
                     // Submit anonymous play data to backend
                     try {
-                        const guestId = JSON.parse(localStorage.getItem('horizon-auth-storage') || '{}').state?.user?.id;
+                        const authStore = JSON.parse(localStorage.getItem('horizon-auth-storage') || '{}');
+                        const guestId = authStore.state?.user?.id;
+
                         await api.post('/engine/guest/play', {
                             guestId: guestId || 'anonymous',
                             scenarioId: activeScenario.id,
@@ -94,17 +110,31 @@ export const useGuestGameStore = create<GuestGameState>()(
                         console.error('Failed to submit guest play data', e);
                     }
                 } else {
-                    // Find next scene in the local scenario data (already fetched in startGuestGame)
-                    try {
-                        const fullScenario = await engineService.getScenarioById(activeScenario.id);
-                        const nextScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
+                    // Find next scene in the local scenario data (already in state)
+                    const nextScene = (activeScenario.scenes || []).find((s: any) => s.id === choice.nextSceneId);
+
+                    if (nextScene) {
                         set({
                             currentScene: nextScene,
                             choicesLog: newChoiceLog,
                             trustScore: newTrustScore
                         });
-                    } catch (error: any) {
-                        set({ error: error.message });
+                    } else {
+                        // Fallback: try to find by ID if not in current scenes array for some reason
+                        set({ isLoading: true });
+                        try {
+                            const fullScenario = await engineService.getScenarioById(activeScenario.id);
+                            const foundScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
+                            set({
+                                activeScenario: fullScenario,
+                                currentScene: foundScene,
+                                choicesLog: newChoiceLog,
+                                trustScore: newTrustScore,
+                                isLoading: false
+                            });
+                        } catch (error: any) {
+                            set({ error: "Next scene not found", isLoading: false });
+                        }
                     }
                 }
             },
