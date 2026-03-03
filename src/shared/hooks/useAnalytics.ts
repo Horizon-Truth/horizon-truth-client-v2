@@ -12,6 +12,7 @@ export interface AnalyticsStats {
         resources: number;
         contacts: number;
         guestPlays: number;
+        reports: number;
     };
     distributions: {
         organizations: Record<string, number>;
