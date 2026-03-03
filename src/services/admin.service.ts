@@ -60,7 +60,12 @@ export interface PlayerProfile {
 
 class AdminService {
     async getUsers() {
-        const response = await api.get('/admin/users');
+        const response = await api.get('/users');
+        return response.data;
+    }
+
+    async createUser(data: any) {
+        const response = await api.post('/users', data);
         return response.data;
     }
 
@@ -76,6 +81,26 @@ class AdminService {
 
     async getOrganizations() {
         const response = await api.get('/admin/organizations');
+        return response.data;
+    }
+
+    async getOrganizationById(id: string) {
+        const response = await api.get(`/admin/organizations/${id}`);
+        return response.data;
+    }
+
+    async createOrganization(data: any) {
+        const response = await api.post('/admin/organizations', data);
+        return response.data;
+    }
+
+    async getOrganizationUsers(orgId: string) {
+        const response = await api.get(`/admin/organizations/${orgId}/users`);
+        return response.data;
+    }
+
+    async addOrganizationUser(orgId: string, data: { userId: string; role: string }) {
+        const response = await api.post(`/admin/organizations/${orgId}/users`, data);
         return response.data;
     }
 

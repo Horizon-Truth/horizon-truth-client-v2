@@ -12,17 +12,34 @@ export default function UserManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [newUser, setNewUser] = useState({ fullName: '', email: '', username: '', role: 'PLAYER' });
 
     const fetchUsers = async () => {
         setIsLoading(true);
         try {
             const response = await adminService.getUsers();
-            setUsers(response.data.data || []);
+            // The response for users seems to be the array itself or { data: { data: [] } }
+            // Given the adminService.getUsers() returns response.data
+            setUsers(response.data?.data || response.data || []);
         } catch (error) {
             console.error("Failed to fetch users:", error);
             toast.error("Failed to load users");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleCreateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await adminService.createUser(newUser);
+            toast.success("Personnel onboarded successfully");
+            setIsCreateModalOpen(false);
+            setNewUser({ fullName: '', email: '', username: '', role: 'PLAYER' });
+            fetchUsers();
+        } catch (error) {
+            toast.error("Failed to onboard personnel");
         }
     };
 
@@ -67,11 +84,82 @@ export default function UserManagementPage() {
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">User Directory</h2>
                     <p className="text-sm text-muted-foreground mt-1">Manage system accounts and access control parameters.</p>
                 </div>
-                <Button className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all">
+                <Button
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all border-none bg-foreground text-background"
+                >
                     <UserPlus size={20} />
                     Onboard New User
                 </Button>
             </div>
+
+            {/* Create User Modal */}
+            {isCreateModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+                    <div className="bg-card border border-border/50 w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-3xl font-black italic uppercase tracking-tighter decoration-primary decoration-4 underline-offset-8 underline">Embed Personnel</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setIsCreateModalOpen(false)} className="rounded-full">
+                                <UserX size={24} />
+                            </Button>
+                        </div>
+
+                        <form onSubmit={handleCreateUser} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Identity Full Name</label>
+                                <Input
+                                    required
+                                    className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                    value={newUser.fullName}
+                                    onChange={e => setNewUser({ ...newUser, fullName: e.target.value })}
+                                    placeholder="e.g. CASPIAN MILLER"
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Comms Email</label>
+                                    <Input
+                                        required
+                                        type="email"
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={newUser.email}
+                                        onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+                                        placeholder="miller@truthwatch.io"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Registry Handle</label>
+                                    <Input
+                                        required
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={newUser.username}
+                                        onChange={e => setNewUser({ ...newUser, username: e.target.value })}
+                                        placeholder="caspian_88"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Clearance Protocol</label>
+                                <select
+                                    className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none cursor-pointer"
+                                    value={newUser.role}
+                                    onChange={e => setNewUser({ ...newUser, role: e.target.value })}
+                                >
+                                    <option value="PLAYER">Field Agent (Player)</option>
+                                    <option value="ORGANIZATION_ADMIN">Lead Investigator (Org Admin)</option>
+                                    <option value="SYSTEM_ADMIN">High Overseer (System Admin)</option>
+                                </select>
+                            </div>
+                            <p className="text-[10px] font-medium italic text-muted-foreground px-1">
+                                Note: Initial authentication credentials will be dispatched to the provided communications channel upon verification.
+                            </p>
+                            <Button type="submit" className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                Authenticate and Embed
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-card border border-border/50 p-2 sm:p-4 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm">
                 <div className="relative flex-1">
