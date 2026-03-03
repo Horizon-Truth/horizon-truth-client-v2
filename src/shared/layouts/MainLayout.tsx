@@ -15,7 +15,8 @@ import {
     ChevronDown,
     MessageSquare,
     BookOpen,
-    Megaphone
+    Megaphone,
+    ShieldCheck
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
@@ -71,8 +72,15 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const NavContent = ({ mobile = false, onSelect }: { mobile?: boolean, onSelect?: () => void }) => (
         <div className="flex flex-col h-full">
             <div className={cn("flex items-center h-16 px-4 border-b justify-between", mobile && "px-6")}>
-                <Link to="/" className="font-bold text-xl uppercase tracking-wider hover:opacity-80 transition-opacity flex items-center gap-2">
-                    Horizon
+                <Link to="/" className="flex items-center gap-2 group">
+                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform flex-shrink-0">
+                        <ShieldCheck className="text-primary-foreground h-5 w-5" />
+                    </div>
+                    {(isSidebarOpen || mobile) && (
+                        <span className="font-bold text-xl uppercase tracking-widest hover:opacity-80 transition-opacity">
+                            Horizon
+                        </span>
+                    )}
                 </Link>
                 {!mobile && (
                     <button
