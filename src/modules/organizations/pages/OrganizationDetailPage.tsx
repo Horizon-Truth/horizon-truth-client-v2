@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    Building2, MapPin, Calendar, CheckCircle2, XCircle,
-    Users as UsersIcon, Mail, Shield, Plus, ArrowLeft, MoreHorizontal, MoreVertical,
+    Building2, MapPin, CheckCircle2, XCircle,
+    Users as UsersIcon, Mail, Shield, ArrowLeft, MoreVertical,
     Trash2, UserPlus
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";

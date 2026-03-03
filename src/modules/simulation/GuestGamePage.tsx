@@ -10,7 +10,6 @@ import {
     UserPlus,
     Loader2,
     Zap,
-    Users,
     ShieldAlert,
     Clock,
     TrendingUp,
@@ -23,7 +22,6 @@ import { Button } from '@/shared/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { toast } from 'sonner';
-import { Badge } from '@/shared/components/ui/badge';
 
 // Component-specific imports
 import { TrustMeter } from '../engine/components/play/TrustMeter';
@@ -78,41 +76,7 @@ const NotificationCard = memo(({ icon, title, desc, time, highlight = false, isL
 });
 NotificationCard.displayName = 'NotificationCard';
 
-function StatCard({ label, value, subValue, icon, progress, color, isLocked }: { label: string, value: string, subValue?: string, icon: React.ReactNode, progress?: number, color?: string, isLocked?: boolean }) {
-    return (
-        <div className={cn(
-            "bg-card/20 border border-white/10 rounded-[2rem] p-6 backdrop-blur-xl relative overflow-hidden group transition-all duration-300",
-            isLocked ? "opacity-60 grayscale-[0.5]" : "hover:border-white/20 hover:bg-card/30"
-        )}>
-            <div className="flex items-center justify-between mb-6">
-                <span className="text-[10px] font-black text-muted-foreground tracking-[0.2em] uppercase">{label}</span>
-                <div className="w-10 h-10 bg-white/5 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform">
-                    {icon}
-                </div>
-            </div>
-            <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                    <h4 className="text-2xl sm:text-3xl font-black tracking-tighter">{value}</h4>
-                    {isLocked && <Badge variant="secondary" className="text-[8px] h-4 rounded-md uppercase font-black tracking-tighter bg-white/5 border-white/10">Locked</Badge>}
-                </div>
-                {subValue && <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">{subValue}</p>}
-            </div>
-            {progress !== undefined && (
-                <div className="mt-6 w-full h-2 bg-white/5 rounded-full overflow-hidden p-[1px]">
-                    <div
-                        className={cn("h-full rounded-full transition-all duration-1000 ease-out", color)}
-                        style={{ width: `${progress}%` }}
-                    />
-                </div>
-            )}
-            {isLocked && (
-                <div className="absolute inset-0 bg-background/5 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <span className="text-[10px] font-black uppercase tracking-widest bg-black/50 px-3 py-1 rounded-full border border-white/10">Sign in to unlock</span>
-                </div>
-            )}
-        </div>
-    );
-}
+
 
 
 export default function GuestGamePage() {
