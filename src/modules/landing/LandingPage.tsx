@@ -102,10 +102,10 @@ const HeroCarousel = () => {
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                 <Button
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => navigate(slide.ctaLink)}
                                     className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all border-none"
                                 >
-                                    Access Protocol
+                                    {slide.ctaText}
                                 </Button>
                                 <Button
                                     variant="outline"
