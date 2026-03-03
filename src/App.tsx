@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./shared/layouts/MainLayout";
 import DashboardPage from "./modules/analytics/DashboardPage";
+import SystemHealthPage from "./modules/analytics/SystemHealthPage";
 import LandingPage from "./modules/landing/LandingPage";
 import AboutPage from "./modules/about/AboutPage";
 import BlogResourcePage from "./modules/resources/BlogResourcePage";
@@ -37,6 +38,7 @@ import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManage
 import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
 import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
+import GuestGamePage from "@/modules/simulation/GuestGamePage";
 import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 
@@ -85,6 +87,7 @@ function App() {
 
         {/* Public Simulation (Guest Mode) */}
         <Route path="/simulation" element={<SimulationPage />} />
+        <Route path="/guest" element={<GuestGamePage />} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard/*" element={
@@ -111,6 +114,7 @@ function App() {
                   <Route path="gamification" element={<div>Gamification Page</div>} />
                   <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="health" element={user?.role === 'SYSTEM_ADMIN' ? <SystemHealthPage /> : <Navigate to="/dashboard" replace />} />
                   <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="audit-logs" element={user?.role !== 'PLAYER' ? <div>Audit Logs Page</div> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />

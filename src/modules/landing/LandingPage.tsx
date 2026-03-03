@@ -44,6 +44,7 @@ const carouselSlides = [
 const HeroCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
+    const { setGuest } = useAuthStore();
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -102,16 +103,19 @@ const HeroCarousel = () => {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                 <Button
                                     onClick={() => navigate(slide.ctaLink)}
-                                    className="w-full sm:w-auto px-8 py-6 bg-primary text-primary-foreground rounded-xl font-bold hover:shadow-xl transition-all text-lg group"
+                                    className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all border-none"
                                 >
-                                    {slide.ctaText} <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                                    {slide.ctaText}
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    onClick={() => navigate("/about")}
-                                    className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold border-2 border-white text-white hover:bg-white/10 transition-all text-lg backdrop-blur-sm"
+                                    onClick={() => {
+                                        setGuest(true);
+                                        navigate('/guest');
+                                    }}
+                                    className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] transition-all"
                                 >
-                                    Learn More
+                                    Play as Guest
                                 </Button>
                             </div>
                         </motion.div>

@@ -14,13 +14,13 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
-import { User, Phone, Lock, AtSign, Sparkles, ArrowRight } from 'lucide-react';
+import { User, Lock, AtSign, Sparkles, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 const registerSchema = z.object({
     fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
     username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
-    phone: z.string().min(10, { message: 'Enter a valid phone number' }),
+    email: z.string().email({ message: 'Enter a valid email address' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -37,7 +37,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
         defaultValues: {
             fullName: '',
             username: '',
-            phone: '',
+            email: '',
             password: '',
             confirmPassword: '',
         },
@@ -128,15 +128,15 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                             />
                             <FormField
                                 control={form.control}
-                                name="phone"
+                                name="email"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
-                                            <Phone size={12} /> Phone
+                                            <AtSign size={12} /> Email
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="+1..."
+                                                placeholder="john@example.com"
                                                 className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4 text-sm"
                                                 {...field}
                                             />

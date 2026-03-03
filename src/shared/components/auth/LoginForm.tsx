@@ -14,7 +14,6 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
-import { GuestSessionManager } from '@/shared/utils/guest-session';
 import { Lock, User as UserIcon, LogIn, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,7 +24,7 @@ const loginSchema = z.object({
 
 export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     const navigate = useNavigate();
-    const { setAuth, setGuest, loading, setLoading, error, setError } = useAuthStore();
+    const { setAuth, loading, setLoading, error, setError } = useAuthStore();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -54,21 +53,6 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
             setLoading(false);
         }
     }
-
-    const handleGuestLogin = async () => {
-        setLoading(true);
-        try {
-            const { sessionId, userId } = GuestSessionManager.createSession();
-            await authService.initGuestSession(sessionId, userId);
-            setGuest(true);
-            toast.success('Continuing as Guest');
-            navigate('/simulation');
-        } catch (err: any) {
-            toast.error('Failed to initialize guest session');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="relative p-8 md:p-12 overflow-hidden">
@@ -160,16 +144,6 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                                         Sign In <LogIn size={18} className="group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 )}
-                            </Button>
-
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleGuestLogin}
-                                className="w-full h-12 rounded-2xl font-bold border-input/50 border-2 hover:bg-secondary transition-all"
-                                disabled={loading}
-                            >
-                                <UserIcon size={18} className="mr-2 opacity-70" /> Continue as Guest
                             </Button>
                         </div>
                     </form>

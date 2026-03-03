@@ -53,7 +53,12 @@ export const useAuthStore = create<AuthState>()(
                 loading: false,
                 error: null
             }),
-            setGuest: (isGuest) => set({ isGuest, isAuthenticated: false, user: null, token: null }),
+            setGuest: (isGuest) => set({
+                isGuest,
+                isAuthenticated: false,
+                user: isGuest ? { id: crypto.randomUUID(), fullName: 'Guest Player', role: 'PLAYER' } as any : null,
+                token: null
+            }),
             updateUser: (updatedUser) => set((state) => ({
                 user: state.user ? { ...state.user, ...updatedUser } : null
             })),

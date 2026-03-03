@@ -14,13 +14,21 @@ export default function OrganizationManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [newOrg, setNewOrg] = useState({ name: '', country: 'Ethiopia', description: '', type: 'CROWDSOURCED' });
+    const [newOrg, setNewOrg] = useState({
+        name: '',
+        country: 'Ethiopia',
+        description: '',
+        type: 'CROWDSOURCED',
+        adminFullName: '',
+        adminEmail: '',
+        adminPassword: ''
+    });
 
     const fetchOrganizations = async () => {
         setIsLoading(true);
         try {
             const response = await adminService.getOrganizations();
-            setOrganizations(response.data.data || []);
+            setOrganizations(response.data || []);
         } catch (error) {
             console.error("Failed to fetch organizations:", error);
             toast.error("Failed to load organizations");
@@ -37,9 +45,17 @@ export default function OrganizationManagementPage() {
         e.preventDefault();
         try {
             await adminService.createOrganization(newOrg);
-            toast.success("Organization registered successfully");
+            toast.success("Organization and Admin registered successfully");
             setIsCreateModalOpen(false);
-            setNewOrg({ name: '', country: 'Ethiopia', description: '', type: 'CROWDSOURCED' });
+            setNewOrg({
+                name: '',
+                country: 'Ethiopia',
+                description: '',
+                type: 'CROWDSOURCED',
+                adminFullName: '',
+                adminEmail: '',
+                adminPassword: ''
+            });
             fetchOrganizations();
         } catch (error) {
             toast.error("Failed to create organization");
@@ -126,17 +142,45 @@ export default function OrganizationManagementPage() {
                                     </select>
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Mission Narrative</label>
-                                <textarea
-                                    className="w-full min-h-[120px] rounded-2xl bg-muted/30 border-none p-4 font-bold italic outline-none resize-none"
-                                    value={newOrg.description}
-                                    onChange={e => setNewOrg({ ...newOrg, description: e.target.value })}
-                                    placeholder="Describe the entity's mandate and scope of operations..."
-                                />
+                            <div className="space-y-4 pt-4 border-t border-border/20">
+                                <h4 className="text-xs font-black uppercase tracking-widest text-primary ml-1">Administrative Node Access</h4>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Admin Full Name</label>
+                                    <Input
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={newOrg.adminFullName}
+                                        onChange={e => setNewOrg({ ...newOrg, adminFullName: e.target.value })}
+                                        placeholder="e.g. ABEBE BIKILA"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Admin Email (Required)</label>
+                                        <Input
+                                            required
+                                            type="email"
+                                            className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                            value={newOrg.adminEmail}
+                                            onChange={e => setNewOrg({ ...newOrg, adminEmail: e.target.value })}
+                                            placeholder="admin@entity.com"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Access Protocol (Password)</label>
+                                        <Input
+                                            required
+                                            type="password"
+                                            className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                            value={newOrg.adminPassword}
+                                            onChange={e => setNewOrg({ ...newOrg, adminPassword: e.target.value })}
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                </div>
                             </div>
+
                             <Button type="submit" className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
-                                Verify and Register
+                                Verify and Register Unit
                             </Button>
                         </form>
                     </div>

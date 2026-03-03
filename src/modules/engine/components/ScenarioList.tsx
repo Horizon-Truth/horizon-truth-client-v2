@@ -7,16 +7,27 @@ import { Play, Loader2, Gauge, Info } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
-export function ScenarioList() {
+export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenario: Scenario) => void, guestMode?: boolean }) {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
-    const { startGame, isLoading } = useGameStore();
+    const gameStore = useGameStore();
     const [localLoading, setLocalLoading] = useState(true);
+
+    const handleStartGame = (scenario: Scenario) => {
+        if (onStartGame) {
+            onStartGame(scenario);
+        } else {
+            gameStore.startGame(scenario.id);
+        }
+    };
 
     useEffect(() => {
         const fetchScenarios = async () => {
             try {
-                const response = await engineService.getScenarios();
-                setScenarios(response.data);
+                // In guest mode (and normally for players), we should only fetch active scenarios
+                const response = await engineService.getScenarios({ isActive: true } as any);
+                // Ensure we handle both potential response formats ({data: []} or just [])
+                const data = Array.isArray(response) ? response : (response.data || []);
+                setScenarios(data);
             } catch (err) {
                 console.error('Failed to fetch scenarios', err);
             } finally {
@@ -94,6 +105,17 @@ export function ScenarioList() {
                                 </span>
                             </div>
 
+                            {!guestMode && (
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                        Lvl {scenario.gameLevel?.level || 0}
+                                    </span>
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                        +{scenario.gameLevel?.requiredXp || 0} Trust
+                                    </span>
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{scenario.title}</h3>
                                 <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
@@ -104,19 +126,19 @@ export function ScenarioList() {
                             <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground pt-2">
                                 <div className="flex items-center gap-1.5">
                                     <Gauge size={14} className="text-primary" />
-                                    <span>Lvl {scenario.gameLevel.level}</span>
+                                    <span>Lvl {scenario.gameLevel?.level || 0}</span>
                                 </div>
                                 <div className="w-1 h-1 rounded-full bg-white/10" />
-                                <span>{scenario.gameLevel.requiredXp} XP Reward</span>
+                                <span>{scenario.gameLevel?.requiredXp || 0} XP Reward</span>
                             </div>
                         </div>
 
                         <Button
-                            onClick={() => startGame(scenario.id)}
-                            disabled={isLoading}
+                            onClick={() => handleStartGame(scenario)}
+                            disabled={gameStore.isLoading}
                             className="mt-auto h-12 rounded-2xl font-bold group-hover:scale-[1.02] transition-transform active:scale-95"
                         >
-                            {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play size={16} className="mr-2" />}
+                            {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play size={16} className="mr-2" />}
                             Initialize Protocol
                         </Button>
                     </div>
