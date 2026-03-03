@@ -125,7 +125,7 @@ export default function CrowdsourcingListingPage() {
                                 <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10">
                                     <h4 className="font-bold mb-2">Want to report?</h4>
                                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">Seen something suspicious online? Submit it for community review.</p>
-                                    <Button onClick={() => navigate("/report")} className="w-full rounded-xl py-6 font-bold">New Report</Button>
+                                    <Button onClick={() => navigate("/crowdsourcing/submit")} className="w-full rounded-xl py-6 font-bold">New Report</Button>
                                 </div>
                             </div>
 

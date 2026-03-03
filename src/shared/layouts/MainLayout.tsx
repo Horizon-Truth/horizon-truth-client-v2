@@ -27,7 +27,7 @@ import { Button } from "@/shared/components/ui/button";
 const navigation = [
     { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
-    { name: "Submit Report", icon: AlertTriangle, href: "/report", roles: ["PLAYER"] },
+    { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
     { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
     { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
     { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
