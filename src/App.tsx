@@ -37,6 +37,7 @@ import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManage
 import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
 import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
+import GuestGamePage from "./modules/simulation/GuestGamePage";
 import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 
@@ -85,6 +86,7 @@ function App() {
 
         {/* Public Simulation (Guest Mode) */}
         <Route path="/simulation" element={<SimulationPage />} />
+        <Route path="/guest" element={<GuestGamePage />} />
 
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard/*" element={
