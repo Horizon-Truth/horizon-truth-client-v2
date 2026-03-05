@@ -53,3 +53,35 @@ export const TRIAL_SCENARIO: Scenario = {
         {
             id: 'scene-emotional',
             type: 'SOCIAL_POST',
+            author: 'TechGuru_99',
+            handle: '@techguru_99',
+            content: '🚨 BREAKING: Scientists discovered a way to DOUBLE human lifespan using common salt! Big Pharma is FURIOUS and wants this DELETED. Share before it\'s taken down! #SecretCure',
+            mediaUrl: 'https://images.unsplash.com/photo-1532187863486-abf51ad4b693?auto=format&fit=crop&q=80&w=800',
+            timestamp: '2 mins ago',
+            techniqueKey: 'emotional',
+            choices: [
+                {
+                    id: 'c1a',
+                    text: 'Share it immediately to warn friends',
+                    trustImpact: -15,
+                    trap: 'Emotional manipulation and fear of missing the “hidden truth” pushed you to share before thinking.',
+                    feedback: 'This post is engineered to bypass your judgment: outrage (“Big Pharma is FURIOUS”), a miracle promise, and zero sources. Sharing it spread a health hoax to everyone who trusts you.',
+                },
+                {
+                    id: 'c1b',
+                    text: 'Search for the study in reputable science outlets first',
+                    trustImpact: 15,
+                    isBest: true,
+                    feedback: 'Exactly right. A discovery this big would be everywhere in the scientific press. When only anonymous accounts carry a “breakthrough”, that absence is your answer.',
+                },
+                {
+                    id: 'c1c',
+                    text: 'Reply angrily that it\'s obviously fake',
+                    trustImpact: 0,
+                    feedback: 'Your instinct was correct, but angry replies boost a post\'s engagement — the algorithm shows it to more people. Verify, report, and don\'t feed the fire.',
+                },
+            ],
+        },
+        {
+            id: 'scene-urgency',
+            type: 'CHAT_CONVERSATION',
