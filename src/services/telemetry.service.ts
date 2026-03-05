@@ -61,3 +61,22 @@ export interface TelemetryPayload {
 }
 
 class TelemetryService {
+    // In-memory accumulation per session_id
+    private buffer: Record<string, Partial<TelemetryPayload>> = {};
+
+    private getSessionId(progressId: string, sceneId: string) {
+        return `${progressId}_${sceneId}`;
+    }
+
+    // Helper to get or init buffer payload
+    private getPayload(sessionId: string): Partial<TelemetryPayload> {
+        if (!this.buffer[sessionId]) {
+            this.buffer[sessionId] = { session_id: sessionId };
+        }
+        return this.buffer[sessionId];
+    }
+
+    trackContext(progressId: string, sceneId: string, context: TelemetryPayload['session_context']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.session_context = { ...payload.session_context, ...context } as any;
