@@ -62,3 +62,42 @@ export default function GamePage() {
         <div className="flex flex-col min-h-full gap-6 p-4 sm:p-8 overflow-y-auto bg-background selection:bg-primary/20 relative">
             {/* Ambient background */}
             {!isLowEndDevice && (
+                <>
+                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 blur-[120px] rounded-full pointer-events-none" />
+                </>
+            )}
+
+            {/* Global Glitch Error Overlay */}
+            {error && <GlitchError message={error} onRetry={clearError} />}
+
+            {/* Mission hub */}
+            {!activeProgress && !currentOutcome && (
+                <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 relative z-10">
+                    {/* Player identity card */}
+                    <section
+                        aria-label="Your profile and rank"
+                        className="flex flex-col lg:flex-row gap-6 border border-border rounded-3xl p-6 bg-card shadow-sm animate-in fade-in slide-in-from-top-4 duration-500"
+                    >
+                        <div className="flex items-center gap-5 flex-1 min-w-0">
+                            <div className="relative shrink-0">
+                                <Avatar className="h-16 w-16 border-2 border-border">
+                                    <AvatarImage src={user?.avatarUrl} alt="" />
+                                    <AvatarFallback className="bg-primary/10 text-primary font-black text-xl">
+                                        {(user?.nickname || user?.fullName)?.[0]?.toUpperCase() || 'P'}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span className="absolute -bottom-1 -right-1 text-lg" aria-hidden>{rank.emoji}</span>
+                            </div>
+                            <div className="space-y-1.5 min-w-0">
+                                <h1 className="text-xl font-black tracking-tight truncate">
+                                    {user?.nickname || user?.fullName || 'Player'}
+                                </h1>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold', rank.chip, rank.color)}>
+                                        {rank.emoji} {rank.name}
+                                    </span>
+                                    <span className="text-[11px] text-muted-foreground font-medium">Level {stats.level}</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground truncate">{rank.tagline}</p>
+                            </div>
