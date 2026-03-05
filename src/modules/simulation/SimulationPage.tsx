@@ -72,3 +72,48 @@ const SimulationPage = () => {
                             <img src={scene.mediaUrl} alt="Attached to the post — treat with suspicion" className="w-full h-full object-cover" loading="lazy" />
                         </div>
                     )}
+                    <div className="p-6">
+                        <p className="text-base sm:text-lg leading-relaxed font-medium">{scene.content}</p>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg p-6 animate-in fade-in slide-in-from-left-4 duration-500">
+                <div className="flex items-start gap-4 mb-8">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary" aria-hidden>
+                        <MessageCircle size={24} />
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-lg">{scene.author}</h4>
+                        <p className="text-sm text-muted-foreground">Someone you trust is asking for your advice.</p>
+                    </div>
+                </div>
+
+                <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0" aria-hidden>
+                        <User size={20} className="text-muted-foreground" />
+                    </div>
+                    <div className="bg-muted/60 p-4 rounded-2xl rounded-tl-none border border-border max-w-[80%]">
+                        <p className="text-sm font-medium leading-relaxed">{scene.content}</p>
+                        <p className="text-[10px] text-muted-foreground mt-2">{scene.timestamp}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    if (isCompleted) {
+        const passed = accuracy >= 70;
+        return (
+            <div className="min-h-screen bg-background text-foreground relative flex items-center justify-center p-4 py-12 overflow-hidden">
+                {passed && <Confetti />}
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[120px] rounded-full" />
+
+                <div className="w-full max-w-2xl z-10 space-y-6 animate-in zoom-in-95 duration-700">
+                    <div className="text-center space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+                            <ShieldCheck size={14} aria-hidden /> Trial complete
+                        </div>
