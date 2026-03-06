@@ -10,3 +10,11 @@ export class GuestSessionManager {
     }
 
     static getGuestUserId(): string | null {
+        if (typeof window === 'undefined') return null;
+        return localStorage.getItem(this.GUEST_USER_ID_KEY);
+    }
+
+    static createSession(): { sessionId: string; userId: string } {
+        if (typeof window === 'undefined') {
+            throw new Error('Cannot create guest session on server');
+        }
