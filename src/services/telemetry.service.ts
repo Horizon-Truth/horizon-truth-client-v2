@@ -80,3 +80,20 @@ class TelemetryService {
         const sessionId = this.getSessionId(progressId, sceneId);
         const payload = this.getPayload(sessionId);
         payload.session_context = { ...payload.session_context, ...context } as any;
+    }
+
+    trackDecision(progressId: string, sceneId: string, decision: TelemetryPayload['decision_outcome']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.decision_outcome = { ...payload.decision_outcome, ...decision };
+    }
+
+    trackSocialContext(progressId: string, sceneId: string, social: TelemetryPayload['social_context']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.social_context = { ...payload.social_context, ...social };
+    }
+
+    trackDissemination(progressId: string, sceneId: string, diss: TelemetryPayload['dissemination']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
