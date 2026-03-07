@@ -14,7 +14,10 @@ export function GameOutcome() {
 
     if (!currentOutcome) return null;
 
-    const isSuccess = currentOutcome.outcomeType === 'SUCCESS';
+    // Debug log to check outcome data
+    console.log('[GameOutcome] currentOutcome:', currentOutcome);
+
+    const isSuccess = currentOutcome.passed ?? (currentOutcome.outcomeType === 'SUCCESS' || (currentOutcome.score !== undefined && currentOutcome.score > 0));
 
     if (view === 'reveal' && currentOutcome.progressId) {
         return (
@@ -46,7 +49,7 @@ export function GameOutcome() {
             <div className="max-w-2xl space-y-6">
                 <div className="space-y-3">
                     <h2 className="text-6xl font-black tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 leading-none">
-                        {isSuccess ? "Protocol Verified" : "Uplink Complete"}
+                        {isSuccess ? "Protocol Verified" : "Protocol Failed"}
                     </h2>
                     <p className="text-primary font-black text-lg tracking-[0.4em] uppercase">{currentOutcome.scenario?.title || 'Unknown Protocol'}</p>
                 </div>
@@ -64,7 +67,7 @@ export function GameOutcome() {
                         <ShieldCheck size={16} />
                         Trust Score
                     </p>
-                    <p className="text-5xl font-black text-emerald-500">{currentOutcome.score > 0 ? '+' : ''}{currentOutcome.score}</p>
+                    <p className="text-5xl font-black text-emerald-500">{currentOutcome.totalScore ?? currentOutcome.score}</p>
                     <p className="text-xs text-emerald-500/60 font-black uppercase mt-3 tracking-widest">Protocol Integrity Verified</p>
                 </div>
                 <div className="p-10 rounded-[2.5rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10 shadow-xl">
@@ -73,9 +76,9 @@ export function GameOutcome() {
                         Societal Impact
                     </p>
                     <p className="text-5xl font-black text-amber-500">
-                        {Math.abs(currentOutcome.score) > 15 ? 'HIGH' : Math.abs(currentOutcome.score) > 5 ? 'MEDIUM' : 'LOW'}
+                        {currentOutcome.influenceScore ?? 0}
                     </p>
-                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">Global Network Analysis</p>
+                    <p className="text-xs text-amber-500/60 font-black uppercase mt-3 tracking-widest">Influence Rating</p>
                 </div>
             </div>
 

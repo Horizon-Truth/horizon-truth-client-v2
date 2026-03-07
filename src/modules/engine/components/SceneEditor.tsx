@@ -38,6 +38,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         label: string;
         actionType: string;
         nextSceneId?: string;
+        scoreImpact?: number;
+        influenceImpact?: number;
         outcomes: ChoiceOutcome[];
     }
 
@@ -57,6 +59,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     const [textBody, setTextBody] = useState("");
     const [mediaUrl, setMediaUrl] = useState("");
     const [selectedNextSceneId, setSelectedNextSceneId] = useState<string>("");
+    const [newChoiceScoreImpact, setNewChoiceScoreImpact] = useState(0);
+    const [newChoiceInfluenceImpact, setNewChoiceInfluenceImpact] = useState(0);
 
     const fetchScenes = async () => {
         setIsLoading(true);
@@ -90,6 +94,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setEditingScene(null);
         setIsFormOpen(false);
         setSelectedNextSceneId("");
+        setNewChoiceScoreImpact(0);
+        setNewChoiceInfluenceImpact(0);
     };
 
     const handleEdit = (scene: any) => {
@@ -167,6 +173,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             label: newChoiceLabel.trim(),
             actionType: "VERIFY",
             nextSceneId: selectedNextSceneId || undefined,
+            scoreImpact: newChoiceScoreImpact,
+            influenceImpact: newChoiceInfluenceImpact,
             outcomes: currentOutcome.message ? [currentOutcome] : []
         };
 
@@ -181,6 +189,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             endScenario: false
         });
         setShowChoiceForm(false);
+        setNewChoiceScoreImpact(0);
+        setNewChoiceInfluenceImpact(0);
     };
 
     const removeChoice = (indexToRemove: number) => {
@@ -289,7 +299,29 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Outcome Score</Label>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Choice Score Impact</Label>
+                                            <Input
+                                                type="number"
+                                                value={newChoiceScoreImpact}
+                                                onChange={(e) => setNewChoiceScoreImpact(parseInt(e.target.value) || 0)}
+                                                className="h-9 mt-1"
+                                                placeholder="+10 or -10"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Influence Impact</Label>
+                                            <Input
+                                                type="number"
+                                                value={newChoiceInfluenceImpact}
+                                                onChange={(e) => setNewChoiceInfluenceImpact(parseInt(e.target.value) || 0)}
+                                                className="h-9 mt-1"
+                                                placeholder="+5 or -5"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Outcome Score (Legacy)</Label>
                                             <Input
                                                 type="number"
                                                 value={currentOutcome.score}
@@ -363,6 +395,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                                 <div className="flex gap-2 mb-1">
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.outcomes[0].score}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent text-accent-foreground">Trust: {choice.outcomes[0].trustScoreDelta}</span>
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">Influence: {choice.influenceImpact || 0}</span>
                                                     {choice.outcomes[0].endScenario && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">Terminates</span>}
                                                     {choice.nextSceneId && (
                                                         <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500">
@@ -374,8 +407,14 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                             </div>
                                         )}
                                         {choice.nextSceneId && choice.outcomes.length === 0 && (
-                                            <div className="px-2.5 pb-2 text-[9px] font-bold text-blue-500">
-                                                Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
+                                            <div className="px-2.5 pb-2 border-t border-border/30 pt-2">
+                                                <div className="flex gap-2 mb-1">
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.scoreImpact || 0}</span>
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">Influence: {choice.influenceImpact || 0}</span>
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500">
+                                                        Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
+                                                    </span>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

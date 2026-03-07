@@ -168,7 +168,7 @@ export function GameSession() {
                             trustPulse === 'increase' && "scale-[1.05]",
                             trustPulse === 'decrease' && "scale-[0.95] opacity-80"
                         )}>
-                            <TrustMeter score={stats.trustScore} size={160} strokeWidth={10} />
+                            <TrustMeter score={activeProgress.totalScore ?? stats.trustScore} size={160} strokeWidth={10} />
 
                             {/* Floating Protocol Icon on change */}
                             <AnimatePresence>
@@ -210,7 +210,7 @@ export function GameSession() {
                                 </div>
                                 <span className="text-xs font-black uppercase tracking-wider">Influence</span>
                             </div>
-                            <span className="text-xl font-black italic">{stats.influence}</span>
+                            <span className="text-xl font-black italic">{activeProgress.influenceScore ?? stats.influence}</span>
                         </div>
                     </div>
 

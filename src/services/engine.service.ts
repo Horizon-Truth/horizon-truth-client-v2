@@ -4,9 +4,12 @@ export interface Scenario {
     id: string;
     title: string;
     description: string;
+    type: 'SOCIAL_POST' | 'NEWS_STORY' | 'CHAT_CONVERSATION';
     difficulty: 'EASY' | 'MEDIUM' | 'HARD';
     scenarioType: 'TUTORIAL' | 'CHALLENGE' | 'STORY';
     isActive: boolean;
+    minimumScore: number;
+    totalScenes: number;
     gameLevel: {
         id: string;
         level: number;
@@ -56,6 +59,9 @@ export interface GameProgress {
     startedAt: string;
     completedAt?: string;
     finalOutcome?: string;
+    totalScore?: number;
+    influenceScore?: number;
+    passed?: boolean;
 }
 
 export interface ChoicePayload {
@@ -71,6 +77,9 @@ export interface GameOutcome {
     score: number;
     feedback: string;
     completedAt: string;
+    totalScore?: number;
+    influenceScore?: number;
+    passed?: boolean;
     scenario: {
         id: string;
         title: string;

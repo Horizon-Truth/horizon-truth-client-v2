@@ -20,6 +20,8 @@ const scenarioSchema = z.object({
     psychologicalTrigger: z.string().optional(),
     preventionLesson: z.string().optional(),
     theme: z.string().optional(),
+    minimumScore: z.number().min(0).max(100).default(70),
+    totalScenes: z.number().min(1).default(1),
 });
 
 type ScenarioFormValues = z.infer<typeof scenarioSchema>;
@@ -37,12 +39,14 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
         formState: { errors, isSubmitting },
     } = useForm<ScenarioFormValues>({
         resolver: zodResolver(scenarioSchema),
-        defaultValues: scenario || {
-            title: "",
-            description: "",
-            type: "SOCIAL_POST",
-            difficulty: "EASY",
-            isActive: true,
+        defaultValues: {
+            title: scenario?.title || "",
+            description: scenario?.description || "",
+            type: scenario?.type || "SOCIAL_POST",
+            difficulty: scenario?.difficulty || "EASY",
+            isActive: scenario?.isActive ?? true,
+            minimumScore: scenario?.minimumScore ?? 70,
+            totalScenes: scenario?.totalScenes ?? 1,
         },
     });
 
@@ -133,6 +137,27 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                         className="w-4 h-4 rounded-md border-primary text-primary focus:ring-primary"
                     />
                     <Label htmlFor="isActive" className="text-sm font-bold">Publish Scenario Immediately</Label>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="minimumScore" className="text-[10px] font-black uppercase tracking-widest ml-1">Minimum Pass Score</Label>
+                        <Input
+                            id="minimumScore"
+                            type="number"
+                            {...register("minimumScore", { valueAsNumber: true })}
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="totalScenes" className="text-[10px] font-black uppercase tracking-widest ml-1">Total Scenes</Label>
+                        <Input
+                            id="totalScenes"
+                            type="number"
+                            {...register("totalScenes", { valueAsNumber: true })}
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-primary/5">

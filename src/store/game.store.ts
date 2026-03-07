@@ -129,7 +129,14 @@ export const useGameStore = create<GameState>()(
                         set({
                             activeProgress: {
                                 ...activeProgress,
-                                currentScene: result.nextScene
+                                currentScene: result.nextScene,
+                                totalScore: result.totalScore,
+                                influenceScore: result.influenceScore
+                            },
+                            stats: {
+                                ...get().stats,
+                                trustScore: result.totalScore ?? get().stats.trustScore,
+                                influence: result.influenceScore ?? get().stats.influence
                             },
                             isLoading: false
                         });
@@ -144,7 +151,9 @@ export const useGameStore = create<GameState>()(
                                 ...get().stats,
                                 // Optimistic update, ideally should fetch fresh stats
                                 missionsCompleted: get().stats.missionsCompleted + 1,
-                                experience: get().stats.experience + result.outcome.score
+                                experience: get().stats.experience + result.outcome.score,
+                                trustScore: result.outcome.totalScore ?? get().stats.trustScore,
+                                influence: result.outcome.influenceScore ?? get().stats.influence
                             },
                             pendingBadges: result.badgesAwarded || []
                         });
