@@ -66,13 +66,13 @@ export default function ScenarioDetailPage() {
                         <Network size={16} />
                         Map Scenario
                     </Button>
-                    <Button
+                    {/* <Button
                         variant="outline"
                         className="font-bold rounded-xl border-border hover:bg-muted"
                         onClick={() => navigate(`/dashboard/engine/scenarios/${id}/edit`)}
                     >
                         Edit Scenario Details
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
 
