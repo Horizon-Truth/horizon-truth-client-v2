@@ -41,6 +41,7 @@ export interface Scene {
     order: number;
     sceneType: 'NARRATIVE' | 'CHOICE' | 'CHALLENGE';
     contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CHAT' | 'FEED' | 'PROPAGATION';
+    isTerminal?: boolean;
     content: any;
     chatMessages: any[];
     feedItems: any[];
@@ -52,6 +53,8 @@ export interface Scene {
         label: string;
         actionType?: string;
         nextSceneId?: string;
+        scoreImpact?: number;
+        influenceImpact?: number;
         spreadSimulation?: { reach: number; reshares: number; credibility_loss: number } | null;
         psychologicalTrap?: string | null;
         outcomes?: {

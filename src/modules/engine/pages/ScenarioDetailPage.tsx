@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Play, Info } from "lucide-react";
+import { ArrowLeft, Play, Info, Network } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { Badge } from "@/shared/components/ui/badge";
 import SceneEditor from "../components/SceneEditor";
+import { ScenarioMapModal } from "../components/ScenarioMapModal";
 import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
 
@@ -13,6 +14,7 @@ export default function ScenarioDetailPage() {
     const navigate = useNavigate();
     const [scenario, setScenario] = useState<Scenario | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isMapOpen, setIsMapOpen] = useState(false);
 
     const fetchScenario = async () => {
         if (!id) return;
@@ -45,7 +47,7 @@ export default function ScenarioDetailPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <Button
                     variant="ghost"
                     onClick={() => navigate("/dashboard/engine")}
@@ -54,6 +56,24 @@ export default function ScenarioDetailPage() {
                     <ArrowLeft size={18} />
                     Back to Scenarios
                 </Button>
+
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="outline"
+                        className="gap-2 font-bold rounded-xl border-border hover:bg-muted"
+                        onClick={() => setIsMapOpen(true)}
+                    >
+                        <Network size={16} />
+                        Map Scenario
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="font-bold rounded-xl border-border hover:bg-muted"
+                        onClick={() => navigate(`/dashboard/engine/scenarios/${id}/edit`)}
+                    >
+                        Edit Scenario Details
+                    </Button>
+                </div>
             </div>
 
             <div className="bg-card border border-border/50 rounded-[2.5rem] p-6 sm:p-10 shadow-sm relative overflow-hidden">
@@ -85,6 +105,9 @@ export default function ScenarioDetailPage() {
                             <div className="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl border border-border/50">
                                 <Info size={14} />
                                 Protocol: {scenario.scenarioType}
+                            </div>
+                            <div className="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/20">
+                                Target Accuracy: {scenario.minimumScore}%
                             </div>
                             <div className={cn(
                                 "flex items-center gap-2 text-[12px] font-black uppercase tracking-widest px-4 py-2 rounded-xl border",
@@ -134,6 +157,12 @@ export default function ScenarioDetailPage() {
             <div className="bg-card border border-border/50 rounded-[2.5rem] p-6 sm:p-10 shadow-sm">
                 <SceneEditor scenarioId={scenario.id} />
             </div>
+
+            <ScenarioMapModal
+                isOpen={isMapOpen}
+                onClose={() => setIsMapOpen(false)}
+                scenes={scenario.scenes || []}
+            />
         </div>
     );
 }

@@ -164,6 +164,9 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                                     Lvl {scenario.gameLevel?.level || 0}
                                                 </span>
                                                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-2.5 py-0.5 rounded-full">
+                                                    Target: {scenario.minimumScore}%
+                                                </span>
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-2.5 py-0.5 rounded-full">
                                                     {scenario.scenarioType}
                                                 </span>
                                             </div>

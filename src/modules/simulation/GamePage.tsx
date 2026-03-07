@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { cn } from '@/shared/lib/utils';
 import {
@@ -15,12 +16,13 @@ import {
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { GameSession } from '../engine/components/GameSession';
 import { GameOutcome } from '../engine/components/GameOutcome';
+import { BadgeAwardOverlay } from '../engine/components/play/BadgeAwardOverlay';
 import { GlitchError } from '../engine/components/play/GlitchError';
 import { Button } from '@/shared/components/ui/button';
 import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 
 export default function GamePage() {
-    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory } = useGameStore();
+    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge } = useGameStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
 
@@ -170,6 +172,21 @@ export default function GamePage() {
                     </div>
                 </div>
             )}
+
+            {/* Badge Award Overlay Global */}
+            <AnimatePresence>
+                {pendingBadges && pendingBadges.length > 0 && (
+                    <div className="fixed inset-0 z-[300] flex items-center justify-center pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <BadgeAwardOverlay
+                                key={pendingBadges[0].id || pendingBadges[0].badgeCode}
+                                badge={pendingBadges[0]}
+                                onClose={() => removePendingBadge(pendingBadges[0].id)}
+                            />
+                        </div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

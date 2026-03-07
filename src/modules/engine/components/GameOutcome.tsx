@@ -89,6 +89,18 @@ export function GameOutcome() {
             >
                 {/* Pulse glow */}
                 <div className="absolute inset-0 opacity-10 animate-pulse bg-gradient-to-t from-white/10 to-transparent rounded-3xl pointer-events-none" />
+
+                {currentOutcome.passed && (
+                    <div className="absolute top-4 right-4 bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.5)] flex items-center gap-1.5">
+                        <Trophy size={14} /> KNOWLEDGE INCREASED!
+                    </div>
+                )}
+                {!currentOutcome.passed && (
+                    <div className="absolute top-4 right-4 bg-red-500/20 border border-red-500/50 text-red-400 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center gap-1.5">
+                        <Activity size={14} /> MISSION FAILED
+                    </div>
+                )}
+
                 <div className="relative z-10 flex flex-col items-center gap-4">
                     <motion.div
                         initial={{ scale: 0 }}

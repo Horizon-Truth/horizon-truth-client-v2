@@ -22,7 +22,6 @@ import {
     Star,
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
-import { BadgeAwardOverlay } from './play/BadgeAwardOverlay';
 import { SpreadSimulationOverlay } from './play/SpreadSimulationOverlay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Progress } from '@/shared/components/ui/progress';
@@ -34,9 +33,7 @@ export function GameSession() {
     const stats = useGameStore(s => s.stats);
     const isLoading = useGameStore(s => s.isLoading);
     const error = useGameStore(s => s.error);
-    const pendingBadges = useGameStore(s => s.pendingBadges);
     const submitChoice = useGameStore(s => s.submitChoice);
-    const removePendingBadge = useGameStore(s => s.removePendingBadge);
     const lastSpreadSimulation = useGameStore(s => s.lastSpreadSimulation);
     const lastChoiceLabel = useGameStore(s => s.lastChoiceLabel);
     const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
@@ -463,16 +460,7 @@ export function GameSession() {
                 </div>
             </aside>
 
-            {/* 4. Badge Award Overlay */}
-            <AnimatePresence>
-                {pendingBadges.length > 0 && (
-                    <BadgeAwardOverlay
-                        key={pendingBadges[0].id}
-                        badge={pendingBadges[0]}
-                        onClose={() => removePendingBadge(pendingBadges[0].id)}
-                    />
-                )}
-            </AnimatePresence>
+            {/* 4. Removed Badge Award Overlay */}
 
             {/* 5. Spread Simulation Overlay */}
             <AnimatePresence>
