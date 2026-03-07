@@ -56,10 +56,16 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
         <div className="flex flex-col h-[400px] border border-white/5 rounded-2xl bg-[#0F1721] overflow-hidden shadow-2xl">
             <div className="p-3 border-b border-white/5 bg-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-xs">TG</div>
+                    <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden border border-white/20 flex items-center justify-center font-black text-[10px] text-white shadow-inner">
+                        {scene.content?.npcAvatarUrl ? (
+                            <img src={scene.content.npcAvatarUrl} alt={scene.content.npcName} className="w-full h-full object-cover" />
+                        ) : (
+                            (scene.content?.npcName || 'Intel').substring(0, 2).toUpperCase()
+                        )}
+                    </div>
                     <div>
-                        <p className="text-sm font-bold leading-tight">Intel Channel Alpha</p>
-                        <p className="text-[10px] text-blue-400">12,492 subscribers</p>
+                        <p className="text-sm font-bold leading-tight">{scene.content?.npcName || 'Intel Channel Alpha'}</p>
+                        <p className="text-[10px] text-blue-400">Secure Channel • {scene.content?.chatMessages?.length || 0} messages</p>
                     </div>
                 </div>
             </div>
@@ -82,7 +88,9 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                             )}
                         >
                             {msg.sender !== 'USER' && (
-                                <p className="text-[11px] font-black text-blue-400 brightness-125 mb-1 uppercase tracking-wider">Forwarded from @intel_leak</p>
+                                <p className="text-[11px] font-black text-blue-400 brightness-125 mb-1 uppercase tracking-wider">
+                                    {scene.content?.npcName || 'System'}
+                                </p>
                             )}
                             <p className="text-base text-white leading-relaxed font-medium">{msg.message}</p>
                             <div className="flex items-center justify-end gap-1 mt-1 opacity-60">

@@ -127,10 +127,17 @@ export function GameSession() {
         }
     };
 
+    // Emotional Feedback State
+    const [prevTrust, setPrevTrust] = useState(stats.trustScore);
+    const [trustPulse, setTrustPulse] = useState<'none' | 'increase' | 'decrease'>('none');
+
+    // Casting activeProgress for extra fields if needed or using fallback
+    const totalScenes = (activeProgress as any).totalScenes || 5;
+
     // Keyboard Hotkeys
     useEffect(() => {
+        if (!activeProgress) return;
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (!activeProgress) return;
             const key = parseInt(e.key);
             if (key >= 1 && key <= activeProgress.currentScene.availableChoices.length) {
                 if (!isLoading) {
@@ -142,18 +149,58 @@ export function GameSession() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [activeProgress, isLoading]);
 
-    // Emotional Feedback State
-    const [prevTrust, setPrevTrust] = useState(stats.trustScore);
-    const [trustPulse, setTrustPulse] = useState<'none' | 'increase' | 'decrease'>('none');
+    // Floating Impact State
+    const [impacts, setImpacts] = useState<{ id: string; label: string; value: number; type: 'trust' | 'influence' }[]>([]);
 
     useEffect(() => {
         if (stats.trustScore !== prevTrust) {
-            setTrustPulse(stats.trustScore > prevTrust ? 'increase' : 'decrease');
+            const diff = stats.trustScore - prevTrust;
+            const id = Math.random().toString(36).substring(2, 9);
+            setImpacts(prev => [...prev, { id, label: diff > 0 ? `+${diff}` : `${diff}`, value: diff, type: 'trust' }]);
+
+            setTrustPulse(diff > 0 ? 'increase' : 'decrease');
             setPrevTrust(stats.trustScore);
-            const timer = setTimeout(() => setTrustPulse('none'), 2000);
-            return () => clearTimeout(timer);
+
+            const pulseTimer = setTimeout(() => setTrustPulse('none'), 2000);
+            const impactTimer = setTimeout(() => {
+                setImpacts(prev => prev.filter(imp => imp.id !== id));
+            }, 3000);
+
+            return () => {
+                clearTimeout(pulseTimer);
+                clearTimeout(impactTimer);
+            };
         }
     }, [stats.trustScore, prevTrust]);
+
+    // Track influence changes too
+    const [prevInfluence, setPrevInfluence] = useState(stats.influence);
+    useEffect(() => {
+        const currentInf = activeProgress?.influenceScore ?? stats.influence;
+        if (currentInf !== prevInfluence) {
+            const diff = currentInf - prevInfluence;
+            const id = Math.random().toString(36).substring(2, 9);
+            setImpacts(prev => [...prev, { id, label: diff > 0 ? `+${diff}` : `${diff}`, value: diff, type: 'influence' }]);
+            setPrevInfluence(currentInf);
+
+            const timer = setTimeout(() => {
+                setImpacts(prev => prev.filter(imp => imp.id !== id));
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [activeProgress?.influenceScore, stats.influence, prevInfluence]);
+
+    // Scenario Theme Config
+    const themeConfig = (() => {
+        const title = activeProgress?.scenarioTitle?.toLowerCase() || '';
+        if (title.includes('crisis') || title.includes('panic') || title.includes('outrage')) {
+            return { color: 'text-red-500', bg: 'bg-red-500/10', glow: 'bg-red-500/10' };
+        }
+        if (title.includes('campaign') || title.includes('coordinated')) {
+            return { color: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'bg-amber-500/5' };
+        }
+        return { color: 'text-primary', bg: 'bg-primary/10', glow: 'bg-primary/5' };
+    })();
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -231,6 +278,28 @@ export function GameSession() {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
+
+                            {/* Floating Impact Text */}
+                            <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center">
+                                <AnimatePresence>
+                                    {impacts.map((imp) => (
+                                        <motion.div
+                                            key={imp.id}
+                                            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                                            animate={{ opacity: 1, y: -100, scale: 1.2 }}
+                                            exit={{ opacity: 0, scale: 1.5 }}
+                                            className={cn(
+                                                "absolute font-black text-2xl drop-shadow-2xl z-50",
+                                                imp.type === 'trust'
+                                                    ? (imp.value > 0 ? "text-emerald-400" : "text-red-400")
+                                                    : (imp.value > 0 ? "text-amber-400" : "text-orange-400")
+                                            )}
+                                        >
+                                            {imp.label} {imp.type === 'trust' ? 'TRUST' : 'INTEL'}
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </div>
                         </div>
 
                         <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between group hover:bg-white/10 transition-colors">
@@ -289,11 +358,25 @@ export function GameSession() {
             {/* 2. Main Feed - Scene Content */}
             <main className="flex-1 flex flex-col relative bg-gradient-to-b from-[#0F1216] to-[#0B0E11]">
                 {/* Header */}
-                <header className="h-16 border-b border-white/5 px-8 flex items-center justify-between bg-black/20 backdrop-blur-md sticky top-0 z-50">
-                    <div className="flex items-center gap-4">
-                        <span className="font-black italic tracking-tighter text-lg uppercase text-primary">Mission Feed</span>
-                        <div className="h-4 w-[1px] bg-white/10" />
-                        <span className="text-xs font-bold text-muted-foreground truncate max-w-[200px]">{activeProgress.scenarioTitle}</span>
+                <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between bg-black/40 backdrop-blur-xl sticky top-0 z-50">
+                    <div className="flex flex-col gap-1 w-1/2">
+                        <div className="flex items-center gap-3">
+                            <span className={cn("font-black italic tracking-tighter text-lg uppercase", themeConfig.color)}>
+                                {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
+                            </span>
+                            <div className="h-3 w-[1px] bg-white/10" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                                Scene {activeProgress.currentScene.order} / {totalScenes || '?'}
+                            </span>
+                        </div>
+                        {/* Progress Bar */}
+                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden max-w-xs">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${((activeProgress.currentScene.order) / (totalScenes || 1)) * 100}%` }}
+                                className={cn("h-full rounded-full transition-all duration-1000", themeConfig.color.replace('text-', 'bg-'))}
+                            />
+                        </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-2">
@@ -469,6 +552,23 @@ export function GameSession() {
                         simulation={lastSpreadSimulation}
                         choiceLabel={lastChoiceLabel || 'your choice'}
                         onClose={clearSpreadSimulation}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Ambient Scenario Glow */}
+            <div className={cn(
+                "fixed inset-0 pointer-events-none opacity-20 blur-[150px] transition-all duration-1000",
+                themeConfig.glow
+            )} />
+
+            {/* Critical Error Shake Effect */}
+            <AnimatePresence>
+                {trustPulse === 'decrease' && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.4, 0], x: [-5, 5, -5, 5, 0] }}
+                        className="fixed inset-0 bg-red-900/20 z-[999] pointer-events-none border-[20px] border-red-500/10"
                     />
                 )}
             </AnimatePresence>
