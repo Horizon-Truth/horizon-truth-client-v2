@@ -23,6 +23,7 @@ export interface Scenario {
     scenes?: Scene[];
     userRecord?: {
         bestScore: number;
+        bestAccuracyRate: number;
         bestInfluence: number;
         isCompleted: boolean;
         attempts: number;
@@ -30,6 +31,7 @@ export interface Scenario {
     lockStatus?: 'LOCKED' | 'AVAILABLE' | 'VERIFIED';
     unlockScenarioId?: string | null;
     campaignTag?: string | null;
+    totalPossibleScore?: number;
 }
 
 export interface Scene {
@@ -75,6 +77,7 @@ export interface GameProgress {
     totalScore?: number;
     influenceScore?: number;
     passed?: boolean;
+    accuracyRate?: number;
 }
 
 export interface ChoicePayload {

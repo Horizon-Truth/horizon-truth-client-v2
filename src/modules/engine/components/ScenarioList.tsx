@@ -3,7 +3,7 @@ import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Play, Loader2, Gauge, Info, ShieldCheck, Trophy, Lock, Star } from 'lucide-react';
+import { Play, Loader2, Gauge, Info, ShieldCheck, Trophy, Lock, Star, Activity } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
@@ -138,10 +138,16 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
                                             Lvl {scenario.gameLevel?.level || 0}
                                         </span>
                                         {bestScore !== null ? (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 gap-1.5">
-                                                <Trophy size={12} />
-                                                Best: {bestScore}
-                                            </span>
+                                            <div className="flex flex-col gap-1">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 gap-1.5 w-fit">
+                                                    <Trophy size={10} />
+                                                    Points: {bestScore}
+                                                </span>
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/20 text-indigo-400 border border-indigo-400/30 gap-1.5 w-fit">
+                                                    <Activity size={10} />
+                                                    Accuracy: {scenario.userRecord?.bestAccuracyRate ?? 0}%
+                                                </span>
+                                            </div>
                                         ) : (
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100/10 text-emerald-400 border border-emerald-400/20">
                                                 +{scenario.gameLevel?.requiredXp || 0} Trust
@@ -188,6 +194,6 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
                     );
                 })}
             </div>
-        </div>
+        </div >
     );
 }

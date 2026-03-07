@@ -6,8 +6,9 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { toast } from "sonner";
-import { X } from "lucide-react";
+import { X, Lock } from "lucide-react";
 import SceneEditor from "./SceneEditor";
+import { useEffect, useState } from "react";
 
 const scenarioSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
@@ -20,8 +21,10 @@ const scenarioSchema = z.object({
     psychologicalTrigger: z.string().optional(),
     preventionLesson: z.string().optional(),
     theme: z.string().optional(),
-    minimumScore: z.number().min(0).max(100).default(70),
-    totalScenes: z.number().min(1).default(1),
+    minimumScore: z.number().min(0).max(100),
+    totalScenes: z.number().min(1),
+    unlockScenarioId: z.string().nullable().optional(),
+    campaignTag: z.string().optional(),
 });
 
 type ScenarioFormValues = z.infer<typeof scenarioSchema>;
@@ -33,10 +36,21 @@ interface ScenarioFormProps {
 }
 
 export default function ScenarioForm({ scenario, onSuccess, onCancel }: ScenarioFormProps) {
+    const [allScenarios, setAllScenarios] = useState<Scenario[]>([]);
+
+    useEffect(() => {
+        engineService.getScenarios({ limit: 100 } as any).then((res) => {
+            const data = Array.isArray(res) ? res : (res.data || []);
+            setAllScenarios(data);
+        }).catch(() => { });
+    }, []);
+
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
+        setValue,
+        watch,
     } = useForm<ScenarioFormValues>({
         resolver: zodResolver(scenarioSchema),
         defaultValues: {
@@ -47,8 +61,14 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
             isActive: scenario?.isActive ?? true,
             minimumScore: scenario?.minimumScore ?? 70,
             totalScenes: scenario?.totalScenes ?? 1,
+            unlockScenarioId: scenario?.unlockScenarioId || null,
+            campaignTag: (scenario as any)?.campaignTag || "",
         },
     });
+
+    const selectedPrereq = watch("unlockScenarioId");
+    // Filter out current scenario from prerequisite options
+    const prereqOptions = allScenarios.filter(s => s.id !== scenario?.id);
 
     const onSubmit = async (data: ScenarioFormValues) => {
         try {
@@ -141,13 +161,19 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="minimumScore" className="text-[10px] font-black uppercase tracking-widest ml-1">Minimum Pass Score</Label>
-                        <Input
-                            id="minimumScore"
-                            type="number"
-                            {...register("minimumScore", { valueAsNumber: true })}
-                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
-                        />
+                        <Label htmlFor="minimumScore" className="text-[10px] font-black uppercase tracking-widest ml-1">Minimum Pass Score (%)</Label>
+                        <div className="relative">
+                            <Input
+                                id="minimumScore"
+                                type="number"
+                                min={0}
+                                max={100}
+                                {...register("minimumScore", { valueAsNumber: true })}
+                                className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary pr-10"
+                            />
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">%</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground ml-1">Player must reach this score percentage to pass and unlock the next scenario</p>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="totalScenes" className="text-[10px] font-black uppercase tracking-widest ml-1">Total Scenes</Label>
@@ -157,6 +183,43 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                             {...register("totalScenes", { valueAsNumber: true })}
                             className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
                         />
+                    </div>
+                </div>
+
+                {/* Prerequisite & Campaign */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-primary/5">
+                    <div className="space-y-2">
+                        <Label htmlFor="unlockScenarioId" className="text-[10px] font-black uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                            <Lock size={10} /> Prerequisite Scenario
+                        </Label>
+                        <select
+                            id="unlockScenarioId"
+                            value={selectedPrereq || ""}
+                            onChange={(e) => setValue("unlockScenarioId", e.target.value || null)}
+                            className="w-full h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary px-3 text-sm appearance-none"
+                        >
+                            <option value="">None (Always Available)</option>
+                            {prereqOptions.map((s) => (
+                                <option key={s.id} value={s.id}>
+                                    {s.title} ({s.minimumScore}%)
+                                </option>
+                            ))}
+                        </select>
+                        <p className="text-[10px] text-muted-foreground ml-1">
+                            Player must pass the prerequisite with its minimum accuracy rate (%) to unlock this scenario
+                        </p>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="campaignTag" className="text-[10px] font-black uppercase tracking-widest ml-1">Campaign Tag</Label>
+                        <Input
+                            id="campaignTag"
+                            {...register("campaignTag")}
+                            placeholder="e.g. MISINFORMATION_101"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                        <p className="text-[10px] text-muted-foreground ml-1">
+                            Group scenarios into a campaign for themed progression
+                        </p>
                     </div>
                 </div>
 

@@ -41,13 +41,20 @@ export default function GamePage() {
             {!activeProgress && !currentOutcome && (
                 <>
                     {/* Stats Header */}
-                    <header className="grid grid-cols-1 md:grid-cols-4 gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <header className="grid grid-cols-1 md:grid-cols-5 gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
                             label="Protocol Trust"
                             value={`${stats.trustScore}%`}
                             icon={<ShieldCheck className="text-emerald-500" />}
                             progress={stats.trustScore}
                             color="bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                        />
+                        <StatCard
+                            label="Network Accuracy"
+                            value={`${stats.accuracyRate}%`}
+                            icon={<Activity className="text-indigo-500" />}
+                            progress={stats.accuracyRate}
+                            color="bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)]"
                         />
                         <StatCard
                             label="Operational Level"

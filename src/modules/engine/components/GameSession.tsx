@@ -256,6 +256,16 @@ export function GameSession() {
                             <span className="text-xl font-black italic">{activeProgress.influenceScore ?? stats.influence}</span>
                         </div>
 
+                        <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between group hover:bg-white/10 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
+                                    <ShieldCheck size={18} />
+                                </div>
+                                <span className="text-xs font-black uppercase tracking-wider">Accuracy</span>
+                            </div>
+                            <span className="text-xl font-black italic">{activeProgress.accuracyRate ?? stats.accuracyRate}%</span>
+                        </div>
+
                         {/* Streak Tracker */}
                         {currentStreak > 0 && (
                             <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-between hover:bg-orange-500/15 transition-colors">

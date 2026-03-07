@@ -119,15 +119,15 @@ export function GameOutcome() {
             </motion.div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl">
-                <div className="p-8 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-emerald-500/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+                {/* <div className="p-8 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-emerald-500/10">
                     <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                         <ShieldCheck size={14} />
                         Trust Score
                     </p>
                     <p className="text-4xl font-black text-emerald-500">{currentOutcome.totalScore ?? currentOutcome.score}</p>
                     <p className="text-[10px] text-emerald-500/60 font-black uppercase mt-2 tracking-widest">Protocol Integrity</p>
-                </div>
+                </div> */}
                 <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10">
                     <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                         <Zap size={14} />

@@ -9,6 +9,7 @@ export interface GameStats {
     experience: number;
     influence: number;
     missionsCompleted: number;
+    accuracyRate: number;
 }
 
 export interface GameState {
@@ -44,6 +45,7 @@ const INITIAL_STATS: GameStats = {
     experience: 0,
     influence: 10,
     missionsCompleted: 0,
+    accuracyRate: 100,
 };
 
 export const useGameStore = create<GameState>()(
@@ -149,12 +151,14 @@ export const useGameStore = create<GameState>()(
                                 ...activeProgress,
                                 currentScene: result.nextScene,
                                 totalScore: result.totalScore,
-                                influenceScore: result.influenceScore
+                                influenceScore: result.influenceScore,
+                                accuracyRate: result.accuracyRate
                             },
                             stats: {
                                 ...get().stats,
                                 trustScore: result.totalScore ?? get().stats.trustScore,
-                                influence: result.influenceScore ?? get().stats.influence
+                                influence: result.influenceScore ?? get().stats.influence,
+                                accuracyRate: result.accuracyRate ?? get().stats.accuracyRate
                             },
                             lastSpreadSimulation: spreadSim,
                             lastChoiceLabel: choiceLabel || choiceKey,
