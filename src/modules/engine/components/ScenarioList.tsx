@@ -3,7 +3,7 @@ import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Play, Loader2, Gauge, Info } from 'lucide-react';
+import { Play, Loader2, Gauge, Info, ShieldCheck, Trophy } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
@@ -81,68 +81,97 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {scenarios.map((scenario) => (
-                    <div
-                        key={scenario.id}
-                        className="group flex flex-col gap-6 p-8 bg-card/30 border border-white/5 rounded-3xl relative overflow-hidden backdrop-blur-xl hover:border-primary/30 transition-all duration-300"
-                    >
-                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
-                            <Play size={120} />
-                        </div>
+                {scenarios.map((scenario) => {
+                    const isCompleted = scenario.userRecord?.isCompleted || false;
+                    const bestScore = scenario.userRecord?.bestScore ?? null;
+                    const hasPlayed = (scenario.userRecord?.attempts || 0) > 0;
 
-                        <div className="space-y-4 relative z-10">
-                            <div className="flex items-center justify-between">
-                                <span className={cn(
-                                    "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                                    scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-500" :
-                                        scenario.difficulty === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" :
-                                            "bg-red-500/10 text-red-500"
-                                )}>
-                                    {scenario.difficulty}
-                                </span>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">
-                                    {scenario.scenarioType}
-                                </span>
-                            </div>
-
-                            {!guestMode && (
-                                <div className="flex flex-wrap gap-2">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                        Lvl {scenario.gameLevel?.level || 0}
-                                    </span>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                        +{scenario.gameLevel?.requiredXp || 0} Trust
-                                    </span>
-                                </div>
+                    return (
+                        <div
+                            key={scenario.id}
+                            className={cn(
+                                "group flex flex-col gap-6 p-8 bg-card/30 border border-white/5 rounded-3xl relative overflow-hidden backdrop-blur-xl transition-all duration-300",
+                                isCompleted ? "border-emerald-500/20 hover:border-emerald-500/40" : "hover:border-primary/30"
                             )}
-
-                            <div className="space-y-2">
-                                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{scenario.title}</h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                                    {scenario.description}
-                                </p>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground pt-2">
-                                <div className="flex items-center gap-1.5">
-                                    <Gauge size={14} className="text-primary" />
-                                    <span>Lvl {scenario.gameLevel?.level || 0}</span>
-                                </div>
-                                <div className="w-1 h-1 rounded-full bg-white/10" />
-                                <span>{scenario.gameLevel?.requiredXp || 0} XP Reward</span>
-                            </div>
-                        </div>
-
-                        <Button
-                            onClick={() => handleStartGame(scenario)}
-                            disabled={gameStore.isLoading}
-                            className="mt-auto h-12 rounded-2xl font-bold group-hover:scale-[1.02] transition-transform active:scale-95"
                         >
-                            {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play size={16} className="mr-2" />}
-                            Initialize Protocol
-                        </Button>
-                    </div>
-                ))}
+                            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                                <Play size={120} />
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex gap-2">
+                                        <span className={cn(
+                                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                                            scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-500" :
+                                                scenario.difficulty === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" :
+                                                    "bg-red-500/10 text-red-500"
+                                        )}>
+                                            {scenario.difficulty}
+                                        </span>
+                                        {isCompleted && (
+                                            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-1">
+                                                <ShieldCheck size={10} />
+                                                Verified
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">
+                                        {scenario.scenarioType}
+                                    </span>
+                                </div>
+
+                                {!guestMode && (
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100/10 text-indigo-400 border border-indigo-400/20">
+                                            Lvl {scenario.gameLevel?.level || 0}
+                                        </span>
+                                        {bestScore !== null ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 gap-1.5">
+                                                <Trophy size={12} />
+                                                Best: {bestScore}
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100/10 text-emerald-400 border border-emerald-400/20">
+                                                +{scenario.gameLevel?.requiredXp || 0} Trust
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{scenario.title}</h3>
+                                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                        {scenario.description}
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground pt-2">
+                                    <div className="flex items-center gap-1.5">
+                                        <Gauge size={14} className="text-primary" />
+                                        <span>Lvl {scenario.gameLevel?.level || 0}</span>
+                                    </div>
+                                    <div className="w-1 h-1 rounded-full bg-white/10" />
+                                    <span>{scenario.gameLevel?.requiredXp || 0} XP Reward</span>
+                                </div>
+                            </div>
+
+                            <Button
+                                onClick={() => handleStartGame(scenario)}
+                                disabled={gameStore.isLoading}
+                                className={cn(
+                                    "mt-auto h-12 rounded-2xl font-bold transition-all active:scale-95",
+                                    isCompleted
+                                        ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20"
+                                        : "bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.02]"
+                                )}
+                            >
+                                {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play size={16} className="mr-2" />}
+                                {isCompleted ? "Improve Score" : hasPlayed ? "Try Again" : "Initialize Protocol"}
+                            </Button>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

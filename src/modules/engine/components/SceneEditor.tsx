@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Save, X, Info, Type, Image as ImageIcon, Video, MessageSquare, Layout } from "lucide-react";
+import { Plus, Edit2, Trash2, Save, X, Info, Type, Image as ImageIcon, Video, MessageSquare, Layout, ArrowRight } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -44,6 +44,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     }
 
     const [choices, setChoices] = useState<SceneChoice[]>([]);
+    const [editingChoiceIndex, setEditingChoiceIndex] = useState<number | null>(null);
 
     // New choice form
     const [newChoiceLabel, setNewChoiceLabel] = useState("");
@@ -96,6 +97,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setSelectedNextSceneId("");
         setNewChoiceScoreImpact(0);
         setNewChoiceInfluenceImpact(0);
+        setEditingChoiceIndex(null);
     };
 
     const handleEdit = (scene: any) => {
@@ -166,10 +168,10 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         }
     };
 
-    const addChoice = () => {
+    const saveChoice = () => {
         if (!newChoiceLabel.trim()) return;
 
-        const newChoice: SceneChoice = {
+        const updatedChoice: SceneChoice = {
             label: newChoiceLabel.trim(),
             actionType: "VERIFY",
             nextSceneId: selectedNextSceneId || undefined,
@@ -178,7 +180,14 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             outcomes: currentOutcome.message ? [currentOutcome] : []
         };
 
-        setChoices([...choices, newChoice]);
+        if (editingChoiceIndex !== null) {
+            const updatedChoices = [...choices];
+            updatedChoices[editingChoiceIndex] = updatedChoice;
+            setChoices(updatedChoices);
+        } else {
+            setChoices([...choices, updatedChoice]);
+        }
+
         setNewChoiceLabel("");
         setSelectedNextSceneId("");
         setCurrentOutcome({
@@ -188,9 +197,33 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             message: "",
             endScenario: false
         });
+        setEditingChoiceIndex(null);
         setShowChoiceForm(false);
         setNewChoiceScoreImpact(0);
         setNewChoiceInfluenceImpact(0);
+    };
+
+    const editChoice = (index: number) => {
+        const choice = choices[index];
+        setNewChoiceLabel(choice.label);
+        setSelectedNextSceneId(choice.nextSceneId || "");
+        setNewChoiceScoreImpact(choice.scoreImpact || 0);
+        setNewChoiceInfluenceImpact(choice.influenceImpact || 0);
+
+        if (choice.outcomes && choice.outcomes.length > 0) {
+            setCurrentOutcome(choice.outcomes[0]);
+        } else {
+            setCurrentOutcome({
+                outcomeType: "NEUTRAL",
+                score: 0,
+                trustScoreDelta: 0,
+                message: "",
+                endScenario: false
+            });
+        }
+
+        setEditingChoiceIndex(index);
+        setShowChoiceForm(true);
     };
 
     const removeChoice = (indexToRemove: number) => {
@@ -375,45 +408,75 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <Button size="sm" variant="ghost" className="flex-1" onClick={() => setShowChoiceForm(false)}>Cancel</Button>
-                                        <Button size="sm" className="flex-1" onClick={addChoice}>Save Choice</Button>
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="flex-1"
+                                            onClick={() => {
+                                                setShowChoiceForm(false);
+                                                setEditingChoiceIndex(null);
+                                                setNewChoiceLabel("");
+                                                setSelectedNextSceneId("");
+                                                setNewChoiceScoreImpact(0);
+                                                setNewChoiceInfluenceImpact(0);
+                                            }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button size="sm" className="flex-1" onClick={saveChoice}>
+                                            {editingChoiceIndex !== null ? "Update Choice" : "Save Choice"}
+                                        </Button>
                                     </div>
                                 </div>
                             )}
 
                             <div className="space-y-2 mt-4">
                                 {choices.map((choice, index) => (
-                                    <div key={index} className="flex flex-col bg-background border border-border/60 rounded-xl overflow-hidden text-sm">
+                                    <div key={index} className="flex flex-col bg-background border border-border/60 rounded-xl overflow-hidden text-sm group/choice">
                                         <div className="flex items-center justify-between p-2.5 bg-muted/30">
-                                            <span className="font-bold text-primary">{choice.label}</span>
-                                            <button onClick={() => removeChoice(index)} className="text-muted-foreground hover:text-destructive">
-                                                <X size={14} />
-                                            </button>
-                                        </div>
-                                        {choice.outcomes.length > 0 && choice.outcomes[0].message && (
-                                            <div className="p-2.5 pt-0 mt-2 border-t border-border/30">
-                                                <div className="flex gap-2 mb-1">
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.outcomes[0].score}</span>
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent text-accent-foreground">Trust: {choice.outcomes[0].trustScoreDelta}</span>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-primary">{choice.label}</span>
+                                                <div className="flex gap-2 mt-0.5">
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500">Trust: {choice.outcomes?.[0]?.trustScoreDelta || 0}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">Influence: {choice.influenceImpact || 0}</span>
-                                                    {choice.outcomes[0].endScenario && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">Terminates</span>}
-                                                    {choice.nextSceneId && (
-                                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500">
-                                                            Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
-                                                        </span>
-                                                    )}
+                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.scoreImpact || (choice.outcomes?.[0]?.score || 0)}</span>
                                                 </div>
-                                                <p className="text-xs text-muted-foreground italic line-clamp-2">"{choice.outcomes[0].message}"</p>
+                                            </div>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover/choice:opacity-100 transition-opacity">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-7 w-7 rounded-md hover:bg-primary/10 hover:text-primary"
+                                                    onClick={() => editChoice(index)}
+                                                >
+                                                    <Edit2 size={12} />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-7 w-7 rounded-md hover:bg-destructive/10 hover:text-destructive"
+                                                    onClick={() => removeChoice(index)}
+                                                >
+                                                    <X size={12} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        {choice.outcomes?.[0]?.message && (
+                                            <div className="p-2.5 pt-2 border-t border-border/30">
+                                                <p className="text-[11px] text-muted-foreground italic line-clamp-2">"{choice.outcomes[0].message}"</p>
+                                                {choice.nextSceneId && (
+                                                    <div className="mt-1 flex items-center gap-1 text-[9px] font-black uppercase text-blue-400">
+                                                        <ArrowRight size={10} />
+                                                        Next: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Stage Link"}
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
-                                        {choice.nextSceneId && choice.outcomes.length === 0 && (
-                                            <div className="px-2.5 pb-2 border-t border-border/30 pt-2">
-                                                <div className="flex gap-2 mb-1">
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.scoreImpact || 0}</span>
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">Influence: {choice.influenceImpact || 0}</span>
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500">
-                                                        Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
-                                                    </span>
+                                        {choice.nextSceneId && (!choice.outcomes || choice.outcomes.length === 0) && (
+                                            <div className="p-2.5 pt-2 border-t border-border/30">
+                                                <div className="flex items-center gap-1 text-[9px] font-black uppercase text-blue-400">
+                                                    <ArrowRight size={10} />
+                                                    Next: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Stage Link"}
                                                 </div>
                                             </div>
                                         )}

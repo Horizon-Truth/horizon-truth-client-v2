@@ -21,6 +21,12 @@ export interface Scenario {
     preventionLesson?: string;
     theme?: string;
     scenes?: Scene[];
+    userRecord?: {
+        bestScore: number;
+        bestInfluence: number;
+        isCompleted: boolean;
+        attempts: number;
+    } | null;
 }
 
 export interface Scene {

@@ -15,6 +15,7 @@ export interface GameState {
     stats: GameStats;
     activeProgress: GameProgress | null;
     currentOutcome: GameOutcome | null;
+    history: GameProgress[];
     isLoading: boolean;
     error: string | null;
     pendingBadges: any[];
@@ -44,6 +45,7 @@ export const useGameStore = create<GameState>()(
             stats: INITIAL_STATS,
             activeProgress: null,
             currentOutcome: null,
+            history: [],
             isLoading: false,
             error: null,
             pendingBadges: [],
@@ -79,9 +81,8 @@ export const useGameStore = create<GameState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const history = await engineService.getMyGameHistory();
-                    // Calculate stats from history if needed, or fetch separate stats endpoint
-                    // For now, we'll just update missionsCompleted
                     set(state => ({
+                        history,
                         stats: {
                             ...state.stats,
                             missionsCompleted: history.length
@@ -157,6 +158,8 @@ export const useGameStore = create<GameState>()(
                             },
                             pendingBadges: result.badgesAwarded || []
                         });
+                        // Refresh history after game completion to ensure scores are updated
+                        get().fetchGameHistory();
                     } else if (result.status === 'scene_completed' && result.awardedBadges) {
                         set(state => ({
                             pendingBadges: [...state.pendingBadges, ...result.awardedBadges]
