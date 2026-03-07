@@ -56,6 +56,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
     const [textBody, setTextBody] = useState("");
     const [mediaUrl, setMediaUrl] = useState("");
+    const [selectedNextSceneId, setSelectedNextSceneId] = useState<string>("");
 
     const fetchScenes = async () => {
         setIsLoading(true);
@@ -88,6 +89,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setIsTerminal(false);
         setEditingScene(null);
         setIsFormOpen(false);
+        setSelectedNextSceneId("");
     };
 
     const handleEdit = (scene: any) => {
@@ -164,11 +166,13 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         const newChoice: SceneChoice = {
             label: newChoiceLabel.trim(),
             actionType: "VERIFY",
+            nextSceneId: selectedNextSceneId || undefined,
             outcomes: currentOutcome.message ? [currentOutcome] : []
         };
 
         setChoices([...choices, newChoice]);
         setNewChoiceLabel("");
+        setSelectedNextSceneId("");
         setCurrentOutcome({
             outcomeType: "NEUTRAL",
             score: 0,
@@ -323,6 +327,21 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                         />
                                         <Label htmlFor="end-scenario-choice" className="text-xs">End scenario if chosen</Label>
                                     </div>
+
+                                    <div>
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Link to Scene (Next Stage)</Label>
+                                        <select
+                                            value={selectedNextSceneId}
+                                            onChange={(e) => setSelectedNextSceneId(e.target.value)}
+                                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm mt-1 focus:ring-1 ring-primary outline-none"
+                                        >
+                                            <option value="">None (Default flow)</option>
+                                            {scenes.filter(s => s.id !== editingScene?.id).map(s => (
+                                                <option key={s.id} value={s.id}>{s.title}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
                                     <div className="flex gap-2">
                                         <Button size="sm" variant="ghost" className="flex-1" onClick={() => setShowChoiceForm(false)}>Cancel</Button>
                                         <Button size="sm" className="flex-1" onClick={addChoice}>Save Choice</Button>
@@ -345,8 +364,18 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.outcomes[0].score}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-accent text-accent-foreground">Trust: {choice.outcomes[0].trustScoreDelta}</span>
                                                     {choice.outcomes[0].endScenario && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">Terminates</span>}
+                                                    {choice.nextSceneId && (
+                                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500">
+                                                            Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <p className="text-xs text-muted-foreground italic line-clamp-2">"{choice.outcomes[0].message}"</p>
+                                            </div>
+                                        )}
+                                        {choice.nextSceneId && choice.outcomes.length === 0 && (
+                                            <div className="px-2.5 pb-2 text-[9px] font-bold text-blue-500">
+                                                Links to: {scenes.find(s => s.id === choice.nextSceneId)?.title || "Unknown Scene"}
                                             </div>
                                         )}
                                     </div>
