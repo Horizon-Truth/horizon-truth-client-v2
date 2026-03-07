@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { engineService } from '@/services/engine.service';
+import { userService } from '@/services/user.service';
 import type { GameProgress, GameOutcome } from '@/services/engine.service';
 
 export interface GameStats {
@@ -93,12 +94,43 @@ export const useGameStore = create<GameState>()(
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    const history = await engineService.getMyGameHistory();
+                    const [history, playerStats] = await Promise.all([
+                        engineService.getMyGameHistory(),
+                        userService.getMyStats().catch(() => null) // graceful fallback
+                    ]);
+
+                    // Calculate average accuracy from completed items in history
+                    const completedGames = history.filter((game: GameProgress) => game.status === 'COMPLETED' && typeof game.accuracyRate === 'number');
+                    let averageAccuracy = 0;
+                    if (completedGames.length > 0) {
+                        const sumAccuracy = completedGames.reduce((sum: number, game: GameProgress) => sum + (game.accuracyRate || 0), 0);
+                        averageAccuracy = Math.round(sumAccuracy / completedGames.length);
+                    }
+
+                    // Calculate total influence
+                    let totalInfluence = 0;
+                    history.forEach((game: GameProgress) => {
+                        if (game.influenceScore) totalInfluence += game.influenceScore;
+                    });
+
+                    // Determine level and experience 
+                    // Let's use playerStats.totalScore as experience (fallback to computing from history if API fails)
+                    let experience = playerStats?.totalScore ?? 0;
+                    if (!playerStats) {
+                        experience = history.reduce((sum: number, game: GameProgress) => sum + (game.totalScore || 0), 0);
+                    }
+                    const level = Math.max(1, Math.floor(Math.sqrt(experience / 100)) + 1);
+
                     set(state => ({
                         history,
                         stats: {
                             ...state.stats,
-                            missionsCompleted: history.length
+                            missionsCompleted: playerStats?.gamesCompleted ?? completedGames.length,
+                            experience: experience,
+                            level: level,
+                            accuracyRate: averageAccuracy,
+                            influence: totalInfluence,
+                            trustScore: playerStats?.trustScore ?? 50
                         },
                         isLoading: false
                     }));
@@ -156,7 +188,7 @@ export const useGameStore = create<GameState>()(
                             },
                             stats: {
                                 ...get().stats,
-                                trustScore: result.totalScore ?? get().stats.trustScore,
+                                trustScore: get().stats.trustScore + (result.trustScoreDelta ?? 0),
                                 influence: result.influenceScore ?? get().stats.influence,
                                 accuracyRate: result.accuracyRate ?? get().stats.accuracyRate
                             },
@@ -178,7 +210,7 @@ export const useGameStore = create<GameState>()(
                                 // Optimistic update, ideally should fetch fresh stats
                                 missionsCompleted: get().stats.missionsCompleted + 1,
                                 experience: get().stats.experience + result.outcome.score,
-                                trustScore: result.outcome.totalScore ?? get().stats.trustScore,
+                                trustScore: get().stats.trustScore + (result.outcome.trustScoreDelta ?? 0),
                                 influence: result.outcome.influenceScore ?? get().stats.influence
                             },
                             pendingBadges: result.badgesAwarded || []

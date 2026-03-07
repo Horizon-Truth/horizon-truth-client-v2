@@ -18,6 +18,11 @@ export const userService = {
         return response.data;
     },
 
+    async getMyStats() {
+        const response = await api.get('/players/stats/me');
+        return response.data;
+    },
+
     async getPreferences() {
         const response = await api.get('/users/me/preferences');
         return response.data;
