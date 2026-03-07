@@ -19,16 +19,23 @@ export interface GameState {
     isLoading: boolean;
     error: string | null;
     pendingBadges: any[];
+    // Spread simulation data from last choice
+    lastSpreadSimulation: { reach: number; reshares: number; credibility_loss: number } | null;
+    lastChoiceLabel: string | null;
+    // Player identity
+    reputationRole: string;
+    currentStreak: number;
 
     // Actions
     fetchGameHistory: () => Promise<void>;
     startGame: (scenarioId: string) => Promise<void>;
-    submitChoice: (sceneId: string, choiceKey: string) => Promise<void>;
+    submitChoice: (sceneId: string, choiceKey: string, choiceLabel?: string) => Promise<void>;
     loadProgress: (progressId: string) => Promise<void>;
     resetGame: () => void;
     clearError: () => void;
     removePendingBadge: (badgeId: string) => void;
     prefetchAssets: (scene: any) => void;
+    clearSpreadSimulation: () => void;
 }
 
 const INITIAL_STATS: GameStats = {
@@ -49,6 +56,10 @@ export const useGameStore = create<GameState>()(
             isLoading: false,
             error: null,
             pendingBadges: [],
+            lastSpreadSimulation: null,
+            lastChoiceLabel: null,
+            reputationRole: 'OBSERVER',
+            currentStreak: 0,
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -114,11 +125,11 @@ export const useGameStore = create<GameState>()(
                 }
             },
 
-            submitChoice: async (sceneId: string, choiceKey: string) => {
+            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string) => {
                 const { activeProgress, isLoading } = get();
                 if (!activeProgress || isLoading) return;
 
-                set({ isLoading: true, error: null });
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null });
                 try {
                     const result = await engineService.submitChoice({
                         progressId: activeProgress.id,
@@ -127,6 +138,12 @@ export const useGameStore = create<GameState>()(
                     });
 
                     if (result.status === 'scene_completed') {
+                        // Check if the choice had a spread simulation (wrong choice)
+                        const choiceData = activeProgress.currentScene?.choices?.find(
+                            (c: any) => c.label === choiceKey || c.id === choiceKey
+                        );
+                        const spreadSim = choiceData?.spreadSimulation || result.spreadSimulation || null;
+
                         set({
                             activeProgress: {
                                 ...activeProgress,
@@ -139,6 +156,8 @@ export const useGameStore = create<GameState>()(
                                 trustScore: result.totalScore ?? get().stats.trustScore,
                                 influence: result.influenceScore ?? get().stats.influence
                             },
+                            lastSpreadSimulation: spreadSim,
+                            lastChoiceLabel: choiceLabel || choiceKey,
                             isLoading: false
                         });
                         // Phase 16: Prefetch next scene assets
@@ -148,6 +167,8 @@ export const useGameStore = create<GameState>()(
                             activeProgress: null,
                             currentOutcome: result.outcome,
                             isLoading: false,
+                            reputationRole: result.reputationRole || get().reputationRole,
+                            currentStreak: result.currentStreak || get().currentStreak,
                             stats: {
                                 ...get().stats,
                                 // Optimistic update, ideally should fetch fresh stats
@@ -174,10 +195,14 @@ export const useGameStore = create<GameState>()(
                 activeProgress: null,
                 currentOutcome: null,
                 error: null,
-                isLoading: false
+                isLoading: false,
+                lastSpreadSimulation: null,
+                lastChoiceLabel: null,
             }),
 
             clearError: () => set({ error: null }),
+
+            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null }),
 
             removePendingBadge: (badgeId: string) => set(state => ({
                 pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)
@@ -188,7 +213,9 @@ export const useGameStore = create<GameState>()(
             partialize: (state) => ({
                 stats: state.stats,
                 activeProgress: state.activeProgress,
-                currentOutcome: state.currentOutcome
+                currentOutcome: state.currentOutcome,
+                reputationRole: state.reputationRole,
+                currentStreak: state.currentStreak,
             }),
         }
     )

@@ -27,6 +27,9 @@ export interface Scenario {
         isCompleted: boolean;
         attempts: number;
     } | null;
+    lockStatus?: 'LOCKED' | 'AVAILABLE' | 'VERIFIED';
+    unlockScenarioId?: string | null;
+    campaignTag?: string | null;
 }
 
 export interface Scene {
@@ -40,11 +43,15 @@ export interface Scene {
     chatMessages: any[];
     feedItems: any[];
     availableChoices: string[];
+    decisionTimeLimit?: number | null;
+    sceneTypeLabel?: string | null;
     choices?: {
         id?: string;
         label: string;
         actionType?: string;
         nextSceneId?: string;
+        spreadSimulation?: { reach: number; reshares: number; credibility_loss: number } | null;
+        psychologicalTrap?: string | null;
         outcomes?: {
             id?: string;
             outcomeType: string;
@@ -86,6 +93,8 @@ export interface GameOutcome {
     totalScore?: number;
     influenceScore?: number;
     passed?: boolean;
+    narrativeEnding?: string;
+    accuracyRate?: number | null;
     scenario: {
         id: string;
         title: string;

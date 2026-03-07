@@ -62,6 +62,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     const [selectedNextSceneId, setSelectedNextSceneId] = useState<string>("");
     const [newChoiceScoreImpact, setNewChoiceScoreImpact] = useState(0);
     const [newChoiceInfluenceImpact, setNewChoiceInfluenceImpact] = useState(0);
+    const [newChoiceActionType, setNewChoiceActionType] = useState("CHOICE");
 
     const fetchScenes = async () => {
         setIsLoading(true);
@@ -97,6 +98,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setSelectedNextSceneId("");
         setNewChoiceScoreImpact(0);
         setNewChoiceInfluenceImpact(0);
+        setNewChoiceActionType("CHOICE");
         setEditingChoiceIndex(null);
     };
 
@@ -173,7 +175,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
         const updatedChoice: SceneChoice = {
             label: newChoiceLabel.trim(),
-            actionType: "VERIFY",
+            actionType: newChoiceActionType,
             nextSceneId: selectedNextSceneId || undefined,
             scoreImpact: newChoiceScoreImpact,
             influenceImpact: newChoiceInfluenceImpact,
@@ -206,6 +208,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     const editChoice = (index: number) => {
         const choice = choices[index];
         setNewChoiceLabel(choice.label);
+        setNewChoiceActionType(choice.actionType || "CHOICE");
         setSelectedNextSceneId(choice.nextSceneId || "");
         setNewChoiceScoreImpact(choice.scoreImpact || 0);
         setNewChoiceInfluenceImpact(choice.influenceImpact || 0);
@@ -332,6 +335,37 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Action Type</Label>
+                                            <select
+                                                value={newChoiceActionType}
+                                                onChange={(e) => setNewChoiceActionType(e.target.value)}
+                                                className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm mt-1 focus:ring-1 ring-primary outline-none"
+                                            >
+                                                <option value="CHOICE">Choice</option>
+                                                <option value="VERIFY">Verify</option>
+                                                <option value="SHARE">Share</option>
+                                                <option value="REPORT">Report</option>
+                                                <option value="INVESTIGATE">Investigate</option>
+                                                <option value="IGNORE">Ignore</option>
+                                                <option value="NEXT">Next</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Next Stage</Label>
+                                            <select
+                                                value={selectedNextSceneId}
+                                                onChange={(e) => setSelectedNextSceneId(e.target.value)}
+                                                className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm mt-1 focus:ring-1 ring-primary outline-none"
+                                            >
+                                                <option value="">Default (Auto)</option>
+                                                {scenes.filter(s => s.id !== editingScene?.id).map(s => (
+                                                    <option key={s.id} value={s.id}>{s.title}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
                                             <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Choice Score Impact</Label>
                                             <Input
                                                 type="number"
@@ -393,19 +427,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                         <Label htmlFor="end-scenario-choice" className="text-xs">End scenario if chosen</Label>
                                     </div>
 
-                                    <div>
-                                        <Label className="text-[10px] font-bold uppercase tracking-widest ml-1 text-muted-foreground">Link to Scene (Next Stage)</Label>
-                                        <select
-                                            value={selectedNextSceneId}
-                                            onChange={(e) => setSelectedNextSceneId(e.target.value)}
-                                            className="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm mt-1 focus:ring-1 ring-primary outline-none"
-                                        >
-                                            <option value="">None (Default flow)</option>
-                                            {scenes.filter(s => s.id !== editingScene?.id).map(s => (
-                                                <option key={s.id} value={s.id}>{s.title}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    {/* Link selection moved up */}
 
                                     <div className="flex gap-2">
                                         <Button
@@ -437,6 +459,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-primary">{choice.label}</span>
                                                 <div className="flex gap-2 mt-0.5">
+                                                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-primary/10 text-primary uppercase">{choice.actionType}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500">Trust: {choice.outcomes?.[0]?.trustScoreDelta || 0}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500">Influence: {choice.influenceImpact || 0}</span>
                                                     <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">Score: {choice.scoreImpact || (choice.outcomes?.[0]?.score || 0)}</span>

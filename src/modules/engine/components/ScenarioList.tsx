@@ -3,7 +3,7 @@ import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Play, Loader2, Gauge, Info, ShieldCheck, Trophy } from 'lucide-react';
+import { Play, Loader2, Gauge, Info, ShieldCheck, Trophy, Lock, Star } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
@@ -82,7 +82,8 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {scenarios.map((scenario) => {
-                    const isCompleted = scenario.userRecord?.isCompleted || false;
+                    const isCompleted = scenario.userRecord?.isCompleted || scenario.lockStatus === 'VERIFIED' || false;
+                    const isLocked = scenario.lockStatus === 'LOCKED';
                     const bestScore = scenario.userRecord?.bestScore ?? null;
                     const hasPlayed = (scenario.userRecord?.attempts || 0) > 0;
 
@@ -91,7 +92,8 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
                             key={scenario.id}
                             className={cn(
                                 "group flex flex-col gap-6 p-8 bg-card/30 border border-white/5 rounded-3xl relative overflow-hidden backdrop-blur-xl transition-all duration-300",
-                                isCompleted ? "border-emerald-500/20 hover:border-emerald-500/40" : "hover:border-primary/30"
+                                isLocked ? "opacity-60 cursor-not-allowed border-white/5" :
+                                    isCompleted ? "border-emerald-500/20 hover:border-emerald-500/40" : "hover:border-primary/30"
                             )}
                         >
                             <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
@@ -109,10 +111,19 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
                                         )}>
                                             {scenario.difficulty}
                                         </span>
-                                        {isCompleted && (
+                                        {isLocked && (
+                                            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-500/10 text-gray-400 border border-gray-500/20 flex items-center gap-1">
+                                                <Lock size={10} /> Locked
+                                            </span>
+                                        )}
+                                        {isCompleted && !isLocked && (
                                             <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 flex items-center gap-1">
-                                                <ShieldCheck size={10} />
-                                                Verified
+                                                <Star size={10} /> Verified
+                                            </span>
+                                        )}
+                                        {!isCompleted && !isLocked && hasPlayed && (
+                                            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
+                                                <ShieldCheck size={10} /> In Progress
                                             </span>
                                         )}
                                     </div>
@@ -157,17 +168,21 @@ export function ScenarioList({ onStartGame, guestMode }: { onStartGame?: (scenar
                             </div>
 
                             <Button
-                                onClick={() => handleStartGame(scenario)}
-                                disabled={gameStore.isLoading}
+                                onClick={() => !isLocked && handleStartGame(scenario)}
+                                disabled={gameStore.isLoading || isLocked}
                                 className={cn(
                                     "mt-auto h-12 rounded-2xl font-bold transition-all active:scale-95",
-                                    isCompleted
-                                        ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20"
-                                        : "bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.02]"
+                                    isLocked
+                                        ? "bg-gray-500/10 text-gray-500 border border-gray-500/20 cursor-not-allowed"
+                                        : isCompleted
+                                            ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20"
+                                            : "bg-primary text-white shadow-xl shadow-primary/20 hover:scale-[1.02]"
                                 )}
+                                title={isLocked ? 'Complete the prerequisite scenario to unlock this mission' : undefined}
                             >
-                                {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Play size={16} className="mr-2" />}
-                                {isCompleted ? "Improve Score" : hasPlayed ? "Try Again" : "Initialize Protocol"}
+                                {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> :
+                                    isLocked ? <Lock size={16} className="mr-2" /> : <Play size={16} className="mr-2" />}
+                                {isLocked ? 'Locked — Complete Prior Mission' : isCompleted ? 'Improve Score' : hasPlayed ? 'Try Again' : 'Initialize Protocol'}
                             </Button>
                         </div>
                     );

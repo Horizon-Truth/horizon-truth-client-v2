@@ -17,10 +17,13 @@ import {
     Minimize,
     Eye,
     EyeOff,
-    ShieldAlert
+    ShieldAlert,
+    Flame,
+    Star,
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
 import { BadgeAwardOverlay } from './play/BadgeAwardOverlay';
+import { SpreadSimulationOverlay } from './play/SpreadSimulationOverlay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Progress } from '@/shared/components/ui/progress';
 import { TrustMeter } from './play/TrustMeter';
@@ -34,6 +37,11 @@ export function GameSession() {
     const pendingBadges = useGameStore(s => s.pendingBadges);
     const submitChoice = useGameStore(s => s.submitChoice);
     const removePendingBadge = useGameStore(s => s.removePendingBadge);
+    const lastSpreadSimulation = useGameStore(s => s.lastSpreadSimulation);
+    const lastChoiceLabel = useGameStore(s => s.lastChoiceLabel);
+    const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
+    const reputationRole = useGameStore(s => s.reputationRole);
+    const currentStreak = useGameStore(s => s.currentStreak);
 
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -68,6 +76,37 @@ export function GameSession() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isFocusMode, setIsFocusMode] = useState(false);
     const shouldReduceMotion = useReducedMotion();
+
+    // Countdown timer state
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
+    const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    // When scene changes, reset timer
+    useEffect(() => {
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        const limit = activeProgress?.currentScene?.decisionTimeLimit;
+        if (limit && limit > 0) {
+            setTimeLeft(limit);
+            countdownRef.current = setInterval(() => {
+                setTimeLeft(prev => {
+                    if (prev === null || prev <= 1) {
+                        clearInterval(countdownRef.current!);
+                        // Auto-submit worst choice (first one)
+                        const choices = activeProgress?.currentScene?.availableChoices;
+                        if (choices && choices.length > 0 && !isLoading) {
+                            handleChoice(choices[0]);
+                        }
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        } else {
+            setTimeLeft(null);
+        }
+        return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeProgress?.currentScene?.id]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -130,7 +169,10 @@ export function GameSession() {
     const { currentScene } = activeProgress;
 
     const handleChoice = (choiceKey: string) => {
-        submitChoice(currentScene.id, choiceKey);
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        setTimeLeft(null);
+        const choiceObj = currentScene?.choices?.find((c: any) => c.label === choiceKey || c.id === choiceKey);
+        submitChoice(currentScene.id, choiceKey, choiceObj?.label || choiceKey);
     };
 
     return (
@@ -158,6 +200,7 @@ export function GameSession() {
                         <div className="space-y-1">
                             <h2 className="text-lg font-black tracking-tight">{user?.fullName || 'Operative'}</h2>
                             <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em]">@{user?.username || 'user_hzn'}</p>
+                            <ReputationBadge role={reputationRole} />
                         </div>
                     </div>
 
@@ -212,6 +255,19 @@ export function GameSession() {
                             </div>
                             <span className="text-xl font-black italic">{activeProgress.influenceScore ?? stats.influence}</span>
                         </div>
+
+                        {/* Streak Tracker */}
+                        {currentStreak > 0 && (
+                            <div className="p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-between hover:bg-orange-500/15 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-xl bg-orange-500/20 text-orange-400">
+                                        <Flame size={18} />
+                                    </div>
+                                    <span className="text-xs font-black uppercase tracking-wider text-orange-400">Streak</span>
+                                </div>
+                                <span className="text-xl font-black italic text-orange-300">{currentStreak}d 🔥</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Navigation Mini */}
@@ -273,6 +329,10 @@ export function GameSession() {
                             <div className="flex items-center gap-3 mb-2">
                                 <Clock size={14} className="text-muted-foreground" />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Intercepted {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                {/* Countdown Timer */}
+                                {timeLeft !== null && (
+                                    <CountdownTimer timeLeft={timeLeft} totalTime={currentScene.decisionTimeLimit!} />
+                                )}
                             </div>
 
                             <SceneRenderer
@@ -403,6 +463,17 @@ export function GameSession() {
                     />
                 )}
             </AnimatePresence>
+
+            {/* 5. Spread Simulation Overlay */}
+            <AnimatePresence>
+                {lastSpreadSimulation && (
+                    <SpreadSimulationOverlay
+                        simulation={lastSpreadSimulation}
+                        choiceLabel={lastChoiceLabel || 'your choice'}
+                        onClose={clearSpreadSimulation}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
@@ -440,3 +511,60 @@ const NotificationCard = memo(({ icon, title, desc, time, highlight = false }: {
     );
 });
 NotificationCard.displayName = 'NotificationCard';
+
+// Reputation role badge component
+const ROLE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+    OBSERVER: { label: 'Observer', color: 'text-gray-400', bg: 'bg-gray-500/10 border-gray-500/20' },
+    FACT_CHECKER: { label: 'Fact Checker', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+    TRUSTED_VERIFIER: { label: 'Trusted Verifier', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+    MODERATOR: { label: 'Moderator', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+};
+
+const ReputationBadge = memo(({ role }: { role: string }) => {
+    const config = ROLE_CONFIG[role] || ROLE_CONFIG['OBSERVER'];
+    return (
+        <div className={cn('inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-[0.15em] mt-1', config.bg, config.color)}>
+            <Star size={9} className="flex-shrink-0" />
+            {config.label}
+        </div>
+    );
+});
+ReputationBadge.displayName = 'ReputationBadge';
+
+// Countdown timer ring component
+const CountdownTimer = memo(({ timeLeft, totalTime }: { timeLeft: number; totalTime: number }) => {
+    const radius = 18;
+    const circumference = 2 * Math.PI * radius;
+    const progress = timeLeft / totalTime;
+    const dashOffset = circumference * (1 - progress);
+    const isUrgent = timeLeft <= 5;
+
+    return (
+        <div className="ml-auto flex items-center gap-2">
+            <motion.div
+                animate={isUrgent ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ repeat: Infinity, duration: 0.5 }}
+                className="relative w-10 h-10 flex items-center justify-center"
+            >
+                <svg className="absolute inset-0 -rotate-90" width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
+                    <circle
+                        cx="20" cy="20" r={radius}
+                        fill="none"
+                        stroke={isUrgent ? '#ef4444' : '#6366f1'}
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={dashOffset}
+                        style={{ transition: 'stroke-dashoffset 0.9s linear, stroke 0.3s' }}
+                    />
+                </svg>
+                <span className={cn('relative text-[11px] font-black tabular-nums', isUrgent ? 'text-red-400 animate-pulse' : 'text-white')}>
+                    {timeLeft}
+                </span>
+            </motion.div>
+            {isUrgent && <span className="text-[9px] font-black text-red-400 uppercase tracking-widest animate-pulse">Act now!</span>}
+        </div>
+    );
+});
+CountdownTimer.displayName = 'CountdownTimer';
