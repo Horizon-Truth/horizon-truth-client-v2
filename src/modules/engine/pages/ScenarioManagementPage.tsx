@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info, MessageSquare, Eye } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { Badge } from "@/shared/components/ui/badge";
@@ -9,6 +10,7 @@ import ScenarioForm from "../components/ScenarioForm";
 import ScenarioFeedbackList from "../components/ScenarioFeedbackList";
 
 export default function ScenarioManagementPage() {
+    const navigate = useNavigate();
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -137,6 +139,16 @@ export default function ScenarioManagementPage() {
                                 >
                                     {scenario.isActive ? <XCircle size={18} /> : <CheckCircle2 size={18} />}
                                 </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-xl hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => navigate(`/dashboard/engine/${scenario.id}`)}
+                                    title="View Detail"
+                                >
+                                    <Eye size={18} />
+                                </Button>
+
                                 <Button
                                     variant="ghost"
                                     size="icon"

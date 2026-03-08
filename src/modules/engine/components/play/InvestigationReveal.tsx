@@ -11,10 +11,12 @@ interface InvestigationRevealProps {
 }
 
 interface SummaryChoice {
-    action: string;
-    consequence: string;
-    trustDelta: number;
-    outcomeType: string;
+    sceneTitle: string;
+    userAction: string;
+    userConsequence: string;
+    userTrustDelta: number;
+    isPerfect: boolean;
+    bestAction: string;
 }
 
 export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progressId, onComplete }) => {
@@ -30,7 +32,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                 setLoading(false);
 
                 // Staggered reveals
-                for (let i = 0; i <= data.choices.length; i++) {
+                for (let i = 0; i < data.choices.length; i++) {
                     await new Promise(resolve => setTimeout(resolve, 800));
                     setVisibleCount(i + 1);
                 }
@@ -88,59 +90,77 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     className="relative"
                                 >
-                                    {/* Timeline Node */}
-                                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-black border-2 border-primary z-20 shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
+                                    {/* Scene Title Center Node */}
+                                    <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-8 z-30">
+                                        <div className="px-4 py-1 rounded-full bg-black border border-white/10 text-[8px] font-black text-white/50 uppercase tracking-[0.3em] whitespace-nowrap backdrop-blur-md">
+                                            Phase {index + 1}: {choice.sceneTitle}
+                                        </div>
+                                    </div>
+
+                                    {/* Timeline Node Icon */}
+                                    <div className={cn(
+                                        "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-black border-2 z-20 flex items-center justify-center transition-all duration-500",
+                                        choice.isPerfect
+                                            ? "border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                            : "border-primary shadow-[0_0_20px_rgba(var(--primary),0.3)]"
+                                    )}>
+                                        {choice.isPerfect ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Activity size={16} className="text-primary" />}
+                                    </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                                         {/* Left Side: Your Action */}
                                         <div className="text-right space-y-4">
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Your Action</span>
                                             <div className={cn(
-                                                "p-6 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-md transition-all duration-700",
-                                                choice.trustDelta < 0 && "border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20"
+                                                "p-6 rounded-3xl bg-black/40 border translation-all duration-700 backdrop-blur-md",
+                                                choice.isPerfect ? "border-emerald-500/30" : "border-white/10",
+                                                choice.userTrustDelta < 0 && "border-red-500/50 shadow-[0_0_30px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20"
                                             )}>
-                                                <p className="text-lg font-bold text-white mb-2">{choice.action}</p>
+                                                <p className="text-lg font-bold text-white mb-2">{choice.userAction}</p>
                                                 <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase text-white/40">
-                                                    <Activity size={12} />
-                                                    Uplink Terminal 01
+                                                    <span className={cn(
+                                                        "px-2 py-0.5 rounded-full",
+                                                        choice.userTrustDelta >= 0 ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                                                    )}>
+                                                        {choice.userTrustDelta > 0 ? '+' : ''}{choice.userTrustDelta} Trust
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Right Side: Reality */}
+                                        {/* Right Side: Reality & Recommended */}
                                         <div className="text-left space-y-4">
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Reality Check</span>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Protocol Analysis</span>
                                             <div className={cn(
                                                 "p-6 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl relative overflow-hidden group",
-                                                choice.trustDelta < 0 ? "border-red-500/30" : "border-emerald-500/30"
+                                                choice.isPerfect ? "border-emerald-500/30" : "border-primary/20"
                                             )}>
-                                                {/* Mistake Highlight Overlay */}
-                                                {choice.trustDelta < 0 && (
-                                                    <motion.div
-                                                        animate={{ opacity: [0.1, 0.3, 0.1] }}
-                                                        transition={{ repeat: Infinity, duration: 2 }}
-                                                        className="absolute inset-0 bg-red-600/5 pointer-events-none"
-                                                    />
-                                                )}
-
-                                                <div className="flex items-start gap-4">
-                                                    <div className={cn(
-                                                        "mt-1 p-2 rounded-xl",
-                                                        choice.trustDelta < 0 ? "bg-red-500/20 text-red-500" : "bg-emerald-500/20 text-emerald-500"
-                                                    )}>
-                                                        {choice.trustDelta < 0 ? <ShieldAlert size={20} /> : <CheckCircle2 size={20} />}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm leading-relaxed text-white font-medium italic mb-3">
-                                                            "{choice.consequence}"
-                                                        </p>
+                                                <div className="space-y-4">
+                                                    <div className="flex items-start gap-4">
                                                         <div className={cn(
-                                                            "inline-block px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest",
-                                                            choice.trustDelta < 0 ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"
+                                                            "mt-1 p-2 rounded-xl",
+                                                            choice.userTrustDelta < 0 ? "bg-red-500/20 text-red-500" : "bg-emerald-500/20 text-emerald-500"
                                                         )}>
-                                                            Trust Delta: {choice.trustDelta > 0 ? '+' : ''}{choice.trustDelta}
+                                                            {choice.userTrustDelta < 0 ? <ShieldAlert size={20} /> : <CheckCircle2 size={20} />}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm leading-relaxed text-white font-medium italic">
+                                                                "{choice.userConsequence}"
+                                                            </p>
                                                         </div>
                                                     </div>
+
+                                                    {!choice.isPerfect && (
+                                                        <div className="pt-4 border-t border-white/5 space-y-2">
+                                                            <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
+                                                                <ArrowRight size={12} />
+                                                                Recommended Protocol
+                                                            </div>
+                                                            <p className="text-sm font-bold text-white/80 pl-4 border-l-2 border-primary/30">
+                                                                {choice.bestAction}
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

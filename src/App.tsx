@@ -32,6 +32,7 @@ import OrganizationDetailPage from "./modules/organizations/pages/OrganizationDe
 import PlayerManagementPage from "./modules/players/pages/PlayerManagementPage";
 import FeedbackDashboardPage from "./modules/engine/pages/FeedbackDashboardPage";
 import ReportingConfigPage from "./modules/reports/pages/ReportingConfigPage";
+import ScenarioDetailPage from "./modules/engine/pages/ScenarioDetailPage";
 import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
 import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManagementPage";
@@ -113,6 +114,7 @@ function App() {
                   <Route path="resources/library/edit/:id" element={<ResourceEditPage />} />
                   <Route path="gamification" element={<div>Gamification Page</div>} />
                   <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
+                  <Route path="engine/:id" element={user?.role !== 'PLAYER' ? <ScenarioDetailPage /> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
                   <Route path="health" element={user?.role === 'SYSTEM_ADMIN' ? <SystemHealthPage /> : <Navigate to="/dashboard" replace />} />
                   <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { cn } from '@/shared/lib/utils';
 import {
@@ -15,12 +16,13 @@ import {
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { GameSession } from '../engine/components/GameSession';
 import { GameOutcome } from '../engine/components/GameOutcome';
+import { BadgeAwardOverlay } from '../engine/components/play/BadgeAwardOverlay';
 import { GlitchError } from '../engine/components/play/GlitchError';
 import { Button } from '@/shared/components/ui/button';
 import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 
 export default function GamePage() {
-    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory } = useGameStore();
+    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge } = useGameStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
 
@@ -41,13 +43,20 @@ export default function GamePage() {
             {!activeProgress && !currentOutcome && (
                 <>
                     {/* Stats Header */}
-                    <header className="grid grid-cols-1 md:grid-cols-4 gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <header className="grid grid-cols-1 md:grid-cols-5 gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
                             label="Protocol Trust"
                             value={`${stats.trustScore}%`}
                             icon={<ShieldCheck className="text-emerald-500" />}
                             progress={stats.trustScore}
                             color="bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                        />
+                        <StatCard
+                            label="Network Accuracy"
+                            value={`${stats.accuracyRate}%`}
+                            icon={<Activity className="text-indigo-500" />}
+                            progress={stats.accuracyRate}
+                            color="bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)]"
                         />
                         <StatCard
                             label="Operational Level"
@@ -163,6 +172,21 @@ export default function GamePage() {
                     </div>
                 </div>
             )}
+
+            {/* Badge Award Overlay Global */}
+            <AnimatePresence>
+                {pendingBadges && pendingBadges.length > 0 && (
+                    <div className="fixed inset-0 z-[300] flex items-center justify-center pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <BadgeAwardOverlay
+                                key={pendingBadges[0].id || pendingBadges[0].badgeCode}
+                                badge={pendingBadges[0]}
+                                onClose={() => removePendingBadge(pendingBadges[0].id)}
+                            />
+                        </div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

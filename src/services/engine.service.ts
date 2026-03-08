@@ -4,9 +4,12 @@ export interface Scenario {
     id: string;
     title: string;
     description: string;
+    type: 'SOCIAL_POST' | 'NEWS_STORY' | 'CHAT_CONVERSATION';
     difficulty: 'EASY' | 'MEDIUM' | 'HARD';
     scenarioType: 'TUTORIAL' | 'CHALLENGE' | 'STORY';
     isActive: boolean;
+    minimumScore: number;
+    totalScenes: number;
     gameLevel: {
         id: string;
         level: number;
@@ -18,6 +21,17 @@ export interface Scenario {
     preventionLesson?: string;
     theme?: string;
     scenes?: Scene[];
+    userRecord?: {
+        bestScore: number;
+        bestAccuracyRate: number;
+        bestInfluence: number;
+        isCompleted: boolean;
+        attempts: number;
+    } | null;
+    lockStatus?: 'LOCKED' | 'AVAILABLE' | 'VERIFIED';
+    unlockScenarioId?: string | null;
+    campaignTag?: string | null;
+    totalPossibleScore?: number;
 }
 
 export interface Scene {
@@ -27,15 +41,22 @@ export interface Scene {
     order: number;
     sceneType: 'NARRATIVE' | 'CHOICE' | 'CHALLENGE';
     contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CHAT' | 'FEED' | 'PROPAGATION';
+    isTerminal?: boolean;
     content: any;
     chatMessages: any[];
     feedItems: any[];
     availableChoices: string[];
+    decisionTimeLimit?: number | null;
+    sceneTypeLabel?: string | null;
     choices?: {
         id?: string;
         label: string;
         actionType?: string;
         nextSceneId?: string;
+        scoreImpact?: number;
+        influenceImpact?: number;
+        spreadSimulation?: { reach: number; reshares: number; credibility_loss: number } | null;
+        psychologicalTrap?: string | null;
         outcomes?: {
             id?: string;
             outcomeType: string;
@@ -56,6 +77,10 @@ export interface GameProgress {
     startedAt: string;
     completedAt?: string;
     finalOutcome?: string;
+    totalScore?: number;
+    influenceScore?: number;
+    passed?: boolean;
+    accuracyRate?: number;
 }
 
 export interface ChoicePayload {
@@ -71,6 +96,11 @@ export interface GameOutcome {
     score: number;
     feedback: string;
     completedAt: string;
+    totalScore?: number;
+    influenceScore?: number;
+    passed?: boolean;
+    narrativeEnding?: string;
+    accuracyRate?: number | null;
     scenario: {
         id: string;
         title: string;

@@ -90,17 +90,17 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
         >
             <div className="flex gap-4">
                 <Avatar className="w-10 h-10 border border-white/5">
-                    <AvatarImage src={`https://ui-avatars.com/api/?name=U${index}&background=random`} />
-                    <AvatarFallback>U{index}</AvatarFallback>
+                    <AvatarImage src={item.avatarUrl || `https://ui-avatars.com/api/?name=${item.authorName || 'Anon'}&background=random`} />
+                    <AvatarFallback>{(item.authorName || 'A').charAt(0)}</AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 min-w-0">
                             <span className="font-bold text-sm truncate hover:underline cursor-pointer">
-                                {item.title || "Anonymous Source"}
+                                {item.authorName || "Anonymous Source"}
                             </span>
-                            <span className="text-muted-foreground text-xs">@user_{index}72</span>
+                            <span className="text-muted-foreground text-xs">@{item.authorUsername || `user_${index}72`}</span>
                             <span className="text-muted-foreground text-xs">· {index + 1}m</span>
                         </div>
                         <MoreHorizontal className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
