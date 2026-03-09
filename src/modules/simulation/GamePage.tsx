@@ -143,16 +143,14 @@ export default function GamePage() {
 
             {/* Immersive Full-Screen Game View */}
             {(activeProgress || currentOutcome) && (
-                <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-3xl flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-500">
+                <div className="fixed inset-0 z-[100] bg-[#0B0E11] flex flex-col overflow-hidden animate-in fade-in duration-500">
                     {/* Background Ambient Glows */}
                     <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/10 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
                     <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
-                    <div className="w-full max-w-6xl max-h-[100vh] md:max-h-[90vh] overflow-y-auto custom-scrollbar relative">
-                        <div className="bg-card/30 border border-white/10 rounded-[1.5rem] sm:rounded-[3rem] p-4 sm:p-12 shadow-2xl backdrop-blur-2xl isolation-isolate [transform:translateZ(0)]">
-                            {activeProgress && <GameSession />}
-                            {currentOutcome && <GameOutcome />}
-                        </div>
+                    <div className="flex-1 relative z-10 w-full h-full overflow-hidden">
+                        {activeProgress && <GameSession />}
+                        {currentOutcome && <GameOutcome />}
                     </div>
                 </div>
             )}
