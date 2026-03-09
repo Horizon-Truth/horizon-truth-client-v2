@@ -20,3 +20,16 @@ const scenario = (over: Partial<Scenario>): Scenario => ({
     order: 0,
     ...over,
 } as Scenario);
+
+const record = (over: Partial<NonNullable<Scenario['userRecord']>> = {}) => ({
+    bestScore: 0,
+    bestAccuracyRate: 0,
+    bestInfluence: 0,
+    isCompleted: false,
+    attempts: 0,
+    ...over,
+});
+
+// Skill book where data-literacy is clearly the weakest (25% over 4 tries).
+const weakDataLiteracy = {
+    'data-literacy': { xp: 30, correct: 1, total: 4 },
