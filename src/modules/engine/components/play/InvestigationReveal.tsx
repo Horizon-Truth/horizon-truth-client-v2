@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { engineService } from '@/services/engine.service';
 import { cn } from '@/shared/lib/utils';
-import { ShieldAlert, Fingerprint, Activity, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, Fingerprint, Activity, ArrowRight, Loader2, CheckCircle2, Search } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
+import { telemetryService } from '@/services/telemetry.service';
 
 interface InvestigationRevealProps {
     progressId: string;
@@ -42,7 +43,29 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
             }
         };
         fetchSummary();
+
+        // Start verification timer
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            verification_start_timestamp: new Date().toISOString()
+        });
     }, [progressId]);
+
+    const handleLearnMore = () => {
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            learn_more_opened: true,
+            source_button_clicked_count: 1
+        });
+        // In a real app, open a modal with more info
+        alert('Opening detailed verification logs...');
+    };
+
+    const handleComplete = () => {
+        telemetryService.trackVerification(progressId, 'investigation_reveal', {
+            verification_end_timestamp: new Date().toISOString()
+        });
+        telemetryService.flush(progressId, 'investigation_reveal');
+        onComplete();
+    };
 
     if (loading) {
         return (
@@ -152,14 +175,25 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                                         </div>
 
                                                         {!choice.isPerfect && (
-                                                            <div className="pt-4 border-t border-white/5 space-y-2">
-                                                                <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
-                                                                    <ArrowRight size={12} />
-                                                                    Recommended Protocol
+                                                            <div className="pt-4 border-t border-white/5 space-y-4">
+                                                                <div className="space-y-2">
+                                                                    <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
+                                                                        <ArrowRight size={12} />
+                                                                        Recommended Protocol
+                                                                    </div>
+                                                                    <p className="text-sm font-bold text-white/80 pl-4 border-l-2 border-primary/30">
+                                                                        {choice.bestAction}
+                                                                    </p>
                                                                 </div>
-                                                                <p className="text-sm font-bold text-white/80 pl-4 border-l-2 border-primary/30">
-                                                                    {choice.bestAction}
-                                                                </p>
+
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="w-full text-xs gap-2 border-white/10 hover:bg-white/5"
+                                                                    onClick={handleLearnMore}
+                                                                >
+                                                                    <Search size={14} /> View Detailed Intel
+                                                                </Button>
                                                             </div>
                                                         )}
                                                     </div>
@@ -189,7 +223,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                         </div>
                         <Button
                             size="lg"
-                            onClick={onComplete}
+                            onClick={handleComplete}
                             className="h-16 px-12 rounded-2xl bg-white text-black font-black hover:bg-white/90 group"
                         >
                             Review Full Impact

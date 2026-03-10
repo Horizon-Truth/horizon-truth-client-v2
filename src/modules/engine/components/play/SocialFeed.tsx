@@ -4,6 +4,8 @@ import { MessageSquare, Heart, Bookmark, BarChart3, MoreHorizontal, Redo2 } from
 import { cn } from '@/shared/lib/utils';
 import { type Scene } from '@/services/engine.service';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { useGameStore } from '@/store/game.store';
+import { telemetryService } from '@/services/telemetry.service';
 
 interface SocialFeedProps {
     scene: Scene;
@@ -13,9 +15,39 @@ interface SocialFeedProps {
 
 export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, isLoading }) => {
     const feedItems = scene.content?.feedItems || [];
+    const { activeProgress } = useGameStore();
+
+    // Track social context exposure when feed mounts
+    React.useEffect(() => {
+        if (!activeProgress?.id || !scene.id) return;
+        telemetryService.trackSocialContext(activeProgress.id, scene.id, {
+            social_context_exposed: 'peer',
+            social_metrics_visible: true,
+            like_count_shown: feedItems.length * 500, // Aggregate fake numbers
+            share_count_shown: feedItems.length * 100,
+            comment_count_shown: feedItems.length * 20,
+            authority_badge_visible: false
+        });
+    }, [activeProgress?.id, scene.id, feedItems.length]);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLDivElement;
+        const scrollPercent = Math.round((target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100);
+
+        if (!activeProgress?.id || !scene.id || isNaN(scrollPercent)) return;
+
+        // Track Scroll Depth
+        telemetryService.trackConsumption(activeProgress.id, scene.id, {
+            scroll_depth_percent: scrollPercent,
+            paragraphs_viewed: Math.floor((scrollPercent / 100) * feedItems.length),
+        });
+    };
 
     return (
-        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar pb-8">
+        <div
+            className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar pb-8"
+            onScroll={handleScroll}
+        >
             <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-white/5 pb-2 mb-4">
                 <h3 className="text-sm font-bold tracking-tight uppercase px-4 pt-2">Global Live Feed</h3>
             </div>
@@ -76,10 +108,23 @@ SocialFeed.displayName = 'SocialFeed';
 
 const FeedItem = ({ item, index }: { item: any, index: number }) => {
     const shouldReduceMotion = useReducedMotion();
+    const { activeProgress } = useGameStore();
     // Generate realistic engagement numbers
     const views = (Math.random() * 50 + 10).toFixed(1) + 'K';
     const likes = Math.floor(Math.random() * 2000 + 100);
     const shares = Math.floor(Math.random() * 500 + 50);
+
+    const handleShareClick = () => {
+        if (!activeProgress?.id) return;
+        const sceneId = activeProgress.currentScene?.id;
+        if (!sceneId) return;
+
+        telemetryService.trackDissemination(activeProgress.id, sceneId, {
+            share_clicked: true,
+            share_channel_type: 'public',
+            share_count: shares + 1
+        });
+    };
 
     return (
         <motion.div
@@ -129,7 +174,10 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                         )}
 
                         <div className="flex items-center justify-between text-muted-foreground pt-1 pr-8">
-                            <button className="flex items-center gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1">
+                            <button
+                                onClick={handleShareClick}
+                                className="flex items-center gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1"
+                            >
                                 <MessageSquare size={18} />
                                 <span className="text-sm font-bold">{shares}</span>
                             </button>
