@@ -16,6 +16,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingScene, setEditingScene] = useState<any | null>(null);
+    const [formSubmitted, setFormSubmitted] = useState(false);
 
     // Form State
     const [title, setTitle] = useState("");
@@ -100,6 +101,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setNewChoiceInfluenceImpact(0);
         setNewChoiceActionType("CHOICE");
         setEditingChoiceIndex(null);
+        setFormSubmitted(false);
     };
 
     const handleEdit = (scene: any) => {
@@ -124,8 +126,13 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
     };
 
     const handleSave = async () => {
+        setFormSubmitted(true);
         if (!title.trim()) {
-            toast.error("Title is required");
+            toast.error("Stage Title is required");
+            return;
+        }
+        if (choices.length === 0) {
+            toast.error("At least one decision choice is required");
             return;
         }
 
@@ -269,18 +276,30 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Stage Title</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
+                                Stage Title <span className="text-destructive">*</span>
+                            </Label>
                             <Input
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)}
+                                onChange={(e) => { setTitle(e.target.value); }}
                                 placeholder="e.g. Analyzing the Source"
-                                className="rounded-xl h-12 bg-background border-none shadow-sm focus-visible:ring-1 ring-primary"
+                                className={cn(
+                                    "rounded-xl h-12 bg-background shadow-sm focus-visible:ring-1 ring-primary",
+                                    formSubmitted && !title.trim()
+                                        ? "border border-destructive focus-visible:ring-destructive"
+                                        : "border-none"
+                                )}
                             />
+                            {formSubmitted && !title.trim() && (
+                                <p className="text-[11px] text-destructive font-semibold ml-1">Stage title is required.</p>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Stage Type</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
+                                    Stage Type <span className="text-destructive">*</span>
+                                </Label>
                                 <select
                                     value={sceneType}
                                     onChange={(e) => setSceneType(e.target.value)}
@@ -316,7 +335,15 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-4">
-                            <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Available Choices & Consequences</Label>
+                            <Label className={cn(
+                                "text-[10px] font-black uppercase tracking-widest ml-1",
+                                formSubmitted && choices.length === 0 ? "text-destructive" : "text-muted-foreground"
+                            )}>
+                                Available Choices & Consequences <span className="text-destructive">*</span>
+                            </Label>
+                            {formSubmitted && choices.length === 0 && (
+                                <p className="text-[11px] text-destructive font-semibold ml-1 -mt-2">At least one choice is required.</p>
+                            )}
 
                             {!showChoiceForm ? (
                                 <Button onClick={() => setShowChoiceForm(true)} className="w-full rounded-xl border border-dashed border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 h-10">
