@@ -4,6 +4,8 @@ import { MoreHorizontal, MessageCircle, Share2, Heart } from 'lucide-react';
 import { type Scene } from '@/services/engine.service';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { cn } from '@/shared/lib/utils';
+import { useGameStore } from '@/store/game.store';
+import { telemetryService } from '@/services/telemetry.service';
 
 interface TextPostProps {
     scene: Scene;
@@ -14,6 +16,28 @@ interface TextPostProps {
 export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoading }) => {
     const shouldReduceMotion = useReducedMotion();
     const { content } = scene;
+    const { activeProgress } = useGameStore();
+
+    // Track social context exposure when mounted
+    React.useEffect(() => {
+        if (!activeProgress?.id || !scene.id) return;
+        telemetryService.trackSocialContext(activeProgress.id, scene.id, {
+            social_context_exposed: 'authority', // Mocking for now based on UI
+            social_metrics_visible: true,
+            like_count_shown: 15400,
+            share_count_shown: 1200,
+            comment_count_shown: 42,
+            authority_badge_visible: true
+        });
+    }, [activeProgress?.id, scene.id]);
+
+    const handleShareClick = () => {
+        if (!activeProgress?.id || !scene.id) return;
+        telemetryService.trackDissemination(activeProgress.id, scene.id, {
+            share_clicked: true,
+            share_channel_type: 'public'
+        });
+    };
 
     return (
         <motion.div
@@ -96,7 +120,10 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                                 </div>
                                 <span className="text-sm">42</span>
                             </button>
-                            <button className="flex items-center gap-2 group cursor-pointer hover:text-emerald-400 transition-colors focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1">
+                            <button
+                                onClick={handleShareClick}
+                                className="flex items-center gap-2 group cursor-pointer hover:text-emerald-400 transition-colors focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1"
+                            >
                                 <div className="p-2 group-hover:bg-emerald-400/10 rounded-full transition-colors">
                                     <Share2 className="w-5 h-5" />
                                 </div>

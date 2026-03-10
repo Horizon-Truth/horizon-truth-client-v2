@@ -26,6 +26,7 @@ import { SpreadSimulationOverlay } from './play/SpreadSimulationOverlay';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Progress } from '@/shared/components/ui/progress';
 import { TrustMeter } from './play/TrustMeter';
+import { telemetryService } from '@/services/telemetry.service';
 
 export function GameSession() {
     // Phase 16: Granular selectors to prevent broad rerenders
@@ -104,6 +105,27 @@ export function GameSession() {
         return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeProgress?.currentScene?.id]);
+
+    // Telemetry: Sub-session mounting & Context Tracking
+    useEffect(() => {
+        if (!activeProgress?.currentScene?.id) return;
+        const progressId = activeProgress.id;
+        const sceneId = activeProgress.currentScene.id;
+
+        // 1. Context
+        telemetryService.trackContext(progressId, sceneId, {
+            player_id: user?.id || 'anonymous',
+            level_id: activeProgress.scenarioId,
+            content_id: sceneId,
+            device_type: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop',
+            network_state: (navigator as any)?.connection?.effectiveType === '4g' ? 'good' : 'poor',
+        });
+
+        // 2. Timing
+        telemetryService.trackTiming(progressId, sceneId, {
+            content_shown_timestamp: new Date().toISOString(),
+        });
+    }, [activeProgress?.currentScene?.id, activeProgress?.id, activeProgress?.scenarioId, user?.id]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -216,6 +238,19 @@ export function GameSession() {
         if (countdownRef.current) clearInterval(countdownRef.current);
         setTimeLeft(null);
         const choiceObj = currentScene?.choices?.find((c: any) => c.label === choiceKey || c.id === choiceKey);
+
+        // Telemetry
+        const progressId = activeProgress.id;
+        const sceneId = currentScene.id;
+        telemetryService.trackTiming(progressId, sceneId, {
+            final_decision_timestamp: new Date().toISOString(),
+        });
+        telemetryService.trackDecision(progressId, sceneId, {
+            player_decision_type: 'trust', // Add deeper logic here if needed
+            decision_confidence_level: 5 // Default
+        });
+        telemetryService.flush(progressId, sceneId);
+
         submitChoice(currentScene.id, choiceKey, choiceObj?.label || choiceKey);
     };
 
