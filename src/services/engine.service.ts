@@ -8,6 +8,7 @@ export interface Scenario {
     difficulty: 'EASY' | 'MEDIUM' | 'HARD';
     scenarioType: 'TUTORIAL' | 'CHALLENGE' | 'STORY';
     isActive: boolean;
+    isArchived: boolean;
     minimumScore: number;
     totalScenes: number;
     gameLevel: {
@@ -108,8 +109,13 @@ export interface GameOutcome {
 }
 
 class EngineService {
-    async getScenarios(params?: { difficulty?: string; scenarioType?: string }) {
+    async getScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean }) {
         const response = await api.get('/engine/scenarios', { params });
+        return response.data;
+    }
+
+    async getAdminScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean }) {
+        const response = await api.get('/engine/admin/scenarios', { params });
         return response.data;
     }
 

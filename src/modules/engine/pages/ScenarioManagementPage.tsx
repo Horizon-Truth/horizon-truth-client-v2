@@ -17,11 +17,15 @@ export default function ScenarioManagementPage() {
     const [isFeedbackListOpen, setIsFeedbackListOpen] = useState(false);
     const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
     const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
 
     const fetchScenarios = async () => {
         setIsLoading(true);
         try {
-            const response = await engineService.getScenarios();
+            const response = await engineService.getAdminScenarios({ 
+                isArchived: activeTab === 'archived',
+                limit: 100 
+            } as any);
             setScenarios(response.data || []);
         } catch (error) {
             console.error("Failed to fetch scenarios:", error);
@@ -33,7 +37,7 @@ export default function ScenarioManagementPage() {
 
     useEffect(() => {
         fetchScenarios();
-    }, []);
+    }, [activeTab]);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this scenario? This will remove all associated scenes.")) return;
@@ -57,6 +61,17 @@ export default function ScenarioManagementPage() {
         }
     };
 
+    const toggleArchive = async (scenario: Scenario) => {
+        try {
+            const newArchivedStatus = !scenario.isArchived;
+            await engineService.updateScenario(scenario.id, { isArchived: newArchivedStatus });
+            toast.success(`Scenario ${newArchivedStatus ? 'archived' : 'restored'} successfully`);
+            fetchScenarios();
+        } catch (error) {
+            toast.error("Failed to update archive status");
+        }
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500 relative min-h-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -64,13 +79,35 @@ export default function ScenarioManagementPage() {
                     <h2 className="text-xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Scenario Engine</h2>
                     <p className="text-sm text-muted-foreground mt-1">Design and manage truth-verification missions for players.</p>
                 </div>
-                <Button
-                    onClick={() => { setEditingScenario(undefined); setIsFormOpen(true); }}
-                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
-                >
-                    <Plus size={20} />
-                    Create New Scenario
-                </Button>
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="flex p-1 bg-muted/50 rounded-2xl border border-border/50">
+                        <button
+                            onClick={() => setActiveTab('active')}
+                            className={cn(
+                                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                                activeTab === 'active' ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Active Missions
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('archived')}
+                            className={cn(
+                                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all",
+                                activeTab === 'archived' ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            Archived Protocols
+                        </button>
+                    </div>
+                    <Button
+                        onClick={() => { setEditingScenario(undefined); setIsFormOpen(true); }}
+                        className="flex-1 sm:flex-none rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
+                    >
+                        <Plus size={20} />
+                        Create New
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
@@ -136,8 +173,18 @@ export default function ScenarioManagementPage() {
                                     size="icon"
                                     className="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-500"
                                     onClick={() => toggleStatus(scenario)}
+                                    title={scenario.isActive ? "Deactivate" : "Activate"}
                                 >
                                     {scenario.isActive ? <XCircle size={18} /> : <CheckCircle2 size={18} />}
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-xl hover:bg-amber-500/10 hover:text-amber-500"
+                                    onClick={() => toggleArchive(scenario)}
+                                    title={scenario.isArchived ? "Restore" : "Archive"}
+                                >
+                                    {scenario.isArchived ? <Plus size={18} className="rotate-45" /> : <Trash2 size={18} className="text-muted-foreground" />}
                                 </Button>
                                 <Button
                                     variant="ghost"
@@ -172,6 +219,7 @@ export default function ScenarioManagementPage() {
                                     size="icon"
                                     className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
                                     onClick={() => handleDelete(scenario.id)}
+                                    title="Delete Permanently"
                                 >
                                     <Trash2 size={18} />
                                 </Button>

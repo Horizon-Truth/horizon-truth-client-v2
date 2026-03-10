@@ -25,6 +25,7 @@ const scenarioSchema = z.object({
     totalScenes: z.number().min(1),
     unlockScenarioId: z.string().nullable().optional(),
     campaignTag: z.string().optional(),
+    isArchived: z.boolean().optional(),
 });
 
 type ScenarioFormValues = z.infer<typeof scenarioSchema>;
@@ -63,6 +64,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
             totalScenes: scenario?.totalScenes ?? 1,
             unlockScenarioId: scenario?.unlockScenarioId || null,
             campaignTag: (scenario as any)?.campaignTag || "",
+            isArchived: scenario?.isArchived ?? false,
         },
     });
 
