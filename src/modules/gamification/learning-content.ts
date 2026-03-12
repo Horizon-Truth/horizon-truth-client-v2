@@ -13,3 +13,17 @@ export interface ManipulationTechnique {
     howToSpot: string;
     example: string;
 }
+
+/** Known manipulation techniques, keyed loosely so scenario-provided trap
+ *  strings can be matched against them. */
+export const TECHNIQUES: ManipulationTechnique[] = [
+    {
+        key: 'emotional',
+        title: 'Emotional Manipulation',
+        description: 'Content engineered to trigger fear, anger, or outrage. Strong emotions switch off critical thinking and make you share before you verify.',
+        howToSpot: 'Notice your own reaction. If a post makes you furious or terrified instantly, that reaction may be the product — pause before acting.',
+        example: '“SHOCKING: They don\'t want you to see this!” headlines that promise outrage but never cite a source.',
+    },
+    {
+        key: 'urgency',
+        title: 'False Urgency',
