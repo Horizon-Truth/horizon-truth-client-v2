@@ -117,9 +117,9 @@ export default function GamePage() {
 
             {/* Immersive Full-Screen Game View */}
             {(activeProgress || currentOutcome) && (
-                <div className="fixed inset-0 z-[100] bg-[#0B0E11] flex flex-col overflow-hidden animate-in fade-in duration-500">
+                <div className="fixed inset-0 z-[100] bg-white flex flex-col overflow-hidden animate-in fade-in duration-500">
                     {/* Background Ambient Glows */}
-                    <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/10 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                    <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
                     <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
                     <div className="flex-1 relative z-10 w-full h-full overflow-hidden flex flex-col">
