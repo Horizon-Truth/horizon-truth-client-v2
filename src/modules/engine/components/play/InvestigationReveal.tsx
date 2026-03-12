@@ -185,15 +185,6 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                                                         {choice.bestAction}
                                                                     </p>
                                                                 </div>
-
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                    className="w-full text-xs gap-2 border-white/10 hover:bg-white/5"
-                                                                    onClick={handleLearnMore}
-                                                                >
-                                                                    <Search size={14} /> View Detailed Intel
-                                                                </Button>
                                                             </div>
                                                         )}
                                                     </div>

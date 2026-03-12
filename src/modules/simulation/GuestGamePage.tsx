@@ -21,12 +21,12 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ScenarioList } from '../engine/components/ScenarioList';
-import { toast } from 'sonner';
 
 // Component-specific imports
 import { TrustMeter } from '../engine/components/play/TrustMeter';
 import { Progress } from '@/shared/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
+import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 
 const NavItem = memo(({ icon, label, active = false, isLocked = false }: { icon: React.ReactNode, label: string, active?: boolean, isLocked?: boolean }) => {
     return (
@@ -151,77 +151,78 @@ export default function GuestGamePage() {
             <main className="flex-1 relative z-10 max-w-7xl w-full mx-auto p-4 sm:p-8 overflow-y-auto custom-scrollbar">
                 {!activeScenario && !isCompleted && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        {/* Better When Signed In Banner */}
-                        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-[2rem] p-6 flex flex-col md:flex-row items-center justify-between gap-6 group">
-                            <div className="flex items-center gap-6">
-                                <div className="w-16 h-16 bg-indigo-500/20 rounded-3xl flex items-center justify-center border border-indigo-500/30 flex-shrink-0">
-                                    <Zap className="text-indigo-500 w-8 h-8 animate-pulse" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h3 className="text-xl font-black italic uppercase tracking-wider text-indigo-400">Horizon Pro Experience</h3>
-                                    <p className="text-sm text-indigo-300/80 font-medium leading-relaxed max-w-xl">
-                                        Signing in unlocks global ranking, customizable avatars, advanced log analytics, and allows you to earn real Trust XP for every mission completed and get certificate.
-                                    </p>
-                                </div>
-                            </div>
-                            <Button
-                                onClick={() => navigate('/register')}
-                                className="bg-indigo-500 hover:bg-indigo-600 text-white font-black uppercase tracking-widest px-8 h-14 rounded-2xl shadow-xl shadow-indigo-500/20 shrink-0"
-                            >
-                                <UserPlus size={18} className="mr-2" /> Upgrade to Pro
-                            </Button>
-                        </div>
-
                         <div className="flex flex-col lg:flex-row gap-8">
                             {/* Main Content Area */}
                             <div className="flex-1 space-y-8">
-                                {/* Hero Section */}
-                                <div className="bg-card/20 border border-white/5 rounded-[2rem] p-8 sm:p-12 backdrop-blur-2xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                                        <Home size={200} />
-                                    </div>
-                                    <div className="space-y-4 text-center md:text-left relative z-10">
-                                        <h1 className="text-3xl sm:text-5xl font-black italic uppercase tracking-wider">Mission Command</h1>
-                                        <p className="text-muted-foreground text-lg max-w-xl">
-                                            Access the truth protocols below. As a guest, your session data is stored locally. Sign in to join the global resistance.
-                                        </p>
-                                        <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
-                                            <Button
-                                                onClick={handleFeedback}
-                                                className="rounded-xl h-12 px-6 font-bold gap-2 bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-black uppercase tracking-widest text-[10px]"
-                                            >
-                                                <MessageSquare size={16} />
-                                                Give Feedback
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 {/* Scenario List */}
                                 <div className="bg-card/20 border border-white/5 rounded-[2rem] p-4 sm:p-10 backdrop-blur-2xl">
                                     <ScenarioList onStartGame={startGuestGame} guestMode />
                                 </div>
                             </div>
 
-                            {/* Sidebar - Locked Features */}
+                            {/* Sidebar - Features & Upgrades */}
                             <aside className="w-full lg:w-80 flex flex-col gap-6">
-                                <div className="bg-card/20 border border-white/5 rounded-[2.5rem] p-8 flex-1 flex flex-col gap-8 backdrop-blur-xl relative group">
-                                    <div className="absolute inset-x-8 bottom-8 z-20">
-                                        <div className="p-6 rounded-3xl bg-black/60 border border-white/10 backdrop-blur-md text-center space-y-4">
-                                            <ShieldAlert className="w-10 h-10 text-primary mx-auto opacity-50" />
-                                            <div className="space-y-1">
-                                                <p className="font-black text-white text-[10px] uppercase tracking-widest">Logs Encrypted</p>
-                                                <p className="text-[10px] text-white">Persistent mission logs require an active operator profile.</p>
-                                            </div>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className="w-full text-[10px] font-black uppercase tracking-widest h-10 rounded-xl"
-                                                onClick={() => navigate('/login')}
-                                            >
-                                                Initialize Login
-                                            </Button>
+                                {/* Horizon Pro Experience */}
+                                <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-[2.5rem] p-6 flex flex-col gap-5 relative group overflow-hidden">
+                                    <div className="absolute -top-4 -right-4 p-6 opacity-[0.05] pointer-events-none group-hover:opacity-[0.1] transition-opacity">
+                                        <Zap size={120} className="text-indigo-500" />
+                                    </div>
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 flex-shrink-0">
+                                            <Zap className="text-indigo-500 w-6 h-6 animate-pulse" />
                                         </div>
+                                        <div>
+                                            <h3 className="text-lg font-black italic uppercase tracking-wider text-indigo-400 leading-tight">Horizon Pro</h3>
+                                            <p className="text-[10px] text-indigo-300 uppercase tracking-widest font-black">Experience</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-indigo-300/80 font-medium leading-relaxed relative z-10">
+                                        Signing in unlocks global ranking, customizable avatars, advanced log analytics, and allows you to earn real Trust XP for every mission completed and get certificate.
+                                    </p>
+                                    <Button
+                                        onClick={() => navigate('/register')}
+                                        className="bg-indigo-500 hover:bg-indigo-600 text-white font-black uppercase tracking-widest w-full h-12 rounded-xl shadow-xl shadow-indigo-500/20 shrink-0 relative z-10 text-[10px]"
+                                    >
+                                        <UserPlus size={16} className="mr-2" /> Upgrade to Pro
+                                    </Button>
+                                </div>
+
+                                {/* Give Feedback */}
+                                <div className="bg-card/20 border border-white/5 rounded-[2.5rem] p-6 flex flex-col gap-4 backdrop-blur-xl group">
+                                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 mb-2">
+                                        <MessageSquare className="text-white w-6 h-6 opacity-70 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="text-sm font-black uppercase tracking-wider">Provide Intel</h3>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            Your insights help us refine the truth protocol. Submit anonymous feedback to help the resistance.
+                                        </p>
+                                    </div>
+                                    <Button
+                                        onClick={handleFeedback}
+                                        variant="outline"
+                                        className="w-full text-[10px] font-black uppercase tracking-widest h-10 rounded-xl mt-2 hover:bg-white/10"
+                                    >
+                                        Give Feedback
+                                    </Button>
+                                </div>
+
+                                {/* Logs Encrypted */}
+                                <div className="bg-card/20 border border-white/5 rounded-[2.5rem] p-6 flex flex-col gap-4 backdrop-blur-xl text-center group">
+                                    <div className="p-6 rounded-3xl bg-black/60 border border-white/10 backdrop-blur-md space-y-4">
+                                        <ShieldAlert className="w-10 h-10 text-primary mx-auto opacity-50" />
+                                        <div className="space-y-1">
+                                            <p className="font-black text-white text-[10px] uppercase tracking-widest">Logs Encrypted</p>
+                                            <p className="text-[10px] text-white">Persistent mission logs require an active operator profile.</p>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full text-[10px] font-black uppercase tracking-widest h-10 rounded-xl"
+                                            onClick={() => navigate('/login')}
+                                        >
+                                            Initialize Login
+                                        </Button>
                                     </div>
                                 </div>
                             </aside>
@@ -490,24 +491,16 @@ export default function GuestGamePage() {
                 )}
             </main>
 
-            {/* Guest Feedback Modal (Simplified) */}
+            {/* Guest Feedback Modal */}
             {isFeedbackOpen && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-background/90 backdrop-blur-md" onClick={() => setIsFeedbackOpen(false)} />
-                    <div className="relative z-[210] w-full max-w-lg bg-card border border-white/10 rounded-[2rem] p-8 shadow-2xl">
-                        <h2 className="text-2xl font-black uppercase mb-4">Guest Feedback</h2>
-                        <p className="text-muted-foreground mb-6">Your insights help us refine the truth protocol. (Guest feedback is logged anonymously).</p>
-                        <textarea
-                            className="w-full h-32 rounded-2xl bg-white/5 border border-white/10 p-4 focus:outline-none focus:border-primary/50 transition-colors mb-4"
-                            placeholder="Enter your transmission..."
+                    <div className="relative z-[210] w-full max-w-lg">
+                        <AddFeedbackModal
+                            isGuest
+                            onSuccess={() => setIsFeedbackOpen(false)}
+                            onCancel={() => setIsFeedbackOpen(false)}
                         />
-                        <div className="flex gap-3">
-                            <Button onClick={() => {
-                                toast.success("Feedback received via anonymous channel.");
-                                setIsFeedbackOpen(false);
-                            }} className="flex-1 rounded-xl h-12 font-bold">Transmit Feedback</Button>
-                            <Button variant="ghost" onClick={() => setIsFeedbackOpen(false)} className="rounded-xl h-12 font-bold">Cancel</Button>
-                        </div>
                     </div>
                 </div>
             )}

@@ -132,15 +132,15 @@ export function GameOutcome() {
                 </motion.div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-                    <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10">
+                <div className="flex flex-wrap justify-center gap-6 w-full max-w-2xl mx-auto">
+                    {/* <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10">
                         <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                             <Zap size={14} />
                             Influence
                         </p>
                         <p className="text-4xl font-black text-amber-500">{currentOutcome.influenceScore ?? 0}</p>
                         <p className="text-[10px] text-amber-500/60 font-black uppercase mt-2 tracking-widest">Network Nodes</p>
-                    </div>
+                    </div> */}
                     {currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate !== undefined ? (
                         <div className="p-8 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-blue-500/10">
                             <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
@@ -176,19 +176,10 @@ export function GameOutcome() {
                         size="lg"
                         variant="outline"
                         onClick={() => setView('reveal')}
-                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
+                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-white/10 transition-all uppercase"
                     >
                         <Activity className="mr-3" size={22} />
                         Reality Check
-                    </Button>
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        onClick={() => setIsFeedbackOpen(true)}
-                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
-                    >
-                        <MessageSquarePlus className="mr-3" size={22} />
-                        Feedback
                     </Button>
                 </div>
 
