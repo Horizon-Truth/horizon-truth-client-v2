@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, LayoutDashboard, Zap, ShieldCheck, Activity, MessageSquarePlus, Target, TrendingDown, Shield, Globe } from 'lucide-react';
+import { Trophy, LayoutDashboard, ShieldCheck, Activity, Target, TrendingDown, Shield, Globe } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
 import PlayerFeedbackModal from './play/PlayerFeedbackModal';

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { engineService } from '@/services/engine.service';
 import { cn } from '@/shared/lib/utils';
-import { ShieldAlert, Fingerprint, Activity, ArrowRight, Loader2, CheckCircle2, Search } from 'lucide-react';
+import { ShieldAlert, Fingerprint, Activity, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { telemetryService } from '@/services/telemetry.service';
 
@@ -50,6 +50,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
         });
     }, [progressId]);
 
+    /* 
     const handleLearnMore = () => {
         telemetryService.trackVerification(progressId, 'investigation_reveal', {
             learn_more_opened: true,
@@ -58,6 +59,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
         // In a real app, open a modal with more info
         alert('Opening detailed verification logs...');
     };
+    */
 
     const handleComplete = () => {
         telemetryService.trackVerification(progressId, 'investigation_reveal', {
