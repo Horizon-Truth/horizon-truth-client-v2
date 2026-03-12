@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, LayoutDashboard, Zap, ShieldCheck, Activity, MessageSquarePlus, Target, TrendingDown, Shield, Globe } from 'lucide-react';
+import { Trophy, LayoutDashboard, ShieldCheck, Activity, Target, TrendingDown, Shield, Globe } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
 import PlayerFeedbackModal from './play/PlayerFeedbackModal';
@@ -19,34 +19,34 @@ const NARRATIVE_CONFIG: Record<string, {
     TRUTH_VICTORY: {
         title: 'Truth Victory',
         subtitle: 'You identified and contained the misinformation before it spread. The community trusts your judgment.',
-        gradient: 'from-emerald-900/60 via-emerald-800/40 to-transparent',
-        border: 'border-emerald-500/30',
-        icon: <Shield size={40} className="text-emerald-400" />,
-        glow: 'shadow-[0_0_80px_rgba(16,185,129,0.2)]',
+        gradient: 'from-emerald-50 via-emerald-100 to-transparent',
+        border: 'border-emerald-200',
+        icon: <Shield size={40} className="text-emerald-500" />,
+        glow: 'shadow-[0_0_80px_rgba(16,185,129,0.1)]',
     },
     CONTAINED_EARLY: {
         title: 'Contained Early',
         subtitle: 'Good work — you slowed the spread significantly, though some misinformation still reached the network.',
-        gradient: 'from-blue-900/60 via-blue-800/40 to-transparent',
-        border: 'border-blue-500/30',
-        icon: <ShieldCheck size={40} className="text-blue-400" />,
-        glow: 'shadow-[0_0_80px_rgba(59,130,246,0.2)]',
+        gradient: 'from-blue-50 via-blue-100 to-transparent',
+        border: 'border-blue-200',
+        icon: <ShieldCheck size={40} className="text-blue-500" />,
+        glow: 'shadow-[0_0_80px_rgba(59,130,246,0.1)]',
     },
     VIRAL_MISINFORMATION: {
         title: 'Viral Misinformation',
         subtitle: 'The false claim reached thousands before fact-checkers could intervene. The damage is significant.',
-        gradient: 'from-orange-900/60 via-orange-800/40 to-transparent',
-        border: 'border-orange-500/30',
-        icon: <Globe size={40} className="text-orange-400" />,
-        glow: 'shadow-[0_0_80px_rgba(249,115,22,0.2)]',
+        gradient: 'from-orange-50 via-orange-100 to-transparent',
+        border: 'border-orange-200',
+        icon: <Globe size={40} className="text-orange-500" />,
+        glow: 'shadow-[0_0_80px_rgba(249,115,22,0.1)]',
     },
     COMMUNITY_CRISIS: {
         title: 'Community Crisis',
         subtitle: 'Your decisions amplified the narrative. The community is divided and trust in institutions has fallen.',
-        gradient: 'from-red-900/60 via-red-800/40 to-transparent',
-        border: 'border-red-500/30',
-        icon: <TrendingDown size={40} className="text-red-400" />,
-        glow: 'shadow-[0_0_80px_rgba(239,68,68,0.2)]',
+        gradient: 'from-red-50 via-red-100 to-transparent',
+        border: 'border-red-200',
+        icon: <TrendingDown size={40} className="text-red-500" />,
+        glow: 'shadow-[0_0_80px_rgba(239,68,68,0.1)]',
     },
 };
 
@@ -92,12 +92,12 @@ export function GameOutcome() {
                     <div className="absolute inset-0 opacity-10 animate-pulse bg-gradient-to-t from-white/10 to-transparent rounded-3xl pointer-events-none" />
 
                     {currentOutcome.passed && (
-                        <div className="absolute top-4 right-4 bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.5)] flex items-center gap-1.5">
+                        <div className="absolute top-4 right-4 bg-emerald-100 border border-emerald-500/50 text-emerald-600 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] flex items-center gap-1.5">
                             <Trophy size={14} /> KNOWLEDGE INCREASED!
                         </div>
                     )}
                     {!currentOutcome.passed && (
-                        <div className="absolute top-4 right-4 bg-red-500/20 border border-red-500/50 text-red-400 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center gap-1.5">
+                        <div className="absolute top-4 right-4 bg-red-100 border border-red-500/50 text-red-600 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.2)] flex items-center gap-1.5">
                             <Activity size={14} /> MISSION FAILED
                         </div>
                     )}
@@ -112,10 +112,10 @@ export function GameOutcome() {
                             {narrativeCfg.icon}
                         </motion.div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-1">Mission Outcome</p>
-                            <h1 className="text-4xl font-black tracking-tighter uppercase">{narrativeCfg.title}</h1>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">Mission Outcome</p>
+                            <h1 className="text-4xl font-black tracking-tighter uppercase text-slate-900">{narrativeCfg.title}</h1>
                         </div>
-                        <p className="text-sm text-white/60 max-w-md leading-relaxed">{narrativeCfg.subtitle}</p>
+                        <p className="text-sm text-slate-600 max-w-md leading-relaxed font-medium">{narrativeCfg.subtitle}</p>
                     </div>
                 </motion.div>
 
@@ -124,40 +124,40 @@ export function GameOutcome() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="max-w-2xl p-8 rounded-3xl bg-white/5 border border-white/5 backdrop-blur-md italic"
+                    className="max-w-2xl p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm italic"
                 >
-                    <p className="text-muted-foreground text-lg leading-relaxed font-medium">
+                    <p className="text-slate-600 text-lg leading-relaxed font-medium">
                         &ldquo;{currentOutcome.feedback}&rdquo;
                     </p>
                 </motion.div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-                    <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10">
+                <div className="flex flex-wrap justify-center gap-6 w-full max-w-2xl mx-auto">
+                    {/* <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-amber-500/10">
                         <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                             <Zap size={14} />
                             Influence
                         </p>
                         <p className="text-4xl font-black text-amber-500">{currentOutcome.influenceScore ?? 0}</p>
                         <p className="text-[10px] text-amber-500/60 font-black uppercase mt-2 tracking-widest">Network Nodes</p>
-                    </div>
+                    </div> */}
                     {currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate !== undefined ? (
-                        <div className="p-8 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-blue-500/10">
-                            <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
+                        <div className="p-8 rounded-[2rem] bg-indigo-50 border border-indigo-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-indigo-100/50 shadow-sm">
+                            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                                 <Target size={14} />
                                 Accuracy Rate
                             </p>
-                            <p className="text-4xl font-black text-blue-500">{currentOutcome.accuracyRate}%</p>
-                            <p className="text-[10px] text-blue-500/60 font-black uppercase mt-2 tracking-widest">Correct Decisions</p>
+                            <p className="text-4xl font-black text-indigo-700">{currentOutcome.accuracyRate}%</p>
+                            <p className="text-[10px] text-indigo-600/60 font-black uppercase mt-2 tracking-widest">Correct Decisions</p>
                         </div>
                     ) : (
-                        <div className="p-8 rounded-[2rem] bg-purple-500/5 border border-purple-500/10 backdrop-blur-2xl group hover:scale-[1.05] transition-all duration-300 hover:bg-purple-500/10">
-                            <p className="text-[10px] font-black text-purple-500 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
+                        <div className="p-8 rounded-[2rem] bg-purple-50 border border-purple-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-purple-100/50 shadow-sm">
+                            <p className="text-[10px] font-black text-purple-600 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                                 <Trophy size={14} />
                                 Mission Score
                             </p>
-                            <p className="text-4xl font-black text-purple-500">{currentOutcome.score}</p>
-                            <p className="text-[10px] text-purple-500/60 font-black uppercase mt-2 tracking-widest">Final Rating</p>
+                            <p className="text-4xl font-black text-purple-700">{currentOutcome.score}</p>
+                            <p className="text-[10px] text-purple-600/60 font-black uppercase mt-2 tracking-widest">Final Rating</p>
                         </div>
                     )}
                 </div>
@@ -176,19 +176,10 @@ export function GameOutcome() {
                         size="lg"
                         variant="outline"
                         onClick={() => setView('reveal')}
-                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
+                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-slate-200 text-slate-900 transition-all uppercase hover:bg-slate-50"
                     >
                         <Activity className="mr-3" size={22} />
                         Reality Check
-                    </Button>
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        onClick={() => setIsFeedbackOpen(true)}
-                        className="h-16 flex-1 rounded-[1.5rem] font-black text-lg border-white/10 hover:bg-white/5 hover:scale-[1.05] active:scale-95 transition-all uppercase tracking-widest backdrop-blur-md"
-                    >
-                        <MessageSquarePlus className="mr-3" size={22} />
-                        Feedback
                     </Button>
                 </div>
 

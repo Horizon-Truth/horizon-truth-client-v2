@@ -21,11 +21,12 @@ type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
 interface AddFeedbackModalProps {
     scenarioId?: string;
+    isGuest?: boolean;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
-export default function AddFeedbackModal({ scenarioId, onSuccess, onCancel }: AddFeedbackModalProps) {
+export default function AddFeedbackModal({ scenarioId, isGuest, onSuccess, onCancel }: AddFeedbackModalProps) {
     const {
         register,
         handleSubmit,
@@ -43,12 +44,19 @@ export default function AddFeedbackModal({ scenarioId, onSuccess, onCancel }: Ad
 
     const onSubmit = async (data: FeedbackFormValues) => {
         try {
-            await feedbackService.createFeedback({
+            const payload = {
                 ...data,
                 scenarioId,
-                type: scenarioId ? "SCENARIO" : "OPERATION",
+                type: scenarioId ? ("SCENARIO" as const) : ("OPERATION" as const),
                 deadline: data.deadline || undefined,
-            });
+            };
+
+            if (isGuest) {
+                await feedbackService.createGuestFeedback(payload);
+            } else {
+                await feedbackService.createFeedback(payload);
+            }
+            
             toast.success("Feedback submitted successfully");
             onSuccess();
         } catch (error) {
@@ -58,7 +66,7 @@ export default function AddFeedbackModal({ scenarioId, onSuccess, onCancel }: Ad
     };
 
     return (
-        <div className="bg-card border rounded-[2rem] p-8 shadow-2xl animate-in zoom-in-95 duration-300 w-full max-w-lg">
+        <div className="bg-card border rounded-[2rem] p-8 shadow-2xl animate-in zoom-in-95 duration-300 w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-xl text-primary">
