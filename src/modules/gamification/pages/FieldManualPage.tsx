@@ -22,3 +22,27 @@ export default function FieldManualPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const stats = useGameStore(s => s.stats);
+    const [category, setCategory] = useState<ManualCategory | 'all'>('all');
+
+    const snapshot = { missionsCompleted: stats.missionsCompleted, xp: stats.experience };
+    const unlockedCount = useMemo(
+        () => MANUAL_ARTICLES.filter(a => isArticleUnlocked(a, snapshot)).length,
+        [snapshot.missionsCompleted, snapshot.xp]
+    );
+
+    const openId = searchParams.get('article');
+    const openArticle = openId ? MANUAL_ARTICLES.find(a => a.id === openId) ?? null : null;
+    const openUnlocked = openArticle ? isArticleUnlocked(openArticle, snapshot) : false;
+
+    const closeArticle = () => setSearchParams({}, { replace: true });
+
+    // Escape closes the open article.
+    useEffect(() => {
+        if (!openArticle) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeArticle(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openArticle?.id]);
+
+    const visible = MANUAL_ARTICLES.filter(a => category === 'all' || a.category === category);

@@ -12,3 +12,17 @@ export interface Skill {
     name: string;
     /** What this competency means, shown in the skills panel. */
     description: string;
+    /** Tailwind text color class for accents. */
+    color: string;
+    /** Tailwind bg class for progress bars. */
+    bar: string;
+    emoji: string;
+}
+
+export const SKILLS: Skill[] = [
+    {
+        key: 'source-verification',
+        name: 'Source Verification',
+        description: 'Checking who is speaking — real experts, real outlets, real accounts.',
+        color: 'text-blue-600 dark:text-blue-400',
+        bar: 'bg-blue-500',
