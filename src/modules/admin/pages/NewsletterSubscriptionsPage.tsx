@@ -12,3 +12,16 @@ export default function NewsletterSubscriptionsPage() {
 
     const fetchSubscriptions = async () => {
         setIsLoading(true);
+        try {
+            const data = await newsletterService.getAll();
+            setSubscriptions(data);
+        } catch (error) {
+            console.error("Failed to fetch newsletter subscriptions:", error);
+            toast.error("Failed to load subscriptions");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubscriptions();
