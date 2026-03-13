@@ -92,13 +92,13 @@ export function GameOutcome() {
                     <div className="absolute inset-0 opacity-10 animate-pulse bg-gradient-to-t from-white/10 to-transparent rounded-3xl pointer-events-none" />
 
                     {currentOutcome.passed && (
-                        <div className="absolute top-4 right-4 bg-emerald-100 border border-emerald-500/50 text-emerald-600 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] flex items-center gap-1.5">
-                            <Trophy size={14} /> KNOWLEDGE INCREASED!
+                        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-emerald-100 border border-emerald-500/50 text-emerald-600 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] flex items-center gap-1.5">
+                            <Trophy size={12} className="sm:w-3.5 sm:h-3.5" /> <span className="hidden xs:inline">KNOWLEDGE INCREASED!</span><span className="xs:hidden">VICTORY</span>
                         </div>
                     )}
                     {!currentOutcome.passed && (
-                        <div className="absolute top-4 right-4 bg-red-100 border border-red-500/50 text-red-600 px-3 py-1.5 rounded-full text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.2)] flex items-center gap-1.5">
-                            <Activity size={14} /> MISSION FAILED
+                        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-red-100 border border-red-500/50 text-red-600 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.2)] flex items-center gap-1.5">
+                            <Activity size={12} className="sm:w-3.5 sm:h-3.5" /> <span className="hidden xs:inline">MISSION FAILED</span><span className="xs:hidden">FAILED</span>
                         </div>
                     )}
 
@@ -107,13 +107,13 @@ export function GameOutcome() {
                             initial={{ scale: 0 }}
                             animate={{ scale: 1, rotate: [0, -10, 10, 0] }}
                             transition={{ delay: 0.2, duration: 0.6 }}
-                            className="w-20 h-20 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center"
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0"
                         >
                             {narrativeCfg.icon}
                         </motion.div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">Mission Outcome</p>
-                            <h1 className="text-4xl font-black tracking-tighter uppercase text-slate-900">{narrativeCfg.title}</h1>
+                            <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">Mission Outcome</p>
+                            <h1 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase text-slate-900">{narrativeCfg.title}</h1>
                         </div>
                         <p className="text-sm text-slate-600 max-w-md leading-relaxed font-medium">{narrativeCfg.subtitle}</p>
                     </div>
@@ -142,22 +142,22 @@ export function GameOutcome() {
                         <p className="text-[10px] text-amber-500/60 font-black uppercase mt-2 tracking-widest">Network Nodes</p>
                     </div> */}
                     {currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate !== undefined ? (
-                        <div className="p-8 rounded-[2rem] bg-indigo-50 border border-indigo-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-indigo-100/50 shadow-sm">
+                        <div className="p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-indigo-50 border border-indigo-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-indigo-100/50 shadow-sm flex-1 min-w-[140px] max-w-xs text-center">
                             <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                                 <Target size={14} />
-                                Accuracy Rate
+                                Accuracy
                             </p>
-                            <p className="text-4xl font-black text-indigo-700">{currentOutcome.accuracyRate}%</p>
-                            <p className="text-[10px] text-indigo-600/60 font-black uppercase mt-2 tracking-widest">Correct Decisions</p>
+                            <p className="text-3xl sm:text-4xl font-black text-indigo-700">{currentOutcome.accuracyRate}%</p>
+                            <p className="text-[9px] sm:text-[10px] text-indigo-600/60 font-black uppercase mt-2 tracking-widest leading-none">Correct Decisions</p>
                         </div>
                     ) : (
-                        <div className="p-8 rounded-[2rem] bg-purple-50 border border-purple-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-purple-100/50 shadow-sm">
+                        <div className="p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] bg-purple-50 border border-purple-100 group hover:scale-[1.05] transition-all duration-300 hover:bg-purple-100/50 shadow-sm flex-1 min-w-[140px] max-w-xs text-center">
                             <p className="text-[10px] font-black text-purple-600 uppercase tracking-[0.3em] mb-3 flex items-center justify-center gap-2">
                                 <Trophy size={14} />
-                                Mission Score
+                                Score
                             </p>
-                            <p className="text-4xl font-black text-purple-700">{currentOutcome.score}</p>
-                            <p className="text-[10px] text-purple-600/60 font-black uppercase mt-2 tracking-widest">Final Rating</p>
+                            <p className="text-3xl sm:text-4xl font-black text-purple-700">{currentOutcome.score}</p>
+                            <p className="text-[9px] sm:text-[10px] text-purple-600/60 font-black uppercase mt-2 tracking-widest leading-none">Final Rating</p>
                         </div>
                     )}
                 </div>

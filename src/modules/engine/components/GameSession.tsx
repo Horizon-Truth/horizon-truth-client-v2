@@ -393,14 +393,14 @@ export function GameSession() {
             {/* 2. Main Feed - Scene Content */}
             <main className="flex-1 flex flex-col relative bg-slate-50">
                 {/* Header */}
-                <header className="h-20 border-b border-slate-200 px-8 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50">
-                    <div className="flex flex-col gap-1 w-1/2">
-                        <div className="flex items-center gap-3">
-                            <span className={cn("font-black italic tracking-tighter text-lg uppercase", themeConfig.color)}>
+                <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+                    <div className="flex flex-col gap-1 w-full sm:w-1/2">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <span className={cn("font-black italic tracking-tighter text-base sm:text-lg uppercase truncate", themeConfig.color)}>
                                 {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
                             </span>
                             <div className="h-3 w-[1px] bg-slate-200" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap">
                                 Scene {activeProgress.currentScene.order} / {totalScenes || '?'}
                             </span>
                         </div>
@@ -443,7 +443,7 @@ export function GameSession() {
                 {/* Content Area */}
                 <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto p-4 md:p-8 space-y-12 custom-scrollbar flex flex-col items-center"
+                    className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-12 custom-scrollbar flex flex-col items-center"
                 >
                     <div className={cn(
                         "w-full space-y-12 pb-32 transition-all duration-500",

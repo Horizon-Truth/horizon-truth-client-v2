@@ -322,26 +322,27 @@ export default function GuestGamePage() {
                                 {/* 2. Main Feed - Scene Content */}
                                 <main className="flex-1 flex flex-col relative bg-slate-50">
                                     {/* Header */}
-                                    <header className="h-16 border-b border-slate-200 px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                                        <div className="flex items-center gap-4">
-                                            <span className="font-black italic tracking-tighter text-lg uppercase text-primary">Guest Simulation</span>
-                                            <div className="h-4 w-[1px] bg-slate-200" />
-                                            <span className="text-xs font-bold text-slate-500 truncate max-w-[200px]">{activeScenario?.title || 'Unknown Protocol'}</span>
+                                    <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-4 overflow-hidden">
+                                            <span className="font-black italic tracking-tighter text-sm sm:text-lg uppercase text-primary truncate">Guest Simulation</span>
+                                            <div className="hidden sm:block h-4 w-[1px] bg-slate-200" />
+                                            <span className="text-[10px] sm:text-xs font-bold text-slate-500 truncate max-w-[150px] sm:max-w-[200px]">{activeScenario?.title || 'Unknown Protocol'}</span>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <Button variant="ghost" size="sm" onClick={resetGuestGame} className="text-[10px] font-black uppercase tracking-widest h-8 px-4 rounded-lg bg-slate-100 hover:bg-red-500/10 hover:text-red-500 text-slate-600">
-                                                Abort Simulation
+                                        <div className="flex items-center gap-2 sm:gap-4">
+                                            <Button variant="ghost" size="sm" onClick={resetGuestGame} className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest h-8 px-2 sm:px-4 rounded-lg bg-slate-100 hover:bg-red-500/10 hover:text-red-500 text-slate-600">
+                                                <span className="hidden xs:inline">Abort Simulation</span>
+                                                <span className="xs:hidden">Abort</span>
                                             </Button>
-                                            <div className="flex items-center gap-2 border-l border-slate-200 pl-4">
+                                            <div className="flex items-center gap-1 sm:gap-2 border-l border-slate-200 pl-2 sm:pl-4">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-600">Guest Stream</span>
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-amber-600 whitespace-nowrap">Guest Stream</span>
                                             </div>
                                         </div>
                                     </header>
 
                                     {/* Content Area */}
-                                    <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-12 custom-scrollbar flex flex-col items-center">
-                                        <div className="w-full max-w-xl space-y-12 pb-32">
+                                    <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-12 custom-scrollbar flex flex-col items-center">
+                                        <div className="w-full max-w-xl space-y-8 sm:space-y-12 pb-32">
                                             {isCompleted ? (
                                                 <div className="text-center space-y-8 py-12 animate-in zoom-in-95 duration-700">
                                                     <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">
