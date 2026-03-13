@@ -155,6 +155,16 @@ class EngineService {
         return response.data;
     }
 
+    async exportScenarios(ids: string[]) {
+        const response = await api.post('/engine/admin/scenarios/export', { ids });
+        return response.data;
+    }
+
+    async importScenarios(data: any[]) {
+        const response = await api.post('/engine/admin/scenarios/import', data);
+        return response.data;
+    }
+
     async getGameOutcome(progressId: string) {
         const response = await api.get(`/engine/game/${progressId}/outcome`);
         return response.data;
