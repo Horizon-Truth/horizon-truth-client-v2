@@ -17,6 +17,7 @@ interface User {
     fullName: string;
     role: UserRole;
     username?: string;
+    nickname?: string;
     avatarUrl?: string;
     onboardingCompleted?: boolean;
 }

@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { onboardingService, type Avatar, type Region } from '../services/onboarding.service';
+import { onboardingService, type Avatar } from '../services/onboarding.service';
 import { useAuthStore } from '../../../store/auth.store';
-import { User, Compass, ChevronRight, Check } from 'lucide-react';
+import { User, ChevronRight, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OnboardingPage: React.FC = () => {
     const [nickname, setNickname] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
-    const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
@@ -21,15 +20,14 @@ const OnboardingPage: React.FC = () => {
         queryFn: onboardingService.getAvatars
     });
 
-    const { data: regions } = useQuery({
-        queryKey: ['regions'],
-        queryFn: onboardingService.getRegions
-    });
-
     const mutation = useMutation({
         mutationFn: onboardingService.initializeProfile,
-        onSuccess: () => {
-            updateUser({ onboardingCompleted: true });
+        onSuccess: (data) => {
+            updateUser({
+                onboardingCompleted: true,
+                nickname: data.nickname,
+                avatarUrl: data.avatar?.imageUrl
+            });
             toast.success('Identity initialized. Welcome to the digital world.');
             navigate('/dashboard/game');
         },
@@ -47,8 +45,7 @@ const OnboardingPage: React.FC = () => {
         setIsSubmitting(true);
         mutation.mutate({
             nickname,
-            avatarId: selectedAvatar.id,
-            fictionalRegionId: selectedRegion?.id
+            avatarId: selectedAvatar.id
         });
     };
 
@@ -150,7 +147,7 @@ const OnboardingPage: React.FC = () => {
                             </div>
 
                             {/* Region Selection */}
-                            <div className="space-y-2">
+                            {/* <div className="space-y-2">
                                 <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Digital Region</label>
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-purple-400/50 transition-colors">
@@ -175,7 +172,7 @@ const OnboardingPage: React.FC = () => {
                                         <ChevronRight size={18} />
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="mt-12 transition-all">
