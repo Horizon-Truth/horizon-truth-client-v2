@@ -40,6 +40,7 @@ import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage
 import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
 import GuestGamePage from "@/modules/simulation/GuestGamePage";
+import AuditLogPage from "./modules/admin/pages/AuditLogPage";
 import { Toaster } from "sonner";
 import { lazy, Suspense } from "react";
 
@@ -131,6 +132,7 @@ function App() {
                       <Route path="reports-config" element={user?.role !== 'PLAYER' ? <ReportingConfigPage /> : <Navigate to="/dashboard/game" replace />} />
                       <Route path="contacts" element={user?.role === 'SYSTEM_ADMIN' ? <ContactSubmissionsPage /> : <Navigate to="/dashboard" replace />} />
                       <Route path="newsletter" element={user?.role === 'SYSTEM_ADMIN' ? <NewsletterSubscriptionsPage /> : <Navigate to="/dashboard" replace />} />
+                      <Route path="audit-logs" element={user?.role === 'SYSTEM_ADMIN' ? <AuditLogPage /> : <Navigate to="/dashboard" replace />} />
                       <Route path="*" element={<div className="flex items-center justify-center h-full text-muted-foreground">Page coming soon...</div>} />
                     </Routes>
                   </MainLayout>
