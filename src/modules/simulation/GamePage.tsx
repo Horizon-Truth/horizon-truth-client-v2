@@ -11,10 +11,8 @@ import {
     LayoutDashboard,
     Activity,
     MessageSquare,
-    LogOut,
-    User as UserIcon
+    LogOut
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { ScenarioList } from '../engine/components/ScenarioList';
 import { GameSession } from '../engine/components/GameSession';

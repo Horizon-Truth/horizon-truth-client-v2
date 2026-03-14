@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { onboardingService, type Avatar, type Region } from '../services/onboarding.service';
+import { onboardingService, type Avatar } from '../services/onboarding.service';
 import { useAuthStore } from '../../../store/auth.store';
-import { User, Compass, ChevronRight, Check } from 'lucide-react';
+import { User, ChevronRight, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OnboardingPage: React.FC = () => {
     const [nickname, setNickname] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
-    const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
@@ -19,11 +18,6 @@ const OnboardingPage: React.FC = () => {
     const { data: avatars, isLoading: loadingAvatars } = useQuery({
         queryKey: ['avatars'],
         queryFn: onboardingService.getAvatars
-    });
-
-    const { data: regions } = useQuery({
-        queryKey: ['regions'],
-        queryFn: onboardingService.getRegions
     });
 
     const mutation = useMutation({
@@ -51,8 +45,7 @@ const OnboardingPage: React.FC = () => {
         setIsSubmitting(true);
         mutation.mutate({
             nickname,
-            avatarId: selectedAvatar.id,
-            fictionalRegionId: selectedRegion?.id
+            avatarId: selectedAvatar.id
         });
     };
 
