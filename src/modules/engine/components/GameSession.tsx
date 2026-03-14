@@ -394,18 +394,18 @@ export function GameSession() {
             <main className="flex-1 flex flex-col relative bg-slate-50/50">
                 {/* Header */}
                 <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                    <div className="flex flex-col gap-1 w-full sm:w-1/2">
+                    <div className="flex flex-col gap-1 w-full sm:w-1/2 overflow-hidden">
                         <div className="flex items-center gap-2 sm:gap-3">
-                            <span className={cn("font-black italic tracking-tighter text-base sm:text-lg uppercase truncate", themeConfig.color)}>
+                            <span className={cn("font-black italic tracking-tighter text-sm sm:text-lg uppercase truncate", themeConfig.color)}>
                                 {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
                             </span>
-                            <div className="h-3 w-[1px] bg-slate-200" />
-                            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap">
+                            <div className="h-3 w-[1px] bg-slate-200 hidden xs:block" />
+                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap hidden xs:block">
                                 Scene {activeProgress.currentScene.order} / {totalScenes || '?'}
                             </span>
                         </div>
                         {/* Progress Bar */}
-                        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden max-w-xs">
+                        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden max-w-[120px] sm:max-w-xs">
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${((activeProgress.currentScene.order) / (totalScenes || 1)) * 100}%` }}
@@ -413,29 +413,29 @@ export function GameSession() {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 border-r border-slate-200 pr-4 mr-2">
+                    <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                        <div className="flex items-center gap-1 sm:gap-2 border-r border-slate-200 pr-2 sm:pr-4 mr-0 sm:mr-2 hidden xs:flex">
                             <button
                                 onClick={() => setIsFocusMode(!isFocusMode)}
                                 className={cn(
-                                    "p-2 rounded-lg transition-all duration-300",
+                                    "p-1.5 sm:p-2 rounded-lg transition-all duration-300",
                                     isFocusMode ? "bg-primary/20 text-primary" : "text-slate-400 hover:bg-slate-100 hover:text-slate-900"
                                 )}
                                 title={isFocusMode ? "Exit Focus Mode" : "Enter Focus Mode"}
                             >
-                                {isFocusMode ? <Eye size={18} /> : <EyeOff size={18} />}
+                                {isFocusMode ? <Eye size={16} /> : <EyeOff size={16} />}
                             </button>
                             <button
                                 onClick={toggleFullscreen}
-                                className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300"
+                                className="p-1.5 sm:p-2 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-all duration-300 hidden sm:block"
                                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                             >
                                 {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
                             </button>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Encrypted Stream</span>
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Secure</span>
                         </div>
                     </div>
                 </header>

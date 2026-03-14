@@ -92,7 +92,7 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                                     {scene.content?.npcName || 'System'}
                                 </p>
                             )}
-                            <p className="text-base leading-relaxed font-medium">{msg.message}</p>
+                            <p className="text-base leading-relaxed font-medium text-white">{msg.message}</p>
                             <div className="flex items-center justify-end gap-1 mt-1 opacity-60">
                                 <span className="text-[10px]">14:2{idx}</span>
                                 {msg.sender === 'USER' ? <CheckCheck size={12} /> : <Check size={12} />}

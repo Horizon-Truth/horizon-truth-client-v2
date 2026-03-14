@@ -80,7 +80,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
                                 onClick={() => onChoice?.(choice)}
                                 className={cn(
                                     "px-4 py-2 rounded-full text-base font-bold transition-all relative overflow-hidden flex items-center gap-2",
-                                    "text-white/80 hover:text-primary",
+                                    "text-slate-600 hover:text-primary",
                                     "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                     isLoading && "opacity-50 cursor-not-allowed"
                                 )}
