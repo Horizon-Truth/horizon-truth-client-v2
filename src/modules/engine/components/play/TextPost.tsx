@@ -44,7 +44,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0.3 : 0.8, delay: 0.5 }}
-            className="w-full bg-[#15181C] border border-white/5 rounded-2xl overflow-hidden shadow-xl"
+            className="w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xl"
         >
             <div className="p-4 flex gap-3">
                 <Avatar className="w-12 h-12 border border-white/10">
@@ -55,8 +55,8 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col">
-                            <span className="font-bold text-white hover:underline cursor-pointer">Horizon Systems</span>
-                            <span className="text-sm text-muted-foreground whitespace-nowrap">@horizon_intel · 12m</span>
+                            <span className="font-bold text-slate-900 hover:underline cursor-pointer">Horizon Systems</span>
+                            <span className="text-sm text-slate-500 whitespace-nowrap">@horizon_intel · 12m</span>
                         </div>
                         <button className="text-muted-foreground hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1">
                             <MoreHorizontal className="w-5 h-5 cursor-pointer" />
@@ -64,7 +64,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                     </div>
 
                     <div className="mt-2 space-y-4">
-                        <p className="text-[17px] text-white/90 leading-normal whitespace-pre-wrap">
+                        <p className="text-[17px] text-slate-800 leading-normal whitespace-pre-wrap">
                             {content?.textBody || scene.description}
                         </p>
 
@@ -84,7 +84,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                                             onClick={() => onChoice?.(choice)}
                                             className={cn(
                                                 "w-full p-6 h-auto rounded-3xl text-left transition-all relative overflow-hidden group/btn",
-                                                "bg-white/5 border border-white/5 hover:border-primary/40 hover:bg-primary/5",
+                                                "bg-slate-50 border border-slate-200 hover:border-primary/40 hover:bg-primary/5",
                                                 "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                                 isLoading && "opacity-50 cursor-not-allowed"
                                             )}
@@ -96,7 +96,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                                                 )}>
                                                     {isLoading ? "..." : index + 1}
                                                 </div>
-                                                <span className="text-base font-bold text-white/90">{choice}</span>
+                                                <span className="text-base font-bold text-slate-700">{choice}</span>
                                             </div>
 
                                             <span className={cn(
@@ -113,24 +113,24 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between pt-2 max-w-sm text-muted-foreground font-black">
-                            <button className="flex items-center gap-2 group cursor-pointer hover:text-blue-400 transition-colors focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1">
-                                <div className="p-2 group-hover:bg-blue-400/10 rounded-full transition-colors">
+                        <div className="flex items-center justify-between pt-2 max-w-sm text-slate-500 font-black">
+                            <button className="flex items-center gap-2 group cursor-pointer hover:text-blue-600 transition-colors focus-visible:ring-1 focus-visible:ring-blue-600 rounded-md p-1 -m-1">
+                                <div className="p-2 group-hover:bg-blue-600/10 rounded-full transition-colors">
                                     <MessageCircle className="w-5 h-5" />
                                 </div>
                                 <span className="text-sm">42</span>
                             </button>
                             <button
                                 onClick={handleShareClick}
-                                className="flex items-center gap-2 group cursor-pointer hover:text-emerald-400 transition-colors focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1"
+                                className="flex items-center gap-2 group cursor-pointer hover:text-emerald-600 transition-colors focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-md p-1 -m-1"
                             >
-                                <div className="p-2 group-hover:bg-emerald-400/10 rounded-full transition-colors">
+                                <div className="p-2 group-hover:bg-emerald-600/10 rounded-full transition-colors">
                                     <Share2 className="w-5 h-5" />
                                 </div>
                                 <span className="text-sm">1.2K</span>
                             </button>
-                            <button className="flex items-center gap-2 group cursor-pointer hover:text-rose-400 transition-colors focus-visible:ring-1 focus-visible:ring-rose-400 rounded-md p-1 -m-1">
-                                <div className="p-2 group-hover:bg-rose-400/10 rounded-full transition-colors">
+                            <button className="flex items-center gap-2 group cursor-pointer hover:text-rose-600 transition-colors focus-visible:ring-1 focus-visible:ring-rose-600 rounded-md p-1 -m-1">
+                                <div className="p-2 group-hover:bg-rose-600/10 rounded-full transition-colors">
                                     <Heart className="w-5 h-5" />
                                 </div>
                                 <span className="text-sm">15.4K</span>

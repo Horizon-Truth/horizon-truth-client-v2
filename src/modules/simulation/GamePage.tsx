@@ -37,7 +37,11 @@ export default function GamePage() {
     if (!isHydrated) return null;
 
     return (
-        <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20">
+        <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20 relative">
+            {/* Ambient Background Dashboard */}
+            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+
             {/* Global Glitch Error Overlay */}
             {error && <GlitchError message={error} onRetry={clearError} />}
 
@@ -127,8 +131,8 @@ export default function GamePage() {
                     </header>
 
                     {/* Main Content Area */}
-                    <main className="flex-1 flex gap-8">
-                        <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden backdrop-blur-2xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden w-full max-w-6xl 2xl:max-w-7xl 3xl:max-w-[90rem] mx-auto">
+                    <main className="flex-1 flex gap-8 relative z-10">
+                        <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden backdrop-blur-3xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden w-full max-w-6xl 2xl:max-w-7xl 3xl:max-w-[90rem] mx-auto">
                             <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                                 <LayoutDashboard size={240} />
                             </div>
