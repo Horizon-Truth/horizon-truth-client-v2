@@ -42,6 +42,7 @@ const navigation = [
     { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
     { name: "Contact Comms", icon: MessageSquare, href: "/dashboard/contacts", roles: ["SYSTEM_ADMIN"] },
     { name: "Newsletter Base", icon: Megaphone, href: "/dashboard/newsletter", roles: ["SYSTEM_ADMIN"] },
+    { name: "Audit Log Base", icon: ShieldCheck, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN"] },
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
