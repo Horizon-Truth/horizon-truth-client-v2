@@ -23,4 +23,6 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run unit tests
+        env:
+          VITE_API_URL: http://localhost:3000
         run: yarn test
