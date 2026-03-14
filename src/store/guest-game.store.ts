@@ -70,72 +70,77 @@ export const useGuestGameStore = create<GuestGameState>()(
             },
 
             submitGuestChoice: async (choice: any) => {
-                const { currentScene, choicesLog, trustScore, activeScenario } = get();
-                if (!currentScene || !activeScenario) return;
+                const { currentScene, choicesLog, trustScore, activeScenario, isLoading } = get();
+                if (!currentScene || !activeScenario || isLoading) return;
 
-                const newChoiceLog = [...choicesLog, {
-                    sceneId: currentScene.id,
-                    choiceId: choice.id,
-                    label: choice.label,
-                    timestamp: new Date().toISOString()
-                }];
+                set({ isLoading: true, error: null });
+                try {
+                    const newChoiceLog = [...choicesLog, {
+                        sceneId: currentScene.id,
+                        choiceId: choice.id,
+                        label: choice.label,
+                        timestamp: new Date().toISOString()
+                    }];
 
-                const outcome = choice.outcomes?.[0]; // Simplified for guest mode
-                const newTrustScore = Math.min(100, Math.max(0, trustScore + (outcome?.trustScoreDelta || 0)));
+                    const outcome = choice.outcomes?.[0]; // Simplified for guest mode
+                    const newTrustScore = Math.min(100, Math.max(0, trustScore + (outcome?.trustScoreDelta || 0)));
 
-                if (outcome?.endScenario || !choice.nextSceneId) {
-                    set({
-                        choicesLog: newChoiceLog,
-                        trustScore: newTrustScore,
-                        isCompleted: true,
-                        currentScene: null
-                    });
-
-                    // Submit anonymous play data to backend
-                    try {
-                        const authStore = JSON.parse(localStorage.getItem('horizon-auth-storage') || '{}');
-                        const guestId = authStore.state?.user?.id;
-
-                        await api.post('/engine/guest/play', {
-                            guestId: guestId || 'anonymous',
-                            scenarioId: activeScenario.id,
-                            choicesLog: newChoiceLog,
-                            finalScore: newTrustScore,
-                            metadata: {
-                                userAgent: navigator.userAgent,
-                                platform: navigator.platform
-                            }
-                        });
-                    } catch (e) {
-                        console.error('Failed to submit guest play data', e);
-                    }
-                } else {
-                    // Find next scene in the local scenario data (already in state)
-                    const nextScene = (activeScenario.scenes || []).find((s: any) => s.id === choice.nextSceneId);
-
-                    if (nextScene) {
+                    if (outcome?.endScenario || !choice.nextSceneId) {
                         set({
-                            currentScene: nextScene,
                             choicesLog: newChoiceLog,
-                            trustScore: newTrustScore
+                            trustScore: newTrustScore,
+                            isCompleted: true,
+                            currentScene: null
                         });
-                    } else {
-                        // Fallback: try to find by ID if not in current scenes array for some reason
-                        set({ isLoading: true });
+
+                        // Submit anonymous play data to backend
                         try {
-                            const fullScenario = await engineService.getScenarioById(activeScenario.id);
-                            const foundScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
-                            set({
-                                activeScenario: fullScenario,
-                                currentScene: foundScene,
+                            const authStore = JSON.parse(localStorage.getItem('horizon-auth-storage') || '{}');
+                            const guestId = authStore.state?.user?.id;
+
+                            await api.post('/engine/guest/play', {
+                                guestId: guestId || 'anonymous',
+                                scenarioId: activeScenario.id,
                                 choicesLog: newChoiceLog,
-                                trustScore: newTrustScore,
-                                isLoading: false
+                                finalScore: newTrustScore,
+                                metadata: {
+                                    userAgent: navigator.userAgent,
+                                    platform: navigator.platform
+                                }
                             });
-                        } catch (error: any) {
-                            set({ error: "Next scene not found", isLoading: false });
+                        } catch (e) {
+                            console.error('Failed to submit guest play data', e);
+                        }
+                    } else {
+                        // Find next scene in the local scenario data (already in state)
+                        const nextScene = (activeScenario.scenes || []).find((s: any) => s.id === choice.nextSceneId);
+
+                        if (nextScene) {
+                            set({
+                                currentScene: nextScene,
+                                choicesLog: newChoiceLog,
+                                trustScore: newTrustScore
+                            });
+                        } else {
+                            // Fallback: try to find by ID if not in current scenes array for some reason
+                            set({ isLoading: true });
+                            try {
+                                const fullScenario = await engineService.getScenarioById(activeScenario.id);
+                                const foundScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
+                                set({
+                                    activeScenario: fullScenario,
+                                    currentScene: foundScene,
+                                    choicesLog: newChoiceLog,
+                                    trustScore: newTrustScore,
+                                    isLoading: false
+                                });
+                            } catch (error: any) {
+                                set({ error: "Next scene not found", isLoading: false });
+                            }
                         }
                     }
+                } finally {
+                    set({ isLoading: false });
                 }
             },
 

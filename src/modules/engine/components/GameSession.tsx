@@ -20,6 +20,7 @@ import {
     ShieldAlert,
     Flame,
     Star,
+    PowerOff,
 } from 'lucide-react';
 import { SceneRenderer } from './play/SceneRenderer';
 import { SpreadSimulationOverlay } from './play/SpreadSimulationOverlay';
@@ -40,6 +41,7 @@ export function GameSession() {
     const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
     const reputationRole = useGameStore(s => s.reputationRole);
     const currentStreak = useGameStore(s => s.currentStreak);
+    const resetGame = useGameStore(s => s.resetGame);
 
     const { user } = useAuthStore();
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -431,6 +433,13 @@ export function GameSession() {
                                 title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                             >
                                 {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                            </button>
+                            <button
+                                onClick={resetGame}
+                                className="p-1.5 sm:p-2 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-all duration-300"
+                                title="Abort Mission"
+                            >
+                                <PowerOff size={18} />
                             </button>
                         </div>
                         <div className="flex items-center gap-1 sm:gap-2">

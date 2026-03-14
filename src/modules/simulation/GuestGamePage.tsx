@@ -86,6 +86,7 @@ export default function GuestGamePage() {
         isCompleted,
         trustScore,
         isLoading,
+        error,
         fetchScenarios,
         startGuestGame,
         submitGuestChoice,
@@ -343,6 +344,12 @@ export default function GuestGamePage() {
                                     {/* Content Area */}
                                     <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-12 custom-scrollbar flex flex-col items-center">
                                         <div className="w-full max-w-xl space-y-8 sm:space-y-12 pb-32">
+                                            {error && (
+                                                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold flex items-center gap-3 animate-in shake-in">
+                                                    <AlertCircle size={18} />
+                                                    {error}
+                                                </div>
+                                            )}
                                             {isCompleted ? (
                                                 <div className="text-center space-y-8 py-12 animate-in zoom-in-95 duration-700">
                                                     <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/30">
