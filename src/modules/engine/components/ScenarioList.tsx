@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
@@ -9,8 +9,60 @@ import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 
 export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenario) => void, guestMode?: boolean }) {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
-    const gameStore = useGameStore();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [localLoading, setLocalLoading] = useState(true);
+    const gameStore = useGameStore();
+    const observer = useRef<IntersectionObserver | null>(null);
+
+    const lastElementRef = useCallback((node: HTMLDivElement | null) => {
+        if (loadingMore || !hasMore) return;
+        if (observer.current) observer.current.disconnect();
+        
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        
+        if (node) observer.current.observe(node);
+    }, [loadingMore, hasMore]);
+
+    const fetchScenarios = useCallback(async (pageNum: number) => {
+        if (pageNum > 1) setLoadingMore(true);
+        try {
+            const response = await engineService.getScenarios({ 
+                isActive: true, 
+                page: pageNum, 
+                limit: 10 
+            } as any);
+            
+            const newData = Array.isArray(response) ? response : (response.data || []);
+            const totalCount = response.total || newData.length;
+
+            setScenarios(prev => {
+                const combined = [...prev, ...newData];
+                // De-duplicate just in case
+                return Array.from(new Map(combined.map(item => [item.id, item])).values());
+            });
+            
+            setHasMore(scenarios.length + newData.length < totalCount);
+        } catch (err) {
+            console.error('Failed to fetch scenarios', err);
+            setHasMore(false);
+        } finally {
+            if (pageNum === 1) {
+                setTimeout(() => setLocalLoading(false), 800);
+            } else {
+                setLoadingMore(false);
+            }
+        }
+    }, [scenarios.length]);
+
+    useEffect(() => {
+        fetchScenarios(page);
+    }, [page]);
 
     const handleStartGame = (scenario: Scenario) => {
         if (onStartGame) {
@@ -20,26 +72,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
         }
     };
 
-    useEffect(() => {
-        const fetchScenarios = async () => {
-            try {
-                // In guest mode (and normally for players), we should only fetch active scenarios
-                const response = await engineService.getScenarios({ isActive: true } as any);
-                // Ensure we handle both potential response formats ({data: []} or just [])
-                const data = Array.isArray(response) ? response : (response.data || []);
-                setScenarios(data);
-            } catch (err) {
-                console.error('Failed to fetch scenarios', err);
-            } finally {
-                // Add a small delay for immersion
-                setTimeout(() => setLocalLoading(false), 800);
-            }
-        };
-
-        fetchScenarios();
-    }, []);
-
-    if (localLoading) {
+    if (localLoading && page === 1) {
         return (
             <div className="flex flex-col gap-6">
                 <div className="space-y-2 opacity-40">
@@ -83,7 +116,6 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
             <div className="relative max-w-3xl mx-auto w-full py-8 text-left">
                 {/* Continuous Central connecting line on the left (Desktop only) */}
                 <div className="absolute left-[3rem] top-12 bottom-[120px] w-2 bg-white/10 rounded-full hidden sm:block overflow-hidden z-0">
-                    {/* Fill line logic could go here based on completion % in future */}
                 </div>
 
                 <div className="flex flex-col gap-10 relative z-10 w-full">
@@ -93,13 +125,19 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                         const hasPlayed = (scenario.userRecord?.attempts || 0) > 0;
                         const prereqScenario = scenario.unlockScenarioId ? scenarios.find(s => s.id === scenario.unlockScenarioId) : null;
 
+                        const isLast = index === scenarios.length - 1;
+
                         return (
-                            <div key={scenario.id} className="relative flex flex-col sm:flex-row items-center sm:items-stretch gap-6 w-full">
+                            <div 
+                                key={scenario.id} 
+                                ref={isLast ? lastElementRef : null}
+                                className="relative flex flex-col sm:flex-row items-center sm:items-stretch gap-6 w-full"
+                            >
 
                                 {/* Node Container - Left aligned on desktop */}
                                 <div className="relative w-24 flex-shrink-0 flex items-center justify-center z-20">
                                     {/* Connecting Line Segment for mobile */}
-                                    {index !== scenarios.length - 1 && (
+                                    {!isLast && (
                                         <div className="absolute top-[90px] bottom-[-2.5rem] left-1/2 w-2 bg-white/10 -translate-x-1/2 sm:hidden rounded-full z-0" />
                                     )}
 
@@ -216,6 +254,22 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                     })}
                 </div>
             </div>
+
+            {/* Infinite Scroll Loader */}
+            {hasMore && (
+                <div className="flex justify-center py-10">
+                    <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest animate-pulse">Loading more operations...</p>
+                    </div>
+                </div>
+            )}
+            
+            {!hasMore && scenarios.length > 10 && (
+                <div className="text-center py-10 opacity-40">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">End of encrypted records</p>
+                </div>
+            )}
         </div>
     );
 }

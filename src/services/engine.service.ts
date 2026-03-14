@@ -110,7 +110,14 @@ export interface GameOutcome {
 }
 
 class EngineService {
-    async getScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean }) {
+    async getScenarios(params?: { 
+        difficulty?: string; 
+        scenarioType?: string; 
+        isActive?: boolean; 
+        isArchived?: boolean;
+        page?: number;
+        limit?: number;
+    }): Promise<{ data: Scenario[]; total: number; page: number; limit: number }> {
         const response = await api.get('/engine/scenarios', { params });
         return response.data;
     }
