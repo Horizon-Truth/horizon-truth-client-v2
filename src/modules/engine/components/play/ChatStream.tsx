@@ -53,8 +53,8 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
     }, [visibleMessages, isTyping]);
 
     return (
-        <div className="flex flex-col h-[400px] border border-white/5 rounded-2xl bg-[#0F1721] overflow-hidden shadow-2xl">
-            <div className="p-3 border-b border-white/5 bg-white/5 flex items-center justify-between">
+        <div className="flex flex-col h-[400px] border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xl">
+            <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden border border-white/20 flex items-center justify-center font-black text-[10px] text-white shadow-inner">
                         {scene.content?.npcAvatarUrl ? (
@@ -64,8 +64,8 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                         )}
                     </div>
                     <div>
-                        <p className="text-sm font-bold leading-tight">{scene.content?.npcName || 'Intel Channel Alpha'}</p>
-                        <p className="text-[10px] text-blue-400">Secure Channel • {scene.content?.chatMessages?.length || 0} messages</p>
+                        <p className="text-sm font-bold leading-tight text-slate-900">{scene.content?.npcName || 'Intel Channel Alpha'}</p>
+                        <p className="text-[10px] text-blue-600">Secure Channel • {scene.content?.chatMessages?.length || 0} messages</p>
                     </div>
                 </div>
             </div>
@@ -88,11 +88,11 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                             )}
                         >
                             {msg.sender !== 'USER' && (
-                                <p className="text-[11px] font-black text-blue-400 brightness-125 mb-1 uppercase tracking-wider">
+                                <p className="text-[11px] font-black text-blue-600 mb-1 uppercase tracking-wider">
                                     {scene.content?.npcName || 'System'}
                                 </p>
                             )}
-                            <p className="text-base text-white leading-relaxed font-medium">{msg.message}</p>
+                            <p className="text-base leading-relaxed font-medium">{msg.message}</p>
                             <div className="flex items-center justify-end gap-1 mt-1 opacity-60">
                                 <span className="text-[10px]">14:2{idx}</span>
                                 {msg.sender === 'USER' ? <CheckCheck size={12} /> : <Check size={12} />}
@@ -140,8 +140,8 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                                     }}
                                     onClick={() => onChoice?.(choice)}
                                     className={cn(
-                                        "w-full p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 text-base font-bold text-blue-400 transition-all duration-200 text-center relative overflow-hidden group/btn",
-                                        "hover:border-blue-500/40 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+                                        "w-full p-4 rounded-xl bg-blue-50 border border-blue-200 text-base font-bold text-blue-600 transition-all duration-200 text-center relative overflow-hidden group/btn",
+                                        "hover:border-blue-500 hover:bg-blue-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
                                         "focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:outline-none",
                                         isLoading && "opacity-50 cursor-not-allowed"
                                     )}
@@ -164,12 +164,12 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                 )}
             </div>
 
-            <div className="p-2 px-4 bg-white/5 border-t border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
+            <div className="p-2 px-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-slate-500">
                     <Eye size={14} />
                     <span className="text-[10px] font-bold">154.2K views</span>
                 </div>
-                <button className="text-[11px] font-bold text-blue-400 uppercase tracking-wider">Join Channel</button>
+                <button className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Join Channel</button>
             </div>
         </div>
     );

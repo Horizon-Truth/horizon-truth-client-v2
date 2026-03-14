@@ -48,8 +48,8 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
             className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar pb-8"
             onScroll={handleScroll}
         >
-            <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-white/5 pb-2 mb-4">
-                <h3 className="text-sm font-bold tracking-tight uppercase px-4 pt-2">Global Live Feed</h3>
+            <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 pb-2 mb-4">
+                <h3 className="text-sm font-bold tracking-tight uppercase px-4 pt-2 text-slate-900">Global Live Feed</h3>
             </div>
 
             {feedItems.sort((a: any, b: any) => a.itemOrder - b.itemOrder).map((item: any, idx: number) => (
@@ -62,7 +62,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
                     <motion.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="p-1.5 rounded-full bg-[#1A1D21]/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-1"
+                        className="p-1.5 rounded-full bg-slate-50/90 backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-1"
                     >
                         {scene.availableChoices.map((choice: string) => (
                             <motion.button
@@ -131,7 +131,7 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: shouldReduceMotion ? 0.1 : 0.8 + (index * 0.2) }}
-            className="group relative border-b border-white/5 last:border-0 pb-6 mb-6"
+            className="group relative border-b border-slate-100 last:border-0 pb-6 mb-6"
         >
             <div className="flex gap-4">
                 <Avatar className="w-10 h-10 border border-white/5">
@@ -142,13 +142,13 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="font-bold text-sm truncate hover:underline cursor-pointer">
+                            <span className="font-bold text-sm truncate hover:underline cursor-pointer text-slate-900">
                                 {item.authorName || "Anonymous Source"}
                             </span>
-                            <span className="text-muted-foreground text-xs">@{item.authorUsername || `user_${index}72`}</span>
-                            <span className="text-muted-foreground text-xs">· {index + 1}m</span>
+                            <span className="text-slate-500 text-xs">@{item.authorUsername || `user_${index}72`}</span>
+                            <span className="text-slate-500 text-xs">· {index + 1}m</span>
                         </div>
-                        <MoreHorizontal className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
+                        <MoreHorizontal className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
                     </div>
 
                     <div className="mt-1 space-y-3">
@@ -158,7 +158,7 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                             <span className="text-xs font-black uppercase tracking-tight">Forwarded many times</span>
                         </div>
 
-                        <p className="text-base text-white/90 leading-relaxed font-medium">
+                        <p className="text-base text-slate-800 leading-relaxed font-medium">
                             {item.description}
                         </p>
 
@@ -195,7 +195,7 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                         </div>
 
                         {/* Fake Comment Thread */}
-                        <div className="pt-2 space-y-3 border-t border-white/5">
+                        <div className="pt-2 space-y-3 border-t border-slate-100">
                             <div className="flex gap-2">
                                 <div className="w-6 h-6 rounded-full bg-white/10 flex-shrink-0" />
                                 <div className="space-y-1">

@@ -257,12 +257,12 @@ export function GameSession() {
     return (
         <div
             ref={containerRef}
-            className="flex h-screen bg-white text-slate-900 overflow-hidden font-sans selection:bg-primary/30"
+            className="flex h-full text-slate-900 overflow-hidden font-sans selection:bg-primary/30 relative z-10"
         >
             {/* 1. Left Sidebar - Profile & Stats */}
             <aside className={cn(
                 "w-[300px] border-r border-slate-200 flex flex-col pt-8 bg-slate-50/80 backdrop-blur-xl transition-all duration-500",
-                (isFullscreen || isFocusMode) ? "w-0 opacity-0 -translate-x-full overflow-hidden border-none" : "flex hidden md:flex",
+                (isFullscreen || isFocusMode) ? "w-0 opacity-0 -translate-x-full overflow-hidden border-none" : "hidden md:flex",
                 shouldReduceMotion && "transition-none"
             )}>
                 <div className="px-6 space-y-8">
@@ -277,7 +277,7 @@ export function GameSession() {
                             <div className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-4 border-white rounded-full z-20" />
                         </div>
                         <div className="space-y-1">
-                            <h2 className="text-lg font-black tracking-tight">{user?.fullName || 'Operative'}</h2>
+                            <h2 className="text-lg font-black tracking-tight italic uppercase">{user?.fullName || 'Operative'}</h2>
                             <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em]">@{user?.username || 'user_hzn'}</p>
                             <ReputationBadge role={reputationRole} />
                         </div>
@@ -391,9 +391,9 @@ export function GameSession() {
             </aside>
 
             {/* 2. Main Feed - Scene Content */}
-            <main className="flex-1 flex flex-col relative bg-slate-50">
+            <main className="flex-1 flex flex-col relative bg-slate-50/50">
                 {/* Header */}
-                <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+                <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
                     <div className="flex flex-col gap-1 w-full sm:w-1/2">
                         <div className="flex items-center gap-2 sm:gap-3">
                             <span className={cn("font-black italic tracking-tighter text-base sm:text-lg uppercase truncate", themeConfig.color)}>
@@ -526,7 +526,7 @@ export function GameSession() {
             {/* 3. Right Panel - Notifications & Intel */}
             <aside className={cn(
                 "w-[350px] border-l border-slate-200 flex flex-col bg-slate-50/80 backdrop-blur-xl transition-all duration-500",
-                (isFullscreen || isFocusMode) ? "w-0 opacity-0 translate-x-full overflow-hidden border-none" : "flex hidden lg:flex"
+                (isFullscreen || isFocusMode) ? "w-0 opacity-0 translate-x-full overflow-hidden border-none" : "hidden lg:flex"
             )}>
                 <div className="p-6 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-8">
