@@ -33,6 +33,7 @@ export interface Scenario {
     unlockScenarioId?: string | null;
     campaignTag?: string | null;
     totalPossibleScore?: number;
+    order?: number;
 }
 
 export interface Scene {

@@ -611,12 +611,12 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                         </div>
                     ) : (
                         <div className="space-y-3">
-                            {scenes.map((scene, index) => (
+                            {scenes.map((scene) => (
                                 <div key={scene.id} className="group bg-card border border-border/50 rounded-[2rem] p-5 hover:border-primary/40 transition-all hover:bg-accent/5 flex items-center justify-between shadow-sm">
                                     <div className="flex items-center gap-6">
                                         <div className="w-14 h-14 rounded-2xl bg-muted/50 flex flex-col items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                            <span className="text-[10px] font-black uppercase text-muted-foreground/50 leading-none mb-1">Step</span>
-                                            <span className="text-2xl font-black text-primary leading-none">{index + 1}</span>
+                                            <span className="text-[10px] font-black uppercase text-muted-foreground/50 leading-none mb-1">Order</span>
+                                            <span className="text-2xl font-black text-primary leading-none">{scene.order}</span>
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-3">

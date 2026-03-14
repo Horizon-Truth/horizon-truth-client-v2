@@ -25,6 +25,7 @@ const scenarioSchema = z.object({
     totalScenes: z.number().min(1),
     unlockScenarioId: z.string().nullable().optional(),
     campaignTag: z.string().optional(),
+    order: z.number().min(0).optional(),
     isArchived: z.boolean().optional(),
 });
 
@@ -64,6 +65,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
             totalScenes: scenario?.totalScenes ?? 1,
             unlockScenarioId: scenario?.unlockScenarioId || null,
             campaignTag: (scenario as any)?.campaignTag || "",
+            order: (scenario as any)?.order ?? 0,
             isArchived: scenario?.isArchived ?? false,
         },
     });
@@ -221,6 +223,19 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                         />
                         <p className="text-[10px] text-muted-foreground ml-1">
                             Group scenarios into a campaign for themed progression
+                        </p>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="order" className="text-[10px] font-black uppercase tracking-widest ml-1">Display Order</Label>
+                        <Input
+                            id="order"
+                            type="number"
+                            {...register("order", { valueAsNumber: true })}
+                            placeholder="e.g. 10"
+                            className="rounded-xl h-12 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
+                        />
+                        <p className="text-[10px] text-muted-foreground ml-1">
+                            Lower numbers appear first in the list
                         </p>
                     </div>
                 </div>

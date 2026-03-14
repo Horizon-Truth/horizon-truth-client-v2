@@ -277,7 +277,10 @@ export default function ScenarioManagementPage() {
                                 </div>
                                 <div className="space-y-1 flex-1 min-w-0">
                                     <div className="flex flex-wrap items-center gap-3">
-                                        <h3 className="text-lg sm:text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors truncate">{scenario.title}</h3>
+                                        <h3 className="text-lg sm:text-xl font-extrabold tracking-tight group-hover:text-primary transition-colors truncate">
+                                            <span className="text-primary/40 mr-2 text-sm">#{scenario.order}</span>
+                                            {scenario.title}
+                                        </h3>
                                         <Badge variant={scenario.isActive ? "default" : "secondary"} className="rounded-lg font-black tracking-[0.1em] text-[10px] uppercase">
                                             {scenario.isActive ? "Active" : "Inactive"}
                                         </Badge>
