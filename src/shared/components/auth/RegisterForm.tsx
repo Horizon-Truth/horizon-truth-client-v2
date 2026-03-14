@@ -198,6 +198,10 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                             </div>
                         )}
 
+                        <div className="text-[10px] text-muted-foreground/60 leading-relaxed px-1 mt-2 italic">
+                            By registering for Horizon Truth, you consent to the collection of your name and email for the purpose of participation in our digital literacy platform, including game progress, user reports, and community contributions.
+                        </div>
+
                         <Button
                             type="submit"
                             className="w-full h-12 rounded-2xl font-black uppercase tracking-widest bg-primary text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 active:scale-[0.97] group mt-4"
