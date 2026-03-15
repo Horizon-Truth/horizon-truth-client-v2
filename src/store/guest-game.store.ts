@@ -85,7 +85,7 @@ export const useGuestGameStore = create<GuestGameState>()(
                     const outcome = choice.outcomes?.[0]; // Simplified for guest mode
                     const newTrustScore = Math.min(100, Math.max(0, trustScore + (outcome?.trustScoreDelta || 0)));
 
-                    if (outcome?.endScenario || !choice.nextSceneId) {
+                    if (outcome?.endScenario) {
                         set({
                             choicesLog: newChoiceLog,
                             trustScore: newTrustScore,
@@ -112,30 +112,60 @@ export const useGuestGameStore = create<GuestGameState>()(
                             console.error('Failed to submit guest play data', e);
                         }
                     } else {
-                        // Find next scene in the local scenario data (already in state)
-                        const nextScene = (activeScenario.scenes || []).find((s: any) => s.id === choice.nextSceneId);
+                        // Progression Logic
+                        let nextScene = null;
+
+                        if (choice.nextSceneId) {
+                            // 1. Explicit Branching: Find next scene by ID in state
+                            nextScene = (activeScenario.scenes || []).find((s: any) => s.id === choice.nextSceneId);
+                            
+                            // 2. Fallback: Re-fetch if not in current state array
+                            if (!nextScene) {
+                                set({ isLoading: true });
+                                try {
+                                    const fullScenario = await engineService.getScenarioById(activeScenario.id);
+                                    nextScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
+                                    set({ activeScenario: fullScenario });
+                                } catch (error) {
+                                    console.error("Next scene re-fetch failed", error);
+                                }
+                            }
+                        } else {
+                            // 3. Linear Progression: Find next scene by order
+                            const currentOrder = currentScene.order || 0;
+                            const sortedScenes = [...(activeScenario.scenes || [])].sort((a: any, b: any) => a.order - b.order);
+                            nextScene = sortedScenes.find((s: any) => s.order > currentOrder);
+                        }
 
                         if (nextScene) {
                             set({
                                 currentScene: nextScene,
                                 choicesLog: newChoiceLog,
-                                trustScore: newTrustScore
+                                trustScore: newTrustScore,
+                                isLoading: false
                             });
                         } else {
-                            // Fallback: try to find by ID if not in current scenes array for some reason
-                            set({ isLoading: true });
+                            // No next scene found, complete scenario
+                            set({
+                                choicesLog: newChoiceLog,
+                                trustScore: newTrustScore,
+                                isCompleted: true,
+                                currentScene: null,
+                                isLoading: false
+                            });
+
+                            // Submit anonymous play data to backend (Completion)
                             try {
-                                const fullScenario = await engineService.getScenarioById(activeScenario.id);
-                                const foundScene = fullScenario.scenes.find((s: any) => s.id === choice.nextSceneId);
-                                set({
-                                    activeScenario: fullScenario,
-                                    currentScene: foundScene,
+                                const authStore = JSON.parse(localStorage.getItem('horizon-auth-storage') || '{}');
+                                const guestId = authStore.state?.user?.id;
+                                await api.post('/engine/guest/play', {
+                                    guestId: guestId || 'anonymous',
+                                    scenarioId: activeScenario.id,
                                     choicesLog: newChoiceLog,
-                                    trustScore: newTrustScore,
-                                    isLoading: false
+                                    finalScore: newTrustScore
                                 });
-                            } catch (error: any) {
-                                set({ error: "Next scene not found", isLoading: false });
+                            } catch (e) {
+                                console.error('Failed to submit guest play data', e);
                             }
                         }
                     }
