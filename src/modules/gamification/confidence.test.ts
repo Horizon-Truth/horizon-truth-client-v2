@@ -3,3 +3,7 @@ import {
     CONFIDENCE_OPTIONS,
     confidenceKeyForLevel,
     bucketAccuracy,
+    calibrationMoment,
+    calibrationInsight,
+    EMPTY_CALIBRATION,
+} from './confidence';

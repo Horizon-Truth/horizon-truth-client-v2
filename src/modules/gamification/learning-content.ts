@@ -27,3 +27,21 @@ export const TECHNIQUES: ManipulationTechnique[] = [
     {
         key: 'urgency',
         title: 'False Urgency',
+        description: 'Pressure to act NOW — “share before it gets deleted!” Urgency prevents verification, which is exactly the point.',
+        howToSpot: 'Real information survives scrutiny. Anything that punishes you for taking 5 minutes to check is suspect.',
+        example: 'Chain messages claiming a law changes “at midnight tonight” that have circulated for years.',
+    },
+    {
+        key: 'authority',
+        title: 'Fake Authority',
+        description: 'Citing vague or invented experts (“scientists say”, “a doctor friend”) to borrow credibility without evidence.',
+        howToSpot: 'Ask: which scientist? Which study? A real claim names checkable sources; a fake one stays vague.',
+        example: '“Top doctors confirm…” posts where no doctor, hospital, or paper is ever named.',
+    },
+    {
+        key: 'context',
+        title: 'Context Manipulation',
+        description: 'Real photos, videos, or quotes presented with a false time, place, or story. The content is genuine — the framing is the lie.',
+        howToSpot: 'Reverse-image search photos and check the original date. Old disaster footage is constantly recycled for new events.',
+        example: 'A 2015 flood video re-shared as “yesterday\'s storm” in a different country.',
+    },

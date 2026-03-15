@@ -7,3 +7,11 @@
  */
 
 export interface Rank {
+    /** Rank index, 0-based */
+    tier: number;
+    name: string;
+    /** Minimum total XP to hold this rank */
+    minXp: number;
+    /** Short motto shown under the rank name */
+    tagline: string;
+    /** Tailwind text color class */

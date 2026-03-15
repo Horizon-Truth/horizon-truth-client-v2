@@ -18,3 +18,25 @@ import type { CalibrationLedger } from './confidence';
 import { MASTERY_TIERS } from './mastery';
 import type { MasteryTier } from './mastery';
 import type { DailyLedger } from './daily';
+
+export type AchievementCategory = 'journey' | 'accuracy' | 'skills' | 'impact' | 'habits';
+
+export const ACHIEVEMENT_CATEGORIES: Record<AchievementCategory, { name: string; emoji: string }> = {
+    journey: { name: 'The Journey', emoji: '🧭' },
+    accuracy: { name: 'Precision', emoji: '🎯' },
+    skills: { name: 'Mastery', emoji: '🧠' },
+    impact: { name: 'Community Impact', emoji: '🛡️' },
+    habits: { name: 'Habits', emoji: '🔥' },
+};
+
+/** Everything an achievement may be evaluated against. */
+export interface AchievementContext {
+    missionsCompleted: number;
+    xp: number;
+    trustScore: number;
+    accuracyRate: number;
+    currentStreak: number;
+    skillBook: Record<string, SkillProgress>;
+    calibration: CalibrationLedger;
+    daily: DailyLedger | null;
+    /** Mastery tiers earned across all scenarios the player has records for. */
