@@ -23,6 +23,9 @@ const registerSchema = z.object({
     email: z.string().email({ message: 'Enter a valid email address' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
     confirmPassword: z.string(),
+    consent: z.boolean().refine(val => val === true, {
+        message: "You must agree to the privacy policy to continue",
+    }),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
@@ -40,6 +43,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
             email: '',
             password: '',
             confirmPassword: '',
+            consent: false,
         },
     });
 
@@ -198,9 +202,38 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                             </div>
                         )}
 
-                        <div className="text-[10px] text-muted-foreground/60 leading-relaxed px-1 mt-2 italic">
-                            By registering for Horizon Truth, you consent to the collection of your name and email for the purpose of participation in our digital literacy platform, including game progress, user reports, and community contributions.
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="consent"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-2xl border border-border/50 p-4 bg-background/30 backdrop-blur-sm transition-all hover:bg-background/50">
+                                    <FormControl>
+                                        <div className="flex items-center h-5">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary cursor-pointer"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel className="text-[11px] font-medium leading-relaxed text-muted-foreground cursor-pointer select-none">
+                                            By registering, I agree to the collection of my data as outlined in the{" "}
+                                            <button 
+                                                type="button"
+                                                onClick={() => navigate('/privacy-policy')}
+                                                className="text-primary font-bold hover:underline underline-offset-4"
+                                            >
+                                                Privacy Policy
+                                            </button>
+                                            . I understand my progress and contributions will be stored.
+                                        </FormLabel>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
 
                         <Button
                             type="submit"
