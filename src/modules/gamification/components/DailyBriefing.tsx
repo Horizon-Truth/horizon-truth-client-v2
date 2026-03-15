@@ -23,3 +23,18 @@ export const DailyBriefing = memo(function DailyBriefing() {
     // One lightweight fetch for the deterministic daily pick.
     useEffect(() => {
         let cancelled = false;
+        engineService.getScenarios({ isActive: true, page: 1, limit: 50 })
+            .then(response => {
+                if (cancelled) return;
+                const data = Array.isArray(response) ? response : (response.data || []);
+                setScenarios(data);
+            })
+            .catch(() => { /* briefing degrades to quests only */ });
+        return () => { cancelled = true; };
+    }, []);
+
+    const ledger = ensureToday(dailyLedger);
+    const featured = useMemo(() => dailyScenario(scenarios, todayKey()), [scenarios]);
+    const swept = allQuestsDone(ledger);
+
+    const handlePlay = async () => {
