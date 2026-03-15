@@ -129,7 +129,22 @@ class EngineService {
     }
 
     async getLevels() {
-        const response = await api.get('/engine/admin/levels');
+        const response = await api.get('/engine/admin/scenarios/levels');
+        return response.data;
+    }
+
+    async createLevel(data: any) {
+        const response = await api.post('/engine/admin/scenarios/levels', data);
+        return response.data;
+    }
+
+    async updateLevel(id: string, data: any) {
+        const response = await api.put(`/engine/admin/scenarios/levels/${id}`, data);
+        return response.data;
+    }
+
+    async deleteLevel(id: string) {
+        const response = await api.delete(`/engine/admin/scenarios/levels/${id}`);
         return response.data;
     }
 

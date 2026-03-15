@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info, MessageSquare, Eye, Download, Upload, CheckSquare, Square, Loader2 } from "lucide-react";
+import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Play, Info, MessageSquare, Eye, Download, Upload, CheckSquare, Square, Loader2, Trophy } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { engineService, type Scenario } from "@/services/engine.service";
 import { Badge } from "@/shared/components/ui/badge";
@@ -8,6 +8,7 @@ import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
 import ScenarioForm from "../components/ScenarioForm";
 import ScenarioFeedbackList from "../components/ScenarioFeedbackList";
+import LevelManagement from "../components/LevelManagement";
 
 export default function ScenarioManagementPage() {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function ScenarioManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isFeedbackListOpen, setIsFeedbackListOpen] = useState(false);
+    const [isLevelMgmtOpen, setIsLevelMgmtOpen] = useState(false);
     const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
     const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
@@ -181,6 +183,15 @@ export default function ScenarioManagementPage() {
                                 />
                                 {isImporting ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
                             </label>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setIsLevelMgmtOpen(true)}
+                            className="rounded-xl border-dashed hover:border-primary transition-colors"
+                            title="Manage Levels"
+                        >
+                            <Trophy size={18} />
                         </Button>
                         <Button
                             variant="outline"
@@ -381,6 +392,17 @@ export default function ScenarioManagementPage() {
                         </div>
                         <ScenarioFeedbackList scenarioId={activeScenarioId} />
                     </div>
+                </div>
+            )}
+
+            {/* Level Management Overlay */}
+            {isLevelMgmtOpen && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
+                        onClick={() => setIsLevelMgmtOpen(false)}
+                    />
+                    <LevelManagement onClose={() => { setIsLevelMgmtOpen(false); fetchScenarios(); }} />
                 </div>
             )}
 
