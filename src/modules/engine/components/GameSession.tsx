@@ -173,14 +173,33 @@ export function GameSession() {
     }, [activeProgress, isLoading]);
 
     // Floating Impact State
-    const [impacts, setImpacts] = useState<{ id: string; label: string; value: number; type: 'trust' | 'influence', x: number }[]>([]);
+    const [impacts, setImpacts] = useState<{ 
+        id: string; 
+        label: string; 
+        value: number; 
+        type: 'trust' | 'influence';
+        x: number;
+        y: number;
+        rotation: number;
+    }[]>([]);
 
     useEffect(() => {
         if (stats.trustScore !== prevTrust) {
             const diff = stats.trustScore - prevTrust;
             const id = Math.random().toString(36).substring(2, 9);
-            const xOffset = Math.floor(Math.random() * 80) - 40; // Random x between -40 and 40
-            setImpacts(prev => [...prev, { id, label: diff > 0 ? `+${diff}` : `${diff}`, value: diff, type: 'trust', x: xOffset }]);
+            const xOffset = Math.floor(Math.random() * 200) - 100; // Wider spread: -100 to 100
+            const yTarget = -(Math.floor(Math.random() * 60) + 80); // Varied height: -80 to -140
+            const rotation = Math.floor(Math.random() * 40) - 20; // Random rotation: -20 to 20
+            
+            setImpacts(prev => [...prev, { 
+                id, 
+                label: diff > 0 ? `+${diff}` : `${diff}`, 
+                value: diff, 
+                type: 'trust', 
+                x: xOffset,
+                y: yTarget,
+                rotation
+            }]);
 
             setTrustPulse(diff > 0 ? 'increase' : 'decrease');
             setPrevTrust(stats.trustScore);
@@ -204,8 +223,19 @@ export function GameSession() {
         if (currentInf !== prevInfluence) {
             const diff = currentInf - prevInfluence;
             const id = Math.random().toString(36).substring(2, 9);
-            const xOffset = Math.floor(Math.random() * 80) - 40; // Random x between -40 and 40
-            setImpacts(prev => [...prev, { id, label: diff > 0 ? `+${diff}` : `${diff}`, value: diff, type: 'influence', x: xOffset }]);
+            const xOffset = Math.floor(Math.random() * 200) - 100; // Wider spread: -100 to 100
+            const yTarget = -(Math.floor(Math.random() * 60) + 80); // Varied height: -80 to -140
+            const rotation = Math.floor(Math.random() * 40) - 20; // Random rotation: -20 to 20
+            
+            setImpacts(prev => [...prev, { 
+                id, 
+                label: diff > 0 ? `+${diff}` : `${diff}`, 
+                value: diff, 
+                type: 'influence', 
+                x: xOffset,
+                y: yTarget,
+                rotation
+            }]);
             setPrevInfluence(currentInf);
 
             const timer = setTimeout(() => {
@@ -323,9 +353,9 @@ export function GameSession() {
                                     {impacts.map((imp) => (
                                         <motion.div
                                             key={imp.id}
-                                            initial={{ opacity: 0, y: 20, x: imp.x, scale: 0.8 }}
-                                            animate={{ opacity: 1, y: -100, x: imp.x, scale: 1.2 }}
-                                            exit={{ opacity: 0, scale: 1.5 }}
+                                            initial={{ opacity: 0, y: 20, x: imp.x, scale: 0.8, rotate: 0 }}
+                                            animate={{ opacity: 1, y: imp.y, x: imp.x, scale: 1.2, rotate: imp.rotation }}
+                                            exit={{ opacity: 0, scale: 1.5, rotate: imp.rotation * 1.5 }}
                                             className={cn(
                                                 "absolute font-black text-2xl drop-shadow-2xl z-50",
                                                 imp.type === 'trust'
