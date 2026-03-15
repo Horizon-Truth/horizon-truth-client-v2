@@ -25,6 +25,7 @@ const scenarioSchema = z.object({
     totalScenes: z.number().min(1),
     unlockScenarioId: z.string().nullable().optional(),
     campaignTag: z.string().optional(),
+    gameLevelId: z.string().min(1, "Target Level is required"),
     order: z.number().min(0).optional(),
     isArchived: z.boolean().optional(),
 });
@@ -39,11 +40,16 @@ interface ScenarioFormProps {
 
 export default function ScenarioForm({ scenario, onSuccess, onCancel }: ScenarioFormProps) {
     const [allScenarios, setAllScenarios] = useState<Scenario[]>([]);
+    const [levels, setLevels] = useState<{ id: string; levelNumber: number }[]>([]);
 
     useEffect(() => {
         engineService.getScenarios({ limit: 100 } as any).then((res) => {
             const data = Array.isArray(res) ? res : (res.data || []);
             setAllScenarios(data);
+        }).catch(() => { });
+
+        engineService.getLevels().then((res) => {
+            setLevels(res || []);
         }).catch(() => { });
     }, []);
 
@@ -65,6 +71,7 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
             totalScenes: scenario?.totalScenes ?? 1,
             unlockScenarioId: scenario?.unlockScenarioId || null,
             campaignTag: (scenario as any)?.campaignTag || "",
+            gameLevelId: scenario?.gameLevelId || "",
             order: (scenario as any)?.order ?? 0,
             isArchived: scenario?.isArchived ?? false,
         },
@@ -225,6 +232,24 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                             Group scenarios into a campaign for themed progression
                         </p>
                     </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="gameLevelId" className="text-[10px] font-black uppercase tracking-widest ml-1">Target Level</Label>
+                        <select
+                            id="gameLevelId"
+                            {...register("gameLevelId")}
+                            className="w-full h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary px-3 text-sm appearance-none"
+                        >
+                            <option value="">Select a Level</option>
+                            {levels.map((l) => (
+                                <option key={l.id} value={l.id}>
+                                    Level {l.levelNumber}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.gameLevelId && <p className="text-xs text-destructive font-medium ml-1">{errors.gameLevelId.message}</p>}
+                    </div>
+
                     <div className="space-y-2">
                         <Label htmlFor="order" className="text-[10px] font-black uppercase tracking-widest ml-1">Display Order</Label>
                         <Input
