@@ -10,6 +10,7 @@ export interface Scenario {
     isActive: boolean;
     isArchived: boolean;
     minimumScore: number;
+    gameLevelId: string;
     totalScenes: number;
     gameLevel: {
         id: string;
@@ -124,6 +125,11 @@ class EngineService {
 
     async getAdminScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean }) {
         const response = await api.get('/engine/admin/scenarios', { params });
+        return response.data;
+    }
+
+    async getLevels() {
+        const response = await api.get('/engine/admin/levels');
         return response.data;
     }
 
