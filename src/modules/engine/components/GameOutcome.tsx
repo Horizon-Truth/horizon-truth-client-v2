@@ -60,7 +60,7 @@ export function GameOutcome() {
     // Debug log to check outcome data
     console.log('[GameOutcome] currentOutcome:', currentOutcome);
 
-    const isSuccess = currentOutcome.passed ?? (currentOutcome.outcomeType === 'SUCCESS' || (currentOutcome.score !== undefined && currentOutcome.score > 0));
+    const isSuccess = currentOutcome.passed ?? (currentOutcome.outcomeType === 'SUCCESS' || currentOutcome.outcomeType === 'PASS' || currentOutcome.outcomeType === 'PERFECT_PASS' || (currentOutcome.accuracyRate !== undefined && currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate >= 70));
     const narrativeKey = currentOutcome.narrativeEnding || (isSuccess ? 'CONTAINED_EARLY' : 'COMMUNITY_CRISIS');
     const narrativeCfg = NARRATIVE_CONFIG[narrativeKey] || NARRATIVE_CONFIG['COMMUNITY_CRISIS'];
 
@@ -91,12 +91,12 @@ export function GameOutcome() {
                     {/* Pulse glow */}
                     <div className="absolute inset-0 opacity-10 animate-pulse bg-gradient-to-t from-white/10 to-transparent rounded-3xl pointer-events-none" />
 
-                    {currentOutcome.passed && (
+                    {isSuccess && (
                         <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-emerald-100 border border-emerald-500/50 text-emerald-600 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.2)] flex items-center gap-1.5">
                             <Trophy size={12} className="sm:w-3.5 sm:h-3.5" /> <span className="hidden xs:inline">KNOWLEDGE INCREASED!</span><span className="xs:hidden">VICTORY</span>
                         </div>
                     )}
-                    {!currentOutcome.passed && (
+                    {!isSuccess && (
                         <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-red-100 border border-red-500/50 text-red-600 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-[0_0_15px_rgba(239,68,68,0.2)] flex items-center gap-1.5">
                             <Activity size={12} className="sm:w-3.5 sm:h-3.5" /> <span className="hidden xs:inline">MISSION FAILED</span><span className="xs:hidden">FAILED</span>
                         </div>

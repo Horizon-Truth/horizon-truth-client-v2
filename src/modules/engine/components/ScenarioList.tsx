@@ -13,6 +13,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const [localLoading, setLocalLoading] = useState(true);
+    const [loadingScenarioId, setLoadingScenarioId] = useState<string | null>(null);
     const gameStore = useGameStore();
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -64,11 +65,16 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
         fetchScenarios(page);
     }, [page]);
 
-    const handleStartGame = (scenario: Scenario) => {
-        if (onStartGame) {
-            onStartGame(scenario);
-        } else {
-            gameStore.startGame(scenario.id);
+    const handleStartGame = async (scenario: Scenario) => {
+        setLoadingScenarioId(scenario.id);
+        try {
+            if (onStartGame) {
+                await onStartGame(scenario);
+            } else {
+                await gameStore.startGame(scenario.id);
+            }
+        } finally {
+            setLoadingScenarioId(null);
         }
     };
 
@@ -227,7 +233,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                     <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-2">
                                         <Button
                                             onClick={() => !isLocked && handleStartGame(scenario)}
-                                            disabled={gameStore.isLoading || isLocked}
+                                            disabled={loadingScenarioId !== null || isLocked}
                                             className={cn(
                                                 "px-8 h-10 rounded-xl font-bold transition-all active:scale-95 text-sm",
                                                 isLocked ? "bg-gray-500/10 text-gray-500" :
@@ -235,7 +241,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                                         "bg-primary text-white shadow-[0_4px_0_rgba(var(--primary),0.8)] active:translate-y-1 active:shadow-none"
                                             )}
                                         >
-                                            {gameStore.isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                            {loadingScenarioId === scenario.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                             {isLocked ? <Lock size={16} className="mr-2" /> : null}
                                             {isLocked ? 'Locked' : accuracy === 100 ? 'Replay Mission' : hasPlayed ? 'Improve Score' : 'Start Mission'}
                                         </Button>
