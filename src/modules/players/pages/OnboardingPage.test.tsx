@@ -6,3 +6,12 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Mock hooks and services
 vi.mock('../services/onboarding.service', () => ({
+    onboardingService: {
+        getAvatars: vi.fn(),
+        initializeProfile: vi.fn(),
+    },
+}));
+
+vi.mock('@tanstack/react-query', async () => {
+    const actual = await vi.importActual('@tanstack/react-query') as any;
+    return {

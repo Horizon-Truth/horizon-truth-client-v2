@@ -13,3 +13,18 @@ export default function PlayerManagementPage() {
     const [searchTerm, setSearchTerm] = useState("");
 
     const fetchPlayers = async () => {
+        setIsLoading(true);
+        try {
+            const response = await adminService.getPlayerProfiles();
+            setPlayers(response.data.data || []);
+        } catch (error) {
+            console.error("Failed to fetch players:", error);
+            toast.error("Failed to load player data");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPlayers();
+    }, []);
