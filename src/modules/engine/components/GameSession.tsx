@@ -426,19 +426,19 @@ export function GameSession() {
             {/* 2. Main Feed - Scene Content */}
             <main className="flex-1 flex flex-col relative bg-slate-50/50">
                 {/* Header */}
-                <header className="h-16 sm:h-20 border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                    <div className="flex flex-col gap-1 w-full sm:w-1/2 overflow-hidden">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                            <span className={cn("font-black italic tracking-tighter text-sm sm:text-lg uppercase truncate", themeConfig.color)}>
+                <header className="h-16 sm:h-20 border-b border-slate-200 px-3 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
+                    <div className="flex flex-col gap-1 w-full max-w-[65%] sm:w-1/2 overflow-hidden">
+                        <div className="flex items-center gap-1.5 sm:gap-3 overflow-hidden">
+                            <span className={cn("font-black italic tracking-tighter text-xs sm:text-lg uppercase truncate", themeConfig.color)}>
                                 {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
                             </span>
-                            <div className="h-3 w-[1px] bg-slate-200 hidden xs:block" />
-                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap hidden xs:block">
-                                Scene {activeProgress.currentScene.order} / {totalScenes || '?'}
+                            <div className="h-3 w-[1px] bg-slate-200 flex-shrink-0" />
+                            <span className="text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap flex-shrink-0">
+                                S{activeProgress.currentScene.order}/{totalScenes || '?'}
                             </span>
                         </div>
                         {/* Progress Bar */}
-                        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden max-w-[120px] sm:max-w-xs">
+                        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden max-w-[80px] sm:max-w-xs">
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${((activeProgress.currentScene.order) / (totalScenes || 1)) * 100}%` }}
@@ -446,8 +446,8 @@ export function GameSession() {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
-                        <div className="flex items-center gap-1 sm:gap-2 border-r border-slate-200 pr-2 sm:pr-4 mr-0 sm:mr-2 hidden xs:flex">
+                    <div className="flex items-center gap-1.5 sm:gap-4 flex-shrink-0 ml-auto">
+                        <div className="flex items-center gap-1 sm:gap-2 border-r border-slate-200 pr-1.5 sm:pr-4 mr-0 sm:mr-2">
                             <button
                                 onClick={() => setIsFocusMode(!isFocusMode)}
                                 className={cn(
@@ -456,7 +456,7 @@ export function GameSession() {
                                 )}
                                 title={isFocusMode ? "Exit Focus Mode" : "Enter Focus Mode"}
                             >
-                                {isFocusMode ? <Eye size={16} /> : <EyeOff size={16} />}
+                                {isFocusMode ? <Eye size={14} className="sm:w-[16px] sm:h-[16px]" /> : <EyeOff size={14} className="sm:w-[16px] sm:h-[16px]" />}
                             </button>
                             <button
                                 onClick={toggleFullscreen}
@@ -470,12 +470,12 @@ export function GameSession() {
                                 className="p-1.5 sm:p-2 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-all duration-300"
                                 title="Abort Mission"
                             >
-                                <PowerOff size={18} />
+                                <PowerOff size={14} className="sm:w-[18px] sm:h-[18px]" />
                             </button>
                         </div>
                         <div className="flex items-center gap-1 sm:gap-2">
-                            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Secure</span>
+                            <span className="w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-500 whitespace-nowrap">Secure</span>
                         </div>
                     </div>
                 </header>
