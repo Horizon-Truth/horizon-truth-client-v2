@@ -23,3 +23,28 @@ import {
 import { Badge } from '@/shared/components/ui/badge';
 import { AvatarFormModal } from '../components/AvatarFormModal';
 import { toast } from 'sonner';
+
+const AvatarManagementPage: React.FC = () => {
+    const queryClient = useQueryClient();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingAvatar, setEditingAvatar] = useState<Avatar | null>(null);
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['admin-avatars', page, searchQuery],
+        queryKeyHashFn: (queryKey) => JSON.stringify(queryKey),
+        queryFn: () => onboardingService.getAllAvatarsAdmin({ page, limit: 10 }),
+    });
+
+    const createMutation = useMutation({
+        mutationFn: (newAvatar: AvatarDto) => onboardingService.createAvatar(newAvatar),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-avatars'] });
+            setIsModalOpen(false);
+            toast.success('Avatar created successfully');
+        },
+        onError: () => toast.error('Failed to create avatar'),
+    });
+
+    const updateMutation = useMutation({
