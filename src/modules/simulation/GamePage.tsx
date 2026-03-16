@@ -93,7 +93,7 @@ export default function GamePage() {
                     </div>
 
                     {/* Stats Header */}
-                    <header className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
                             label="Protocol Trust"
                             value={`${stats.trustScore}%`}

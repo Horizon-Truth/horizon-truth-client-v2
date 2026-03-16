@@ -91,19 +91,19 @@ const HeroCarousel = () => {
                                 <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">{slide.badge}</span>
                             </div>
 
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white leading-tight">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white leading-tight">
                                 {slide.title} <br />
-                                <span className="text-primary-foreground italic text-3xl md:text-4xl lg:text-5xl opacity-90">{slide.subtitle}</span>
+                                <span className="text-primary-foreground italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl opacity-90">{slide.subtitle}</span>
                             </h1>
 
-                            <p className="text-lg text-white/80 max-w-xl mx-auto leading-relaxed font-medium">
+                            <p className="text-base sm:text-lg text-white/80 max-w-xl mx-auto leading-relaxed font-medium">
                                 {slide.description}
                             </p>
 
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
                                 <Button
                                     onClick={() => navigate(slide.ctaLink)}
-                                    className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all border-none"
+                                    className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-12 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all border-none w-full sm:w-auto"
                                 >
                                     {slide.ctaText}
                                 </Button>
@@ -113,7 +113,7 @@ const HeroCarousel = () => {
                                         setGuest(true);
                                         navigate('/guest');
                                     }}
-                                    className="h-14 sm:h-16 px-8 sm:px-12 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] transition-all"
+                                    className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-12 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] transition-all w-full sm:w-auto"
                                 >
                                     Play as Guest
                                 </Button>
@@ -372,7 +372,7 @@ export default function LandingPage() {
             <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-center">
                         {[
                             { label: "Active Users", value: "5,247+" },
                             { label: "Reports Debunked", value: "2,847+" },
@@ -386,8 +386,8 @@ export default function LandingPage() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
                             >
-                                <div className="text-5xl md:text-6xl font-black mb-4 tracking-tight">{stat.value}</div>
-                                <div className="text-sm font-bold uppercase tracking-[0.2em] opacity-80">{stat.label}</div>
+                                <div className="text-3xl sm:text-5xl md:text-6xl font-black mb-2 sm:mb-4 tracking-tight">{stat.value}</div>
+                                <div className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] opacity-80">{stat.label}</div>
                             </motion.div>
                         ))}
                     </div>

@@ -58,43 +58,37 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
 
             {/* Social Reaction-style Choice Bar */}
             {scene.availableChoices.length > 0 && (
-                <div className="sticky bottom-4 left-0 right-0 flex justify-center px-4">
+                <div className="sticky bottom-4 left-0 right-0 flex justify-center px-2 sm:px-4">
                     <motion.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="p-1.5 rounded-full bg-slate-50/90 backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-1"
+                        className="p-1.5 rounded-3xl sm:rounded-full bg-slate-50/90 backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex flex-wrap justify-center items-center gap-1"
                     >
                         {scene.availableChoices.map((choice: string) => (
                             <motion.button
                                 key={choice}
                                 disabled={isLoading}
                                 whileHover={{
-                                    scale: 1.2,
-                                    y: -8,
+                                    scale: 1.05,
+                                    y: -2,
                                     backgroundColor: "rgba(255, 255, 255, 0.05)"
                                 }}
                                 whileTap={{
-                                    scale: 0.9,
-                                    rotate: [0, -5, 5, -5, 5, 0],
+                                    scale: 0.95,
                                 }}
                                 onClick={() => onChoice?.(choice)}
                                 className={cn(
-                                    "px-4 py-2 rounded-full text-base font-bold transition-all relative overflow-hidden flex items-center gap-2",
+                                    "px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all relative overflow-hidden flex items-center gap-1.5 sm:gap-2",
                                     "text-slate-600 hover:text-primary",
                                     "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                     isLoading && "opacity-50 cursor-not-allowed"
                                 )}
                             >
                                 <span className={cn(
-                                    "w-2 h-2 rounded-full",
+                                    "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
                                     isLoading ? "bg-primary animate-pulse" : "bg-primary/40"
                                 )} />
                                 {choice}
-                                {isLoading && (
-                                    <div className="absolute inset-0 bg-primary/5 flex items-center justify-center backdrop-blur-[1px]">
-                                        <div className="w-1 h-4 bg-primary animate-[stretch_1s_infinite]" />
-                                    </div>
-                                )}
                             </motion.button>
                         ))}
                     </motion.div>
@@ -173,24 +167,24 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between text-muted-foreground pt-1 pr-8">
+                        <div className="flex items-center justify-between text-muted-foreground pt-1 pr-2 sm:pr-8">
                             <button
                                 onClick={handleShareClick}
-                                className="flex items-center gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1"
+                                className="flex items-center gap-1 sm:gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1"
                             >
-                                <MessageSquare size={18} />
-                                <span className="text-sm font-bold">{shares}</span>
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{shares}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1">
-                                <BarChart3 size={18} />
-                                <span className="text-sm font-bold">{views}</span>
+                            <button className="flex items-center gap-1 sm:gap-1.5 hover:text-emerald-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1">
+                                <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{views}</span>
                             </button>
                             <button className="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer text-rose-400/80 focus-visible:ring-1 focus-visible:ring-rose-400 rounded-md p-1 -m-1">
-                                <Heart size={18} fill="currentColor" className="fill-rose-400/20" />
-                                <span className="text-sm font-bold">{likes}</span>
+                                <Heart size={16} fill="currentColor" className="fill-rose-400/20 sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{likes}</span>
                             </button>
                             <button className="hover:text-primary transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1 -m-1">
-                                <Bookmark size={18} />
+                                <Bookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
                             </button>
                         </div>
 
