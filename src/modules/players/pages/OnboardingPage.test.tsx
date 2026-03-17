@@ -15,3 +15,13 @@ vi.mock('../services/onboarding.service', () => ({
 vi.mock('@tanstack/react-query', async () => {
     const actual = await vi.importActual('@tanstack/react-query') as any;
     return {
+        ...actual,
+        useQuery: vi.fn().mockReturnValue({
+            data: [{ id: 'a1', name: 'Avatar 1', imageUrl: 'url', ageGroup: 'YOUTH' }],
+            isLoading: false,
+        }),
+        useMutation: vi.fn().mockReturnValue({
+            mutate: vi.fn(),
+            isLoading: false,
+        }),
+    };
