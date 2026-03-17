@@ -17,3 +17,28 @@ export interface CampaignWorldState {
     pct: number;
     /** Average best accuracy across completed missions, or null before any. */
     avgAccuracy: number | null;
+    /** Narrative summary of how the campaign's community is doing. */
+    narrative: string;
+    tone: 'neutral' | 'thriving' | 'contested' | 'crisis';
+}
+
+export interface CampaignGroup {
+    /** Raw campaign tag, or null for standalone missions. */
+    tag: string | null;
+    /** Human-readable arc name derived from the tag. */
+    title: string | null;
+    scenarios: Scenario[];
+}
+
+/** "ELECTION_CAMPAIGN" / "election-campaign" → "Election Campaign". */
+export function campaignTitle(tag: string): string {
+    return tag
+        .split(/[_\-\s]+/)
+        .filter(Boolean)
+        .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+}
+
+/**
+ * Split an ordered scenario list into consecutive runs that share a campaign
+ * tag. Order is preserved exactly as the learning path delivers it, so

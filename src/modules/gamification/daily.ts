@@ -6,3 +6,12 @@
  * a per-day ledger in the game store. The ledger rolls over automatically at
  * local midnight; quests reinforce the existing streak loop rather than
  * granting client-side rewards.
+ */
+
+import type { Scenario } from '@/services/engine.service';
+
+export interface DailyLedger {
+    /** Local date key (YYYY-MM-DD) this ledger belongs to. */
+    date: string;
+    /** Missions completed today. */
+    missions: number;
