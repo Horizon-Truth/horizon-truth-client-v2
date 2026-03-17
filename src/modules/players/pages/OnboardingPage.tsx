@@ -22,3 +22,26 @@ const OnboardingPage: React.FC = () => {
             await authService.logout();
         } catch (error) {
             console.error(error);
+        } finally {
+            logout();
+            navigate('/login');
+        }
+    };
+
+    const { data: avatars, isLoading: loadingAvatars } = useQuery({
+        queryKey: ['avatars'],
+        queryFn: onboardingService.getAvatars
+    });
+
+    const mutation = useMutation({
+        mutationFn: onboardingService.initializeProfile,
+        onSuccess: (data) => {
+            updateUser({
+                onboardingCompleted: true,
+                nickname: data.nickname,
+                avatarUrl: data.avatar?.imageUrl
+            });
+            toast.success('Profile created successfully. Welcome!');
+            navigate('/dashboard/game');
+        },
+        onError: (error: any) => {
