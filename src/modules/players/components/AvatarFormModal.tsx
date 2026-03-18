@@ -36,3 +36,26 @@ interface AvatarFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: AvatarDto) => void;
+    initialData?: Avatar | null;
+    isSubmitting?: boolean;
+}
+
+export const AvatarFormModal: React.FC<AvatarFormModalProps> = ({
+    isOpen,
+    onClose,
+    onSubmit,
+    initialData,
+    isSubmitting,
+}) => {
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: '',
+            imageUrl: '',
+            gender: 'NEUTRAL',
+            ageGroup: 'YOUTH',
+            isActive: true,
+        },
+    });
+
+    React.useEffect(() => {
