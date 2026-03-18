@@ -48,3 +48,32 @@ const AvatarManagementPage: React.FC = () => {
     });
 
     const updateMutation = useMutation({
+        mutationFn: ({ id, data }: { id: string, data: Partial<AvatarDto> }) =>
+            onboardingService.updateAvatar(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-avatars'] });
+            setIsModalOpen(false);
+            setEditingAvatar(null);
+            toast.success('Avatar updated successfully');
+        },
+        onError: () => toast.error('Failed to update avatar'),
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: string) => onboardingService.deleteAvatar(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-avatars'] });
+            toast.success('Avatar deleted successfully');
+        },
+        onError: () => toast.error('Failed to delete avatar'),
+    });
+
+    const handleCreate = (data: AvatarDto) => {
+        createMutation.mutate(data);
+    };
+
+    const handleUpdate = (data: AvatarDto) => {
+        if (editingAvatar) {
+            updateMutation.mutate({ id: editingAvatar.id, data });
+        }
+    };
