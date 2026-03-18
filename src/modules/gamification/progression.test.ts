@@ -8,3 +8,9 @@ describe('progression', () => {
             expect(RANKS[i].minXp).toBeGreaterThan(RANKS[i - 1].minXp);
         }
     });
+
+    it('levelForXp matches the store formula', () => {
+        expect(levelForXp(0)).toBe(1);
+        expect(levelForXp(99)).toBe(1);
+        expect(levelForXp(100)).toBe(2);
+        expect(levelForXp(400)).toBe(3);
