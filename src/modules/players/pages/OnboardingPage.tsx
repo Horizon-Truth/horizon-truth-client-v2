@@ -45,3 +45,31 @@ const OnboardingPage: React.FC = () => {
             navigate('/dashboard/game');
         },
         onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Failed to initialize profile');
+            setIsSubmitting(false);
+        }
+    });
+
+    const handleSubmit = () => {
+        if (!nickname || !selectedAvatar) {
+            toast.error('Please complete your identity profile');
+            return;
+        }
+        setIsSubmitting(true);
+        mutation.mutate({
+            nickname,
+            avatarId: selectedAvatar.id
+        });
+    };
+
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+        exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-[#050505] flex items-center justify-center overflow-hidden font-sans text-white">
+            {/* Background Soft Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
