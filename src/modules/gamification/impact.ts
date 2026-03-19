@@ -10,3 +10,15 @@
  * - Choosing well "shields" the community: the largest spread any other
  *   option on that scene would have caused is counted as exposure prevented.
  */
+
+export interface SpreadSimulation {
+    reach: number;
+    reshares: number;
+    credibility_loss: number;
+}
+
+export interface MissionImpact {
+    /** The game progress this ledger belongs to. */
+    progressId: string;
+    /** People reached by misinformation the player spread or amplified. */
+    reached: number;
