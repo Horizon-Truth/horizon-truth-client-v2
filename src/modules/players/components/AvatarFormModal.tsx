@@ -59,3 +59,28 @@ export const AvatarFormModal: React.FC<AvatarFormModalProps> = ({
     });
 
     React.useEffect(() => {
+        if (initialData) {
+            form.reset({
+                name: initialData.name,
+                imageUrl: initialData.imageUrl,
+                gender: initialData.gender as any,
+                ageGroup: initialData.ageGroup as any,
+                isActive: initialData.isActive,
+            });
+        } else {
+            form.reset({
+                name: '',
+                imageUrl: '',
+                gender: 'NEUTRAL',
+                ageGroup: 'YOUTH',
+                isActive: true,
+            });
+        }
+    }, [initialData, form, isOpen]);
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-[425px] bg-card border-border">
+                <DialogHeader>
+                    <DialogTitle>{initialData ? 'Edit Avatar' : 'Create Avatar'}</DialogTitle>
+                </DialogHeader>

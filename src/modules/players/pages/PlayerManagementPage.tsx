@@ -47,3 +47,23 @@ export default function PlayerManagementPage() {
                 <div className="flex gap-4 w-full sm:w-auto">
                     <div className="flex-1 sm:flex-none bg-card border border-border/40 p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center min-w-[80px] sm:min-w-[120px]">
                         <span className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total Assets</span>
+                        <span className="text-xl sm:text-3xl font-black italic">{players.length}</span>
+                    </div>
+                    <div className="flex-1 sm:flex-none bg-card border border-border/40 p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center min-w-[80px] sm:min-w-[120px]">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase mb-1">Onboarded</span>
+                        <span className="text-xl sm:text-3xl font-black italic text-emerald-500">{players.filter(p => p.onboardingCompleted).length}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex gap-4 p-2 bg-muted/30 rounded-[2.5rem] border border-border/20 backdrop-blur-md">
+                <div className="relative flex-1">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground/50" size={20} />
+                    <Input
+                        placeholder="Intercept signal by Handle or Cyber-Link..."
+                        className="pl-14 h-14 rounded-full border-none bg-card/50 focus-visible:ring-primary/40 text-lg font-bold italic"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <Button variant="outline" className="h-14 w-14 rounded-full p-0 border-border/40 bg-card hover:bg-accent group">
