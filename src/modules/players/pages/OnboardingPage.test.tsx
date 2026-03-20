@@ -25,3 +25,13 @@ vi.mock('@tanstack/react-query', async () => {
             isLoading: false,
         }),
     };
+});
+
+vi.mock('../../../store/auth.store', () => ({
+    useAuthStore: () => ({
+        updateUser: vi.fn(),
+    }),
+}));
+
+vi.mock('sonner', () => ({
+    toast: {
