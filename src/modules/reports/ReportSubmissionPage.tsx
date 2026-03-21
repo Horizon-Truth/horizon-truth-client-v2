@@ -18,3 +18,25 @@ export default function ReportSubmissionPage() {
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authMode, setAuthMode] = useState<"login" | "register">("login");
     const [authResolved, setAuthResolved] = useState(0);
+
+    const handleSuccess = () => {
+        setIsSubmitted(true);
+        setTimeout(() => navigate("/crowdsourcing"), 3000);
+    };
+
+    const openAuth = (mode: "login" | "register") => {
+        setAuthMode(mode);
+        setIsAuthModalOpen(true);
+    };
+
+    const handleAuthSuccess = () => {
+        setIsAuthModalOpen(false);
+        // Signal the form that authentication completed so it can resume the pending submission.
+        setAuthResolved((n) => n + 1);
+    };
+
+    if (isSubmitted) {
+        return (
+            <PublicLayout>
+                <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
+                    <motion.div
