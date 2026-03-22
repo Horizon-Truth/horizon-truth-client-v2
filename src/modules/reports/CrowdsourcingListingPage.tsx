@@ -23,3 +23,28 @@ export default function CrowdsourcingListingPage() {
                     reportService.getReports({
                         tagId: activeCategory === 'all' ? undefined : activeCategory,
                         search: searchTerm || undefined
+                    }),
+                    reportService.getReportTags()
+                ]);
+                setReports(reportsRes.data);
+                setCategories(tagsRes.data);
+            } catch (error) {
+                console.error("Error fetching crowdsourcing data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        const timeoutId = setTimeout(fetchData, searchTerm ? 500 : 0);
+        return () => clearTimeout(timeoutId);
+    }, [activeCategory, searchTerm]);
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'VERIFIED': return 'bg-green-500/10 text-green-500 border-green-500/20';
+            case 'UNDER_REVIEW': return 'bg-primary/10 text-primary border-primary/20';
+            case 'NEW': return 'bg-accent/10 text-accent-foreground border-accent/20';
+            case 'FLAGGED': return 'bg-red-500/10 text-red-500 border-red-500/20';
+            default: return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+        }
+    };

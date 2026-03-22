@@ -20,3 +20,16 @@ interface Report {
 export function ReportList() {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadReports() {
+            try {
+                const data = await reportService.getReports();
+                setReports(data.data);
+            } catch (error) {
+                toast.error("Failed to load reports");
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadReports();

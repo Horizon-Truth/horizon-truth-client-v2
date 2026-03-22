@@ -14,3 +14,19 @@ import {
     DialogTitle,
 } from "@/shared/components/ui/dialog";
 import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { Switch } from "@/shared/components/ui/switch";
+import { reportService, type Language } from "@/services/report.service";
+
+const languageSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    code: z.string().min(2, "Code must be at least 2 characters").max(10, "Code is too long"),
+    isActive: z.boolean(),
+});

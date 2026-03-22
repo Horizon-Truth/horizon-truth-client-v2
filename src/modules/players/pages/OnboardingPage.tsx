@@ -45,3 +45,62 @@ const OnboardingPage: React.FC = () => {
             navigate('/dashboard/game');
         },
         onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Failed to initialize profile');
+            setIsSubmitting(false);
+        }
+    });
+
+    const handleSubmit = () => {
+        if (!nickname || !selectedAvatar) {
+            toast.error('Please complete your identity profile');
+            return;
+        }
+        setIsSubmitting(true);
+        mutation.mutate({
+            nickname,
+            avatarId: selectedAvatar.id
+        });
+    };
+
+    const containerVariants: Variants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+        exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-[#050505] flex items-center justify-center overflow-hidden font-sans text-white">
+            {/* Background Soft Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+            <div className="relative z-10 w-full max-w-lg px-6">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key="onboarding-card"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="bg-[#111111]/80 backdrop-blur-xl border border-white/5 rounded-3xl p-10 shadow-2xl relative overflow-hidden"
+                    >
+                        {/* Glow Border Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
+
+                        {/* Switch Account Action */}
+                        <button
+                            onClick={handleLogout}
+                            className="absolute top-6 right-6 text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold z-20"
+                        >
+                            <span className="hidden sm:inline">Switch Account</span>
+                            <LogOut size={14} />
+                        </button>
+
+                        <div className="mb-8 text-center pt-2 flex flex-col items-center">
+                            <Logo variant="only" className="h-16 w-auto mb-6" />
+                            <h1 className="text-3xl font-light tracking-tight mb-2">Create Your Profile</h1>
+                            <p className="text-white/40 text-sm">Choose a nickname and avatar to get started.</p>
+                        </div>
+
+                        <div className="space-y-8">
+                            {/* Nickname Input */}

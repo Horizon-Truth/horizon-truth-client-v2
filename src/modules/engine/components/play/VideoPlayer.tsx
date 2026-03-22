@@ -60,3 +60,21 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(({ scene }) => {
                         animate={shouldReduceMotion ? { opacity: [0.3, 0.6] } : {}}
                         transition={shouldReduceMotion ? { duration: 2, repeat: Infinity, repeatType: 'reverse' } : {}}
                     />
+
+                    {/* Bounding Boxes */}
+                    <div className="absolute top-[20%] left-[30%] w-32 h-32 border border-red-500/60 flex flex-col justify-between">
+                        <div className="flex justify-between">
+                            <div className="w-2 h-2 border-t border-l border-red-500" />
+                            <div className="w-2 h-2 border-t border-r border-red-500" />
+                        </div>
+                        <div className="absolute -top-6 left-0 bg-red-500/80 px-1.5 py-0.5 text-[8px] font-bold text-white uppercase flex items-center gap-1">
+                            <Scan size={8} /> Target_ID: Unknown
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="w-2 h-2 border-b border-l border-red-500" />
+                            <div className="w-2 h-2 border-b border-r border-red-500" />
+                        </div>
+                    </div>
+
+                    <div className="absolute bottom-[10%] right-[10%] p-4 bg-black/40 backdrop-blur-md border border-white/10 font-mono text-[10px] text-red-400 space-y-1">
+                        <p className="flex justify-between gap-8"><span>DETECTION_STATE:</span> <span className="animate-pulse">ANALYZING...</span></p>
