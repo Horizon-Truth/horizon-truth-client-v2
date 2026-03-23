@@ -13,3 +13,11 @@ describe('AuthStore', () => {
         expect(state.token).toBeNull();
         expect(state.isAuthenticated).toBe(false);
     });
+
+    it('should set authentication data', () => {
+        const user = { id: '1', fullName: 'Test User', role: 'PLAYER' as any };
+        const token = 'test-token';
+        
+        useAuthStore.getState().setAuth(user, token);
+        
+        const state = useAuthStore.getState();
