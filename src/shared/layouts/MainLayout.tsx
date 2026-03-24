@@ -23,6 +23,7 @@ import { useDevice } from "@/shared/hooks/useDevice";
 import { cn } from "@/shared/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import { ThemeToggle } from "@/shared/components/theme-toggle";
 import { authService } from "@/services/auth.service";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
@@ -216,7 +217,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                             </h1>
                         </div>
 
-                        <div className="relative">
+                        <div className="flex items-center gap-2 md:gap-4 relative">
+                            <ThemeToggle />
                             <button
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                 className="flex items-center gap-2 md:gap-3 p-1 md:p-1.5 md:pr-3 rounded-full hover:bg-accent transition-all group border border-transparent hover:border-border"

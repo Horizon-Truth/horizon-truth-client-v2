@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "./shared/components/theme-provider";
 import { MainLayout } from "./shared/layouts/MainLayout";
 import DashboardPage from "./modules/analytics/DashboardPage";
 import SystemHealthPage from "./modules/analytics/SystemHealthPage";
@@ -91,8 +92,9 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
         <ScrollToTop />
         <Toaster position="top-center" richColors />
         <ErrorBoundary>
@@ -185,6 +187,7 @@ function App() {
         </ErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

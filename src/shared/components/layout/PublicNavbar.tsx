@@ -4,6 +4,7 @@ import logo from "@/assets/logo.png";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 import { useAuthStore } from "@/store/auth.store";
+import { ThemeToggle } from "@/shared/components/theme-toggle";
 
 export const PublicNavbar = () => {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ export const PublicNavbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
+                        <ThemeToggle />
                         <button
                             onClick={() => navigate("/about")}
                             className="text-sm font-medium hover:text-primary transition-colors"
@@ -117,6 +119,10 @@ export const PublicNavbar = () => {
                                         FAQ
                                     </button>
                                     <hr className="border-border" />
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-lg font-medium">Theme</span>
+                                        <ThemeToggle />
+                                    </div>
                                     <button
                                         onClick={() => navigate("/login")}
                                         className="text-left text-lg font-medium hover:text-primary transition-colors"
