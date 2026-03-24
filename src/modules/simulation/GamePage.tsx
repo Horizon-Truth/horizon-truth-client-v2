@@ -184,6 +184,23 @@ export default function GamePage() {
                     )}
 
                     <div className="flex-1 relative z-10 w-full h-full overflow-hidden flex flex-col">
+                        {/* Exit Button for Immersive Mode */}
+                        <div className="absolute top-4 right-4 z-[110]">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    // Use window.confirm for safety if progress exists
+                                    if (activeProgress && !window.confirm("Exit mission? Progress will be lost.")) return;
+                                    navigate("/dashboard");
+                                    window.location.reload(); // Force refresh to clear game state if needed, or just navigate
+                                }}
+                                className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 font-bold uppercase tracking-widest text-[10px] h-8 rounded-full px-4"
+                            >
+                                <LogOut size={14} className="mr-2" />
+                                Exit Mission
+                            </Button>
+                        </div>
                         {activeProgress && <GameSession />}
                         {currentOutcome && <GameOutcome />}
                     </div>

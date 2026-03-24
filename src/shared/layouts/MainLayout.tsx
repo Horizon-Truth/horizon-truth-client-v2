@@ -195,39 +195,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                                             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account</p>
                                             <p className="md:hidden text-sm font-medium mt-1">{user?.fullName}</p>
                                         </div>
-                                        {user?.role !== 'PLAYER' && (
-                                            <>
-                                                <Link
-                                                    to="/dashboard/reports"
-                                                    className={cn(
-                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                        location.pathname === "/dashboard/reports"
-                                                            ? "bg-primary/10 text-primary"
-                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                    )}
-                                                >
-                                                    <FileText size={18} />
-                                                    Reports
-                                                </Link>
-                                                <Link
-                                                    to="/dashboard/reports-config"
-                                                    className={cn(
-                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                        location.pathname === "/dashboard/reports-config"
-                                                            ? "bg-primary/10 text-primary"
-                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                    )}
-                                                >
-                                                    <Settings size={18} />
-                                                    Reports Config
-                                                </Link>
-                                                <div className="pt-4 pb-2">
-                                                    <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                                        System
-                                                    </p>
-                                                </div>
-                                            </>
-                                        )}
                                         <Link
                                             to="/dashboard/profile"
                                             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"

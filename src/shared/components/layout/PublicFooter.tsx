@@ -40,9 +40,9 @@ export const PublicFooter = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p className="text-xs text-muted-foreground">© 2026 Horizon Truth. All rights reserved.</p>
                 <div className="flex gap-6 text-muted-foreground">
-                    <a href="#" className="hover:text-primary transition-colors"><ShieldCheck size={18} /></a>
-                    <a href="#" className="hover:text-primary transition-colors"><Globe size={18} /></a>
-                    <a href="#" className="hover:text-primary transition-colors"><Github size={18} /></a>
+                    <a href="https://horizon-truth.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><ShieldCheck size={18} /></a>
+                    <a href="https://twitter.com/horizontruth" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Globe size={18} /></a>
+                    <a href="https://github.com/horizon-truth" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Github size={18} /></a>
                 </div>
             </div>
         </footer>
