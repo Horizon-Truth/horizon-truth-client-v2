@@ -563,7 +563,7 @@ export function GameSession() {
                                                 disabled={isLoading}
                                                 onClick={() => handleChoice(choice)}
                                                 className={cn(
-                                                    "group p-5 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
+                                                    "group p-5 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden active:scale-[0.99]",
                                                     "bg-slate-100 border-slate-200 hover:border-primary/40 hover:bg-slate-200/50 hover:shadow-[0_10px_30px_rgba(var(--primary),0.05)]",
                                                     "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                                     isLoading && "opacity-50 cursor-not-allowed grayscale"

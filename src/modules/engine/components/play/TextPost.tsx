@@ -113,8 +113,8 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                             </div>
                         )}
 
-                        <div className="flex flex-wrap items-center justify-between pt-2 max-w-sm text-slate-500 font-black gap-y-2">
-                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-blue-600 transition-colors focus-visible:ring-1 focus-visible:ring-blue-600 rounded-md p-1 -m-1">
+                        <div className="flex flex-wrap items-center justify-between pt-4 max-w-sm text-slate-500 font-black gap-y-4 gap-x-4 sm:gap-x-6">
+                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-blue-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-blue-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <div className="p-1.5 sm:p-2 group-hover:bg-blue-600/10 rounded-full transition-colors">
                                     <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
@@ -122,14 +122,14 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                             </button>
                             <button
                                 onClick={handleShareClick}
-                                className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-emerald-600 transition-colors focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-md p-1 -m-1"
+                                className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-emerald-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3"
                             >
                                 <div className="p-1.5 sm:p-2 group-hover:bg-emerald-600/10 rounded-full transition-colors">
                                     <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <span className="text-xs sm:text-sm">1.2K</span>
                             </button>
-                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-rose-600 transition-colors focus-visible:ring-1 focus-visible:ring-rose-600 rounded-md p-1 -m-1">
+                            <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-rose-600 transition-all active:scale-90 focus-visible:ring-1 focus-visible:ring-rose-600 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <div className="p-1.5 sm:p-2 group-hover:bg-rose-600/10 rounded-full transition-colors">
                                     <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
