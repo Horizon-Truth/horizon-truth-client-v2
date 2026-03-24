@@ -118,9 +118,14 @@ export default function CrowdsourcingDetailPage() {
                 {/* Header / Breadcrumbs */}
                 <div className="bg-background border-b py-6">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <button onClick={() => navigate("/crowdsourcing")} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-medium">
-                            <ChevronLeft size={18} /> Back to Listings
-                        </button>
+                        <Button
+                            variant="ghost"
+                            onClick={() => navigate("/crowdsourcing")}
+                            className="gap-2 rounded-xl hover:bg-primary/5 font-bold"
+                        >
+                            <ChevronLeft size={18} />
+                            Back to Listings
+                        </Button>
                     </div>
                 </div>
 

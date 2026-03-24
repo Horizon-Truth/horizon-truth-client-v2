@@ -4,8 +4,9 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { onboardingService, type Avatar } from '../services/onboarding.service';
 import { useAuthStore } from '../../../store/auth.store';
-import { User, ChevronRight, Check } from 'lucide-react';
+import { User, ChevronRight, Check, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
+import { authService } from '../../../services/auth.service';
 
 const OnboardingPage: React.FC = () => {
     const [nickname, setNickname] = useState('');
@@ -13,7 +14,18 @@ const OnboardingPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
-    const { updateUser } = useAuthStore();
+    const { updateUser, logout } = useAuthStore();
+
+    const handleLogout = async () => {
+        try {
+            await authService.logout();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            logout();
+            navigate('/login');
+        }
+    };
 
     const { data: avatars, isLoading: loadingAvatars } = useQuery({
         queryKey: ['avatars'],
@@ -74,7 +86,16 @@ const OnboardingPage: React.FC = () => {
                         {/* Glow Border Effect */}
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 pointer-events-none" />
 
-                        <div className="mb-8 text-center">
+                        {/* Switch Account Action */}
+                        <button
+                            onClick={handleLogout}
+                            className="absolute top-6 right-6 text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold z-20"
+                        >
+                            <span className="hidden sm:inline">Switch Account</span>
+                            <LogOut size={14} />
+                        </button>
+
+                        <div className="mb-8 text-center pt-2">
                             <h1 className="text-3xl font-light tracking-tight mb-2">Initialize Identity</h1>
                             <p className="text-white/40 text-sm">Level 0: Creating your digital signature</p>
                         </div>
