@@ -19,6 +19,7 @@ import {
     ShieldCheck
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDevice } from "@/shared/hooks/useDevice";
 import { cn } from "@/shared/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
@@ -46,12 +47,22 @@ const navigation = [
 ];
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const { isMobile, isLowEndDevice } = useDevice();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(!isMobile);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Auto-close sidebar on mobile
+    React.useEffect(() => {
+        if (isMobile) {
+            setIsSidebarOpen(false);
+        } else {
+            setIsSidebarOpen(true);
+        }
+    }, [isMobile]);
 
     const handleLogout = async () => {
         try {
@@ -127,11 +138,12 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     );
 
     return (
-        <div className="flex h-screen bg-background text-foreground overflow-hidden">
+        <div className="flex vh-height bg-background text-foreground overflow-hidden">
             {/* Desktop Sidebar */}
             <aside
                 className={cn(
-                    "bg-card border-r transition-all duration-300 ease-in-out hidden md:flex flex-col z-20",
+                    "bg-card border-r hidden md:flex flex-col z-20",
+                    !isLowEndDevice && "transition-all duration-300 ease-in-out",
                     isSidebarOpen ? "w-64" : "w-16"
                 )}
             >

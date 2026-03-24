@@ -156,3 +156,13 @@
     padding-right: var(--safe-area-inset-right);
   }
 }
+/* Viewport height utility for mobile browser consistency */
+.vh-height {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.min-vh-height {
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+}
