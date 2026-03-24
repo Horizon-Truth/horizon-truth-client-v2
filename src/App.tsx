@@ -41,8 +41,8 @@ import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
 import GuestGamePage from "@/modules/simulation/GuestGamePage";
 import AuditLogPage from "./modules/admin/pages/AuditLogPage";
-import { Toaster } from "sonner";
-import { lazy, Suspense } from "react";
+import { Toaster, toast } from "sonner";
+import { lazy, Suspense, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "./shared/components/layout/ErrorBoundary";
 
@@ -66,6 +66,29 @@ const ResourceEditPage = lazy(() => import('./modules/resources/admin/ResourceEd
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    const handleOnline = () => {
+      toast.success("Network connection restored. You are back online.", {
+        icon: "🔌",
+        duration: 4000,
+      });
+    };
+    const handleOffline = () => {
+      toast.error("Network connection lost. Changes will be saved locally when possible.", {
+        icon: "📡",
+        duration: 5000,
+      });
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
