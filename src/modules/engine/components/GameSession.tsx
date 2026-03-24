@@ -37,6 +37,7 @@ export function GameSession() {
     const submitChoice = useGameStore(s => s.submitChoice);
     const lastSpreadSimulation = useGameStore(s => s.lastSpreadSimulation);
     const lastChoiceLabel = useGameStore(s => s.lastChoiceLabel);
+    const lastChoiceFeedback = useGameStore(s => s.lastChoiceFeedback);
     const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
     const reputationRole = useGameStore(s => s.reputationRole);
     const currentStreak = useGameStore(s => s.currentStreak);
@@ -505,6 +506,35 @@ export function GameSession() {
                                 onChoice={handleChoice}
                                 isLoading={isLoading}
                             />
+
+                            {/* Choice Feedback Message */}
+                            <AnimatePresence>
+                                {lastChoiceFeedback && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="p-6 rounded-[2rem] bg-white shadow-xl border border-slate-100 flex items-start gap-4 relative overflow-hidden group w-full"
+                                    >
+                                        <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
+                                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                                            <ShieldCheck size={20} className="text-primary" />
+                                        </div>
+                                        <div className="space-y-1 pr-8">
+                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Mission Intel</h4>
+                                            <p className="text-sm font-medium text-slate-700 leading-relaxed italic">
+                                                "{lastChoiceFeedback}"
+                                            </p>
+                                        </div>
+                                        <button 
+                                            onClick={clearSpreadSimulation}
+                                            className="absolute top-4 right-4 p-2 text-slate-300 hover:text-slate-600 transition-colors"
+                                        >
+                                            <PowerOff size={14} />
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* Error Handling */}

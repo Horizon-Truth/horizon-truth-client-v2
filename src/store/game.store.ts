@@ -24,6 +24,7 @@ export interface GameState {
     // Spread simulation data from last choice
     lastSpreadSimulation: { reach: number; reshares: number; credibility_loss: number } | null;
     lastChoiceLabel: string | null;
+    lastChoiceFeedback: string | null;
     // Player identity
     reputationRole: string;
     currentStreak: number;
@@ -61,6 +62,7 @@ export const useGameStore = create<GameState>()(
             pendingBadges: [],
             lastSpreadSimulation: null,
             lastChoiceLabel: null,
+            lastChoiceFeedback: null,
             reputationRole: 'OBSERVER',
             currentStreak: 0,
 
@@ -163,7 +165,7 @@ export const useGameStore = create<GameState>()(
                 const { activeProgress, isLoading } = get();
                 if (!activeProgress || isLoading) return;
 
-                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null });
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null });
                 try {
                     const result = await engineService.submitChoice({
                         progressId: activeProgress.id,
@@ -194,6 +196,7 @@ export const useGameStore = create<GameState>()(
                             },
                             lastSpreadSimulation: spreadSim,
                             lastChoiceLabel: choiceLabel || choiceKey,
+                            lastChoiceFeedback: result.message || null,
                             isLoading: false
                         });
                         // Phase 16: Prefetch next scene assets
@@ -234,11 +237,12 @@ export const useGameStore = create<GameState>()(
                 isLoading: false,
                 lastSpreadSimulation: null,
                 lastChoiceLabel: null,
+                lastChoiceFeedback: null,
             }),
 
             clearError: () => set({ error: null }),
 
-            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null }),
+            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null }),
 
             removePendingBadge: (badgeId: string) => set(state => ({
                 pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)

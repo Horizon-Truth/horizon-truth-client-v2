@@ -35,6 +35,7 @@ export interface Scenario {
     campaignTag?: string | null;
     totalPossibleScore?: number;
     order?: number;
+    activeProgressId?: string | null;
 }
 
 export interface Scene {
