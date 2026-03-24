@@ -84,37 +84,37 @@ export default function GamePage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
                             <Button
                                 onClick={() => setIsFeedbackOpen(true)}
                                 variant="ghost"
-                                className="flex-1 sm:flex-none rounded-xl h-10 px-4 font-bold gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
+                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
                             >
-                                <MessageSquare size={18} />
-                                <span className="text-xs">Feedback</span>
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-[10px] sm:text-xs">Feedback</span>
                             </Button>
                             <Button
                                 onClick={() => navigate("/crowdsourcing/submit")}
                                 variant="ghost"
-                                className="flex-1 sm:flex-none rounded-xl h-10 px-4 font-bold gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
+                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
                             >
-                                <MessageSquare size={18} />
-                                <span className="text-xs">Submit Report</span>
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-[10px] sm:text-xs whitespace-nowrap">Report</span>
                             </Button>
 
                             <Button
                                 onClick={() => logout()}
                                 variant="ghost"
-                                className="flex-1 sm:flex-none rounded-xl h-10 px-4 font-bold gap-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                className="flex-none rounded-xl h-10 px-3 sm:px-4 font-bold gap-1 sm:gap-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
                             >
-                                <LogOut size={18} />
+                                <LogOut size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span className="hidden sm:inline text-xs">Log Out</span>
                             </Button>
                         </div>
                     </div>
 
                     {/* Stats Header */}
-                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
                             label="Protocol Trust"
                             value={`${stats.trustScore}%`}
@@ -243,10 +243,10 @@ export default function GamePage() {
 
 function StatCard({ label, value, subValue, icon, progress, color }: { label: string, value: string, subValue?: string, icon: React.ReactNode, progress?: number, color?: string }) {
     return (
-        <div className="bg-card/20 border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 backdrop-blur-xl relative overflow-hidden group hover:border-white/20 hover:bg-card/30 transition-all duration-300">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <span className="text-[8px] sm:text-[10px] font-black text-muted-foreground tracking-[0.2em] uppercase">{label}</span>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform">
+        <div className="bg-card/20 border border-white/10 rounded-[1.2rem] sm:rounded-[2rem] p-3 sm:p-6 backdrop-blur-xl relative overflow-hidden group hover:border-white/20 hover:bg-card/30 transition-all duration-300">
+            <div className="flex items-center justify-between mb-3 sm:mb-6">
+                <span className="text-[8px] sm:text-[10px] font-black text-muted-foreground tracking-[0.1em] sm:tracking-[0.2em] uppercase truncate pr-1 sm:pr-2">{label}</span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 group-hover:rotate-12 transition-transform">
                     {icon}
                 </div>
             </div>

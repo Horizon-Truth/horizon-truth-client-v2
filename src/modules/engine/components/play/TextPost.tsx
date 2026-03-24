@@ -56,7 +56,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col min-w-0">
                             <span className="font-bold text-slate-900 hover:underline cursor-pointer truncate">Horizon Systems</span>
-                            <span className="text-xs sm:text-sm text-slate-500 truncate">@horizon_intel · 12m</span>
+                            <span className="text-[10px] sm:text-xs md:text-sm text-slate-500 truncate">@horizon_intel · 12m</span>
                         </div>
                         <button className="text-muted-foreground hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1 flex-shrink-0">
                             <MoreHorizontal className="w-5 h-5 cursor-pointer" />
@@ -113,7 +113,7 @@ export const TextPost: React.FC<TextPostProps> = memo(({ scene, onChoice, isLoad
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between pt-2 max-w-sm text-slate-500 font-black">
+                        <div className="flex flex-wrap items-center justify-between pt-2 max-w-sm text-slate-500 font-black gap-y-2">
                             <button className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer hover:text-blue-600 transition-colors focus-visible:ring-1 focus-visible:ring-blue-600 rounded-md p-1 -m-1">
                                 <div className="p-1.5 sm:p-2 group-hover:bg-blue-600/10 rounded-full transition-colors">
                                     <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />

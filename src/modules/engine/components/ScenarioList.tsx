@@ -141,7 +141,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                             >
 
                                 {/* Node Container - Left aligned on desktop */}
-                                <div className="relative w-24 flex-shrink-0 flex items-center justify-center z-20">
+                                <div className="relative w-20 sm:w-24 shrink-0 flex items-center justify-center z-20">
                                     {/* Connecting Line Segment for mobile */}
                                     {!isLast && (
                                         <div className="absolute top-[90px] bottom-[-2.5rem] left-1/2 w-2 bg-white/10 -translate-x-1/2 sm:hidden rounded-full z-0" />
@@ -191,7 +191,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                         accuracy === 100 ? "border-emerald-500/30 bg-emerald-500/5 shadow-[0_10px_40px_rgba(16,185,129,0.05)]" :
                                             "border-white/10 hover:border-primary/30 hover:bg-card/60"
                                 )}>
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-3">
                                         <div>
                                             <h3 className={cn("text-xl font-bold", isLocked ? "text-muted-foreground" : accuracy === 100 ? "text-emerald-400" : "text-foreground")}>
                                                 {scenario.title}
@@ -230,7 +230,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                         {scenario.description}
                                     </p>
 
-                                    <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-2">
+                                    <div className="flex flex-col sm:flex-row justify-start items-stretch sm:items-center gap-3 sm:gap-4 mt-2">
                                         <Button
                                             onClick={() => {
                                                 if (isLocked) return;

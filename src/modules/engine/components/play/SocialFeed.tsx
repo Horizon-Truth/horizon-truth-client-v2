@@ -167,7 +167,7 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between text-muted-foreground pt-1 pr-2 sm:pr-8">
+                        <div className="flex flex-wrap items-center justify-between text-muted-foreground pt-1 pr-1 sm:pr-8 gap-y-2">
                             <button
                                 onClick={handleShareClick}
                                 className="flex items-center gap-1 sm:gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1"

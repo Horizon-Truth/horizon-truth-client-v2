@@ -428,13 +428,13 @@ export function GameSession() {
             <main className="flex-1 flex flex-col relative bg-slate-50/50">
                 {/* Header */}
                 <header className="h-16 sm:h-20 border-b border-slate-200 px-3 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                    <div className="flex flex-col gap-1 w-full max-w-[65%] sm:w-1/2 overflow-hidden">
+                    <div className="flex flex-col gap-1 w-full max-w-[55%] sm:max-w-[65%] lg:w-1/2 overflow-hidden">
                         <div className="flex items-center gap-1.5 sm:gap-3 overflow-hidden">
                             <span className={cn("font-black italic tracking-tighter text-xs sm:text-lg uppercase truncate", themeConfig.color)}>
                                 {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
                             </span>
-                            <div className="h-3 w-[1px] bg-slate-200 flex-shrink-0" />
-                            <span className="text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap flex-shrink-0">
+                            <div className="hidden xs:block h-3 w-[1px] bg-slate-200 flex-shrink-0" />
+                            <span className="hidden xs:inline text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap flex-shrink-0">
                                 S{activeProgress.currentScene.order}/{totalScenes || '?'}
                             </span>
                         </div>
@@ -573,8 +573,8 @@ export function GameSession() {
                                                 <div className="flex items-center justify-between">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] font-black text-primary/40 leading-none">[{index + 1}]</span>
-                                                            <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
+                                                            <span className="text-[10px] shrink-0 font-black text-primary/40 leading-none">[{index + 1}]</span>
+                                                            <span className="font-bold text-sm sm:text-lg group-hover:text-primary transition-colors">{choice}</span>
                                                         </div>
                                                         <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">System Directive Alpha</p>
                                                     </div>
@@ -742,7 +742,7 @@ const CountdownTimer = memo(({ timeLeft, totalTime }: { timeLeft: number; totalT
     const isUrgent = timeLeft <= 5;
 
     return (
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
             <motion.div
                 animate={isUrgent ? { scale: [1, 1.1, 1] } : {}}
                 transition={{ repeat: Infinity, duration: 0.5 }}
