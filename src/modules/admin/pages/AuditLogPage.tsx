@@ -10,7 +10,8 @@ import {
   Shield,
   Activity,
   Calendar,
-  Info
+  Info,
+  Download
 } from 'lucide-react';
 import { auditLogService } from '@/services/audit-log.service';
 import type { AuditLogItem } from '@/services/audit-log.service';
@@ -36,6 +37,27 @@ export default function AuditLogPage() {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const blob = await auditLogService.exportLogs({ 
+        entityType, 
+        action: actionFilter 
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `audit-logs-export-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+      // Optional: add a toast notification if we had one available, 
+      // but let's stick to the requirements.
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
@@ -49,6 +71,13 @@ export default function AuditLogPage() {
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Track all administrative operations and system changes.</p>
         </div>
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white font-black italic uppercase rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10"
+        >
+          <Download size={18} />
+          <span>Export CSV</span>
+        </button>
       </div>
 
       {/* Filters */}

@@ -33,10 +33,22 @@ export const auditLogService = {
     action?: string;
     entityType?: string;
   }) => {
-    // Mapping internal actionFilter to what the backend expects (action)
     const { page, limit, userId, action, entityType } = params;
     const response = await api.get<AuditLogResponse>('/audit-logs', { 
       params: { page, limit, userId, action, entityType } 
+    });
+    return response.data;
+  },
+
+  exportLogs: async (params: {
+    userId?: string;
+    action?: string;
+    entityType?: string;
+  }) => {
+    const { userId, action, entityType } = params;
+    const response = await api.get('/audit-logs/export', {
+      params: { userId, action, entityType },
+      responseType: 'blob',
     });
     return response.data;
   },
