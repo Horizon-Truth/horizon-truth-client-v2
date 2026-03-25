@@ -30,3 +30,22 @@ const languageSchema = z.object({
     code: z.string().min(2, "Code must be at least 2 characters").max(10, "Code is too long"),
     isActive: z.boolean(),
 });
+
+interface LanguageDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    language?: Language | null;
+    onSuccess: () => void;
+}
+
+export function LanguageDialog({ open, onOpenChange, language, onSuccess }: LanguageDialogProps) {
+    const [loading, setLoading] = useState(false);
+
+    type LanguageFormValues = z.infer<typeof languageSchema>;
+
+    const form = useForm<LanguageFormValues>({
+        resolver: zodResolver(languageSchema),
+        defaultValues: {
+            name: "",
+            code: "",
+            isActive: true,
