@@ -42,6 +42,7 @@ import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage
 import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
 import GuestGamePage from "@/modules/simulation/GuestGamePage";
 import AuditLogPage from "./modules/admin/pages/AuditLogPage";
+import GameAnalyticsPage from "./modules/analytics/GameAnalyticsPage";
 import { Toaster, toast } from "sonner";
 import { lazy, Suspense, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -159,7 +160,7 @@ function App() {
                           <Route path="gamification" element={<div>Gamification Page</div>} />
                           <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="engine/:id" element={user?.role !== 'PLAYER' ? <ScenarioDetailPage /> : <Navigate to="/dashboard/game" replace />} />
-                          <Route path="analytics" element={user?.role !== 'PLAYER' ? <div>Analytics Page</div> : <Navigate to="/dashboard/game" replace />} />
+                          <Route path="analytics" element={user?.role !== 'PLAYER' ? <GameAnalyticsPage /> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="health" element={user?.role === 'SYSTEM_ADMIN' ? <SystemHealthPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
