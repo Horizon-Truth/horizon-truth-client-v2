@@ -16,7 +16,8 @@ import {
     MessageSquare,
     BookOpen,
     Megaphone,
-    ShieldCheck
+    ShieldCheck,
+    BarChart3
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDevice } from "@/shared/hooks/useDevice";
@@ -33,6 +34,7 @@ const navigationGroups = [
         title: "Operations",
         items: [
             { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+            { name: "Game Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
             { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
             { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
         ]

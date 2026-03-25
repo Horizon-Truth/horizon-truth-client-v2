@@ -38,6 +38,31 @@ export interface SystemHealth {
     environment: string;
 }
 
+export interface GamePlayAnalytics {
+    overview: {
+        totalSessions: number;
+        uniquePlayers: number;
+        avgScore: number;
+        avgAccuracy: number;
+        completionRate: number;
+    };
+    trend: Array<{ date: string; count: number }>;
+    popularity: Array<{ name: string; count: number }>;
+    distributions: {
+        outcomes: Record<string, number>;
+        difficulties: Record<string, number>;
+    };
+}
+
+export interface RecentSession {
+    id: string;
+    score: number;
+    outcome: string;
+    createdAt: string;
+    scenarioTitle: string;
+    playerName: string;
+}
+
 export const useAnalyticsStats = () => {
     return useQuery<AnalyticsStats>({
         queryKey: ['analytics-stats'],
@@ -55,6 +80,26 @@ export const useSystemHealth = () => {
             const response = await api.get('/analytics/health');
             return response.data;
         },
-        refetchInterval: 5000, // Refresh every 5 seconds for real-time status
+        refetchInterval: 5000, 
+    });
+};
+
+export const useGamePlayAnalytics = () => {
+    return useQuery<GamePlayAnalytics>({
+        queryKey: ['gameplay-analytics'],
+        queryFn: async () => {
+            const response = await api.get('/analytics/gameplay');
+            return response.data;
+        },
+    });
+};
+
+export const useRecentSessions = (limit: number = 10) => {
+    return useQuery<RecentSession[]>({
+        queryKey: ['recent-sessions', limit],
+        queryFn: async () => {
+            const response = await api.get('/analytics/gameplay/recent', { params: { limit } });
+            return response.data;
+        },
     });
 };
