@@ -3,9 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
+import { useAuthStore } from "@/store/auth.store";
+import { ThemeToggle } from "@/shared/components/theme-toggle";
 
 export const PublicNavbar = () => {
     const navigate = useNavigate();
+    const { isAuthenticated, user } = useAuthStore();
     const location = useLocation();
 
     const isHomePage = location.pathname === "/";
@@ -28,6 +31,7 @@ export const PublicNavbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
+                        <ThemeToggle />
                         <button
                             onClick={() => navigate("/about")}
                             className="text-sm font-medium hover:text-primary transition-colors"
@@ -60,7 +64,13 @@ export const PublicNavbar = () => {
                             Login
                         </button>
                         <button
-                            onClick={() => navigate("/dashboard")}
+                            onClick={() => {
+                                if (isAuthenticated) {
+                                    navigate(user?.role === 'PLAYER' ? "/dashboard/game" : "/dashboard");
+                                } else {
+                                    navigate("/login");
+                                }
+                            }}
                             className="text-sm font-medium px-4 py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all flex items-center gap-2"
                         >
                             Start the Game <ArrowRight size={16} />
@@ -109,6 +119,10 @@ export const PublicNavbar = () => {
                                         FAQ
                                     </button>
                                     <hr className="border-border" />
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-lg font-medium">Theme</span>
+                                        <ThemeToggle />
+                                    </div>
                                     <button
                                         onClick={() => navigate("/login")}
                                         className="text-left text-lg font-medium hover:text-primary transition-colors"
@@ -116,7 +130,13 @@ export const PublicNavbar = () => {
                                         Login
                                     </button>
                                     <button
-                                        onClick={() => navigate("/dashboard")}
+                                        onClick={() => {
+                                            if (isAuthenticated) {
+                                                navigate(user?.role === 'PLAYER' ? "/dashboard/game" : "/dashboard");
+                                            } else {
+                                                navigate("/login");
+                                            }
+                                        }}
                                         className="w-full px-4 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2"
                                     >
                                         Start Game <ArrowRight size={18} />

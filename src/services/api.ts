@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { useAuthStore } from '../store/auth.store';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +14,15 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+});
+
+// Configure automatic retries for network errors and 5xx responses
+axiosRetry(api, {
+    retries: 3,
+    retryDelay: axiosRetry.exponentialDelay,
+    retryCondition: (error) => {
+        return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.response?.status === 503 || error.response?.status === 502;
+    }
 });
 
 api.interceptors.request.use(

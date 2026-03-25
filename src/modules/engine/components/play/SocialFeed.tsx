@@ -167,23 +167,23 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between text-muted-foreground pt-1 pr-2 sm:pr-8">
+                        <div className="flex flex-wrap items-center justify-between text-muted-foreground pt-1 pr-1 sm:pr-8 gap-y-4 gap-x-4 mt-2">
                             <button
                                 onClick={handleShareClick}
-                                className="flex items-center gap-1 sm:gap-1.5 hover:text-blue-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-md p-1 -m-1"
+                                className="flex items-center gap-1.5 sm:gap-2 hover:text-blue-400 transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3"
                             >
                                 <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span className="text-xs sm:text-sm font-bold">{shares}</span>
                             </button>
-                            <button className="flex items-center gap-1 sm:gap-1.5 hover:text-emerald-400 transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-md p-1 -m-1">
+                            <button className="flex items-center gap-1.5 sm:gap-2 hover:text-emerald-400 transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span className="text-xs sm:text-sm font-bold">{views}</span>
                             </button>
-                            <button className="flex items-center gap-1.5 hover:text-rose-400 transition-colors cursor-pointer text-rose-400/80 focus-visible:ring-1 focus-visible:ring-rose-400 rounded-md p-1 -m-1">
+                            <button className="flex items-center gap-1.5 sm:gap-2 hover:text-rose-400 transition-all active:scale-90 cursor-pointer text-rose-400/80 focus-visible:ring-1 focus-visible:ring-rose-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <Heart size={16} fill="currentColor" className="fill-rose-400/20 sm:w-[18px] sm:h-[18px]" />
                                 <span className="text-xs sm:text-sm font-bold">{likes}</span>
                             </button>
-                            <button className="hover:text-primary transition-colors cursor-pointer focus-visible:ring-1 focus-visible:ring-primary rounded-md p-1 -m-1">
+                            <button className="hover:text-primary transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-primary rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <Bookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
                             </button>
                         </div>

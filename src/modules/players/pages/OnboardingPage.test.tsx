@@ -60,19 +60,19 @@ const renderComponent = () =>
 describe('OnboardingPage', () => {
     it('renders the onboarding title', () => {
         renderComponent();
-        expect(screen.getByText(/Initialize Identity/i)).toBeDefined();
-        expect(screen.getByPlaceholderText(/Enter your alias.../i)).toBeDefined();
+        expect(screen.getByText(/Create Your Profile/i)).toBeDefined();
+        expect(screen.getByPlaceholderText(/e.g. Alex/i)).toBeDefined();
     });
 
     it('disables the submit button initially', () => {
         renderComponent();
-        const button = screen.getByRole('button', { name: /Enter The Digital World/i });
+        const button = screen.getByRole('button', { name: /Complete Profile/i });
         expect(button).toBeDisabled();
     });
 
     it('updates nickname input', () => {
         renderComponent();
-        const input = screen.getByPlaceholderText(/Enter your alias.../i) as HTMLInputElement;
+        const input = screen.getByPlaceholderText(/e.g. Alex/i) as HTMLInputElement;
         fireEvent.change(input, { target: { value: 'Skywalker' } });
         expect(input.value).toBe('Skywalker');
     });

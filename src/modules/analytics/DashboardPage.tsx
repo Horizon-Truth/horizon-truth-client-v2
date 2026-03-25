@@ -29,10 +29,12 @@ import {
     Legend
 } from 'recharts';
 import { motion } from "framer-motion";
+import { useDevice } from "@/shared/hooks/useDevice";
 
 const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981'];
 
 export default function DashboardPage() {
+    const { isLowEndDevice, prefersReducedMotion } = useDevice();
     const { data: stats, isLoading, isError } = useAnalyticsStats();
     const { user } = useAuthStore();
 
@@ -98,13 +100,13 @@ export default function DashboardPage() {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.1
+                staggerChildren: isLowEndDevice ? 0 : 0.1
             }
         }
     };
 
     const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
+        hidden: { y: isLowEndDevice ? 0 : 20, opacity: 0 },
         visible: { y: 0, opacity: 1 }
     };
 
@@ -145,7 +147,7 @@ export default function DashboardPage() {
                     <motion.div
                         key={card.title}
                         variants={itemVariants}
-                        whileHover={{ scale: 1.02, translateY: -5 }}
+                        whileHover={!isLowEndDevice && !prefersReducedMotion ? { scale: 1.02, translateY: -5 } : undefined}
                         className="group relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
                     >
                         <div className={`absolute top-0 right-0 p-3 opacity-10 transition-opacity group-hover:opacity-20`}>

@@ -141,7 +141,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                             >
 
                                 {/* Node Container - Left aligned on desktop */}
-                                <div className="relative w-24 flex-shrink-0 flex items-center justify-center z-20">
+                                <div className="relative w-20 sm:w-24 shrink-0 flex items-center justify-center z-20">
                                     {/* Connecting Line Segment for mobile */}
                                     {!isLast && (
                                         <div className="absolute top-[90px] bottom-[-2.5rem] left-1/2 w-2 bg-white/10 -translate-x-1/2 sm:hidden rounded-full z-0" />
@@ -191,7 +191,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                         accuracy === 100 ? "border-emerald-500/30 bg-emerald-500/5 shadow-[0_10px_40px_rgba(16,185,129,0.05)]" :
                                             "border-white/10 hover:border-primary/30 hover:bg-card/60"
                                 )}>
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-3">
                                         <div>
                                             <h3 className={cn("text-xl font-bold", isLocked ? "text-muted-foreground" : accuracy === 100 ? "text-emerald-400" : "text-foreground")}>
                                                 {scenario.title}
@@ -230,20 +230,28 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                         {scenario.description}
                                     </p>
 
-                                    <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-4 mt-2">
+                                    <div className="flex flex-col sm:flex-row justify-start items-stretch sm:items-center gap-3 sm:gap-4 mt-2">
                                         <Button
-                                            onClick={() => !isLocked && handleStartGame(scenario)}
+                                            onClick={() => {
+                                                if (isLocked) return;
+                                                if (scenario.activeProgressId) {
+                                                    gameStore.loadProgress(scenario.activeProgressId);
+                                                } else {
+                                                    handleStartGame(scenario);
+                                                }
+                                            }}
                                             disabled={loadingScenarioId !== null || isLocked}
                                             className={cn(
                                                 "px-8 h-10 rounded-xl font-bold transition-all active:scale-95 text-sm",
                                                 isLocked ? "bg-gray-500/10 text-gray-500" :
-                                                    accuracy === 100 ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_4px_0_rgb(4,120,87)] active:translate-y-1 active:shadow-none" :
-                                                        "bg-primary text-white shadow-[0_4px_0_rgba(var(--primary),0.8)] active:translate-y-1 active:shadow-none"
+                                                    scenario.activeProgressId ? "bg-amber-500 hover:bg-amber-600 text-white shadow-[0_4px_0_rgb(180,83,9)] active:translate-y-1 active:shadow-none" :
+                                                        accuracy === 100 ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_4px_0_rgb(4,120,87)] active:translate-y-1 active:shadow-none" :
+                                                            "bg-primary text-white shadow-[0_4px_0_rgba(var(--primary),0.8)] active:translate-y-1 active:shadow-none"
                                             )}
                                         >
                                             {loadingScenarioId === scenario.id ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                             {isLocked ? <Lock size={16} className="mr-2" /> : null}
-                                            {isLocked ? 'Locked' : accuracy === 100 ? 'Replay Mission' : hasPlayed ? 'Improve Score' : 'Start Mission'}
+                                            {isLocked ? 'Locked' : scenario.activeProgressId ? 'Resume Mission' : accuracy === 100 ? 'Replay Mission' : hasPlayed ? 'Improve Score' : 'Start Mission'}
                                         </Button>
 
                                         {/* Display Unlock Requirement if Locked */}

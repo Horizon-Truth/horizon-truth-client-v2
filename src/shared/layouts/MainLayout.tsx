@@ -19,39 +19,78 @@ import {
     ShieldCheck
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDevice } from "@/shared/hooks/useDevice";
 import { cn } from "@/shared/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import { ThemeToggle } from "@/shared/components/theme-toggle";
 import { authService } from "@/services/auth.service";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 
-const navigation = [
-    { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
-    { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
-    { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
-    { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
-    { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
-    { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
-    { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
-    { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN"] },
-    { name: "Avatar Manager", icon: Settings, href: "/dashboard/players/avatars", roles: ["SYSTEM_ADMIN"] },
-    { name: "Blogs", icon: FileText, href: "/dashboard/resources/blogs", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
-    { name: "Contact Comms", icon: MessageSquare, href: "/dashboard/contacts", roles: ["SYSTEM_ADMIN"] },
-    { name: "Newsletter Base", icon: Megaphone, href: "/dashboard/newsletter", roles: ["SYSTEM_ADMIN"] },
-    { name: "Audit Log Base", icon: ShieldCheck, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN"] },
+const navigationGroups = [
+    {
+        title: "Operations",
+        items: [
+            { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+            { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
+            { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
+        ]
+    },
+    {
+        title: "Accounts",
+        items: [
+            { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
+            { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
+            { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
+            { name: "Avatar Manager", icon: Settings, href: "/dashboard/players/avatars", roles: ["SYSTEM_ADMIN"] },
+        ]
+    },
+    {
+        title: "Engine",
+        items: [
+            { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN"] },
+        ]
+    },
+    {
+        title: "Content",
+        items: [
+            { name: "Blogs", icon: FileText, href: "/dashboard/resources/blogs", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Contact Comms", icon: MessageSquare, href: "/dashboard/contacts", roles: ["SYSTEM_ADMIN"] },
+            { name: "Newsletters", icon: Megaphone, href: "/dashboard/newsletter", roles: ["SYSTEM_ADMIN"] },
+        ]
+    },
+    {
+        title: "Reports & Safety",
+        items: [
+            { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
+            { name: "Audit Logs", icon: ShieldCheck, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN"] },
+        ]
+    }
 ];
 
+const navigation = navigationGroups.flatMap(g => g.items);
+
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+    const { isMobile, isLowEndDevice } = useDevice();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(!isMobile);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Auto-close sidebar on mobile
+    React.useEffect(() => {
+        if (isMobile) {
+            setIsSidebarOpen(false);
+        } else {
+            setIsSidebarOpen(true);
+        }
+    }, [isMobile]);
 
     const handleLogout = async () => {
         try {
@@ -63,12 +102,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             navigate("/login");
         }
     };
-
-    const filteredNav = navigation.filter(item => {
-        if (!item.roles) return true;
-        if (item.roles.includes("GUEST")) return true;
-        return user?.role && item.roles.includes(user.role);
-    });
 
     const NavContent = ({ mobile = false, onSelect }: { mobile?: boolean, onSelect?: () => void }) => (
         <div className="flex flex-col h-full">
@@ -93,33 +126,62 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 )}
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
-                {filteredNav.map((item) => {
-                    const isActive = location.pathname === item.href;
+            <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-4">
+                {navigationGroups.map((group) => {
+                    const groupItems = group.items.filter(item => {
+                        if (!item.roles) return true;
+                        if (item.roles.includes("GUEST")) return true;
+                        return user?.role && item.roles.includes(user.role);
+                    });
+
+                    if (groupItems.length === 0) return null;
+
                     return (
-                        <Link
-                            key={item.name}
-                            to={item.href}
-                            onClick={onSelect}
-                            className={cn(
-                                "flex items-center px-2 py-2.5 text-sm font-medium rounded-md transition-colors group",
-                                isActive
-                                    ? "bg-primary text-primary-foreground"
-                                    : "hover:bg-accent hover:text-accent-foreground",
-                                !isSidebarOpen && !mobile && "justify-center"
+                        <div key={group.title} className="space-y-1">
+                            {/* Group Header */}
+                            {(isSidebarOpen || mobile) && (
+                                <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 mb-2 mt-4">
+                                    {group.title}
+                                </p>
                             )}
-                        >
-                            <item.icon
-                                className={cn(
-                                    "flex-shrink-0 transition-all",
-                                    isSidebarOpen || mobile ? "mr-3 h-5 w-5" : "h-6 w-6"
-                                )}
-                            />
-                            {(isSidebarOpen || mobile) && <span>{item.name}</span>}
-                            {isActive && (isSidebarOpen || mobile) && (
-                                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
-                            )}
-                        </Link>
+
+                            {/* Group Items */}
+                            {groupItems.map((item) => {
+                                const isActive = location.pathname === item.href;
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        to={item.href}
+                                        onClick={onSelect}
+                                        className={cn(
+                                            "flex items-center px-2 py-2.5 text-sm font-medium rounded-md transition-colors group relative",
+                                            isActive
+                                                ? "bg-primary text-primary-foreground"
+                                                : "hover:bg-accent hover:text-accent-foreground",
+                                            !isSidebarOpen && !mobile && "justify-center"
+                                        )}
+                                    >
+                                        <item.icon
+                                            className={cn(
+                                                "flex-shrink-0 transition-all",
+                                                isSidebarOpen || mobile ? "mr-3 h-5 w-5" : "h-6 w-6"
+                                            )}
+                                        />
+                                        {(isSidebarOpen || mobile) && <span>{item.name}</span>}
+                                        
+                                        {isActive && (isSidebarOpen || mobile) && (
+                                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-foreground/50" />
+                                        )}
+                                        {/* Show tooltip-like title when collapsed */}
+                                        {!isSidebarOpen && !mobile && (
+                                            <span className="absolute left-14 opacity-0 group-hover:opacity-100 bg-black/90 text-white text-xs px-2 py-1 rounded pointer-events-none transition-opacity font-bold whitespace-nowrap z-50">
+                                                {item.name}
+                                            </span>
+                                        )}
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     );
                 })}
             </nav>
@@ -127,11 +189,12 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     );
 
     return (
-        <div className="flex h-screen bg-background text-foreground overflow-hidden">
+        <div className="flex vh-height bg-background text-foreground overflow-hidden">
             {/* Desktop Sidebar */}
             <aside
                 className={cn(
-                    "bg-card border-r transition-all duration-300 ease-in-out hidden md:flex flex-col z-20",
+                    "bg-card border-r hidden md:flex flex-col z-20",
+                    !isLowEndDevice && "transition-all duration-300 ease-in-out",
                     isSidebarOpen ? "w-64" : "w-16"
                 )}
             >
@@ -154,7 +217,8 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                             </h1>
                         </div>
 
-                        <div className="relative">
+                        <div className="flex items-center gap-2 md:gap-4 relative">
+                            <ThemeToggle />
                             <button
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                 className="flex items-center gap-2 md:gap-3 p-1 md:p-1.5 md:pr-3 rounded-full hover:bg-accent transition-all group border border-transparent hover:border-border"
@@ -183,39 +247,6 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                                             <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account</p>
                                             <p className="md:hidden text-sm font-medium mt-1">{user?.fullName}</p>
                                         </div>
-                                        {user?.role !== 'PLAYER' && (
-                                            <>
-                                                <Link
-                                                    to="/dashboard/reports"
-                                                    className={cn(
-                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                        location.pathname === "/dashboard/reports"
-                                                            ? "bg-primary/10 text-primary"
-                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                    )}
-                                                >
-                                                    <FileText size={18} />
-                                                    Reports
-                                                </Link>
-                                                <Link
-                                                    to="/dashboard/reports-config"
-                                                    className={cn(
-                                                        "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                                                        location.pathname === "/dashboard/reports-config"
-                                                            ? "bg-primary/10 text-primary"
-                                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                                    )}
-                                                >
-                                                    <Settings size={18} />
-                                                    Reports Config
-                                                </Link>
-                                                <div className="pt-4 pb-2">
-                                                    <p className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                                        System
-                                                    </p>
-                                                </div>
-                                            </>
-                                        )}
                                         <Link
                                             to="/dashboard/profile"
                                             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
@@ -236,7 +267,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                             )}
                         </div>
                     </header>
-                    <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/20 w-full">
+                    <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/20 w-full animate-in fade-in duration-500">
                         {children}
                     </main>
                 </div>

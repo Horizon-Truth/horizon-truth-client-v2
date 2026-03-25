@@ -176,9 +176,30 @@ export default function FeedbackDashboardPage() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button variant="ghost" size="icon" className="rounded-xl self-end sm:self-center group-hover:translate-x-1 transition-transform">
-                                            <ArrowRight size={18} />
-                                        </Button>
+                                        <div className="flex items-center gap-2 self-end sm:self-center">
+                                            {item.status !== 'RESOLVED' && (
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    disabled={isLoading}
+                                                    onClick={async () => {
+                                                        try {
+                                                            await feedbackService.updateFeedback(item.id, { status: 'RESOLVED' });
+                                                            toast.success("Feedback marked as resolved");
+                                                            fetchData();
+                                                        } catch (err) {
+                                                            toast.error("Failed to update feedback");
+                                                        }
+                                                    }}
+                                                    className="rounded-xl px-4 h-9 font-bold text-[10px] uppercase border-emerald-500/30 text-emerald-600 hover:bg-emerald-50"
+                                                >
+                                                    Resolve
+                                                </Button>
+                                            )}
+                                            <Button variant="ghost" size="icon" className="rounded-xl group-hover:translate-x-1 transition-transform">
+                                                <ArrowRight size={18} />
+                                            </Button>
+                                        </div>
                                     </div>
                                 ))}
                                 <Button variant="outline" className="w-full rounded-2xl h-12 font-bold border-dashed mt-4">

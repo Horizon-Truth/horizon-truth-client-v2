@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
+import { useDevice } from '@/shared/hooks/useDevice';
 import { cn } from '@/shared/lib/utils';
 import {
     ShieldCheck,
@@ -21,12 +22,15 @@ import { BadgeAwardOverlay } from '../engine/components/play/BadgeAwardOverlay';
 import { GlitchError } from '../engine/components/play/GlitchError';
 import { Button } from '@/shared/components/ui/button';
 import AddFeedbackModal from '../engine/components/AddFeedbackModal';
+import { useNavigate } from 'react-router-dom';
 
 export default function GamePage() {
+    const { isLowEndDevice } = useDevice();
     const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge } = useGameStore();
     const { user, logout } = useAuthStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
+    const navigate = useNavigate();
 
     // Ensure store is hydrated from localStorage before rendering
     useEffect(() => {
@@ -39,8 +43,12 @@ export default function GamePage() {
     return (
         <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20 relative">
             {/* Ambient Background Dashboard */}
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            {!isLowEndDevice && (
+                <>
+                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                </>
+            )}
 
             {/* Global Glitch Error Overlay */}
             {error && <GlitchError message={error} onRetry={clearError} />}
@@ -49,7 +57,11 @@ export default function GamePage() {
             {!activeProgress && !currentOutcome && (
                 <>
                     {/* User Profile Bar */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card/10 backdrop-blur-xl border border-white/5 rounded-3xl p-6 mb-2 animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className={cn(
+                        "flex flex-col sm:flex-row items-center justify-between gap-4 border border-white/5 rounded-3xl p-6 mb-2",
+                        !isLowEndDevice && "bg-card/10 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-500",
+                        isLowEndDevice && "bg-card/40"
+                    )}>
                         <div className="flex items-center gap-5">
                             <div className="relative group">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
@@ -72,28 +84,37 @@ export default function GamePage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
                             <Button
                                 onClick={() => setIsFeedbackOpen(true)}
                                 variant="ghost"
-                                className="flex-1 sm:flex-none rounded-xl h-10 px-4 font-bold gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
+                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
                             >
-                                <MessageSquare size={18} />
-                                <span className="text-xs">Feedback</span>
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-[10px] sm:text-xs">Feedback</span>
                             </Button>
+                            <Button
+                                onClick={() => navigate("/crowdsourcing/submit")}
+                                variant="ghost"
+                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
+                            >
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-[10px] sm:text-xs whitespace-nowrap">Report</span>
+                            </Button>
+
                             <Button
                                 onClick={() => logout()}
                                 variant="ghost"
-                                className="flex-1 sm:flex-none rounded-xl h-10 px-4 font-bold gap-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                className="flex-none rounded-xl h-10 px-3 sm:px-4 font-bold gap-1 sm:gap-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
                             >
-                                <LogOut size={18} />
+                                <LogOut size={16} className="sm:w-[18px] sm:h-[18px]" />
                                 <span className="hidden sm:inline text-xs">Log Out</span>
                             </Button>
                         </div>
                     </div>
 
                     {/* Stats Header */}
-                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
                             label="Protocol Trust"
                             value={`${stats.trustScore}%`}
@@ -132,7 +153,11 @@ export default function GamePage() {
 
                     {/* Main Content Area */}
                     <main className="flex-1 flex gap-8 relative z-10">
-                        <div className="flex-1 flex flex-col gap-6 bg-card/20 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden backdrop-blur-3xl shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden w-full max-w-6xl 2xl:max-w-7xl 3xl:max-w-[90rem] mx-auto">
+                        <div className={cn(
+                            "flex-1 flex flex-col gap-6 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden w-full max-w-6xl 2xl:max-w-7xl 3xl:max-w-[90rem] mx-auto",
+                            !isLowEndDevice && "bg-card/20 backdrop-blur-3xl",
+                            isLowEndDevice && "bg-card/40"
+                        )}>
                             <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
                                 <LayoutDashboard size={240} />
                             </div>
@@ -151,10 +176,31 @@ export default function GamePage() {
             {(activeProgress || currentOutcome) && (
                 <div className="fixed inset-0 z-[100] bg-white flex flex-col overflow-hidden animate-in fade-in duration-500">
                     {/* Background Ambient Glows */}
-                    <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-                    <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
+                    {!isLowEndDevice && (
+                        <>
+                            <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                            <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-emerald-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2 pointer-events-none" />
+                        </>
+                    )}
 
                     <div className="flex-1 relative z-10 w-full h-full overflow-hidden flex flex-col">
+                        {/* Exit Button for Immersive Mode */}
+                        <div className="absolute top-4 right-4 z-[110]">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    // Use window.confirm for safety if progress exists
+                                    if (activeProgress && !window.confirm("Exit mission? Progress will be lost.")) return;
+                                    navigate("/dashboard");
+                                    window.location.reload(); // Force refresh to clear game state if needed, or just navigate
+                                }}
+                                className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 font-bold uppercase tracking-widest text-[10px] h-8 rounded-full px-4"
+                            >
+                                <LogOut size={14} className="mr-2" />
+                                Exit Mission
+                            </Button>
+                        </div>
                         {activeProgress && <GameSession />}
                         {currentOutcome && <GameOutcome />}
                     </div>
@@ -197,10 +243,10 @@ export default function GamePage() {
 
 function StatCard({ label, value, subValue, icon, progress, color }: { label: string, value: string, subValue?: string, icon: React.ReactNode, progress?: number, color?: string }) {
     return (
-        <div className="bg-card/20 border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 backdrop-blur-xl relative overflow-hidden group hover:border-white/20 hover:bg-card/30 transition-all duration-300">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <span className="text-[8px] sm:text-[10px] font-black text-muted-foreground tracking-[0.2em] uppercase">{label}</span>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform">
+        <div className="bg-card/20 border border-white/10 rounded-[1.2rem] sm:rounded-[2rem] p-3 sm:p-6 backdrop-blur-xl relative overflow-hidden group hover:border-white/20 hover:bg-card/30 transition-all duration-300">
+            <div className="flex items-center justify-between mb-3 sm:mb-6">
+                <span className="text-[8px] sm:text-[10px] font-black text-muted-foreground tracking-[0.1em] sm:tracking-[0.2em] uppercase truncate pr-1 sm:pr-2">{label}</span>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 group-hover:rotate-12 transition-transform">
                     {icon}
                 </div>
             </div>

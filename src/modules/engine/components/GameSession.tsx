@@ -37,6 +37,7 @@ export function GameSession() {
     const submitChoice = useGameStore(s => s.submitChoice);
     const lastSpreadSimulation = useGameStore(s => s.lastSpreadSimulation);
     const lastChoiceLabel = useGameStore(s => s.lastChoiceLabel);
+    const lastChoiceFeedback = useGameStore(s => s.lastChoiceFeedback);
     const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
     const reputationRole = useGameStore(s => s.reputationRole);
     const currentStreak = useGameStore(s => s.currentStreak);
@@ -427,13 +428,13 @@ export function GameSession() {
             <main className="flex-1 flex flex-col relative bg-slate-50/50">
                 {/* Header */}
                 <header className="h-16 sm:h-20 border-b border-slate-200 px-3 sm:px-8 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50">
-                    <div className="flex flex-col gap-1 w-full max-w-[65%] sm:w-1/2 overflow-hidden">
+                    <div className="flex flex-col gap-1 w-full max-w-[55%] sm:max-w-[65%] lg:w-1/2 overflow-hidden">
                         <div className="flex items-center gap-1.5 sm:gap-3 overflow-hidden">
                             <span className={cn("font-black italic tracking-tighter text-xs sm:text-lg uppercase truncate", themeConfig.color)}>
                                 {activeProgress.scenarioTitle?.split('—')[0] || 'Mission Control'}
                             </span>
-                            <div className="h-3 w-[1px] bg-slate-200 flex-shrink-0" />
-                            <span className="text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap flex-shrink-0">
+                            <div className="hidden xs:block h-3 w-[1px] bg-slate-200 flex-shrink-0" />
+                            <span className="hidden xs:inline text-[7px] sm:text-[10px] font-black uppercase tracking-widest text-slate-400 whitespace-nowrap flex-shrink-0">
                                 S{activeProgress.currentScene.order}/{totalScenes || '?'}
                             </span>
                         </div>
@@ -505,6 +506,35 @@ export function GameSession() {
                                 onChoice={handleChoice}
                                 isLoading={isLoading}
                             />
+
+                            {/* Choice Feedback Message */}
+                            <AnimatePresence>
+                                {lastChoiceFeedback && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="p-6 rounded-[2rem] bg-white shadow-xl border border-slate-100 flex items-start gap-4 relative overflow-hidden group w-full"
+                                    >
+                                        <div className="absolute top-0 left-0 w-2 h-full bg-primary" />
+                                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                                            <ShieldCheck size={20} className="text-primary" />
+                                        </div>
+                                        <div className="space-y-1 pr-8">
+                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Mission Intel</h4>
+                                            <p className="text-sm font-medium text-slate-700 leading-relaxed italic">
+                                                "{lastChoiceFeedback}"
+                                            </p>
+                                        </div>
+                                        <button 
+                                            onClick={clearSpreadSimulation}
+                                            className="absolute top-4 right-4 p-2 text-slate-300 hover:text-slate-600 transition-colors"
+                                        >
+                                            <PowerOff size={14} />
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* Error Handling */}
@@ -533,7 +563,7 @@ export function GameSession() {
                                                 disabled={isLoading}
                                                 onClick={() => handleChoice(choice)}
                                                 className={cn(
-                                                    "group p-5 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden",
+                                                    "group p-5 text-left rounded-2xl border transition-all duration-300 relative overflow-hidden active:scale-[0.99]",
                                                     "bg-slate-100 border-slate-200 hover:border-primary/40 hover:bg-slate-200/50 hover:shadow-[0_10px_30px_rgba(var(--primary),0.05)]",
                                                     "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                                                     isLoading && "opacity-50 cursor-not-allowed grayscale"
@@ -543,8 +573,8 @@ export function GameSession() {
                                                 <div className="flex items-center justify-between">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] font-black text-primary/40 leading-none">[{index + 1}]</span>
-                                                            <span className="font-bold text-lg group-hover:text-primary transition-colors">{choice}</span>
+                                                            <span className="text-[10px] shrink-0 font-black text-primary/40 leading-none">[{index + 1}]</span>
+                                                            <span className="font-bold text-sm sm:text-lg group-hover:text-primary transition-colors">{choice}</span>
                                                         </div>
                                                         <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest opacity-60">System Directive Alpha</p>
                                                     </div>
@@ -712,7 +742,7 @@ const CountdownTimer = memo(({ timeLeft, totalTime }: { timeLeft: number; totalT
     const isUrgent = timeLeft <= 5;
 
     return (
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
             <motion.div
                 animate={isUrgent ? { scale: [1, 1.1, 1] } : {}}
                 transition={{ repeat: Infinity, duration: 0.5 }}
