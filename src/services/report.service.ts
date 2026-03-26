@@ -9,3 +9,14 @@ export interface CreateReportDto {
     reason?: string;
     category?: string;
     reportedContentReference?: string;
+    evidenceLinks?: string[];
+    relatedReportIds?: string[];
+    priority?: string;
+    tagIds?: string[];
+}
+
+export interface ReportTag {
+    id: string;
+    name: string;
+    slug: string;
+    isActive: boolean;
