@@ -36,3 +36,41 @@ interface ReportFormProps {
     onSuccess: () => void;
     onRequireAuth: () => void;
     onCancel: () => void;
+    /** Increments each time authentication completes, so a pending submission can resume. */
+    authResolvedSignal?: number;
+}
+
+/**
+ * Resolve the navbar/system language code (en/am/om) to the matching option in
+ * the report `languages` table. Codes can differ (e.g. Afaan Oromo is `om` in
+ * the UI language store but seeded as `or` here), so fall back through known
+ * aliases before defaulting to the first available language.
+ */
+function resolveReportLanguageCode(
+    systemLanguage: string,
+    available: Language[],
+): string | undefined {
+    if (available.length === 0) return undefined;
+    const aliases: Record<string, string[]> = {
+        om: ["om", "or"],
+        or: ["or", "om"],
+    };
+    const candidates = aliases[systemLanguage] ?? [systemLanguage];
+    const match = available.find((l) => candidates.includes(l.code));
+    return (match ?? available[0]).code;
+}
+
+export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSignal }: ReportFormProps) {
+    const { isAuthenticated } = useAuthStore();
+    const systemLanguage = useLanguageStore((s) => s.language);
+    const [tags, setTags] = useState<ReportTag[]>([]);
+    const [languages, setLanguages] = useState<Language[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [fetchingData, setFetchingData] = useState(true);
+    // Holds the form values captured when a guest tried to submit, so we can resume after login.
+    const [pendingValues, setPendingValues] = useState<z.infer<typeof reportSchema> | null>(null);
+
+    const form = useForm<z.infer<typeof reportSchema>>({
+        resolver: zodResolver(reportSchema),
+        defaultValues: {
+            title: "",
