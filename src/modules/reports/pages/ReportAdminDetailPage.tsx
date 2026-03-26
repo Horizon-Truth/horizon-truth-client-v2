@@ -36,3 +36,40 @@ export default function ReportAdminDetailPage() {
 
     const fetchReport = async () => {
         if (!id) return;
+        setIsLoading(true);
+        try {
+            const data = await reportService.getReportById(id);
+            setReport(data);
+            setStatus(data.status);
+            setPriority(data.priority);
+            setModeratorNotes(data.moderatorNotes || "");
+        } catch (error) {
+            console.error("Error fetching report details:", error);
+            toast.error("Failed to load report details");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReport();
+    }, [id]);
+
+    const handleUpdate = async () => {
+        if (!id) return;
+        setIsUpdating(true);
+        try {
+            await reportService.updateReport(id, { status, priority, moderatorNotes });
+            toast.success("Report updated successfully");
+            fetchReport();
+        } catch (error) {
+            console.error("Error updating report:", error);
+            toast.error("Failed to update report");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleAddEvidence = async () => {
+        if (!id || !evidenceText.trim()) return;
+        try {
