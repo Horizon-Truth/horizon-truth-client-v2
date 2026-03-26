@@ -41,3 +41,46 @@ export default function CrowdsourcingDetailPage() {
     const fetchReport = async () => {
         if (!id) return;
         setIsLoading(true);
+        try {
+            const data = await reportService.getReportById(id);
+            setReport(data);
+        } catch (error) {
+            console.error("Error fetching report details:", error);
+            toast.error("Failed to load report details");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReport();
+    }, [id]);
+
+    const handleVote = (type: 'up' | 'down') => {
+        toast.info(`Verification ${type === 'up' ? 'upvoted' : 'downvoted'} (Simulation)`);
+    };
+
+    const handleShare = async () => {
+        const url = window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied to clipboard!");
+        } catch (error) {
+            toast.error("Failed to copy link");
+        }
+    };
+
+    const submitVerification = async () => {
+        if (!id) return;
+        setIsSubmitting(true);
+        try {
+            await reportService.addVerification(id, {
+                comment: verificationComment,
+                status: verificationStatus,
+                rating: parseInt(verificationRating)
+            });
+            toast.success("Verification submitted successfully!");
+            setIsVerifying(false);
+            setVerificationComment("");
+            fetchReport(); // Refresh data
+        } catch (error) {
