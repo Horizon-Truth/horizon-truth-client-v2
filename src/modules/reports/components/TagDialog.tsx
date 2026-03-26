@@ -30,3 +30,24 @@ const tagSchema = z.object({
     slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
     isActive: z.boolean(),
 });
+
+interface TagDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    tag?: ReportTag | null;
+    onSuccess: () => void;
+}
+
+export function TagDialog({ open, onOpenChange, tag, onSuccess }: TagDialogProps) {
+    const [loading, setLoading] = useState(false);
+
+    type TagFormValues = z.infer<typeof tagSchema>;
+
+    const form = useForm<TagFormValues>({
+        resolver: zodResolver(tagSchema),
+        defaultValues: {
+            name: "",
+            slug: "",
+            isActive: true,
+        },
+    });
