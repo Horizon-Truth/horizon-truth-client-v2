@@ -48,3 +48,17 @@ export function ReportList() {
         return (
             <div className="text-center py-20 bg-muted/5 rounded-3xl border-2 border-dashed border-muted/20">
                 <div className="w-16 h-16 bg-muted/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <AlertTriangle className="w-8 h-8 text-muted-foreground/50" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No incidents reported yet</h3>
+                <p className="text-muted-foreground max-w-xs mx-auto">
+                    The horizon is currently clear. Be the first to report an incident if you spot one.
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="grid gap-6">
+            {reports.map((report) => (
+                <div
