@@ -48,3 +48,34 @@ export default function CrowdsourcingListingPage() {
             default: return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
         }
     };
+
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'CRITICAL':
+            case 'HIGH': return 'text-red-500';
+            case 'MEDIUM': return 'text-accent-foreground';
+            case 'LOW': return 'text-secondary';
+            default: return 'text-gray-500';
+        }
+    };
+
+    const renderIcon = (iconName: string | undefined) => {
+        if (!iconName) return <Info size={18} />;
+        const IconComponent = (LucideIcons as any)[iconName];
+        return IconComponent ? <IconComponent size={18} /> : <Info size={18} />;
+    };
+
+    return (
+        <PublicLayout>
+            <div className="flex flex-col min-h-screen">
+                {/* Hero Section */}
+                <section className="py-20 bg-primary/5 border-b">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-3xl mx-auto space-y-6">
+                            <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight">Crowdsourced <span className="text-primary">Reports</span></h1>
+                            <p className="text-xl text-muted-foreground leading-relaxed">
+                                Explore reported misinformation cases verified by our community. Join the effort to build a more truthful digital landscape.
+                            </p>
+                            <div className="relative pt-6">
+                                <Search className="absolute left-4 top-[calc(50%+12px)] -translate-y-1/2 text-muted-foreground" size={20} />
+                                <input

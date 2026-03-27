@@ -23,3 +23,27 @@ export default function ReportingConfigPage() {
 
     const [languageDialogOpen, setLanguageDialogOpen] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
+
+    const [tagDialogOpen, setTagDialogOpen] = useState(false);
+    const [selectedTag, setSelectedTag] = useState<ReportTag | null>(null);
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const [langsRes, tagsRes] = await Promise.all([
+                reportService.getLanguages(true),
+                reportService.getReportTags(true)
+            ]);
+            setLanguages(langsRes.data || []);
+            setTags(tagsRes.data || []);
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+            toast.error("Failed to load configuration data");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);

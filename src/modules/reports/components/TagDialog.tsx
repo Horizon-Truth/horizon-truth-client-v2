@@ -15,3 +15,39 @@ import {
 } from "@/shared/components/ui/dialog";
 import {
     Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { Switch } from "@/shared/components/ui/switch";
+import { reportService, type ReportTag } from "@/services/report.service";
+
+const tagSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must only contain lowercase letters, numbers, and hyphens"),
+    isActive: z.boolean(),
+});
+
+interface TagDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    tag?: ReportTag | null;
+    onSuccess: () => void;
+}
+
+export function TagDialog({ open, onOpenChange, tag, onSuccess }: TagDialogProps) {
+    const [loading, setLoading] = useState(false);
+
+    type TagFormValues = z.infer<typeof tagSchema>;
+
+    const form = useForm<TagFormValues>({
+        resolver: zodResolver(tagSchema),
+        defaultValues: {
+            name: "",
+            slug: "",
+            isActive: true,
+        },
+    });

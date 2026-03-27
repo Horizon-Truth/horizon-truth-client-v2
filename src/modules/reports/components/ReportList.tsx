@@ -33,3 +33,18 @@ export function ReportList() {
             }
         }
         loadReports();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground animate-pulse">Scanning the integrity horizon...</p>
+            </div>
+        );
+    }
+
+    if (reports.length === 0) {
+        return (
+            <div className="text-center py-20 bg-muted/5 rounded-3xl border-2 border-dashed border-muted/20">
+                <div className="w-16 h-16 bg-muted/10 rounded-full flex items-center justify-center mx-auto mb-6">
