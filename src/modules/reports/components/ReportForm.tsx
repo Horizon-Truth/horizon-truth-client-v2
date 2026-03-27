@@ -74,3 +74,48 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
         resolver: zodResolver(reportSchema),
         defaultValues: {
             title: "",
+            description: "",
+            contentType: "ARTICLE",
+            sourceUrl: "",
+            language: systemLanguage,
+            reason: "",
+            category: "False Information",
+            reportedContentReference: "",
+            evidenceLinks: [],
+            tagIds: [],
+        },
+    });
+
+    useEffect(() => {
+        async function loadData() {
+            try {
+                const [tagsRes, langsRes] = await Promise.all([
+                    reportService.getReportTags(),
+                    reportService.getLanguages()
+                ]);
+                setTags(tagsRes.data);
+                // Language defaulting is handled by the system-language sync effect below.
+                setLanguages(langsRes.data);
+            } catch (error) {
+                toast.error("Failed to load form data");
+            } finally {
+                setFetchingData(false);
+            }
+        }
+        loadData();
+    }, []);
+
+    // Keep the report language in sync when the user switches the navbar language.
+    useEffect(() => {
+        const resolved = resolveReportLanguageCode(systemLanguage, languages);
+        if (resolved) {
+            form.setValue("language", resolved, { shouldValidate: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [systemLanguage, languages]);
+
+    async function submitReport(values: z.infer<typeof reportSchema>) {
+        setLoading(true);
+        try {
+            await reportService.submitReport({
+                ...values,

@@ -51,3 +51,25 @@ export function TagDialog({ open, onOpenChange, tag, onSuccess }: TagDialogProps
             isActive: true,
         },
     });
+
+    useEffect(() => {
+        if (open) {
+            if (tag) {
+                form.reset({
+                    name: tag.name,
+                    slug: tag.slug,
+                    isActive: tag.isActive,
+                });
+            } else {
+                form.reset({
+                    name: "",
+                    slug: "",
+                    isActive: true,
+                });
+            }
+        }
+    }, [open, tag, form]);
+
+    async function onSubmit(values: z.infer<typeof tagSchema>) {
+        setLoading(true);
+        try {

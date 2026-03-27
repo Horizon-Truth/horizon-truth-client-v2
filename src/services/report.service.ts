@@ -20,3 +20,17 @@ export interface ReportTag {
     name: string;
     slug: string;
     isActive: boolean;
+    icon?: string;
+    color?: string;
+}
+
+export interface Language {
+    id: string;
+    name: string;
+    code: string;
+    isActive: boolean;
+}
+
+export const reportService = {
+    async submitReport(data: CreateReportDto) {
+        const response = await api.post('/reports', data);

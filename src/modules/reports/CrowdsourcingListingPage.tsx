@@ -79,3 +79,36 @@ export default function CrowdsourcingListingPage() {
                             <div className="relative pt-6">
                                 <Search className="absolute left-4 top-[calc(50%+12px)] -translate-y-1/2 text-muted-foreground" size={20} />
                                 <input
+                                    type="text"
+                                    placeholder="Search reports by title or content..."
+                                    className="w-full pl-12 pr-4 py-5 rounded-2xl border bg-background shadow-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="py-12 bg-background">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex flex-col lg:flex-row gap-12">
+
+                            {/* Sidebar Filters */}
+                            <div className="lg:w-1/4 space-y-8">
+                                <div>
+                                    <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                                        <Filter size={18} /> Categories
+                                    </h3>
+                                    <div className="space-y-2">
+                                        <button
+                                            onClick={() => setActiveCategory("all")}
+                                            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all ${activeCategory === 'all' ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-secondary text-muted-foreground"}`}
+                                        >
+                                            <Info size={18} />
+                                            <span className="font-semibold">All Categories</span>
+                                        </button>
+                                        {categories.map((cat) => (
+                                            <button
+                                                key={cat.id}
+                                                onClick={() => setActiveCategory(cat.id)}
