@@ -101,3 +101,45 @@ export default function DashboardPage() {
             opacity: 1,
             transition: {
                 staggerChildren: isLowEndDevice ? 0 : 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: isLowEndDevice ? 0 : 20, opacity: 0 },
+        visible: { y: 0, opacity: 1 }
+    };
+
+    return (
+        <motion.div
+            className="space-y-8 p-1"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+        >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600">
+                        Admin Dashboard
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1 font-medium">
+                        Real-time overview of the Horizon Truth ecosystem.
+                    </p>
+                </div>
+                {isSystemAdmin && (
+                    <div className="flex gap-2">
+                        <Button asChild variant="outline" className="rounded-xl font-semibold border-2">
+                            <Link to="/dashboard/reports">View Reports</Link>
+                        </Button>
+                        <Button asChild className="rounded-xl font-bold shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95">
+                            <Link to="/dashboard/health">
+                                <TrendingUp className="mr-2 h-4 w-4" />
+                                System Health
+                            </Link>
+                        </Button>
+                    </div>
+                )}
+            </div>
+
+            {/* Stat Cards Grid */}
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
