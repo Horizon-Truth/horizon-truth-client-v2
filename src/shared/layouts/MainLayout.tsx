@@ -28,6 +28,7 @@ import { ThemeToggle } from "@/shared/components/theme-toggle";
 import { authService } from "@/services/auth.service";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
+import { Logo } from "@/shared/components/ui/logo";
 
 const navigationGroups = [
     {
@@ -109,14 +110,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col h-full">
             <div className={cn("flex items-center h-16 px-4 border-b justify-between", mobile && "px-6")}>
                 <Link to="/" className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform flex-shrink-0">
-                        <ShieldCheck className="text-primary-foreground h-5 w-5" />
-                    </div>
-                    {(isSidebarOpen || mobile) && (
-                        <span className="font-bold text-xl uppercase tracking-widest hover:opacity-80 transition-opacity">
-                            Horizon
-                        </span>
-                    )}
+                    <Logo variant={isSidebarOpen || mobile ? 'right' : 'only'} className="h-8 w-auto" />
                 </Link>
                 {!mobile && (
                     <button

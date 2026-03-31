@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { Logo } from '@/shared/components/ui/logo';
 import { Button } from '@/shared/components/ui/button';
 
 export function AuthLayout() {
@@ -26,14 +27,8 @@ export function AuthLayout() {
             </div>
 
             <div className="w-full max-w-md relative z-10">
-                <div className="mb-8 flex flex-col items-center">
-                    <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
-                        <ShieldCheck className="text-primary-foreground w-7 h-7" />
-                    </div>
-                    <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-                        HORIZON TRUTH
-                    </h1>
-                    <p className="text-muted-foreground mt-2 font-medium">Secure Access Portal</p>
+                <div className="mb-8 flex flex-col items-center cursor-pointer" onClick={() => navigate('/')}>
+                    <Logo variant="bottom" className="h-20 w-auto" />
                 </div>
 
                 <div className="relative group">
