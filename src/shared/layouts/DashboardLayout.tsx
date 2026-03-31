@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { Button } from '@/shared/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { LogOut, Home } from 'lucide-react';
+import { Logo } from '@/shared/components/ui/logo';
 
 export function DashboardLayout() {
     const { user, logout } = useAuthStore();
@@ -18,7 +19,7 @@ export function DashboardLayout() {
             <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container flex h-16 items-center justify-between py-4 px-4 md:px-8">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold tracking-tight">Horizon</h2>
+                        <Logo variant="right" className="h-8 w-auto cursor-pointer" onClick={() => navigate('/')} />
                         <nav className="flex gap-2">
                             <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="gap-2">
                                 <Home className="h-4 w-4" />

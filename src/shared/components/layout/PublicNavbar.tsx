@@ -1,6 +1,6 @@
-import { ShieldCheck, Menu, ArrowRight } from "lucide-react";
+import { Menu, ArrowRight } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import { Logo } from "@/shared/components/ui/logo";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 import { useAuthStore } from "@/store/auth.store";
@@ -25,7 +25,7 @@ export const PublicNavbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-                        <img src={logo} alt="Horizon Truth Logo" className="h-10 w-auto" />
+                        <Logo variant="right" className="h-10 w-auto" />
                         {/* <span className="text-xl font-bold tracking-tight">HORIZON TRUTH</span> */}
                     </div>
 
@@ -86,11 +86,8 @@ export const PublicNavbar = () => {
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="right" className="w-[300px] flex flex-col p-6">
-                                <div className="flex items-center gap-2 mb-8 cursor-pointer" onClick={() => navigate("/")}>
-                                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                        <ShieldCheck className="text-primary-foreground w-5 h-5" />
-                                    </div>
-                                    <span className="text-xl font-bold tracking-tight">HORIZON</span>
+                                <div className="mb-8 cursor-pointer" onClick={() => navigate("/")}>
+                                    <Logo variant="right" className="h-8 w-auto px-1" />
                                 </div>
                                 <div className="flex flex-col gap-6">
                                     <button

@@ -1,6 +1,6 @@
 import { ShieldCheck, Globe, Github } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import { Logo } from "@/shared/components/ui/logo";
 
 export const PublicFooter = () => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ export const PublicFooter = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-6">
-                            <img src={logo} alt="Horizon Truth Logo" className="h-8 w-auto" />
+                            <Logo variant="right" className="h-8 w-auto" />
                             {/* <span className="font-bold italic text-lg tracking-tight">HORIZON TRUTH</span> */}
                         </div>
                         <p className="text-sm text-muted-foreground max-w-xs">

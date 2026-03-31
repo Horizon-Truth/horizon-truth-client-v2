@@ -7,6 +7,7 @@ import { useAuthStore } from '../../../store/auth.store';
 import { User, ChevronRight, Check, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { authService } from '../../../services/auth.service';
+import { Logo } from '@/shared/components/ui/logo';
 
 const OnboardingPage: React.FC = () => {
     const [nickname, setNickname] = useState('');
@@ -95,7 +96,8 @@ const OnboardingPage: React.FC = () => {
                             <LogOut size={14} />
                         </button>
 
-                        <div className="mb-8 text-center pt-2">
+                        <div className="mb-8 text-center pt-2 flex flex-col items-center">
+                            <Logo variant="only" className="h-16 w-auto mb-6" />
                             <h1 className="text-3xl font-light tracking-tight mb-2">Create Your Profile</h1>
                             <p className="text-white/40 text-sm">Choose a nickname and avatar to get started.</p>
                         </div>
