@@ -25,3 +25,19 @@ export default function NewsletterSubscriptionsPage() {
 
     useEffect(() => {
         fetchSubscriptions();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to remove this subscription?")) return;
+        try {
+            await newsletterService.delete(id);
+            toast.success("Subscription removed successfully");
+            fetchSubscriptions();
+        } catch (error) {
+            toast.error("Failed to remove subscription");
+        }
+    };
+
+    const filteredSubscriptions = subscriptions.filter(s =>
+        s.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
