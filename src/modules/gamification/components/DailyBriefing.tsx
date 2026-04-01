@@ -38,3 +38,19 @@ export const DailyBriefing = memo(function DailyBriefing() {
     const swept = allQuestsDone(ledger);
 
     const handlePlay = async () => {
+        if (!featured) return;
+        setStarting(true);
+        try {
+            if (featured.activeProgressId) {
+                await loadProgress(featured.activeProgressId);
+            } else {
+                await startGame(featured.id);
+            }
+        } finally {
+            setStarting(false);
+        }
+    };
+
+    return (
+        <section
+            aria-label="Today's briefing"

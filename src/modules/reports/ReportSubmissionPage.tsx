@@ -64,3 +64,31 @@ export default function ReportSubmissionPage() {
             </PublicLayout>
         );
     }
+
+    return (
+        <PublicLayout>
+            <div className="min-h-screen bg-background relative overflow-hidden pb-20">
+                {/* Decorative Background */}
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
+                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-accent/5 rounded-full blur-3xl translate-y-1/2 pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    {/* Header Section */}
+                    <div className="py-12 md:py-20">
+                        <motion.button
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            onClick={() => navigate("/crowdsourcing")}
+                            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-black text-xs uppercase tracking-widest group mb-12"
+                        >
+                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Back to Intelligence Dashboard
+                        </motion.button>
+
+                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                            <div className="max-w-2xl">
+                                <motion.div
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.1 }}
+                                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
+                                >

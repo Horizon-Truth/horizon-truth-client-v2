@@ -51,3 +51,47 @@ export function TagDialog({ open, onOpenChange, tag, onSuccess }: TagDialogProps
             isActive: true,
         },
     });
+
+    useEffect(() => {
+        if (open) {
+            if (tag) {
+                form.reset({
+                    name: tag.name,
+                    slug: tag.slug,
+                    isActive: tag.isActive,
+                });
+            } else {
+                form.reset({
+                    name: "",
+                    slug: "",
+                    isActive: true,
+                });
+            }
+        }
+    }, [open, tag, form]);
+
+    async function onSubmit(values: z.infer<typeof tagSchema>) {
+        setLoading(true);
+        try {
+            if (tag) {
+                await reportService.updateReportTag(tag.id, values);
+                toast.success("Tag updated successfully");
+            } else {
+                await reportService.createReportTag(values);
+                toast.success("Tag created successfully");
+            }
+            onSuccess();
+            onOpenChange(false);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to save tag");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>{tag ? "Edit Tag" : "Add Tag"}</DialogTitle>
+                    <DialogDescription>
