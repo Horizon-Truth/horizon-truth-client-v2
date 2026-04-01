@@ -9,3 +9,10 @@ export interface AuditLogItem {
     email: string;
   };
   action: string;
+  entityType: string;
+  entityId: string;
+  metadata: any;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
+}
