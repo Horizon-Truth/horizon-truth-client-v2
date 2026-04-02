@@ -92,3 +92,30 @@ export default function ReportSubmissionPage() {
                                     transition={{ delay: 0.1 }}
                                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6"
                                 >
+                                    <ShieldAlert size={14} className="text-primary" />
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">Incident Reporting Module</span>
+                                </motion.div>
+                                <motion.h1
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]"
+                                >
+                                    Register <span className="text-primary">New Case</span>
+                                </motion.h1>
+                                <motion.p
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="text-lg text-muted-foreground mt-6 font-medium max-w-xl"
+                                >
+                                    Provide accurate details regarding the misinformation or incident you've encountered. Your data empowers the community to verify the truth.
+                                </motion.p>
+                            </div>
+
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className="hidden lg:flex flex-col items-end text-right"
+                            >
