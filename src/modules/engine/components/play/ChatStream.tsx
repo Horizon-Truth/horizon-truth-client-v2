@@ -34,3 +34,24 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
                 }
 
                 if (!mounted) break;
+                setIsTyping(false);
+                setVisibleMessages(prev => [...prev, messages[i]]);
+
+                // Realistic gap between messages
+                await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+            }
+        };
+
+        showMessages();
+        return () => { mounted = false; };
+    }, [messages]);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [visibleMessages, isTyping]);
+
+    return (
+        <div className="flex flex-col h-[400px] border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xl">
+            <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
