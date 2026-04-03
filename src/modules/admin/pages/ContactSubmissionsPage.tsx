@@ -18,3 +18,23 @@ export default function ContactSubmissionsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selected, setSelected] = useState<ContactSubmission | null>(null);
+
+    const fetchSubmissions = async () => {
+        setIsLoading(true);
+        try {
+            const data = await contactService.getAll();
+            setSubmissions(data);
+        } catch (error) {
+            console.error("Failed to fetch contact submissions:", error);
+            toast.error("Failed to load submissions");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubmissions();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this submission?")) return;
