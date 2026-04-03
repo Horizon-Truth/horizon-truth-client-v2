@@ -15,3 +15,21 @@ export interface User {
 export interface Organization {
     id: string;
     name: string;
+    description: string;
+    country: string;
+    status: string;
+    createdAt: string;
+}
+
+export interface Blog {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    authorName: string;
+    authorRole: string;
+    authorAvatar?: string;
+    imageUrl?: string;
+    category: string;
+    readTime: string;
