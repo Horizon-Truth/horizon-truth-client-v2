@@ -33,3 +33,24 @@ export interface Blog {
     imageUrl?: string;
     category: string;
     readTime: string;
+    language: LanguageCode;
+    publishedAt: string;
+    createdAt: string;
+}
+
+export interface Resource {
+    id: string;
+    title: string;
+    slug: string;
+    type: 'guide' | 'video' | 'course';
+    description: string;
+    duration: string;
+    badge?: string;
+    icon: string;
+    fullContent?: string;
+    linkUrl?: string;
+    language: LanguageCode;
+    createdAt: string;
+}
+
+export interface PlayerProfile {
