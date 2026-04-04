@@ -4,3 +4,22 @@ export interface AuditLogItem {
   id: string;
   userId: string;
   user: {
+    id: string;
+    username: string;
+    email: string;
+  };
+  action: string;
+  entityType: string;
+  entityId: string;
+  metadata: any;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
+}
+
+export interface AuditLogResponse {
+  items: AuditLogItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;

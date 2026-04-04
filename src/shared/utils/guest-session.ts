@@ -18,3 +18,9 @@ export class GuestSessionManager {
         if (typeof window === 'undefined') {
             throw new Error('Cannot create guest session on server');
         }
+
+        const sessionId = uuidv4();
+        const userId = `guest_${uuidv4()}`;
+
+        localStorage.setItem(this.GUEST_SESSION_KEY, sessionId);
+        localStorage.setItem(this.GUEST_USER_ID_KEY, userId);

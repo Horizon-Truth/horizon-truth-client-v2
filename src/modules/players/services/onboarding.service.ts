@@ -13,3 +13,10 @@ export interface Region {
     id: string;
     name: string;
     description: string;
+}
+
+export interface InitializeProfileDto {
+    nickname: string;
+    avatarId: string;
+    fictionalRegionId?: string;
+}

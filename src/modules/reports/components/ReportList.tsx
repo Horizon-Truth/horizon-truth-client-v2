@@ -20,3 +20,45 @@ interface Report {
 export function ReportList() {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadReports() {
+            try {
+                const data = await reportService.getReports();
+                setReports(data.data);
+            } catch (error) {
+                toast.error("Failed to load reports");
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadReports();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground animate-pulse">Scanning the integrity horizon...</p>
+            </div>
+        );
+    }
+
+    if (reports.length === 0) {
+        return (
+            <div className="text-center py-20 bg-muted/5 rounded-3xl border-2 border-dashed border-muted/20">
+                <div className="w-16 h-16 bg-muted/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <AlertTriangle className="w-8 h-8 text-muted-foreground/50" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">No incidents reported yet</h3>
+                <p className="text-muted-foreground max-w-xs mx-auto">
+                    The horizon is currently clear. Be the first to report an incident if you spot one.
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="grid gap-6">
+            {reports.map((report) => (
+                <div
