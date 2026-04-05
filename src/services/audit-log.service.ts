@@ -23,3 +23,10 @@ export interface AuditLogResponse {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export const auditLogService = {
+  getLogs: async (params: {
+    page?: number;
+    limit?: number;
+    userId?: string;
