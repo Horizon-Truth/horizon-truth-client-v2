@@ -59,3 +59,20 @@ export default function NewsletterSubscriptionsPage() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
+            </div>
+
+            <div className="bg-card border border-border/50 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-[700px]">
+                        <thead>
+                            <tr className="bg-muted/30 border-b border-border/50">
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Subscriber Email</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Enrolled On</th>
+                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={4} className="py-20 text-center">

@@ -11,3 +11,10 @@ export interface ContactReply {
     sentByUserId: string | null;
     createdAt: string;
 }
+
+export interface ContactSubmission {
+    id?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    subject: string;
