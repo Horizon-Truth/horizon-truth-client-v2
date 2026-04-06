@@ -76,3 +76,26 @@ class AdminService {
         const response = await api.put(`/admin/users/${id}/status`, { status });
         return response.data;
     }
+
+    async deleteUser(id: string) {
+        const response = await api.delete(`/admin/users/${id}`);
+        return response.data;
+    }
+
+    async getOrganizations() {
+        const response = await api.get('/admin/organizations');
+        return response.data;
+    }
+
+    async getOrganizationById(id: string) {
+        const response = await api.get(`/admin/organizations/${id}`);
+        return response.data;
+    }
+
+    async createOrganization(data: any) {
+        const response = await api.post('/admin/organizations', data);
+        return response.data;
+    }
+
+    async getOrganizationUsers(orgId: string) {
+        const response = await api.get(`/admin/organizations/${orgId}/users`);
