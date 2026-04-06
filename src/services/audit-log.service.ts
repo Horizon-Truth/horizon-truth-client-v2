@@ -16,3 +16,17 @@ export interface AuditLogItem {
   userAgent: string;
   createdAt: string;
 }
+
+export interface AuditLogResponse {
+  items: AuditLogItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export const auditLogService = {
+  getLogs: async (params: {
+    page?: number;
+    limit?: number;
+    userId?: string;
