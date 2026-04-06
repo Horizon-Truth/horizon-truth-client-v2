@@ -36,4 +36,20 @@ Horizon-Truth Frontend provides an accessible, high-performance, and intuitive p
 *   Backend business logic
 *   Database management
 *   AI model training
-*   Authentication implementation details (handled by backend)
+*   Authentication implementation details (handled by backend)
+
+## 3. Governance Model
+
+The frontend follows the same **Maintainer-Led Consensus Model** as the backend to ensure alignment across the ecosystem.
+
+*   UI/UX decisions are collaborative
+*   Design changes require review
+*   Consistency with backend APIs is mandatory
+
+## 4. Roles & Responsibilities
+
+### Frontend Project Lead
+
+*   Oversees UI architecture
+*   Maintains design consistency
+*   Coordinates with backend maintainers
