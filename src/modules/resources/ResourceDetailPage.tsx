@@ -15,3 +15,20 @@ export default function ResourceDetailPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const fetchResource = async () => {
+            if (!id) return;
+            setIsLoading(true);
+            try {
+                const data = await adminService.getResourceById(id);
+                setResource(data);
+            } catch (error) {
+                console.error("Failed to fetch resource:", error);
+                toast.error("Failed to load resource");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchResource();
+    }, [id]);
+
+    if (isLoading) {
