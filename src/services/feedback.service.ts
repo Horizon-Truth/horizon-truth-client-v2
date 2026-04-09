@@ -6,3 +6,11 @@ export interface Feedback {
     userId: string;
     assignedTo?: string;
     commentSource: string;
+    commentText: string;
+    requiredAction?: string;
+    priority: 'LOW' | 'MEDIUM' | 'HIGH';
+    status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+    type: 'SCENARIO' | 'OPERATION';
+    deadline?: string;
+    createdAt: string;
+    updatedAt: string;
