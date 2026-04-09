@@ -37,3 +37,41 @@ const blogSchema = z.object({
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
+
+export default function BlogEditPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const form = useForm<BlogFormValues>({
+        resolver: zodResolver(blogSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            excerpt: "",
+            content: "",
+            authorName: "",
+            authorRole: "",
+            authorAvatar: "",
+            imageUrl: "",
+            category: "",
+            readTime: "",
+            language: DEFAULT_LANGUAGE,
+            publishedAt: "",
+        },
+    });
+
+    useEffect(() => {
+        const fetchBlog = async () => {
+            if (!id) return;
+            try {
+                const blog = await adminService.getBlogById(id);
+                form.reset({
+                    title: blog.title,
+                    slug: blog.slug,
+                    excerpt: blog.excerpt,
+                    content: blog.content,
+                    authorName: blog.authorName,
+                    authorRole: blog.authorRole,
+                    authorAvatar: blog.authorAvatar || "",

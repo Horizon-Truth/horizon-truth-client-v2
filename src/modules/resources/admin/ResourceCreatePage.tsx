@@ -30,3 +30,35 @@ const resourceSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
     slug: z.string().min(3, "Slug must be at least 3 characters"),
     type: z.enum(["guide", "video", "course"]),
+    description: z.string().min(10, "Description must be at least 10 characters"),
+    duration: z.string().min(2, "Duration is required"),
+    badge: z.string().optional().or(z.literal("")),
+    icon: z.string().min(2, "Icon name is required (e.g. FileText)"),
+    fullContent: z.string().optional().or(z.literal("")),
+    linkUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
+});
+
+type ResourceFormValues = z.infer<typeof resourceSchema>;
+
+export default function ResourceCreatePage() {
+    const navigate = useNavigate();
+    const form = useForm<ResourceFormValues>({
+        resolver: zodResolver(resourceSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            type: "guide",
+            description: "",
+            duration: "10 min read",
+            badge: "",
+            icon: "FileText",
+            fullContent: "",
+            linkUrl: "",
+            language: useLanguageStore.getState().language,
+        },
+    });
+
+    const onSubmit = async (values: ResourceFormValues) => {

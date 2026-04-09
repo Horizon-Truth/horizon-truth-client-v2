@@ -32,3 +32,37 @@ const blogSchema = z.object({
     readTime: z.string().min(2, "Read time is required"),
     language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
         message: "Please select a language",
+    }),
+    publishedAt: z.string().min(10, "Published date is required"),
+});
+
+type BlogFormValues = z.infer<typeof blogSchema>;
+
+export default function BlogCreatePage() {
+    const navigate = useNavigate();
+    const form = useForm<BlogFormValues>({
+        resolver: zodResolver(blogSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            excerpt: "",
+            content: "",
+            authorName: "",
+            authorRole: "",
+            authorAvatar: "",
+            imageUrl: "",
+            category: "",
+            readTime: "5 min read",
+            language: useLanguageStore.getState().language,
+            publishedAt: new Date().toISOString().split("T")[0],
+        },
+    });
+
+    const onSubmit = async (values: BlogFormValues) => {
+        try {
+            await adminService.createBlog({ ...values, language: values.language as LanguageCode });
+            toast.success("Blog post created successfully");
+            navigate("/dashboard/resources/blogs");
+        } catch (error) {
+            console.error("Failed to create blog:", error);
+            toast.error("Failed to create blog post");
