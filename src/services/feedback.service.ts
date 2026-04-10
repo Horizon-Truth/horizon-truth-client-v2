@@ -14,3 +14,13 @@ export interface Feedback {
     deadline?: string;
     createdAt: string;
     updatedAt: string;
+    scenario?: {
+        id: string;
+        title: string;
+    };
+    user?: {
+        id: string;
+        fullName: string;
+        username: string;
+    };
+    assignee?: {
