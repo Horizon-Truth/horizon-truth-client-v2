@@ -20,3 +20,25 @@ export default function BlogManagementPage() {
     const fetchBlogs = async () => {
         setIsLoading(true);
         try {
+            // Language filtering is applied server-side so admins can scope the
+            // list to one language; "all" omits the param to show every language.
+            const data = await adminService.getBlogs(
+                languageFilter === "all" ? undefined : { language: languageFilter },
+            );
+            setBlogs(data || []);
+        } catch (error) {
+            console.error("Failed to fetch blogs:", error);
+            toast.error("Failed to load blog posts");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchBlogs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [languageFilter]);
+
+    const handleDelete = async (blog: Blog) => {
+        if (!confirm(`Are you sure you want to delete "${blog.title}"?`)) return;
+        try {

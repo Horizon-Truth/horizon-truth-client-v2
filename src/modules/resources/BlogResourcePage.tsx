@@ -18,3 +18,23 @@ export default function BlogResourcePage() {
         const fetchData = async () => {
             setIsLoading(true);
             try {
+                // Public knowledge hub: show only content in the visitor's
+                // currently selected language.
+                const [blogsData, resourcesData] = await Promise.all([
+                    adminService.getBlogs({ language }),
+                    adminService.getResources({ language })
+                ]);
+                setBlogs(blogsData || []);
+                setResources(resourcesData || []);
+            } catch (error) {
+                console.error("Failed to fetch knowledge hub data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [language]);
+
+    if (isLoading) {
+        return (
+            <PublicLayout>
