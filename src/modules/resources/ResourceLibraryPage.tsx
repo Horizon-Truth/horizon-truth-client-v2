@@ -13,3 +13,18 @@ export default function ResourceLibraryPage() {
     const language = useLanguageStore((s) => s.language);
     const [resources, setResources] = useState<Resource[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [activeFilter, setActiveFilter] = useState("all");
+
+    useEffect(() => {
+        const fetchResources = async () => {
+            setIsLoading(true);
+            try {
+                const data = await adminService.getResources({ language });
+                setResources(data || []);
+            } catch (error) {
+                console.error("Failed to fetch resources:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
