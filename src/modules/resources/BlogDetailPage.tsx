@@ -12,3 +12,19 @@ export default function BlogDetailPage() {
     const navigate = useNavigate();
     const [blog, setBlog] = useState<Blog | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
+    useEffect(() => {
+        const fetchBlog = async () => {
+            if (!id) return;
+            setIsLoading(true);
+            try {
+                const data = await adminService.getBlogById(id);
+                setBlog(data);
+            } catch (error) {
