@@ -16,3 +16,22 @@ export default function ResourcesPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const fetchResources = async () => {
+            setIsLoading(true);
+            try {
+                const data = await adminService.getResources();
+                setResources(data || []);
+            } catch (error) {
+                console.error("Failed to fetch resources:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchResources();
+    }, []);
+
+    useEffect(() => {
+        let results = resources;
+        if (activeFilter !== "all") {
+            results = results.filter((r) => r.type === activeFilter);
+        }

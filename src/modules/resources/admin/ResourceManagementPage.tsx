@@ -21,3 +21,26 @@ export default function ResourceManagementPage() {
         setIsLoading(true);
         try {
             const data = await adminService.getResources(
+                languageFilter === "all" ? undefined : { language: languageFilter },
+            );
+            setResources(data || []);
+        } catch (error) {
+            console.error("Failed to fetch resources:", error);
+            toast.error("Failed to load resource library");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchResources();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [languageFilter]);
+
+    const handleDelete = async (resource: Resource) => {
+        if (!confirm(`Are you sure you want to delete "${resource.title}"?`)) return;
+        try {
+            await adminService.deleteResource(resource.id);
+            toast.success("Resource deleted successfully");
+            fetchResources();
+        } catch (error) {
