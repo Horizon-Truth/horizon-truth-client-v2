@@ -35,3 +35,39 @@ const resourceSchema = z.object({
     badge: z.string().optional().or(z.literal("")),
     icon: z.string().min(2, "Icon name is required"),
     fullContent: z.string().optional().or(z.literal("")),
+    linkUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
+});
+
+type ResourceFormValues = z.infer<typeof resourceSchema>;
+
+export default function ResourceEditPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const form = useForm<ResourceFormValues>({
+        resolver: zodResolver(resourceSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            type: "guide",
+            description: "",
+            duration: "",
+            badge: "",
+            icon: "BookOpen",
+            fullContent: "",
+            linkUrl: "",
+            language: DEFAULT_LANGUAGE,
+        },
+    });
+
+    useEffect(() => {
+        const fetchResource = async () => {
+            if (!id) return;
+            try {
+                const resource = await adminService.getResourceById(id);
+                form.reset({
