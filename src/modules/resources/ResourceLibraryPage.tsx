@@ -28,3 +28,21 @@ export default function ResourceLibraryPage() {
                 setIsLoading(false);
             }
         };
+        fetchResources();
+    }, [language]);
+
+    const filteredResources = resources.filter(resource => {
+        const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            resource.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesType = activeFilter === "all" || resource.type === activeFilter;
+        return matchesSearch && matchesType;
+    });
+
+    const filters = ["all", "guide", "video", "course"];
+
+    return (
+        <PublicLayout>
+            <section className="py-20 bg-primary/5 border-b">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 className="text-4xl lg:text-7xl font-extrabold tracking-tight mb-6">
+                        Resource <span className="text-primary">Library</span>

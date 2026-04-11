@@ -35,3 +35,24 @@ export default function ResourcesPage() {
         if (activeFilter !== "all") {
             results = results.filter((r) => r.type === activeFilter);
         }
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            results = results.filter(
+                (r) => r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q)
+            );
+        }
+        setFilteredResources(results);
+    }, [activeFilter, searchQuery, resources]);
+
+    if (isLoading) {
+        return (
+            <PublicLayout>
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Restoring Asset Archive...</p>
+                    </div>
+                </div>
+            </PublicLayout>
+        );
+    }

@@ -15,3 +15,13 @@ export const blogs = [
                 <li><strong>Check the source:</strong> Always verify where the media originated.</li>
                 <li><strong>Look for artifacts:</strong> AI-generated images often have subtle glitches in textures or symmetry.</li>
                 <li><strong>Use verification tools:</strong> Platforms like Horizon Truth offer specialized tools to flag potential deepfakes.</li>
+            </ul>
+        `,
+        date: "May 15, 2024",
+        readTime: "6 min read",
+        author: {
+            name: "Sarah Chen",
+            role: "AI Researcher",
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+        },
+        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
