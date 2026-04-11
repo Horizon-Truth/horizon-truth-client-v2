@@ -71,3 +71,47 @@ export default function ResourceEditPage() {
             try {
                 const resource = await adminService.getResourceById(id);
                 form.reset({
+                    title: resource.title,
+                    slug: resource.slug,
+                    type: resource.type,
+                    description: resource.description,
+                    duration: resource.duration,
+                    badge: resource.badge || "",
+                    icon: resource.icon,
+                    fullContent: resource.fullContent || "",
+                    linkUrl: resource.linkUrl || "",
+                    language: resource.language || DEFAULT_LANGUAGE,
+                });
+            } catch (error) {
+                console.error("Failed to fetch resource:", error);
+                toast.error("Failed to load resource data");
+                navigate("/dashboard/resources/library");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchResource();
+    }, [id, form, navigate]);
+
+    const onSubmit = async (values: ResourceFormValues) => {
+        if (!id) return;
+        setIsSaving(true);
+        try {
+            await adminService.updateResource(id, { ...values, language: values.language as LanguageCode });
+            toast.success("Resource updated successfully");
+            navigate("/dashboard/resources/library");
+        } catch (error) {
+            console.error("Failed to update resource:", error);
+            toast.error("Failed to update resource");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            </div>
+        );

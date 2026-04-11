@@ -44,3 +44,31 @@ export default function ResourceManagementPage() {
             toast.success("Resource deleted successfully");
             fetchResources();
         } catch (error) {
+            toast.error("Failed to delete resource");
+        }
+    };
+
+    const filteredResources = resources.filter(resource => {
+        const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            resource.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            resource.type.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesType = typeFilter === "all" || resource.type === typeFilter;
+        return matchesSearch && matchesType;
+    });
+
+    const types = Array.from(new Set(resources.map(r => r.type)));
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider text-secondary">Asset <span className="text-foreground">Library</span></h2>
+                    <p className="text-sm text-muted-foreground mt-1">Manage educational toolkits, guides, and multimeda training assets.</p>
+                </div>
+                <Button
+                    onClick={() => navigate("/dashboard/resources/library/create")}
+                    className="w-full sm:w-auto rounded-2xl h-12 px-6 font-black uppercase tracking-widest text-[10px] gap-2 shadow-lg shadow-secondary/20 hover:shadow-secondary/40 transition-all bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                >
+                    <Plus size={20} />
+                    Onboard New Asset
+                </Button>

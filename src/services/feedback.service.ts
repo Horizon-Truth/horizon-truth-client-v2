@@ -24,3 +24,13 @@ export interface Feedback {
         username: string;
     };
     assignee?: {
+        id: string;
+        fullName: string;
+        username: string;
+    };
+}
+
+export interface FeedbackStats {
+    totalOpen: number;
+    byPriority: {
+        LOW?: number;
