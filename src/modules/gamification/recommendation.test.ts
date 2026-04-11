@@ -47,3 +47,16 @@ describe('scenarioSkill', () => {
         expect(scenarioSkill({ psychologicalTrigger: 'zzz', theme: 'yyy' })).toBeNull();
     });
 });
+
+describe('overallAccuracy', () => {
+    it('aggregates across skills and handles empty books', () => {
+        expect(overallAccuracy({})).toBeNull();
+        expect(overallAccuracy(weakDataLiteracy)).toBe(67); // 6/9
+    });
+});
+
+describe('recommendScenario', () => {
+    it('returns null when everything is locked or empty', () => {
+        expect(recommendScenario([], {})).toBeNull();
+        expect(recommendScenario([scenario({ lockStatus: 'LOCKED' })], {})).toBeNull();
+    });

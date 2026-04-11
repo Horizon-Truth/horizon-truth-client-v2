@@ -35,3 +35,41 @@ export const en = {
   },
 
   settings: {
+    title: 'Settings',
+    languageSection: 'Language & Region',
+    languageHint:
+      'Content (scenarios, articles and resources) will be shown in your selected language.',
+  },
+
+  content: {
+    language: 'Content Language',
+    languageRequired: 'Please select a language',
+    languageHint:
+      'Select the language this content is written in. It will only be shown to users viewing that language.',
+    filterByLanguage: 'Filter by language',
+    allLanguages: 'All languages',
+    languageColumn: 'Language',
+  },
+
+  scenario: {
+    create: 'New Scenario Protocol',
+    edit: 'Edit Scenario',
+    title: 'Title',
+    description: 'Description',
+    saveCreate: 'Initialize Protocol',
+    saveUpdate: 'Update Protocol',
+    createdSuccess: 'Scenario created successfully',
+    updatedSuccess: 'Scenario updated successfully',
+    saveError: 'Failed to save scenario',
+  },
+
+  blog: {
+    create: 'Draft New Article',
+    edit: 'Edit Article',
+    createdSuccess: 'Blog post created successfully',
+    saveError: 'Failed to create blog post',
+  },
+
+  resource: {
+    create: 'New Resource',
+    edit: 'Edit Resource',

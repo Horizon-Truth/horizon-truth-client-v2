@@ -38,3 +38,28 @@ import ScenarioDetailPage from "./modules/engine/pages/ScenarioDetailPage";
 import OnboardingPage from "./modules/players/pages/OnboardingPage";
 import AvatarManagementPage from "./modules/players/pages/AvatarManagementPage";
 import ReportAdminManagementPage from "./modules/reports/pages/ReportAdminManagementPage";
+import ReportAdminDetailPage from "./modules/reports/pages/ReportAdminDetailPage";
+import ContactSubmissionsPage from "./modules/admin/pages/ContactSubmissionsPage";
+import NewsletterSubscriptionsPage from "./modules/admin/pages/NewsletterSubscriptionsPage";
+import GuestGamePage from "@/modules/simulation/GuestGamePage";
+import AuditLogPage from "./modules/admin/pages/AuditLogPage";
+import GameAnalyticsPage from "./modules/analytics/GameAnalyticsPage";
+import { Toaster, toast } from "sonner";
+import { lazy, Suspense, useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ErrorBoundary } from "./shared/components/layout/ErrorBoundary";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const BlogManagementPage = lazy(() => import('./modules/resources/admin/BlogManagementPage'));
+const BlogCreatePage = lazy(() => import('./modules/resources/admin/BlogCreatePage'));
+const BlogEditPage = lazy(() => import('./modules/resources/admin/BlogEditPage'));

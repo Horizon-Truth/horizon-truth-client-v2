@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ArrowLeft, Save, BookOpen, ExternalLink, Type, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Save, BookOpen, ExternalLink, Type, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
@@ -23,8 +24,7 @@ import {
 } from "@/shared/components/ui/select";
 import { adminService } from "@/services/admin.service";
 import { toast } from "sonner";
-import { SUPPORTED_LANGUAGE_CODES, SUPPORTED_LANGUAGES, type LanguageCode } from "@/shared/i18n/languages";
-import { useLanguageStore } from "@/store/language.store";
+import { SUPPORTED_LANGUAGE_CODES, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, type LanguageCode } from "@/shared/i18n/languages";
 
 const resourceSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
@@ -33,7 +33,7 @@ const resourceSchema = z.object({
     description: z.string().min(10, "Description must be at least 10 characters"),
     duration: z.string().min(2, "Duration is required"),
     badge: z.string().optional().or(z.literal("")),
-    icon: z.string().min(2, "Icon name is required (e.g. FileText)"),
+    icon: z.string().min(2, "Icon name is required"),
     fullContent: z.string().optional().or(z.literal("")),
     linkUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
     language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
@@ -43,8 +43,12 @@ const resourceSchema = z.object({
 
 type ResourceFormValues = z.infer<typeof resourceSchema>;
 
-export default function ResourceCreatePage() {
+export default function ResourceEditPage() {
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
     const form = useForm<ResourceFormValues>({
         resolver: zodResolver(resourceSchema),
         defaultValues: {
@@ -52,13 +56,18 @@ export default function ResourceCreatePage() {
             slug: "",
             type: "guide",
             description: "",
-            duration: "10 min read",
+            duration: "",
             badge: "",
-            icon: "FileText",
+            icon: "BookOpen",
             fullContent: "",
             linkUrl: "",
-            language: useLanguageStore.getState().language,
+            language: DEFAULT_LANGUAGE,
         },
     });
 
-    const onSubmit = async (values: ResourceFormValues) => {
+    useEffect(() => {
+        const fetchResource = async () => {
+            if (!id) return;
+            try {
+                const resource = await adminService.getResourceById(id);
+                form.reset({

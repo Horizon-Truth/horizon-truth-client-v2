@@ -9,3 +9,8 @@ import { cn } from "@/shared/lib/utils";
  * validation can force an explicit choice.
  */
 export const LanguageSelect = forwardRef<
+    HTMLSelectElement,
+    React.SelectHTMLAttributes<HTMLSelectElement> & { includeEmpty?: boolean }
+>(({ className, includeEmpty = true, ...props }, ref) => {
+    return (
+        <select
