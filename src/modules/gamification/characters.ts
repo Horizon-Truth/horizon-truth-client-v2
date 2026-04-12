@@ -33,3 +33,25 @@ export interface Character {
     /** The skill whose accuracy drives their disposition; null = overall conduct. */
     skillKey: string | null;
     /** What they say at each disposition. */
+    lines: Record<Disposition, string>;
+}
+
+export const CHARACTERS: Character[] = [
+    {
+        key: 'meron',
+        name: 'Meron',
+        role: 'Local journalist',
+        emoji: '📰',
+        bio: 'Runs a two-person newsroom and checks every claim twice. She notices who else does.',
+        skillKey: 'source-verification',
+        lines: {
+            wary: "You pass things along without asking who's behind them. In my job, that's how careers end.",
+            neutral: "You're careful sometimes. Make it a habit and I'll start sending you tips.",
+            warm: 'You check your sources. That puts you ahead of most people with a newsroom badge.',
+            devoted: "When something big breaks, you're the first person I want a second opinion from.",
+        },
+    },
+    {
+        key: 'tsehay',
+        name: 'Tsehay',
+        role: 'Schoolteacher',
