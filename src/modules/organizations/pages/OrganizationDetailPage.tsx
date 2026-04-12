@@ -30,3 +30,35 @@ export default function OrganizationDetailPage() {
                 adminService.getOrganizationUsers(id),
                 adminService.getUsers()
             ]);
+            setOrganization(orgRes.data);
+            setOrgUsers(usersRes.data || []);
+            setAllUsers(allUsersRes.data?.data || allUsersRes.data || []);
+        } catch (error) {
+            console.error("Failed to fetch organization details:", error);
+            toast.error("Failed to load organization data");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleAssignAgent = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!id || !assignment.userId) return;
+        try {
+            await adminService.addOrganizationUser(id, assignment);
+            toast.success("Agent assigned successfully");
+            setIsAssignModalOpen(false);
+            setAssignment({ userId: '', role: 'MEMBER' });
+            fetchData();
+        } catch (error) {
+            toast.error("Failed to assign agent");
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [id]);
+
+    const handleStatusToggle = async () => {
+        if (!organization) return;
+        try {
