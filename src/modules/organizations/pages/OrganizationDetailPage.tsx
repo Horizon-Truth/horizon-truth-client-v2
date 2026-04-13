@@ -62,3 +62,41 @@ export default function OrganizationDetailPage() {
     const handleStatusToggle = async () => {
         if (!organization) return;
         try {
+            const newStatus = organization.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            await adminService.updateOrganizationStatus(organization.id, newStatus);
+            toast.success(`Organization status updated to ${newStatus}`);
+            fetchData();
+        } catch (error) {
+            toast.error("Failed to update status");
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                <p className="text-sm font-black uppercase tracking-widest text-muted-foreground animate-pulse">Syncing Entity Data...</p>
+            </div>
+        );
+    }
+
+    if (!organization) {
+        return (
+            <div className="text-center py-20">
+                <p className="text-lg font-bold text-muted-foreground">Entity not found in current sector.</p>
+                <Button variant="link" onClick={() => navigate("/dashboard/organizations")} className="mt-4">
+                    Return to Registry
+                </Button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Header section */}
+            <div className="flex flex-col gap-6">
+                <Button
+                    variant="ghost"
+                    className="w-fit gap-2 -ml-2 text-muted-foreground hover:text-primary transition-colors font-bold uppercase tracking-widest text-[10px]"
+                    onClick={() => navigate("/dashboard/organizations")}
+                >
