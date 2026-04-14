@@ -26,3 +26,31 @@ export default function OrganizationManagementPage() {
 
     const fetchOrganizations = async () => {
         setIsLoading(true);
+        try {
+            const response = await adminService.getOrganizations();
+            setOrganizations(response.data || []);
+        } catch (error) {
+            console.error("Failed to fetch organizations:", error);
+            toast.error("Failed to load organizations");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrganizations();
+    }, []);
+
+    const handleCreateOrg = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await adminService.createOrganization(newOrg);
+            toast.success("Organization and Admin registered successfully");
+            setIsCreateModalOpen(false);
+            setNewOrg({
+                name: '',
+                country: 'Ethiopia',
+                description: '',
+                type: 'CROWDSOURCED',
+                adminFullName: '',
+                adminEmail: '',
