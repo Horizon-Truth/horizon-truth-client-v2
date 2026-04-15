@@ -15,3 +15,9 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+
+// Configure automatic retries for network errors and 5xx responses
+axiosRetry(api, {
+    retries: 3,
+    retryDelay: axiosRetry.exponentialDelay,
+    retryCondition: (error) => {
