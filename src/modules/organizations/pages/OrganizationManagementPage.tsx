@@ -54,3 +54,36 @@ export default function OrganizationManagementPage() {
                 type: 'CROWDSOURCED',
                 adminFullName: '',
                 adminEmail: '',
+                adminPassword: ''
+            });
+            fetchOrganizations();
+        } catch (error) {
+            toast.error("Failed to create organization");
+        }
+    };
+
+    const handleStatusToggle = async (org: Organization) => {
+        try {
+            const newStatus = org.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            await adminService.updateOrganizationStatus(org.id, newStatus);
+            toast.success(`Organization status updated to ${newStatus}`);
+            fetchOrganizations();
+        } catch (error) {
+            toast.error("Failed to update status");
+        }
+    };
+
+    const filteredOrgs = organizations.filter(org =>
+        org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        org.country.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl sm:text-4xl font-black tracking-tighter italic uppercase">Registry of Entities</h2>
+                    <p className="text-sm text-muted-foreground mt-1 font-medium italic">Authorized organizations and institutional partners.</p>
+                </div>
+                <Button
+                    onClick={() => setIsCreateModalOpen(true)}
