@@ -60,3 +60,49 @@ describe('recommendScenario', () => {
         expect(recommendScenario([], {})).toBeNull();
         expect(recommendScenario([scenario({ lockStatus: 'LOCKED' })], {})).toBeNull();
     });
+
+    it('always resumes an in-progress mission first', () => {
+        const rec = recommendScenario([
+            scenario({ id: 'a', psychologicalTrigger: 'statistics' }),
+            scenario({ id: 'b', activeProgressId: 'p1' }),
+        ], weakDataLiteracy);
+        expect(rec?.scenario.id).toBe('b');
+        expect(rec?.resume).toBe(true);
+    });
+
+    it('prefers a scenario training the weakest skill', () => {
+        const rec = recommendScenario([
+            scenario({ id: 'sources', psychologicalTrigger: 'fake experts and authority', order: 0 }),
+            scenario({ id: 'charts', psychologicalTrigger: 'misleading statistics', order: 1 }),
+        ], weakDataLiteracy);
+        expect(rec?.scenario.id).toBe('charts');
+        expect(rec?.reasons[0]).toMatch(/Data Literacy/);
+    });
+
+    it('prefers uncompleted scenarios over completed ones with equal skills', () => {
+        const rec = recommendScenario([
+            scenario({ id: 'done', order: 0, userRecord: record({ isCompleted: true, bestAccuracyRate: 90, attempts: 1 }) }),
+            scenario({ id: 'fresh', order: 1 }),
+        ], {});
+        expect(rec?.scenario.id).toBe('fresh');
+    });
+
+    it('skips fully-legendary scenarios', () => {
+        const rec = recommendScenario([
+            scenario({
+                id: 'perfect',
+                totalPossibleScore: 500,
+                userRecord: record({ isCompleted: true, bestAccuracyRate: 100, bestScore: 500, attempts: 2 }),
+            }),
+        ], {});
+        expect(rec).toBeNull();
+    });
+
+    it('breaks ties by learning-path order', () => {
+        const rec = recommendScenario([
+            scenario({ id: 'later', order: 5 }),
+            scenario({ id: 'earlier', order: 2 }),
+        ], {});
+        expect(rec?.scenario.id).toBe('earlier');
+    });
+});

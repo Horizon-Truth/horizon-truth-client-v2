@@ -75,3 +75,50 @@ export default function BlogEditPage() {
                     authorName: blog.authorName,
                     authorRole: blog.authorRole,
                     authorAvatar: blog.authorAvatar || "",
+                    imageUrl: blog.imageUrl || "",
+                    category: blog.category,
+                    readTime: blog.readTime,
+                    language: blog.language || DEFAULT_LANGUAGE,
+                    publishedAt: new Date(blog.publishedAt).toISOString().split("T")[0],
+                });
+            } catch (error) {
+                console.error("Failed to fetch blog:", error);
+                toast.error("Failed to load blog post data");
+                navigate("/dashboard/resources/blogs");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchBlog();
+    }, [id, form, navigate]);
+
+    const onSubmit = async (values: BlogFormValues) => {
+        if (!id) return;
+        setIsSaving(true);
+        try {
+            await adminService.updateBlog(id, { ...values, language: values.language as LanguageCode });
+            toast.success("Blog post updated successfully");
+            navigate("/dashboard/resources/blogs");
+        } catch (error) {
+            console.error("Failed to update blog:", error);
+            toast.error("Failed to update blog post");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Button
