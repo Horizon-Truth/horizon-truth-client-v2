@@ -74,3 +74,35 @@ export default function FieldManualPage() {
                         </div>
                         <div>
                             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Field Manual</h1>
+                            <p className="text-sm text-muted-foreground">
+                                Everything you've learned in the field, collected. New entries unlock as you complete missions.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Category filter */}
+                    <div className="flex flex-wrap gap-2 pt-2" role="group" aria-label="Filter by category">
+                        <CategoryChip active={category === 'all'} onClick={() => setCategory('all')} label="All" emoji="📚" />
+                        {(Object.keys(MANUAL_CATEGORIES) as ManualCategory[]).map(key => (
+                            <CategoryChip
+                                key={key}
+                                active={category === key}
+                                onClick={() => setCategory(key)}
+                                label={MANUAL_CATEGORIES[key].name}
+                                emoji={MANUAL_CATEGORIES[key].emoji}
+                            />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Article grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-16">
+                    {visible.map(article => {
+                        const unlocked = isArticleUnlocked(article, snapshot);
+                        const cat = MANUAL_CATEGORIES[article.category];
+                        return (
+                            <button
+                                key={article.id}
+                                onClick={() => unlocked && setSearchParams({ article: article.id }, { replace: true })}
+                                disabled={!unlocked}
+                                aria-label={unlocked ? `Read ${article.title}` : `${article.title} — ${unlockRequirementLabel(article)}`}
