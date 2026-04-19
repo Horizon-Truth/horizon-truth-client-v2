@@ -62,3 +62,16 @@ export function ReportList() {
         <div className="grid gap-6">
             {reports.map((report) => (
                 <div
+                    key={report.id}
+                    className="group bg-card p-6 rounded-2xl border hover:border-primary/30 transition-all hover:shadow-xl hover:shadow-primary/5 active:scale-[0.99]"
+                >
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-3">
+                                <Badge variant="outline" className="rounded-full bg-primary/5 border-primary/10 text-primary px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                                    {report.contentType}
+                                </Badge>
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${report.priority === 'CRITICAL' ? 'bg-red-500/10 text-red-500' :
+                                        report.priority === 'HIGH' ? 'bg-orange-500/10 text-orange-500' :
+                                            'bg-blue-500/10 text-blue-500'
+                                    }`}>
