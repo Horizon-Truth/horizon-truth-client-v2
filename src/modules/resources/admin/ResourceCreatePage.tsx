@@ -1,0 +1,103 @@
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { ArrowLeft, Save, BookOpen, ExternalLink, Type, Clock } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Textarea } from "@/shared/components/ui/textarea";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/shared/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select";
+import { adminService } from "@/services/admin.service";
+import { toast } from "sonner";
+import { SUPPORTED_LANGUAGE_CODES, SUPPORTED_LANGUAGES, type LanguageCode } from "@/shared/i18n/languages";
+import { useLanguageStore } from "@/store/language.store";
+
+const resourceSchema = z.object({
+    title: z.string().min(5, "Title must be at least 5 characters"),
+    slug: z.string().min(3, "Slug must be at least 3 characters"),
+    type: z.enum(["guide", "video", "course"]),
+    description: z.string().min(10, "Description must be at least 10 characters"),
+    duration: z.string().min(2, "Duration is required"),
+    badge: z.string().optional().or(z.literal("")),
+    icon: z.string().min(2, "Icon name is required (e.g. FileText)"),
+    fullContent: z.string().optional().or(z.literal("")),
+    linkUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
+});
+
+type ResourceFormValues = z.infer<typeof resourceSchema>;
+
+export default function ResourceCreatePage() {
+    const navigate = useNavigate();
+    const form = useForm<ResourceFormValues>({
+        resolver: zodResolver(resourceSchema),
+        defaultValues: {
+            title: "",
+            slug: "",
+            type: "guide",
+            description: "",
+            duration: "10 min read",
+            badge: "",
+            icon: "FileText",
+            fullContent: "",
+            linkUrl: "",
+            language: useLanguageStore.getState().language,
+        },
+    });
+
+    const onSubmit = async (values: ResourceFormValues) => {
+        try {
+            await adminService.createResource({ ...values, language: values.language as LanguageCode });
+            toast.success("Resource onboarded successfully");
+            navigate("/dashboard/resources/assets");
+        } catch (error) {
+            console.error("Failed to create resource:", error);
+            toast.error("Failed to onboard resource");
+        }
+    };
+
+    return (
+        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate("/dashboard/resources/assets")}
+                        className="rounded-xl hover:bg-secondary/10 transition-colors"
+                    >
+                        <ArrowLeft size={20} />
+                    </Button>
+                    <div>
+                        <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase text-secondary">Onboard <span className="text-foreground">New Asset</span></h2>
+                        <p className="text-sm text-muted-foreground mt-1">Register new educational toolkits, guides, or training assets.</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate("/dashboard/resources/assets")}
+                        className="flex-1 sm:flex-none rounded-xl h-12 font-bold uppercase tracking-widest text-[10px]"
+                    >
+                        Abort
+                    </Button>
+                    <Button
+                        onClick={form.handleSubmit(onSubmit)}
+                        className="flex-1 sm:flex-none rounded-xl h-12 px-8 font-black uppercase tracking-widest text-[10px] gap-2 shadow-lg shadow-secondary/20 bg-secondary hover:bg-secondary/90 text-secondary-foreground"

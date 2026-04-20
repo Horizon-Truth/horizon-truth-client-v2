@@ -19,3 +19,18 @@ Scope: player-facing game experience (mission hub, game session, learning feedba
 | C6 | **Hostile navigation.** Back button was silently hijacked (popstate trap with no way out); exiting a mission forced `window.location.reload()`. | `GameSession`, `GamePage` |
 
 ### High (UX / gameplay)
+
+| # | Issue |
+|---|-------|
+| H1 | Cryptic spy-jargon copy everywhere ("Select Response Node", "System Directive Alpha", "Decrypting Uplink", "Intercepted") obscured the educational mission and confused non-expert players. |
+| H2 | No progression identity: no named rank ladder, no "XP to next rank", no reason to come back tomorrow. |
+| H3 | No onboarding for the game — new players landed on a scenario list with zero explanation of trust, influence, accuracy, or streaks. |
+| H4 | Result screen had no celebration, no XP breakdown, no "what you learned", no rank progress. |
+| H5 | Timer expiry silently auto-submitted "the worst choice (the first one)" — an unproven assumption, with no explanation to the player. |
+| H6 | Number-key hotkeys (1–9) fired even while typing in inputs or holding modifiers. |
+| H7 | New scenes scrolled the feed to the **bottom** instead of the top. |
+| H8 | Invisible "Exit Mission" button (white text/white glass on white background). |
+| H9 | `ScenarioList`: stale-closure pagination bug, artificial 800 ms loading delay. |
+| H10 | `custom-scrollbar` class referenced across every game screen but never defined in CSS. |
+
+### Medium (polish / a11y)

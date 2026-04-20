@@ -119,3 +119,89 @@ export default function ReportSubmissionPage() {
                                 transition={{ delay: 0.4 }}
                                 className="hidden lg:flex flex-col items-end text-right"
                             >
+                                <div className="text-3xl font-black text-primary/20 select-none tracking-tighter">TRUTH-V1</div>
+                                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">Status: Ready for Intake</div>
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    {/* Form and Guide Grid */}
+                    <div className="grid lg:grid-cols-12 gap-12 items-start">
+                        {/* Form Card */}
+                        <motion.div
+                            initial={{ y: 30, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            className="lg:col-span-8"
+                        >
+                            <div className="bg-card/40 backdrop-blur-xl border border-border/50 rounded-[2.5rem] shadow-2xl shadow-black/5 overflow-hidden">
+                                <div className="p-8 md:p-12">
+                                    <ReportForm
+                                        onSuccess={handleSuccess}
+                                        onRequireAuth={() => openAuth("login")}
+                                        onCancel={() => navigate("/crowdsourcing")}
+                                        authResolvedSignal={authResolved}
+                                    />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Guide Sidebar */}
+                        <motion.div
+                            initial={{ x: 30, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.6 }}
+                            className="lg:col-span-4 space-y-8"
+                        >
+                            <div className="bg-primary p-10 rounded-[2.5rem] text-primary-foreground shadow-xl shadow-primary/10 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-[2s]" />
+                                <h3 className="text-2xl font-black uppercase tracking-tighter mb-8 flex items-center gap-3">
+                                    <Info className="opacity-50" /> Filing Guide
+                                </h3>
+                                <ul className="space-y-8">
+                                    <li className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 font-black text-xs border border-white/20">01</div>
+                                        <div>
+                                            <p className="font-bold text-sm uppercase tracking-wide">Clear Title</p>
+                                            <p className="text-xs opacity-70 mt-1 leading-relaxed">Summarize the core claim in a few powerful words for immediate recognition.</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 font-black text-xs border border-white/20">02</div>
+                                        <div>
+                                            <p className="font-bold text-sm uppercase tracking-wide">Source Verification</p>
+                                            <p className="text-xs opacity-70 mt-1 leading-relaxed">Provide the direct URL where the content originated for evidence gathering.</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4">
+                                        <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 font-black text-xs border border-white/20">03</div>
+                                        <div>
+                                            <p className="font-bold text-sm uppercase tracking-wide">Dossier Detail</p>
+                                            <p className="text-xs opacity-70 mt-1 leading-relaxed">Explain the specific falsehoods or misleading elements within the report.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="p-10 bg-secondary/10 border-2 border-dashed border-secondary/20 rounded-[2.5rem] hover:bg-secondary/20 transition-colors">
+                                <h4 className="text-lg font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <ShieldAlert size={20} className="text-secondary" /> Accountability
+                                </h4>
+                                <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                                    Incident reporting requires verifiable identity to maintain the integrity of our crowdsourced intelligence network.
+                                </p>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                initialMode={authMode}
+                onSuccess={handleAuthSuccess}
+            />
+        </PublicLayout>
+    );
+}

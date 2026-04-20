@@ -22,3 +22,18 @@ export interface MissionImpact {
     progressId: string;
     /** People reached by misinformation the player spread or amplified. */
     reached: number;
+    /** Reshares triggered by the player's spreading choices. */
+    reshares: number;
+    /** Credibility lost across spreading choices. */
+    credibilityLoss: number;
+    /** Exposure prevented by good calls (max alternative spread per scene). */
+    preventedReach: number;
+    /** Number of decisions that spread misinformation. */
+    misinfoChoices: number;
+    /** Number of decisions that protected the community. */
+    protectiveChoices: number;
+}
+
+export function emptyImpact(progressId: string): MissionImpact {
+    return {
+        progressId,

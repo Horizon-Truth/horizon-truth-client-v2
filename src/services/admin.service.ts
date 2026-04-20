@@ -54,3 +54,48 @@ export interface Resource {
 }
 
 export interface PlayerProfile {
+    id: string;
+    nickname: string;
+    trustScoreInitial: number;
+    onboardingCompleted: boolean;
+    user?: User;
+}
+
+class AdminService {
+    async getUsers(params?: { page?: number; limit?: number; search?: string; role?: string }) {
+        const response = await api.get('/users', { params });
+        return response.data;
+    }
+
+    async createUser(data: any) {
+        const response = await api.post('/users', data);
+        return response.data;
+    }
+
+    async updateUserStatus(id: string, status: string) {
+        const response = await api.put(`/admin/users/${id}/status`, { status });
+        return response.data;
+    }
+
+    async deleteUser(id: string) {
+        const response = await api.delete(`/admin/users/${id}`);
+        return response.data;
+    }
+
+    async getOrganizations() {
+        const response = await api.get('/admin/organizations');
+        return response.data;
+    }
+
+    async getOrganizationById(id: string) {
+        const response = await api.get(`/admin/organizations/${id}`);
+        return response.data;
+    }
+
+    async createOrganization(data: any) {
+        const response = await api.post('/admin/organizations', data);
+        return response.data;
+    }
+
+    async getOrganizationUsers(orgId: string) {
+        const response = await api.get(`/admin/organizations/${orgId}/users`);
