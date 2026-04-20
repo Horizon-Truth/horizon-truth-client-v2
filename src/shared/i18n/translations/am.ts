@@ -34,3 +34,40 @@ export const am: DeepPartial<TranslationDict> = {
   },
 
   settings: {
+    title: 'ቅንብሮች',
+    languageSection: 'ቋንቋ እና አካባቢ',
+    languageHint: 'ይዘቶች (ሁኔታዎች፣ ጽሁፎች እና መርጃዎች) በመረጡት ቋንቋ ይታያሉ።',
+  },
+
+  content: {
+    language: 'የይዘት ቋንቋ',
+    languageRequired: 'እባክዎ ቋንቋ ይምረጡ',
+    languageHint:
+      'ይህ ይዘት የተጻፈበትን ቋንቋ ይምረጡ። ያንን ቋንቋ ለሚመለከቱ ተጠቃሚዎች ብቻ ይታያል።',
+    filterByLanguage: 'በቋንቋ አጣራ',
+    allLanguages: 'ሁሉም ቋንቋዎች',
+    languageColumn: 'ቋንቋ',
+  },
+
+  scenario: {
+    create: 'አዲስ ሁኔታ',
+    edit: 'ሁኔታ አስተካክል',
+    title: 'ርዕስ',
+    description: 'መግለጫ',
+    saveCreate: 'ሁኔታ ጀምር',
+    saveUpdate: 'ሁኔታ አዘምን',
+    createdSuccess: 'ሁኔታ በተሳካ ሁኔታ ተፈጥሯል',
+    updatedSuccess: 'ሁኔታ በተሳካ ሁኔታ ተዘምኗል',
+    saveError: 'ሁኔታ ማስቀመጥ አልተሳካም',
+  },
+
+  blog: {
+    create: 'አዲስ ጽሁፍ',
+    edit: 'ጽሁፍ አስተካክል',
+    createdSuccess: 'ጽሁፍ በተሳካ ሁኔታ ተፈጥሯል',
+    saveError: 'ጽሁፍ መፍጠር አልተሳካም',
+  },
+
+  resource: {
+    create: 'አዲስ መርጃ',
+    edit: 'መርጃ አስተካክል',

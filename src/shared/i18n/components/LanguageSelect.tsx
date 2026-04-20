@@ -18,3 +18,17 @@ export const LanguageSelect = forwardRef<
             className={cn(
                 "w-full h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary px-3 text-sm appearance-none",
                 className,
+            )}
+            {...props}
+        >
+            {includeEmpty && <option value="">Select a language…</option>}
+            {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                    {lang.englishName} ({lang.nativeName})
+                </option>
+            ))}
+        </select>
+    );
+});
+
+LanguageSelect.displayName = "LanguageSelect";
