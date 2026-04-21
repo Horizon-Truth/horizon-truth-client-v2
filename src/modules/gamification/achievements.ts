@@ -40,3 +40,27 @@ export interface AchievementContext {
     calibration: CalibrationLedger;
     daily: DailyLedger | null;
     /** Mastery tiers earned across all scenarios the player has records for. */
+    masteryTiers: MasteryTier[];
+    /** Lifetime community impact totals, if known. */
+    totalPreventedReach: number;
+    totalReached: number;
+}
+
+export interface Achievement {
+    key: string;
+    category: AchievementCategory;
+    name: string;
+    description: string;
+    emoji: string;
+    /** Current progress and the target, for partial-progress display. */
+    progress: (ctx: AchievementContext) => { current: number; target: number };
+}
+
+/** Total decisions recorded across all skills. */
+function totalDecisions(book: Record<string, SkillProgress>): number {
+    return SKILLS.reduce((sum, s) => sum + (book[s.key]?.total ?? 0), 0);
+}
+
+function correctDecisions(book: Record<string, SkillProgress>): number {
+    return SKILLS.reduce((sum, s) => sum + (book[s.key]?.correct ?? 0), 0);
+}
