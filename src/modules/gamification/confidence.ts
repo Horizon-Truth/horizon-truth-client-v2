@@ -15,3 +15,13 @@ export interface ConfidenceOption {
     key: 'guessing' | 'somewhat' | 'certain';
     label: string;
     hint: string;
+    emoji: string;
+}
+
+export const CONFIDENCE_OPTIONS: ConfidenceOption[] = [
+    { level: 1, key: 'guessing', label: 'Guessing', hint: "I'm not sure — going with instinct", emoji: '🎲' },
+    { level: 3, key: 'somewhat', label: 'Somewhat sure', hint: 'I have a reason, but some doubt', emoji: '🤔' },
+    { level: 5, key: 'certain', label: 'Certain', hint: "I'd stake my reputation on it", emoji: '🎯' },
+];
+
+export interface CalibrationBucket {
