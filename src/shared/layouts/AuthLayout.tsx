@@ -8,3 +8,8 @@ export function AuthLayout() {
 
     return (
         <div className="min-h-screen relative flex items-center justify-center bg-background overflow-hidden p-4">
+            {/* Back to Home Button */}
+            <div className="absolute top-8 left-8 z-50">
+                <Button
+                    variant="ghost"
+                    size="sm"
