@@ -34,3 +34,14 @@ export interface FeedbackStats {
     totalOpen: number;
     byPriority: {
         LOW?: number;
+        MEDIUM?: number;
+        HIGH?: number;
+    };
+    overdueItems: number;
+}
+
+class FeedbackService {
+    async createFeedback(data: Partial<Feedback>) {
+        const response = await api.post('/feedback', data);
+        return response.data;
+    }
