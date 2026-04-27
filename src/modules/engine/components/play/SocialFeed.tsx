@@ -70,3 +70,32 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
                                 disabled={isLoading}
                                 whileHover={{
                                     scale: 1.05,
+                                    y: -2,
+                                    backgroundColor: "rgba(255, 255, 255, 0.05)"
+                                }}
+                                whileTap={{
+                                    scale: 0.95,
+                                }}
+                                onClick={() => onChoice?.(choice)}
+                                className={cn(
+                                    "px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all relative overflow-hidden flex items-center gap-1.5 sm:gap-2",
+                                    "text-slate-600 hover:text-primary",
+                                    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                                    isLoading && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <span className={cn(
+                                    "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
+                                    isLoading ? "bg-primary animate-pulse" : "bg-primary/40"
+                                )} />
+                                {choice}
+                            </motion.button>
+                        ))}
+                    </motion.div>
+                </div>
+            )}
+        </div>
+    );
+});
+
+SocialFeed.displayName = 'SocialFeed';
