@@ -21,3 +21,17 @@ const SelectTrigger = React.forwardRef<
     >
         {children}
         <SelectPrimitive.Icon asChild>
+            <ChevronDown className="h-4 w-4 opacity-50" />
+        </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+))
+SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
+
+const SelectContent = React.forwardRef<
+    React.ElementRef<typeof SelectPrimitive.Content>,
+    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = "popper", ...props }, ref) => (
+    <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+            ref={ref}
+            className={cn(

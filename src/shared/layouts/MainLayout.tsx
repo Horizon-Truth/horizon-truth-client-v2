@@ -54,3 +54,36 @@ const navigationGroups = [
         items: [
             { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
             { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN"] },
+        ]
+    },
+    {
+        title: "Content",
+        items: [
+            { name: "Blogs", icon: FileText, href: "/dashboard/resources/blogs", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Resources", icon: BookOpen, href: "/dashboard/resources/library", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Contact Comms", icon: MessageSquare, href: "/dashboard/contacts", roles: ["SYSTEM_ADMIN"] },
+            { name: "Newsletters", icon: Megaphone, href: "/dashboard/newsletter", roles: ["SYSTEM_ADMIN"] },
+        ]
+    },
+    {
+        title: "Reports & Safety",
+        items: [
+            { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
+            { name: "Audit Logs", icon: ShieldCheck, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN"] },
+        ]
+    }
+];
+
+const navigation = navigationGroups.flatMap(g => g.items);
+
+export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+    const { isMobile, isLowEndDevice } = useDevice();
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(!isMobile);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
+    const { user, logout } = useAuthStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Auto-close sidebar on mobile
