@@ -49,3 +49,23 @@ export const PublicNavbar = () => {
                         >
                             {t("nav.features")}
                         </a>
+                        <button
+                            onClick={() => navigate("/crowdsourcing")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.crowdsourcing")}
+                        </button>
+                        <button
+                            onClick={() => navigate("/faq")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.faq")}
+                        </button>
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.login")}
+                        </button>
+                        <button
+                            onClick={() => {
