@@ -8,3 +8,8 @@ import logoTextRightLight from '@/assets/logos/logo-text-right-light.png';
 import logoTextRightDark from '@/assets/logos/logo-text-right-dark.png';
 
 interface LogoProps {
+    variant?: 'only' | 'bottom' | 'right';
+    className?: string;
+    alt?: string;
+    onClick?: () => void;
+}

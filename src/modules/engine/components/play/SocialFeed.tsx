@@ -70,3 +70,61 @@ export const SocialFeed: React.FC<SocialFeedProps> = memo(({ scene, onChoice, is
                                 disabled={isLoading}
                                 whileHover={{
                                     scale: 1.05,
+                                    y: -2,
+                                    backgroundColor: "rgba(255, 255, 255, 0.05)"
+                                }}
+                                whileTap={{
+                                    scale: 0.95,
+                                }}
+                                onClick={() => onChoice?.(choice)}
+                                className={cn(
+                                    "px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold transition-all relative overflow-hidden flex items-center gap-1.5 sm:gap-2",
+                                    "text-slate-600 hover:text-primary",
+                                    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                                    isLoading && "opacity-50 cursor-not-allowed"
+                                )}
+                            >
+                                <span className={cn(
+                                    "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
+                                    isLoading ? "bg-primary animate-pulse" : "bg-primary/40"
+                                )} />
+                                {choice}
+                            </motion.button>
+                        ))}
+                    </motion.div>
+                </div>
+            )}
+        </div>
+    );
+});
+
+SocialFeed.displayName = 'SocialFeed';
+
+const FeedItem = ({ item, index }: { item: any, index: number }) => {
+    const shouldReduceMotion = useReducedMotion();
+    const { activeProgress } = useGameStore();
+    // Generate realistic engagement numbers
+    const views = (Math.random() * 50 + 10).toFixed(1) + 'K';
+    const likes = Math.floor(Math.random() * 2000 + 100);
+    const shares = Math.floor(Math.random() * 500 + 50);
+
+    const handleShareClick = () => {
+        if (!activeProgress?.id) return;
+        const sceneId = activeProgress.currentScene?.id;
+        if (!sceneId) return;
+
+        telemetryService.trackDissemination(activeProgress.id, sceneId, {
+            share_clicked: true,
+            share_channel_type: 'public',
+            share_count: shares + 1
+        });
+    };
+
+    return (
+        <motion.div
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0.1 : 0.8 + (index * 0.2) }}
+            className="group relative border-b border-slate-100 last:border-0 pb-6 mb-6"
+        >
+            <div className="flex gap-4">

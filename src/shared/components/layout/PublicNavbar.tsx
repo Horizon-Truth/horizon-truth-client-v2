@@ -30,3 +30,42 @@ export const PublicNavbar = () => {
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
                         <Logo variant="right" className="h-10 w-auto" />
                         {/* <span className="text-xl font-bold tracking-tight">HORIZON TRUTH</span> */}
+                    </div>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center space-x-8">
+                        <LanguageSwitcher variant="compact" />
+                        <ThemeToggle />
+                        <button
+                            onClick={() => navigate("/about")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.about")}
+                        </button>
+                        <a
+                            href="#features"
+                            onClick={(e) => handleAnchorClick(e, "#features")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.features")}
+                        </a>
+                        <button
+                            onClick={() => navigate("/crowdsourcing")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.crowdsourcing")}
+                        </button>
+                        <button
+                            onClick={() => navigate("/faq")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.faq")}
+                        </button>
+                        <button
+                            onClick={() => navigate("/login")}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                        >
+                            {t("nav.login")}
+                        </button>
+                        <button
+                            onClick={() => {

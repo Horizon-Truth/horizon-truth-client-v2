@@ -23,3 +23,17 @@ export const AnonymizeConfirmModal: React.FC<AnonymizeConfirmModalProps> = ({
     onClose,
     onConfirm,
 }) => {
+    const [confirmText, setConfirmText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleConfirm = async () => {
+        if (confirmText !== 'ANONYMIZE') return;
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            await onConfirm();
+            onClose();
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to anonymize account. Please try again.');
