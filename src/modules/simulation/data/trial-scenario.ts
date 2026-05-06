@@ -121,3 +121,38 @@ export const TRIAL_SCENARIO: Scenario = {
             techniqueKey: 'authority',
             choices: [
                 {
+                    id: 'c3a',
+                    text: 'Trust it — a doctor said it, after all',
+                    trustImpact: -15,
+                    trap: 'Fake authority: an unnamed, unverifiable “doctor” borrowed credibility without any evidence.',
+                    feedback: 'Which doctor? Where? Vague experts (“my cousin\'s friend”) are unfalsifiable — that\'s the point. Real medical claims name checkable people, institutions, and studies. Your friend may now skip a vaccine over a rumor.',
+                },
+                {
+                    id: 'c3b',
+                    text: 'Suggest checking what health authorities and named experts actually say',
+                    trustImpact: 15,
+                    isBest: true,
+                    feedback: 'Well done. You didn\'t mock your friend — you redirected them to named, accountable sources. Public health bodies publish exactly this information, reviewed by hundreds of identifiable experts.',
+                },
+                {
+                    id: 'c3c',
+                    text: 'Tell them to just decide for themselves',
+                    trustImpact: -5,
+                    feedback: 'Staying neutral feels polite, but your friend asked for help while frightened by a false claim. Silence lets the rumor win by default.',
+                },
+            ],
+        },
+        {
+            id: 'scene-context',
+            type: 'SOCIAL_POST',
+            author: 'CityWatch24',
+            handle: '@citywatch24',
+            content: 'HAPPENING NOW: Downtown completely underwater after tonight\'s storm!! Authorities silent as usual. Stay away from the city center!! 😱',
+            mediaUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&q=80&w=800',
+            timestamp: '20 mins ago',
+            techniqueKey: 'context',
+            choices: [
+                {
+                    id: 'c4a',
+                    text: 'Repost it — people need to stay away from downtown',
+                    trustImpact: -15,

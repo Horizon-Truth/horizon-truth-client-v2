@@ -119,3 +119,52 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
         try {
             await reportService.submitReport({
                 ...values,
+                sourceUrl: values.sourceUrl || undefined,
+            });
+            toast.success("Report submitted successfully!");
+            form.reset();
+            onSuccess();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to submit report");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function onSubmit(values: z.infer<typeof reportSchema>) {
+        // Guests can fill out the form; auth is only enforced at submission time.
+        if (!isAuthenticated) {
+            setPendingValues(values); // keep the entered data so we can resume after login
+            toast.info("Please login or register to submit your report");
+            onRequireAuth();
+            return;
+        }
+        submitReport(values);
+    }
+
+    // Resume the held submission once the user has authenticated via the modal.
+    useEffect(() => {
+        if (isAuthenticated && pendingValues) {
+            const values = pendingValues;
+            setPendingValues(null);
+            submitReport(values);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authResolvedSignal]);
+
+    if (fetchingData) {
+        return (
+            <div className="flex items-center justify-center p-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (

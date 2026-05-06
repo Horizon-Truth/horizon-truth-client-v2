@@ -55,3 +55,124 @@ export const ChatStream: React.FC<ChatStreamProps> = memo(({ scene, onChoice, is
     return (
         <div className="flex flex-col h-[400px] border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-2xl">
             <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 overflow-hidden border border-white/20 flex items-center justify-center font-black text-[10px] text-white shadow-inner">
+                        {scene.content?.npcAvatarUrl ? (
+                            <img src={scene.content.npcAvatarUrl} alt={scene.content.npcName} className="w-full h-full object-cover" />
+                        ) : (
+                            (scene.content?.npcName || 'Intel').substring(0, 2).toUpperCase()
+                        )}
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold leading-tight text-slate-900">{scene.content?.npcName || 'Intel Channel Alpha'}</p>
+                        <p className="text-[10px] text-blue-600">Secure Channel • {scene.content?.chatMessages?.length || 0} messages</p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                ref={scrollRef}
+                className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar scroll-smooth"
+            >
+                <AnimatePresence initial={false}>
+                    {visibleMessages.map((msg, idx) => (
+                        <motion.div
+                            key={msg.id || idx}
+                            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            className={cn(
+                                "max-w-[85%] rounded-2xl p-3 relative shadow-md",
+                                msg.sender === 'USER'
+                                    ? "bg-blue-600 ml-auto rounded-tr-none"
+                                    : "bg-[#212D3B] mr-auto rounded-tl-none"
+                            )}
+                        >
+                            {msg.sender !== 'USER' && (
+                                <p className="text-[11px] font-black text-blue-600 mb-1 uppercase tracking-wider">
+                                    {scene.content?.npcName || 'System'}
+                                </p>
+                            )}
+                            <p className="text-base leading-relaxed font-medium text-white">{msg.message}</p>
+                            <div className="flex items-center justify-end gap-1 mt-1 opacity-60">
+                                <span className="text-[10px]">14:2{idx}</span>
+                                {msg.sender === 'USER' ? <CheckCheck size={12} /> : <Check size={12} />}
+                            </div>
+                        </motion.div>
+                    ))}
+
+                    {isTyping && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            className="bg-[#212D3B] rounded-2xl rounded-tl-none p-3 mr-auto flex gap-1 items-center"
+                        >
+                            <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                            <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                            <span className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Telegram-style Inline Choice Keyboard */}
+                {!isTyping && scene.availableChoices.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="grid grid-cols-1 gap-1.5 pt-4"
+                    >
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                            <span className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest">Select Operation</span>
+                            <div className="h-[1px] flex-1 bg-blue-400/20" />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            {scene.availableChoices.map((choice: string, index: number) => (
+                                <motion.button
+                                    key={choice}
+                                    disabled={isLoading}
+                                    whileHover={{
+                                        backgroundColor: "rgba(59, 130, 246, 0.15)",
+                                    }}
+                                    whileTap={{
+                                        scale: 0.98,
+                                        x: [0, -2, 2, -2, 2, 0], // Micro vibration
+                                        transition: { duration: 0.1 }
+                                    }}
+                                    onClick={() => onChoice?.(choice)}
+                                    className={cn(
+                                        "w-full p-4 rounded-xl bg-blue-50 border border-blue-200 text-base font-bold text-blue-600 transition-all duration-200 text-center relative overflow-hidden group/btn",
+                                        "hover:border-blue-500 hover:bg-blue-100 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]",
+                                        "focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:outline-none",
+                                        isLoading && "opacity-50 cursor-not-allowed"
+                                    )}
+                                >
+                                    {/* Subtle Ripple Effect Simulation */}
+                                    <div className="absolute inset-0 bg-blue-400/10 scale-0 group-active/btn:scale-150 transition-transform duration-500 rounded-full opacity-0 group-active/btn:opacity-100 pointer-events-none" />
+
+                                    <div className="relative z-10 flex items-center justify-center gap-3">
+                                        {isLoading ? (
+                                            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-ping" />
+                                        ) : (
+                                            <span className="text-[10px] opacity-40">[{index + 1}]</span>
+                                        )}
+                                        <span className={cn(isLoading && "opacity-50")}>{choice}</span>
+                                    </div>
+                                </motion.button>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </div>
+
+            <div className="p-2 px-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-slate-500">
+                    <Eye size={14} />
+                    <span className="text-[10px] font-bold">154.2K views</span>
+                </div>
+                <button className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Join Channel</button>
+            </div>
+        </div>
+    );
+});
+
+ChatStream.displayName = 'ChatStream';

@@ -46,3 +46,23 @@ export default function ResourceLibraryPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-4xl lg:text-7xl font-extrabold tracking-tight mb-6">
                         Resource <span className="text-primary">Library</span>
+                    </h1>
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                        Access our full collection of educational materials, verification guides, and media resources to sharpen your digital literacy.
+                    </p>
+                </div>
+            </section>
+
+            {isLoading ? (
+                <div className="py-24 flex flex-col items-center justify-center gap-4">
+                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Decrypting Repository...</p>
+                </div>
+            ) : (
+                <section className="py-16 bg-background">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        {/* Filters & Search */}
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+                            <div className="flex flex-wrap gap-2">
+                                {filters.map((filter) => (
+                                    <Button

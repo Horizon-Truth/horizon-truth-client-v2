@@ -71,3 +71,46 @@ export const am: DeepPartial<TranslationDict> = {
   resource: {
     create: 'አዲስ መርጃ',
     edit: 'መርጃ አስተካክል',
+    createdSuccess: 'መርጃ በተሳካ ሁኔታ ተፈጥሯል',
+    saveError: 'መርጃ ማስቀመጥ አልተሳካም',
+  },
+
+  nav: {
+    about: 'ስለ እኛ',
+    features: 'ባህሪያት',
+    crowdsourcing: 'የማህበረሰብ ተሳትፎ',
+    faq: 'ተደጋጋሚ ጥያቄዎች',
+    login: 'ግባ',
+    theme: 'ገጽታ',
+    language: 'ቋንቋ',
+    startGame: 'ጨዋታውን ጀምር',
+    startGameShort: 'ጀምር',
+  },
+
+  footer: {
+    tagline:
+      'በጨዋታ መልክ ባለው ዲጂታል እውቀት አእምሮን ማብቃት። ይበልጥ እውነተኛ የሆነ ዲጂታል ምህዳር መገንባት።',
+    pages: 'ገጾች',
+    legal: 'ሕጋዊ',
+    aboutUs: 'ስለ እኛ',
+    blogResources: 'ብሎግ እና መርጃዎች',
+    faq: 'ተደጋጋሚ ጥያቄዎች',
+    contact: 'አግኙን',
+    privacy: 'የግላዊነት ፖሊሲ',
+    terms: 'የአገልግሎት ውል',
+    cookies: 'የኩኪ ፖሊሲ',
+    rights: '© 2026 Horizon Truth። መብቱ በሕግ የተጠበቀ ነው።',
+  },
+
+  landing: {
+    slide1Badge: 'በማህበረሰብ የተረጋገጠ ይዘት',
+    slide1Title: 'በዲጂታል ዘመን እውነትን መከላከል',
+    slide1Subtitle: 'በጋራ ሐሰተኛ መረጃን እንታገል',
+    slide1Desc:
+      'Horizon Truth ሐሰተኛ ዜናን ለመለየት፣ ምንጮችን ለመተንተን እና ዲጂታል ማታለልን ለማሸነፍ በሚያስደስት የጨዋታ ተሞክሮ መስተጋብራዊ የገሃዱ ዓለም ማስመሰያዎችን ያስታጥቅዎታል።',
+    slide1Cta: 'ስልጠናዎን ይጀምሩ',
+    slide2Badge: 'በማህበረሰብ የተደገፈ ግልጽነት',
+    slide2Title: 'የጋራ ብልህነት ኃይል',
+    slide2Subtitle: 'በማህበረሰብ የሚመራ ማረጋገጫ',
+    slide2Desc:
+      'አጠራጣሪ ይዘትን በማሳወቅ፣ በመገምገም እና በማረጋገጥ እያደገ ካለው የዲጂታል ተከላካዮች መረብ ጋር ይቀላቀሉ። በጋራ ይበልጥ ደህንነቱ የተጠበቀ እና አስተማማኝ የመረጃ ስነ-ምህዳር እንፈጥራለን።',

@@ -15,3 +15,13 @@ export interface DailyLedger {
     date: string;
     /** Missions completed today. */
     missions: number;
+    /** Correct decisions made today. */
+    correctDecisions: number;
+    /** Missions finished today with ≥80% accuracy. */
+    sharpMissions: number;
+}
+
+/** Local (not UTC) date key, so "today" matches the player's clock. */
+export function todayKey(now: Date = new Date()): string {
+    const y = now.getFullYear();
+    const m = `${now.getMonth() + 1}`.padStart(2, '0');

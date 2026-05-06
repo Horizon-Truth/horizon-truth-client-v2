@@ -16,3 +16,39 @@ export const Confetti = memo(function Confetti({ pieces = 60 }: { pieces?: numbe
                 id: i,
                 x: Math.random() * 100,
                 delay: Math.random() * 0.8,
+                duration: 2.2 + Math.random() * 1.6,
+                size: 6 + Math.random() * 6,
+                color: COLORS[i % COLORS.length],
+                rotate: Math.random() * 360,
+                drift: (Math.random() - 0.5) * 30,
+            })),
+        [pieces]
+    );
+
+    if (reduceMotion) return null;
+
+    return (
+        <div className="pointer-events-none fixed inset-0 z-[120] overflow-hidden" aria-hidden>
+            {items.map(p => (
+                <motion.span
+                    key={p.id}
+                    initial={{ x: `${p.x}vw`, y: '-5vh', rotate: 0, opacity: 1 }}
+                    animate={{
+                        y: '105vh',
+                        x: `${p.x + p.drift}vw`,
+                        rotate: p.rotate + 360,
+                        opacity: [1, 1, 0.9, 0],
+                    }}
+                    transition={{ duration: p.duration, delay: p.delay, ease: 'easeIn' }}
+                    style={{
+                        position: 'absolute',
+                        width: p.size,
+                        height: p.size * 0.45,
+                        backgroundColor: p.color,
+                        borderRadius: 2,
+                    }}
+                />
+            ))}
+        </div>
+    );
+});
