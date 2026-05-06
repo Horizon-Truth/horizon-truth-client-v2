@@ -12,3 +12,11 @@ const scenario = (id: string, campaignTag: string | null, userRecord?: Partial<N
 
 describe('campaignTitle', () => {
     it('humanizes tags in any common casing', () => {
+        expect(campaignTitle('ELECTION_CAMPAIGN')).toBe('Election Campaign');
+        expect(campaignTitle('health-hoax')).toBe('Health Hoax');
+        expect(campaignTitle('viral panic')).toBe('Viral Panic');
+    });
+});
+
+describe('groupByCampaign', () => {
+    it('groups consecutive runs and keeps standalone missions between arcs', () => {
