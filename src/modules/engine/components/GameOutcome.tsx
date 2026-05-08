@@ -63,3 +63,42 @@ export function GameOutcome() {
     if (!currentOutcome) return null;
 
     const isSuccess = currentOutcome.passed ?? (currentOutcome.outcomeType === 'SUCCESS' || currentOutcome.outcomeType === 'PASS' || currentOutcome.outcomeType === 'PERFECT_PASS' || (currentOutcome.accuracyRate !== undefined && currentOutcome.accuracyRate !== null && currentOutcome.accuracyRate >= 70));
+    const narrativeKey = currentOutcome.narrativeEnding || (isSuccess ? 'CONTAINED_EARLY' : 'COMMUNITY_CRISIS');
+    const narrativeCfg = NARRATIVE_CONFIG[narrativeKey] || NARRATIVE_CONFIG['COMMUNITY_CRISIS'];
+
+    // XP breakdown (the store already added the score to experience)
+    const xpEarned = Math.max(0, currentOutcome.score ?? 0);
+    const xpNow = stats.experience;
+    const rank = getRank(xpNow);
+    const nextRank = getNextRank(xpNow);
+    const rankPct = rankProgress(xpNow);
+
+    const lessons: { icon: React.ReactNode; label: string; text: string }[] = [];
+    if (scenario?.learningObjective) lessons.push({ icon: <GraduationCap size={18} aria-hidden />, label: 'What this mission taught', text: scenario.learningObjective });
+    if (scenario?.psychologicalTrigger) lessons.push({ icon: <Brain size={18} aria-hidden />, label: 'The manipulation at play', text: scenario.psychologicalTrigger });
+    if (scenario?.preventionLesson) lessons.push({ icon: <ShieldCheck size={18} aria-hidden />, label: 'How to protect yourself', text: scenario.preventionLesson });
+    if (lessons.length === 0) {
+        const tip = tipForSeed(currentOutcome.scenario?.id || 'fallback');
+        lessons.push({ icon: <Lightbulb size={18} aria-hidden />, label: tip.title, text: tip.tip });
+    }
+
+    // Community impact (Phase 4): only show the ledger of this very mission.
+    const impact = missionImpact
+        && (!currentOutcome.progressId || missionImpact.progressId === currentOutcome.progressId)
+        && hasImpact(missionImpact)
+        ? missionImpact
+        : null;
+    const verdict = impact ? impactVerdict(impact) : null;
+
+    if (view === 'reveal' && currentOutcome.progressId) {
+        return (
+            <InvestigationReveal
+                progressId={currentOutcome.progressId}
+                onComplete={() => setView('summary')}
+            />
+        );
+    }
+
+    return (
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 flex flex-col items-center bg-background text-foreground">
+            {isSuccess && <Confetti />}
