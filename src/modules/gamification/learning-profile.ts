@@ -3,3 +3,7 @@
  * confidence calibration). Mirrors backend/src/players/learning-profile.util.ts:
  * counters are monotonic, so divergent copies reconcile via element-wise max —
  * progress can never be lost, whichever side is stale.
+ */
+
+import type { SkillProgress } from './skills';
+import { EMPTY_CALIBRATION } from './confidence';
