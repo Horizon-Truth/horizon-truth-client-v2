@@ -93,3 +93,117 @@ export const ACHIEVEMENTS: Achievement[] = [
     { key: 'trust-90', category: 'accuracy', name: 'Pillar of the Community', description: 'Reach a trust score of 90.', emoji: '🏛️', progress: c => count(c.trustScore, 90) },
     {
         key: 'well-calibrated',
+        category: 'accuracy',
+        name: 'Well Calibrated',
+        description: 'Be right 90%+ of the time when you say you are certain (min. 10 certain calls).',
+        emoji: '⚖️',
+        progress: c => {
+            const bucket = c.calibration?.certain ?? { correct: 0, total: 0 };
+            if (bucket.total < 10) return { current: bucket.total, target: 10 };
+            return count(bucketAccuracy(bucket) ?? 0, 90);
+        },
+    },
+    {
+        key: 'honest-doubt',
+        category: 'accuracy',
+        name: 'Honest Doubt',
+        description: 'Admit uncertainty 20 times — knowing what you don\'t know is a skill.',
+        emoji: '🤔',
+        progress: c => count(c.calibration?.guessing?.total ?? 0, 20),
+    },
+
+    // ——— Mastery ———
+    { key: 'first-gold', category: 'skills', name: 'Going for Gold', description: 'Earn Gold mastery on any mission.', emoji: '🥇', progress: c => count(countTierAtLeast(c.masteryTiers, 2), 1) },
+    { key: 'five-gold', category: 'skills', name: 'Gold Standard', description: 'Earn Gold mastery or better on 5 missions.', emoji: '🏅', progress: c => count(countTierAtLeast(c.masteryTiers, 2), 5) },
+    { key: 'first-platinum', category: 'skills', name: 'Diamond Hands', description: 'Earn Platinum mastery on any mission.', emoji: '💎', progress: c => count(countTierAtLeast(c.masteryTiers, 3), 1) },
+    { key: 'first-legendary', category: 'skills', name: 'Flawless', description: 'Earn Legendary mastery — perfect accuracy and a perfect score.', emoji: '👑', progress: c => count(countTierAtLeast(c.masteryTiers, 5), 1) },
+    { key: 'all-skills-started', category: 'skills', name: 'Well Rounded', description: 'Practice all six media-literacy skills.', emoji: '🧩', progress: c => count(SKILLS.filter(s => (c.skillBook[s.key]?.total ?? 0) > 0).length, SKILLS.length) },
+    { key: 'skill-level-5', category: 'skills', name: 'Specialist', description: 'Reach level 5 in any skill.', emoji: '📈', progress: c => count(skillsAtLevel(c.skillBook, 5), 1) },
+    { key: 'all-skills-level-5', category: 'skills', name: 'Renaissance Mind', description: 'Reach level 5 in every skill.', emoji: '🎓', progress: c => count(skillsAtLevel(c.skillBook, 5), SKILLS.length) },
+    { key: 'skill-level-10', category: 'skills', name: 'Grandmaster', description: 'Max out any skill at level 10.', emoji: '🏆', progress: c => count(skillsAtLevel(c.skillBook, 10), 1) },
+    {
+        key: 'source-expert',
+        category: 'skills',
+        name: 'Source Expert',
+        description: 'Reach 90% accuracy in Source Verification (min. 10 decisions).',
+        emoji: '📰',
+        progress: c => {
+            const p = c.skillBook['source-verification'];
+            if (!p || p.total < 10) return { current: p?.total ?? 0, target: 10 };
+            return count(skillAccuracy(p) ?? 0, 90);
+        },
+    },
+    {
+        key: 'deepfake-hunter',
+        category: 'skills',
+        name: 'Deepfake Hunter',
+        description: 'Reach 90% accuracy in Media Analysis (min. 10 decisions).',
+        emoji: '🖼️',
+        progress: c => {
+            const p = c.skillBook['media-analysis'];
+            if (!p || p.total < 10) return { current: p?.total ?? 0, target: 10 };
+            return count(skillAccuracy(p) ?? 0, 90);
+        },
+    },
+    {
+        key: 'bias-breaker',
+        category: 'skills',
+        name: 'Bias Breaker',
+        description: 'Reach 90% accuracy in Emotional Defense (min. 10 decisions).',
+        emoji: '🧘',
+        progress: c => {
+            const p = c.skillBook['emotional-defense'];
+            if (!p || p.total < 10) return { current: p?.total ?? 0, target: 10 };
+            return count(skillAccuracy(p) ?? 0, 90);
+        },
+    },
+
+    // ——— Community impact ———
+    { key: 'shield-1000', category: 'impact', name: 'Community Shield', description: 'Prevent 1,000 people from being exposed to misinformation.', emoji: '🛡️', progress: c => count(c.totalPreventedReach, 1000) },
+    { key: 'shield-25000', category: 'impact', name: 'Firewall', description: 'Prevent 25,000 exposures.', emoji: '🧱', progress: c => count(c.totalPreventedReach, 25000) },
+    { key: 'shield-100000', category: 'impact', name: 'Truth Ambassador', description: 'Prevent 100,000 exposures.', emoji: '🌍', progress: c => count(c.totalPreventedReach, 100000) },
+    {
+        key: 'clean-hands',
+        category: 'impact',
+        name: 'Never Amplified',
+        description: 'Complete 10 missions without ever spreading misinformation.',
+        emoji: '🕊️',
+        progress: c => (c.totalReached > 0 ? { current: 0, target: 10 } : count(c.missionsCompleted, 10)),
+    },
+
+    // ——— Habits ———
+    { key: 'streak-3', category: 'habits', name: 'Building the Habit', description: 'Play 3 days in a row.', emoji: '🔥', progress: c => count(c.currentStreak, 3) },
+    { key: 'streak-7', category: 'habits', name: 'Week of Vigilance', description: 'Play 7 days in a row.', emoji: '📅', progress: c => count(c.currentStreak, 7) },
+    { key: 'streak-30', category: 'habits', name: 'Thirty Days of Truth', description: 'Play 30 days in a row.', emoji: '🗓️', progress: c => count(c.currentStreak, 30) },
+    { key: 'daily-sweep', category: 'habits', name: 'Daily Sweep', description: 'Clear all of a day\'s quests.', emoji: '✅', progress: c => count((c.daily?.missions ?? 0) >= 1 && (c.daily?.correctDecisions ?? 0) >= 5 && (c.daily?.sharpMissions ?? 0) >= 1 ? 1 : 0, 1) },
+    { key: 'marathon', category: 'habits', name: 'Marathon Session', description: 'Complete 3 missions in a single day.', emoji: '⏱️', progress: c => count(c.daily?.missions ?? 0, 3) },
+];
+
+export interface EvaluatedAchievement extends Achievement {
+    current: number;
+    target: number;
+    unlocked: boolean;
+    /** 0–100 completion. */
+    pct: number;
+}
+
+export function evaluateAchievement(achievement: Achievement, ctx: AchievementContext): EvaluatedAchievement {
+    const { current, target } = achievement.progress(ctx);
+    const safeTarget = target > 0 ? target : 1;
+    const clamped = Math.max(0, Math.min(current, safeTarget));
+    return {
+        ...achievement,
+        current: clamped,
+        target: safeTarget,
+        unlocked: clamped >= safeTarget,
+        pct: Math.round((clamped / safeTarget) * 100),
+    };
+}
+
+export function evaluateAll(ctx: AchievementContext): EvaluatedAchievement[] {
+    return ACHIEVEMENTS.map(a => evaluateAchievement(a, ctx));
+}
+
+export function unlockedCount(ctx: AchievementContext): number {
+    return evaluateAll(ctx).filter(a => a.unlocked).length;
+}
