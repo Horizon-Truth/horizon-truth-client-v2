@@ -27,3 +27,9 @@ describe('AuthStore', () => {
     });
 
     it('should update user partially', () => {
+        const user = { id: '1', fullName: 'Test User', role: 'PLAYER' as any };
+        useAuthStore.getState().setAuth(user, 'token');
+        
+        useAuthStore.getState().updateUser({ nickname: 'test-nick' });
+        
+        const state = useAuthStore.getState();
