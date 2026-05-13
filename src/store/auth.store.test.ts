@@ -33,3 +33,17 @@ describe('AuthStore', () => {
         useAuthStore.getState().updateUser({ nickname: 'test-nick' });
         
         const state = useAuthStore.getState();
+        expect(state.user?.fullName).toBe('Test User');
+        expect(state.user?.nickname).toBe('test-nick');
+    });
+
+    it('should clear state on logout', () => {
+        useAuthStore.getState().setAuth({ id: '1' } as any, 'token');
+        useAuthStore.getState().logout();
+        
+        const state = useAuthStore.getState();
+        expect(state.user).toBeNull();
+        expect(state.token).toBeNull();
+        expect(state.isAuthenticated).toBe(false);
+    });
+});
