@@ -55,3 +55,26 @@ const teamData: TeamMember[] = [
     description: "Develops educational narratives and scenarios with a focus on cultural relevance and pedagogy. Oversees content review and improvement."
   },
   {
+    id: 6,
+    name: "Ajaib Mohammed",
+    role: "DevOps Manager",
+    image: AjaibMoh,
+    description: "Manages CI/CD pipelines, monitors system performance, ensures infrastructure scalability, and oversees cloud infrastructure and security."
+  },
+  {
+    id: 7,
+    name: "Bilkes Elias",
+    role: "AI & Machine Learning Expert",
+    image: BilkesEl,
+    description: "Develops and fine-tunes machine learning models, performs data processing, and supports AI integration within the product platform."
+  },
+  {
+    id: 8,
+    name: "Dr. Muhammed Mumtaz",
+    role: "ICT Consultant",
+    image: MohammedMum,
+    description: "Director of ICT at Jimma University, Provides strategic ICT guidance, supports quality assurance and code review, and offers technical advice across the stack."
+  },
+  {
+    id: 9,
+    name: "Remela Habib",

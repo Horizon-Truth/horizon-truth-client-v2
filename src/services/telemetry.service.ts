@@ -97,3 +97,17 @@ class TelemetryService {
     trackDissemination(progressId: string, sceneId: string, diss: TelemetryPayload['dissemination']) {
         const sessionId = this.getSessionId(progressId, sceneId);
         const payload = this.getPayload(sessionId);
+        payload.dissemination = { ...payload.dissemination, ...diss };
+    }
+
+    trackConsumption(progressId: string, sceneId: string, consumption: TelemetryPayload['content_consumption']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.content_consumption = { ...payload.content_consumption, ...consumption };
+    }
+
+    trackVerification(progressId: string, sceneId: string, verification: TelemetryPayload['verification']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.verification = { ...payload.verification, ...verification };
+    }
