@@ -128,3 +128,30 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
             className="group relative border-b border-slate-100 last:border-0 pb-6 mb-6"
         >
             <div className="flex gap-4">
+                <Avatar className="w-10 h-10 border border-white/5">
+                    <AvatarImage src={item.avatarUrl || `https://ui-avatars.com/api/?name=${item.authorName || 'Anon'}&background=random`} />
+                    <AvatarFallback>{(item.authorName || 'A').charAt(0)}</AvatarFallback>
+                </Avatar>
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-bold text-sm truncate hover:underline cursor-pointer text-slate-900">
+                                {item.authorName || "Anonymous Source"}
+                            </span>
+                            <span className="text-slate-500 text-xs">@{item.authorUsername || `user_${index}72`}</span>
+                            <span className="text-slate-500 text-xs">· {index + 1}m</span>
+                        </div>
+                        <MoreHorizontal className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" />
+                    </div>
+
+                    <div className="mt-1 space-y-3">
+                        {/* Forwarded Tag */}
+                        <div className="flex items-center gap-1 text-primary brightness-125 italic">
+                            <Redo2 size={14} className="-scale-x-100" />
+                            <span className="text-xs font-black uppercase tracking-tight">Forwarded many times</span>
+                        </div>
+
+                        <p className="text-base text-slate-800 leading-relaxed font-medium">
+                            {item.description}
+                        </p>
