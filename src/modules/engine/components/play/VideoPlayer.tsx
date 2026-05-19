@@ -95,3 +95,43 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(({ scene }) => {
 
             {/* UI Overlays */}
             <div className="absolute top-6 left-6 z-40 flex items-center gap-3">
+                <div className="px-3 py-1 bg-red-600 rounded text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2 animate-pulse">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white" /> Live
+                </div>
+                <div className="px-3 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] font-mono text-white/80 uppercase">
+                    Rec: 00:04:21:09
+                </div>
+            </div>
+
+            <div className="absolute inset-x-0 bottom-0 z-40 p-6 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => setIsPlaying(!isPlaying)} className="text-white hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md">
+                        {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
+                    </button>
+                    <button onClick={() => setIsMuted(!isMuted)} className="text-white hover:text-primary transition-colors focus-visible:ring-1 focus-visible:ring-primary rounded-md">
+                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                    </button>
+                    <div className="w-64 h-1 bg-white/20 rounded-full overflow-hidden">
+                        <motion.div
+                            className="h-full bg-primary"
+                            initial={{ width: "0%" }}
+                            animate={{ width: "45%" }}
+                        />
+                    </div>
+                </div>
+                <Maximize size={20} className="text-white hover:text-primary cursor-pointer" />
+            </div>
+
+            {/* Night Vision Reticle */}
+            <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center opacity-30">
+                <div className="w-64 h-64 border border-emerald-500/20 rounded-full flex items-center justify-center">
+                    <div className="w-32 h-32 border border-emerald-500/40 rounded-full" />
+                    <div className="absolute w-full h-[1px] bg-emerald-500/20" />
+                    <div className="absolute h-full w-[1px] bg-emerald-500/20" />
+                </div>
+            </div>
+        </div>
+    );
+});
+
+VideoPlayer.displayName = 'VideoPlayer';
