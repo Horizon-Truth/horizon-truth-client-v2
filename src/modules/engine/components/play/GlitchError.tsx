@@ -29,3 +29,11 @@ export const GlitchError: React.FC<GlitchErrorProps> = ({ message, onRetry }) =>
 
                 <div className="relative z-10 space-y-6">
                     <div className="flex items-center gap-4 text-red-500">
+                        <div className="p-3 bg-red-500/10 rounded-2xl">
+                            <AlertTriangle size={32} className="animate-pulse" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-black uppercase tracking-widest italic">Signal Interference</h2>
+                            <p className="text-[10px] font-mono opacity-60">CRITICAL_PROTOCOL_FAIL // ERROR_0x429</p>
+                        </div>
+                    </div>
