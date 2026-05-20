@@ -78,3 +78,26 @@ export const CHARACTERS: Character[] = [
             warm: 'You catch the recycled and the synthetic. Good instincts, well trained.',
             devoted: "You spot things I miss now. That's not flattery — that's a job offer.",
         },
+    },
+    {
+        key: 'sara',
+        name: 'Dr. Sara',
+        role: 'Public health researcher',
+        emoji: '🔬',
+        bio: 'Fights health misinformation with data — and knows how easily data can be twisted.',
+        skillKey: 'data-literacy',
+        lines: {
+            wary: 'A number in a graphic convinced you. That graphic had no axis labels.',
+            neutral: "You're asking better questions about the numbers. Keep asking 'percent of what?'",
+            warm: "You read the axes and the sample size. Do you know how rare that is?",
+            devoted: 'I send you my drafts before publication. You catch the framing problems I miss.',
+        },
+    },
+    {
+        key: 'kaleb',
+        name: 'Kaleb',
+        role: 'Community organizer',
+        emoji: '🕸️',
+        bio: 'Watches how rumors move through neighborhoods, group chats, and hashtags.',
+        skillKey: 'network-awareness',
+        lines: {
