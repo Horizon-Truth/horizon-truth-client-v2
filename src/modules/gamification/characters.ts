@@ -33,3 +33,48 @@ export interface Character {
     /** The skill whose accuracy drives their disposition; null = overall conduct. */
     skillKey: string | null;
     /** What they say at each disposition. */
+    lines: Record<Disposition, string>;
+}
+
+export const CHARACTERS: Character[] = [
+    {
+        key: 'meron',
+        name: 'Meron',
+        role: 'Local journalist',
+        emoji: '📰',
+        bio: 'Runs a two-person newsroom and checks every claim twice. She notices who else does.',
+        skillKey: 'source-verification',
+        lines: {
+            wary: "You pass things along without asking who's behind them. In my job, that's how careers end.",
+            neutral: "You're careful sometimes. Make it a habit and I'll start sending you tips.",
+            warm: 'You check your sources. That puts you ahead of most people with a newsroom badge.',
+            devoted: "When something big breaks, you're the first person I want a second opinion from.",
+        },
+    },
+    {
+        key: 'tsehay',
+        name: 'Tsehay',
+        role: 'Schoolteacher',
+        emoji: '🧑‍🏫',
+        bio: 'Teaches teenagers to think before they share. Watches how adults handle outrage bait.',
+        skillKey: 'emotional-defense',
+        lines: {
+            wary: 'Anger travels faster than truth, and lately it travels through you.',
+            neutral: "You're learning to pause. That pause is the whole lesson.",
+            warm: "You don't take the bait anymore. I use your example in class.",
+            devoted: 'My students should learn to read a feed the way you do. Would you talk to them?',
+        },
+    },
+    {
+        key: 'dawit',
+        name: 'Dawit',
+        role: 'Photo editor',
+        emoji: '🖼️',
+        bio: 'Spent fifteen years spotting doctored images. Now the fakes are generated, not edited.',
+        skillKey: 'media-analysis',
+        lines: {
+            wary: "You believe pictures. Pictures have been lying since long before the AI showed up.",
+            neutral: "You're starting to look twice at images. Keep going — the fakes are getting better.",
+            warm: 'You catch the recycled and the synthetic. Good instincts, well trained.',
+            devoted: "You spot things I miss now. That's not flattery — that's a job offer.",
+        },
