@@ -75,3 +75,35 @@ export function ReportList() {
                                         report.priority === 'HIGH' ? 'bg-orange-500/10 text-orange-500' :
                                             'bg-blue-500/10 text-blue-500'
                                     }`}>
+                                    {report.priority}
+                                </span>
+                                <span className="text-[10px] font-bold text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                                    {report.status}
+                                </span>
+                            </div>
+                            <h3 className="text-xl font-black mb-2 group-hover:text-primary transition-colors">{report.title}</h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 md:line-clamp-none">
+                                {report.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 pt-6 border-t flex flex-wrap items-center gap-6 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        <div className="flex items-center gap-2">
+                            <Calendar size={14} className="text-primary/50" />
+                            {new Date(report.createdAt).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <User size={14} className="text-primary/50" />
+                            {report.user?.username || 'ANONYMOUS'}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Globe size={14} className="text-primary/50" />
+                            VERIFIED SOURCE
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
