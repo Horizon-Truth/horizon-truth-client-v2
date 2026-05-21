@@ -172,3 +172,214 @@ export default function BlogEditPage() {
                                             <Input {...field} placeholder="e.g. Technology" className="h-11 rounded-xl bg-muted/30 border-none" />
                                         </FormControl>
                                         <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="readTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Read Time</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="e.g. 5 min read" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">
+                                            Language <span className="text-destructive">*</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <select
+                                                {...field}
+                                                className="w-full h-11 rounded-xl bg-muted/30 border-none px-3 text-sm appearance-none focus-visible:ring-1 focus-visible:ring-primary"
+                                            >
+                                                <option value="">Select a language…</option>
+                                                {SUPPORTED_LANGUAGES.map((lang) => (
+                                                    <option key={lang.code} value={lang.code}>
+                                                        {lang.englishName} ({lang.nativeName})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="publishedAt"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Publish Date</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                                                <Input {...field} type="date" className="pl-9 h-11 rounded-xl bg-muted/30 border-none" />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="bg-card border border-border/50 p-6 rounded-[2rem] shadow-sm space-y-6">
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary/60 flex items-center gap-2">
+                                <User size={14} /> Author Profile
+                            </h3>
+
+                            <FormField
+                                control={form.control}
+                                name="authorName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Full Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="Sarah Chen" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="authorRole"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Professional Role</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="AI Researcher" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="authorAvatar"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Avatar URI</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="https://..." className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Right Column: Main Content */}
+                    <div className="md:col-span-2 space-y-6">
+                        <div className="bg-card border border-border/50 p-8 rounded-[2.5rem] shadow-sm space-y-8">
+                            <div className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Article Title</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="The Future of Synthetic Reality"
+                                                    className="text-2xl font-black h-16 rounded-2xl bg-muted/20 border-border/30 focus:bg-background transition-all"
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        form.setValue("slug", e.target.value.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""));
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="slug"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">URL Semantic (Slug)</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="the-future-of-synthetic-reality" className="font-mono text-xs h-10 rounded-xl bg-muted/30 border-none" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="imageUrl"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Featured Graphics URI</FormLabel>
+                                        <FormControl>
+                                            <div className="relative group">
+                                                <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                                                <Input {...field} placeholder="https://unsplash.com/..." className="pl-12 h-14 rounded-2xl bg-muted/20 border-border/30" />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="excerpt"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Executive Summary</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                {...field}
+                                                placeholder="Brief overview for the knowledge grid card..."
+                                                className="min-h-[100px] rounded-2xl bg-muted/20 border-border/30 resize-none font-medium leading-relaxed"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Full Discourse (HTML Enabled)</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                {...field}
+                                                placeholder="<p>Begin the narrative here...</p>"
+                                                className="min-h-[400px] rounded-[2rem] bg-muted/10 border-border/30 font-mono text-sm leading-relaxed p-6"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </Form>
+        </div>
+    );
+}
