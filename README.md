@@ -54,3 +54,36 @@ src/
 
 test/                   # Test files
 ├── setup.ts           # Test setup configuration
+└── components/        # Component tests
+```
+
+## 🛠️ Quick Start
+
+### Prerequisites
+
+- Node.js v18 or higher
+- npm, yarn, or pnpm (yarn recommended)
+
+### Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Horizon-Truth/horizon-truth-client-v2.git
+   cd horizon-truth-client-v2
+   ```
+
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   # Copy environment template for development
+   cp .env.development .env.local
+   ```
+
+4. **Update the `.env.local` file** with your API URL and other configuration:
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   VITE_APP_NAME=Horizon Truth
