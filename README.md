@@ -26,3 +26,64 @@
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/) with `@tailwindcss/vite` plugin
 
 ### Testing & Quality
+- **Testing Framework:** [Vitest 4.0](https://vitest.dev/)
+- **Testing Library:** React Testing Library with Jest DOM
+- **Linting:** ESLint 9 with TypeScript and React plugins
+- **Type Checking:** TypeScript strict mode
+
+### Development Tools
+- **Hot Reload:** Vite HMR with React Refresh
+- **UI Testing:** Vitest UI for visual test runner
+- **Preview:** Vite Preview for production build validation
+
+## 📂 Project Structure
+
+```
+src/
+├── assets/              # Static assets (images, icons, fonts)
+├── components/          # Reusable UI components
+│   ├── common/         # Shared components (Button, Input, Modal)
+│   ├── layout/         # Layout components (Header, Footer, Sidebar)
+│   └── features/       # Feature-specific components
+├── hooks/              # Custom React hooks
+├── utils/              # Utility functions and helpers
+├── types/              # TypeScript type definitions
+├── App.tsx             # Root application component
+├── main.tsx           # Application entry point
+└── index.css          # Global styles and Tailwind imports
+
+test/                   # Test files
+├── setup.ts           # Test setup configuration
+└── components/        # Component tests
+```
+
+## 🛠️ Quick Start
+
+### Prerequisites
+
+- Node.js v18 or higher
+- npm, yarn, or pnpm (yarn recommended)
+
+### Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Horizon-Truth/horizon-truth-client-v2.git
+   cd horizon-truth-client-v2
+   ```
+
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   # Copy environment template for development
+   cp .env.development .env.local
+   ```
+
+4. **Update the `.env.local` file** with your API URL and other configuration:
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   VITE_APP_NAME=Horizon Truth

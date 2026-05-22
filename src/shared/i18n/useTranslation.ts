@@ -14,3 +14,9 @@ function resolve(dict: unknown, path: string): string | undefined {
             return (acc as Record<string, unknown>)[key];
         }
         return undefined;
+    }, dict) as string | undefined;
+}
+
+export type TranslateFn = (key: string, fallback?: string) => string;
+
+/**

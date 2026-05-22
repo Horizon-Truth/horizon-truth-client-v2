@@ -34,3 +34,47 @@ interface AuthState {
     updateUser: (user: Partial<User>) => void;
     logout: () => void;
     setLoading: (loading: boolean) => void;
+    setError: (error: string | null) => void;
+}
+
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set) => ({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            isGuest: false,
+            loading: false,
+            error: null,
+            setAuth: (user, token) => set({
+                user,
+                token,
+                isAuthenticated: true,
+                isGuest: false,
+                loading: false,
+                error: null
+            }),
+            setGuest: (isGuest) => set({
+                isGuest,
+                isAuthenticated: false,
+                user: isGuest ? { id: crypto.randomUUID(), fullName: 'Guest Player', role: 'PLAYER' } as any : null,
+                token: null
+            }),
+            updateUser: (updatedUser) => set((state) => ({
+                user: state.user ? { ...state.user, ...updatedUser } : null
+            })),
+            logout: () => set({ user: null, token: null, isAuthenticated: false, isGuest: false }),
+            setLoading: (loading) => set({ loading }),
+            setError: (error) => set({ error, loading: false }),
+        }),
+        {
+            name: 'horizon-auth-storage',
+            partialize: (state) => ({
+                token: state.token,
+                isAuthenticated: state.isAuthenticated,
+                user: state.user,
+                isGuest: state.isGuest
+            }),
+        }
+    )
+);

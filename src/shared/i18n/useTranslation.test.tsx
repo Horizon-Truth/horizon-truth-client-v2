@@ -8,3 +8,8 @@ describe('useTranslation', () => {
     beforeEach(() => {
         useLanguageStore.getState().setLanguage(DEFAULT_LANGUAGE);
     });
+
+    it('returns English strings by default', () => {
+        const { result } = renderHook(() => useTranslation());
+        expect(result.current.t('common.save')).toBe('Save');
+        expect(result.current.language).toBe(ContentLanguage.ENGLISH);

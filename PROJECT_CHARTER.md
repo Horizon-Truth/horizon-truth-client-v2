@@ -52,4 +52,20 @@ The frontend follows the same **Maintainer-Led Consensus Model** as the backend 
 
 *   Oversees UI architecture
 *   Maintains design consistency
-*   Coordinates with backend maintainers
+*   Coordinates with backend maintainers
+
+### Maintainers
+
+*   Review PRs
+*   Maintain component standards
+*   Manage releases
+
+### Contributors
+
+*   Improve UI components
+*   Fix bugs and accessibility issues
+*   Propose UX improvements
+
+## 5. Contribution Model
+
+*   All UI changes require screenshots or previews
