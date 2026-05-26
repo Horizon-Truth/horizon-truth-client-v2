@@ -144,3 +144,62 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
             </div>
         );
     }
+
+    return (
+        <div className="flex flex-col gap-6 animate-in fade-in duration-500 overflow-x-hidden">
+            <div className="space-y-2 mb-4 text-center">
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Learning Path</h2>
+                <p className="text-muted-foreground text-base sm:text-lg max-w-xl mx-auto">
+                    Each mission teaches you a new way misinformation works — and how to beat it.
+                </p>
+            </div>
+
+            {/* Adaptive recommendation (Phase 9) */}
+            {recommendation && (
+                <section
+                    aria-label="Recommended mission"
+                    className="max-w-3xl mx-auto w-full rounded-3xl border border-primary/25 bg-primary/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                        <Compass size={22} aria-hidden />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+                            {recommendation.resume ? 'Continue your mission' : 'Recommended next'}
+                        </p>
+                        <h3 className="font-black tracking-tight leading-snug truncate">{recommendation.scenario.title}</h3>
+                        <div className="flex flex-wrap gap-1.5">
+                            {recommendation.reasons.slice(0, 3).map((reason, i) => (
+                                <span key={i} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-card border border-border text-[11px] font-semibold text-muted-foreground">
+                                    <Sparkles size={10} className="text-primary shrink-0" aria-hidden />
+                                    {reason}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <Button
+                        onClick={() => {
+                            if (recommendation.scenario.activeProgressId) {
+                                gameStore.loadProgress(recommendation.scenario.activeProgressId);
+                            } else {
+                                handleStartGame(recommendation.scenario);
+                            }
+                        }}
+                        disabled={loadingScenarioId !== null}
+                        className="h-11 px-6 rounded-xl font-bold shrink-0 bg-primary text-white shadow-lg shadow-primary/25 active:scale-95 transition-all"
+                    >
+                        {loadingScenarioId === recommendation.scenario.id
+                            ? <Loader2 className="w-4 h-4 animate-spin mr-2" aria-hidden />
+                            : <Play size={16} className="mr-2" aria-hidden />}
+                        {recommendation.resume ? 'Resume' : 'Start'}
+                    </Button>
+                </section>
+            )}
+
+            <div className="relative max-w-3xl mx-auto w-full py-8 text-left">
+                {/* Continuous Central connecting line on the left (Desktop only) */}
+                <div className="absolute left-[3rem] top-12 bottom-[120px] w-2 bg-foreground/10 rounded-full hidden sm:block overflow-hidden z-0">
+                </div>
+
+                <div className="flex flex-col gap-10 relative z-10 w-full">
+                    {scenarios.map((scenario, index) => {
