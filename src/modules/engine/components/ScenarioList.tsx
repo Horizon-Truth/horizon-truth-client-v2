@@ -89,3 +89,58 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
             setHasMore(false);
         } finally {
             if (pageNum === 1) {
+                setLocalLoading(false);
+            } else {
+                setLoadingMore(false);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchScenarios(page);
+    }, [page]);
+
+    const handleStartGame = async (scenario: Scenario) => {
+        setLoadingScenarioId(scenario.id);
+        try {
+            if (onStartGame) {
+                await onStartGame(scenario);
+            } else {
+                await gameStore.startGame(scenario.id);
+            }
+        } finally {
+            setLoadingScenarioId(null);
+        }
+    };
+
+    if (localLoading && page === 1) {
+        return (
+            <div className="flex flex-col gap-6">
+                <div className="space-y-2 opacity-40">
+                    <h2 className="text-3xl font-extrabold tracking-tight">Learning Path</h2>
+                    <p className="text-lg">Loading your missions...</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ScenarioSkeleton />
+                    <ScenarioSkeleton />
+                    <ScenarioSkeleton />
+                </div>
+            </div>
+        );
+    }
+
+    if (scenarios.length === 0) {
+        return (
+            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6">
+                <div className="w-20 h-20 bg-muted rounded-3xl flex items-center justify-center text-muted-foreground mb-2">
+                    <Info size={40} aria-hidden />
+                </div>
+                <div className="space-y-2">
+                    <h2 className="text-2xl font-bold">No missions yet</h2>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                        New missions are on the way. Check back soon — misinformation never sleeps, and neither do we.
+                    </p>
+                </div>
+            </div>
+        );
+    }
