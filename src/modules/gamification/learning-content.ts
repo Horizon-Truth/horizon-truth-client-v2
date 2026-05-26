@@ -45,3 +45,101 @@ export const TECHNIQUES: ManipulationTechnique[] = [
         howToSpot: 'Reverse-image search photos and check the original date. Old disaster footage is constantly recycled for new events.',
         example: 'A 2015 flood video re-shared as “yesterday\'s storm” in a different country.',
     },
+    {
+        key: 'social-proof',
+        title: 'Manufactured Consensus',
+        description: 'Bots, fake accounts, and coordinated reposts create the illusion that “everyone believes this”, exploiting our instinct to follow the crowd.',
+        howToSpot: 'Check the accounts: creation dates, repetitive wording, no personal history. Thousands of identical comments are a red flag, not proof.',
+        example: 'A hashtag trending through accounts that were all created last week.',
+    },
+    {
+        key: 'statistics',
+        title: 'Misleading Statistics',
+        description: 'Real numbers framed dishonestly — truncated graph axes, cherry-picked date ranges, or percentages without a baseline.',
+        howToSpot: 'Look at the axes and the time window. Ask “percent of what?” A 200% rise from 1 case to 3 cases is technically true and deeply misleading.',
+        example: 'A chart starting its y-axis at 90% to make a 2% difference look enormous.',
+    },
+    {
+        key: 'impersonation',
+        title: 'Impersonation',
+        description: 'Fake accounts or lookalike websites mimicking trusted news outlets, officials, or friends to launder false claims.',
+        howToSpot: 'Check the exact handle and domain character by character. “bbc-news24.com” is not the BBC.',
+        example: 'A screenshot of a “breaking news” tweet from an account with one letter changed in the name.',
+    },
+    {
+        key: 'deepfake',
+        title: 'Synthetic Media',
+        description: 'AI-generated or AI-altered images, video, or audio that show people saying or doing things that never happened.',
+        howToSpot: 'Look for warped hands, jewelry, and text; unnatural blinking or lip-sync; and — most importantly — whether any trusted outlet carries the same footage.',
+        example: 'A “leaked” audio clip of a politician that no journalist can trace to a real recording.',
+    },
+    {
+        key: 'clickbait',
+        title: 'Clickbait Framing',
+        description: 'Headlines engineered for clicks — curiosity gaps, superlatives, and promises the article never delivers. The business model rewards attention, not accuracy.',
+        howToSpot: '“You won\'t believe…”, “Number 7 will shock you”, or a headline that asks a question it never answers. If the payoff is withheld, the headline is the product.',
+        example: 'A “miracle cure DOCTORS HATE” article that resolves to an ad for supplements.',
+    },
+    {
+        key: 'cherry-picking',
+        title: 'Cherry-Picking',
+        description: 'Presenting only the evidence that supports a claim while omitting the fuller record that contradicts it. Each fact may be true; the picture is false.',
+        howToSpot: 'Ask what\'s missing: the full time range, the control group, the other studies. One cold day doesn\'t disprove a warming trend.',
+        example: 'Quoting the single study that found an effect while ignoring the ten that found none.',
+    },
+    {
+        key: 'conspiracy',
+        title: 'Conspiracy Framing',
+        description: 'Explaining events through hidden all-powerful plotters, where every piece of counter-evidence becomes proof of the cover-up. The theory is unfalsifiable by design.',
+        howToSpot: 'Ask what evidence would change the believer\'s mind. If the answer is “nothing — that\'s what they want you to think”, it\'s a closed loop, not an argument.',
+        example: '“The absence of evidence just shows how deep it goes.”',
+    },
+];
+
+export interface VerificationTip {
+    title: string;
+    tip: string;
+}
+
+/** Rotating practical verification habits, shown after choices and on results. */
+export const VERIFICATION_TIPS: VerificationTip[] = [
+    { title: 'Pause before sharing', tip: 'The single most effective habit: wait 30 seconds. Misinformation depends on instant, emotional resharing.' },
+    { title: 'Find the original source', tip: 'Follow the claim upstream. If every post links to other posts and never to a primary source, treat it as unverified.' },
+    { title: 'Reverse-image search', tip: 'Right-click any suspicious image and search for it. You\'ll often find the same photo attached to a different, older story.' },
+    { title: 'Check the date', tip: 'Old news re-shared as new is one of the most common forms of misinformation — always check when it was actually published.' },
+    { title: 'Read past the headline', tip: 'Headlines are written to be shared, not to be accurate. The article often contradicts its own headline.' },
+    { title: 'Cross-check with multiple outlets', tip: 'If a story is real and significant, more than one independent outlet will carry it. One lone source for a huge claim is a warning sign.' },
+    { title: 'Inspect the account', tip: 'Before trusting a post, look at who posted it: account age, follower patterns, and what else they share tell you a lot.' },
+    { title: 'Beware of screenshots', tip: 'Screenshots of posts or “messages” are trivially faked. Look for a link to the live original before believing one.' },
+    { title: 'Ask who benefits', tip: 'Misinformation usually serves someone — politically or financially. Asking “who gains if I believe this?” exposes many hoaxes.' },
+];
+
+/** Match a scenario-provided trap/technique string against the library. */
+export function matchTechnique(raw?: string | null): ManipulationTechnique | null {
+    if (!raw) return null;
+    const s = raw.toLowerCase();
+    const patterns: [RegExp, string][] = [
+        [/deepfake|synthetic|ai[- ](generated|image|video|audio|content)|face swap|voice clone/, 'deepfake'],
+        [/clickbait|curiosity gap|headline|you won'?t believe/, 'clickbait'],
+        [/cherry|selective|omit|one[- ]sided|incomplete (data|evidence)/, 'cherry-picking'],
+        [/conspir|cover[- ]?up|hidden (agenda|plot)|they don'?t want/, 'conspiracy'],
+        [/emotion|fear|anger|outrage|panic/, 'emotional'],
+        [/urgen|hurry|act now|deadline|before it/, 'urgency'],
+        [/authorit|expert|doctor|scientist|official/, 'authority'],
+        [/context|out of context|old (photo|video|image)|recycl|miscaption/, 'context'],
+        [/bot|consensus|bandwagon|everyone|social proof|coordinat/, 'social-proof'],
+        [/statistic|number|graph|chart|percent|data/, 'statistics'],
+        [/imperson|fake account|lookalike|spoof|mimic/, 'impersonation'],
+    ];
+    for (const [re, key] of patterns) {
+        if (re.test(s)) return TECHNIQUES.find(t => t.key === key) ?? null;
+    }
+    return null;
+}
+
+/** Deterministic tip rotation so the same scene shows a stable tip. */
+export function tipForSeed(seed: string): VerificationTip {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    return VERIFICATION_TIPS[hash % VERIFICATION_TIPS.length];
+}
