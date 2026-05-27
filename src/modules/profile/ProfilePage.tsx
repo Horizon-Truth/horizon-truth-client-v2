@@ -111,3 +111,96 @@ const ProfilePage = () => {
                     {success}
                 </div>
             )}
+
+            {error && (
+                <div className="flex items-center gap-2 p-4 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-xl animate-in fade-in slide-in-from-top-4">
+                    <AlertCircle size={18} />
+                    {error}
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Left Column: Avatar & Quick Info */}
+                <Card className="md:col-span-1 h-fit bg-card/50 backdrop-blur-xl border-white/5 shadow-xl">
+                    <CardContent className="pt-8">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="relative p-1 rounded-full bg-gradient-to-br from-primary to-primary/20 shadow-2xl shadow-primary/20">
+                                <Avatar className="h-24 w-24 border-4 border-card">
+                                    <AvatarImage src={user.avatarUrl} alt={user.fullName} />
+                                    <AvatarFallback className="text-2xl font-bold bg-muted/50">
+                                        {user.fullName?.split(" ").map(n => n[0]).join("").toUpperCase() || "U"}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground p-1.5 rounded-full border-4 border-card shadow-lg">
+                                    <ShieldCheck size={16} />
+                                </div>
+                            </div>
+                            <h3 className="text-xl font-bold mt-4">{user.fullName}</h3>
+                            <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest">{user.role}</p>
+
+                            <div className="mt-6 w-full space-y-3 pt-6 border-t border-white/5">
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <Mail size={16} className="text-primary/70" />
+                                    <span className="truncate">{user.email}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <UserIcon size={16} className="text-primary/70" />
+                                    <span>@{user.username || user.fullName.toLowerCase().replace(/\s+/g, '')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Right Column: Detailed Info / Edit Form */}
+                <div className="md:col-span-2 space-y-6">
+                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 shadow-xl overflow-hidden relative">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
+                            <div className="space-y-1.5">
+                                <CardTitle className="text-lg font-bold">Personal Information</CardTitle>
+                                <CardDescription>Core details associated with your identity on Horizon Truth.</CardDescription>
+                            </div>
+                            {!isEditing && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-white/5 border-white/10 hover:bg-white/10"
+                                    onClick={() => setIsEditing(true)}
+                                >
+                                    <Edit2 size={14} className="mr-2" />
+                                    Edit Profile
+                                </Button>
+                            )}
+                        </CardHeader>
+                        <CardContent>
+                            {isEditing ? (
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <FormField
+                                                control={form.control}
+                                                name="fullName"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="username"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Username</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="johndoe"
+                                                                className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                                                {...field}
