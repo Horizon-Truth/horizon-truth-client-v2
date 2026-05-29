@@ -26,3 +26,14 @@ jobs:
       # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
+
+      # 4️⃣ Determine branch environment
+      - name: Set deployment environment
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "DEPLOY_SUBDIR=current" >> $GITHUB_ENV
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "stage" ]]; then
+            echo "DEPLOY_SUBDIR=stage" >> $GITHUB_ENV
+            echo "ENVIRONMENT=staging" >> $GITHUB_ENV
