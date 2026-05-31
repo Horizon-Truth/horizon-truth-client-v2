@@ -158,3 +158,49 @@ const ProfilePage = () => {
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
                             <div className="space-y-1.5">
                                 <CardTitle className="text-lg font-bold">Personal Information</CardTitle>
+                                <CardDescription>Core details associated with your identity on Horizon Truth.</CardDescription>
+                            </div>
+                            {!isEditing && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-white/5 border-white/10 hover:bg-white/10"
+                                    onClick={() => setIsEditing(true)}
+                                >
+                                    <Edit2 size={14} className="mr-2" />
+                                    Edit Profile
+                                </Button>
+                            )}
+                        </CardHeader>
+                        <CardContent>
+                            {isEditing ? (
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <FormField
+                                                control={form.control}
+                                                name="fullName"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="username"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Username</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="johndoe"
+                                                                className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
+                                                                {...field}

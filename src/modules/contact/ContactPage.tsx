@@ -94,3 +94,32 @@ export default function ContactPage() {
                                 </div>
                             </div>
                         </div>
+
+                        <div className="p-8 bg-primary rounded-3xl text-primary-foreground shadow-xl">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Clock className="opacity-80" size={20} />
+                                <h4 className="font-bold text-xl">{t("contact.businessHours")}</h4>
+                            </div>
+                            <div className="space-y-2 opacity-90">
+                                <p className="flex justify-between border-b border-white/20 pb-2"><span>{t("contact.weekdays")}</span> <span>9:00 AM - 5:00 PM</span></p>
+                                <p className="flex justify-between border-b border-white/20 pb-2"><span>{t("contact.saturday")}</span> <span>10:00 AM - 2:00 PM</span></p>
+                                <p className="flex justify-between"><span>{t("contact.sunday")}</span> <span>{t("contact.closed")}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Contact Form */}
+                    <div className="bg-card p-8 md:p-12 rounded-[2rem] border shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+                        {isSubmitted ? (
+                            <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in zoom-in duration-500 py-12">
+                                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center relative">
+                                    <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-20" />
+                                    <CheckCircle size={48} className="text-primary relative z-10" />
+                                </div>
+                                <h3 className="text-3xl font-black italic uppercase tracking-wider">{t("contact.successTitle")}</h3>
+                                <p className="text-muted-foreground max-w-sm leading-relaxed">
+                                    {t("contact.successDesc")}
+                                </p>
+                                <Button
