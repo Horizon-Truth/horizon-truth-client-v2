@@ -168,3 +168,210 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
                         control={form.control}
                         name="title"
                         render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Dossier Title</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Identify the incident..."
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Narrative Context</FormLabel>
+                                <FormControl>
+                                    <textarea
+                                        className="flex min-h-[160px] w-full rounded-[2rem] border-none ring-1 ring-border bg-background/50 px-5 py-4 text-sm font-medium ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                                        placeholder="Provide comprehensive details regarding the reported content..."
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="contentType"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Intelligence Type</FormLabel>
+                                <select
+                                    className="flex h-14 w-full rounded-2xl border-none ring-1 ring-border bg-background/50 px-4 py-2 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 appearance-none cursor-pointer transition-all"
+                                    {...field}
+                                >
+                                    <option value="ARTICLE">Online Article</option>
+                                    <option value="POST">Social Media Post</option>
+                                    <option value="VIDEO">Multimedia / Video</option>
+                                    <option value="IMAGE">Visual Content / Image</option>
+                                    <option value="COMMENT">Comment / Discussion</option>
+                                </select>
+                                <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="language"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Source Language</FormLabel>
+                                <FormControl>
+                                    <select
+                                        className="flex h-14 w-full rounded-2xl border-none ring-1 ring-border bg-background/50 px-4 py-2 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 appearance-none cursor-pointer transition-all"
+                                        {...field}
+                                    >
+                                        {languages.map((lang) => (
+                                            <option key={lang.id} value={lang.code}>
+                                                {lang.name.toUpperCase()}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </FormControl>
+                                <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="sourceUrl"
+                        render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Verification Link (URL)</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="https://source-of-content.com/..."
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="reason"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Report Reason</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Example: False Information"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Category</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="False Information"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="reportedContentReference"
+                        render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Reported Content Reference</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Claim, post, profile, or URL"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="tagIds"
+                        render={() => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-4 block">Classification Tags</FormLabel>
+                                <div className="flex flex-wrap gap-2">
+                                    {tags.map((tag) => (
+                                        <button
+                                            key={tag.id}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentTags = form.getValues("tagIds");
+                                                const newTags = currentTags.includes(tag.id)
+                                                    ? currentTags.filter((id) => id !== tag.id)
+                                                    : [...currentTags, tag.id];
+                                                form.setValue("tagIds", newTags, { shouldValidate: true });
+                                            }}
+                                            className={`px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${form.watch("tagIds").includes(tag.id)
+                                                ? "bg-primary text-primary-foreground shadow-xl shadow-primary/20 scale-105"
+                                                : "bg-muted/50 text-muted-foreground hover:bg-muted border border-border/50"
+                                                }`}
+                                        >
+                                            {tag.name}
+                                        </button>
+                                    ))}
+                                </div>
+                                <FormMessage className="mt-4 text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-6 pt-6 border-t border-border/30">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={onCancel}
+                        className="w-full sm:flex-1 h-14 rounded-2xl font-black uppercase tracking-widest hover:bg-muted transition-all text-xs"
+                        disabled={loading}
+                    >
+                        Abort Intake
+                    </Button>
+                    <Button
+                        type="submit"
+                        className="w-full sm:flex-[2] h-14 rounded-2xl font-black uppercase tracking-widest bg-primary text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 transition-all active:scale-[0.98] text-xs"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                                Processing Dossier...
+                            </>
+                        ) : (
+                            "Commit Intelligence Report"
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </Form>
+    );
+}
