@@ -31,5 +31,11 @@ export const userService = {
     async updatePreferences(data: any) {
         const response = await api.put('/users/me/preferences', data);
         return response.data;
+    },
+
+    async anonymizeAccount() {
+        const response = await api.post('/users/me/anonymize');
+        return response.data;
     }
 };
+

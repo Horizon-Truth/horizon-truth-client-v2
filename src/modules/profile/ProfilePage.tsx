@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,8 +28,12 @@ import {
     Save,
     Loader2,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Trash2,
+    Lock
 } from 'lucide-react';
+import { AnonymizeConfirmModal } from '@/shared/components/modals/AnonymizeConfirmModal';
+
 
 const profileSchema = z.object({
     fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
@@ -37,9 +43,12 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const ProfilePage = () => {
-    const { user, updateUser } = useAuthStore();
     const [isEditing, setIsEditing] = useState(false);
+    const [isAnonymizeModalOpen, setIsAnonymizeModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const { user, updateUser, logout } = useAuthStore();
+
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -75,6 +84,13 @@ const ProfilePage = () => {
         setError(null);
         setSuccess(null);
     };
+
+    const handleAnonymize = async () => {
+        await userService.anonymizeAccount();
+        logout();
+        navigate('/');
+    };
+
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
@@ -273,9 +289,50 @@ const ProfilePage = () => {
                             </div>
                         </CardContent>
                     </Card>
+
+                    <Card className="bg-destructive/5 backdrop-blur-xl border-destructive/10 shadow-xl overflow-hidden">
+                        <CardHeader className="pb-4">
+                            <CardTitle className="text-lg font-bold flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Danger Zone
+                            </CardTitle>
+                            <CardDescription className="text-destructive/70">
+                                Irreversible actions related to your account and personal data.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <h4 className="font-bold text-sm text-destructive flex items-center gap-2">
+                                        <Lock size={14} />
+                                        Delete My Account & Personal Data
+                                    </h4>
+                                    <p className="text-xs text-destructive/80 max-w-md">
+                                        All your personally identifiable information will be permanently removed. 
+                                        You will lose access to this account immediately.
+                                    </p>
+                                </div>
+                                <Button 
+                                    variant="destructive" 
+                                    size="sm"
+                                    className="w-full sm:w-auto font-bold shadow-lg shadow-destructive/20 rounded-xl"
+                                    onClick={() => setIsAnonymizeModalOpen(true)}
+                                >
+                                    Delete My Data
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
+
+            <AnonymizeConfirmModal 
+                isOpen={isAnonymizeModalOpen}
+                onClose={() => setIsAnonymizeModalOpen(false)}
+                onConfirm={handleAnonymize}
+            />
         </div>
+
     );
 };
 
