@@ -25,3 +25,14 @@ export interface DailyLedger {
 export function todayKey(now: Date = new Date()): string {
     const y = now.getFullYear();
     const m = `${now.getMonth() + 1}`.padStart(2, '0');
+    const d = `${now.getDate()}`.padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+export function emptyLedger(date: string = todayKey()): DailyLedger {
+    return { date, missions: 0, correctDecisions: 0, sharpMissions: 0 };
+}
+
+/** Roll the ledger over if it belongs to a previous day. */
+export function ensureToday(ledger: DailyLedger | null | undefined, now: Date = new Date()): DailyLedger {
+    const key = todayKey(now);
