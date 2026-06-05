@@ -215,3 +215,48 @@ export const en = {
       'By subscribing, you agree to our Privacy Policy. No spam, just truth.',
     newsletterSuccessToast:
       'Newsletter Subscription Successful! You will receive an email reservation notification.',
+    newsletterErrorToast: 'Failed to subscribe. Please try again.',
+  },
+
+  about: {
+    heroTitle: 'About',
+    heroHighlight: 'Horizon Truth',
+    heroDesc:
+      "We're on a mission to combat misinformation through education, technology, and community engagement.",
+    ourStory: 'Our Story',
+    meetTeam: 'Meet Our Team',
+
+    genesisEyebrow: 'Our Genesis',
+    storyTitle: 'How Horizon',
+    storyTitleHighlight: 'Truth Began.',
+    storyP1:
+      'Horizon Truth was founded in 2023 by a team of digital literacy advocates, educators, and technology experts who recognized the growing threat of misinformation in our increasingly connected world.',
+    storyP2:
+      "What started as a university research project quickly evolved into a comprehensive platform dedicated to helping individuals, especially youth, develop the critical thinking skills needed to navigate today's complex information landscape.",
+    journeyTitle: 'The Journey',
+    journey1Title: 'Research Phase',
+    journey1Date: 'Jan 2023 - April 2023',
+    journey1Desc:
+      'Conducted extensive research on misinformation patterns and digital literacy gaps.',
+    journey2Title: 'Platform Development',
+    journey2Date: 'May 2023 - Sept 2023',
+    journey2Desc:
+      'Built the initial version of our gamified learning platform and community tools.',
+    journey3Title: 'Launch & Growth',
+    journey3Date: 'Oct 2023 - Present',
+    journey3Desc:
+      'Launched publicly and continuously expanded our resources based on feedback.',
+
+    missionTitle: 'Our Mission',
+    missionDesc:
+      'To empower individuals with the critical thinking skills and digital literacy needed to identify, analyze, and combat misinformation in all its forms, creating a more informed and resilient society.',
+    visionTitle: 'Our Vision',
+    visionDesc:
+      'We envision a world where individuals are equipped to navigate the digital landscape responsibly, where truth prevails over falsehood, and where communities collaboratively foster information integrity.',
+
+    valuesEyebrow: 'Our North Star',
+    valuesTitle: 'Intrinsic',
+    valuesTitleHighlight: 'Values.',
+    value1Title: 'Integrity',
+    value1Desc:
+      'We practice what we preach, ensuring our content is accurate and transparent.',

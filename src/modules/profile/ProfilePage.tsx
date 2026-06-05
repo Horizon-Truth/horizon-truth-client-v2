@@ -204,3 +204,152 @@ const ProfilePage = () => {
                                                                 placeholder="johndoe"
                                                                 className="bg-background/50 border-white/5 focus-visible:ring-primary/30 h-11 rounded-xl"
                                                                 {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center gap-3 pt-4 justify-end">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                className="hover:bg-destructive/10 hover:text-destructive rounded-xl"
+                                                onClick={handleCancel}
+                                                disabled={loading}
+                                            >
+                                                <X size={16} className="mr-2" />
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                className="bg-primary hover:shadow-lg hover:shadow-primary/20 rounded-xl"
+                                                disabled={loading}
+                                            >
+                                                {loading ? (
+                                                    <Loader2 size={16} className="mr-2 animate-spin" />
+                                                ) : (
+                                                    <Save size={16} className="mr-2" />
+                                                )}
+                                                {loading ? 'Saving...' : 'Save Changes'}
+                                            </Button>
+                                        </div>
+                                    </form>
+                                </Form>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                    <div className="space-y-1.5 p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Full Name</p>
+                                        <p className="font-semibold text-lg text-foreground">{user.fullName}</p>
+                                    </div>
+                                    <div className="space-y-1.5 p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email Address</p>
+                                        <p className="font-semibold text-lg text-foreground truncate">{user.email}</p>
+                                    </div>
+                                    <div className="space-y-1.5 p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account Role</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                                                {user.role}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5 p-4 rounded-xl bg-white/5 border border-white/5">
+                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Account ID</p>
+                                        <p className="font-mono text-xs text-muted-foreground">{user.id}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 shadow-xl lg:hover:border-primary/20 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold flex items-center gap-2">
+                                <Globe className="text-primary h-5 w-5" />
+                                {tt("settings.languageSection")}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <LanguageSwitcher variant="menu" />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 shadow-xl lg:hover:border-primary/20 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold flex items-center gap-2">
+                                <ShieldCheck className="text-primary h-5 w-5" />
+                                Security Settings
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 group cursor-pointer hover:bg-primary/10 transition-colors">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="font-bold text-sm">Two-Factor Authentication</h4>
+                                        <p className="text-xs text-muted-foreground mt-1">Enhance your account security with 2FA protocol.</p>
+                                    </div>
+                                    <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors">
+                                        <Edit2 size={16} className="text-primary" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-4 rounded-xl bg-muted/40 border border-white/5">
+                                <h4 className="font-bold text-sm">Last Session Activity</h4>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                                    <Calendar size={12} />
+                                    <span>Active session started 2 hours ago from your current IP</span>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-destructive/5 backdrop-blur-xl border-destructive/10 shadow-xl overflow-hidden">
+                        <CardHeader className="pb-4">
+                            <CardTitle className="text-lg font-bold flex items-center gap-2 text-destructive">
+                                <Trash2 className="h-5 w-5" />
+                                Danger Zone
+                            </CardTitle>
+                            <CardDescription className="text-destructive/70">
+                                Irreversible actions related to your account and personal data.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <h4 className="font-bold text-sm text-destructive flex items-center gap-2">
+                                        <Lock size={14} />
+                                        Delete My Account & Personal Data
+                                    </h4>
+                                    <p className="text-xs text-destructive/80 max-w-md">
+                                        All your personally identifiable information will be permanently removed. 
+                                        You will lose access to this account immediately.
+                                    </p>
+                                </div>
+                                <Button 
+                                    variant="destructive" 
+                                    size="sm"
+                                    className="w-full sm:w-auto font-bold shadow-lg shadow-destructive/20 rounded-xl"
+                                    onClick={() => setIsAnonymizeModalOpen(true)}
+                                >
+                                    Delete My Data
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            <AnonymizeConfirmModal 
+                isOpen={isAnonymizeModalOpen}
+                onClose={() => setIsAnonymizeModalOpen(false)}
+                onConfirm={handleAnonymize}
+            />
+        </div>
+
+    );
+};
+
+export default ProfilePage;
