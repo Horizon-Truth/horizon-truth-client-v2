@@ -165,3 +165,98 @@ export const en = {
     mission2Desc:
       "We don't tell you what to believe; we give you the tools to decide.",
     confidenceScore: 'User Confidence Score',
+
+    partnersEyebrow: 'Trusted Ecosystem',
+    partnersTitle: 'Our Foundational Partners',
+    partnersDesc:
+      'Collaborating with leading institutions to build digital resilience across the nation.',
+    partner1Title: 'Jimma University',
+    partner1Desc: 'Academic curriculum integration & research.',
+    partner2Title: 'Ministry of Peace',
+    partner2Desc: 'National youth ambassador programs.',
+    partner3Title: 'Sheger City',
+    partner3Desc: 'Community-driven digital literacy workshops.',
+
+    statActiveUsers: 'Active Users',
+    statReportsDebunked: 'Reports Debunked',
+    statVerifiers: 'Community Verifiers',
+    statAccuracy: 'Accuracy Rate',
+
+    faqEyebrow: 'Help Center',
+    faqTitle: 'Expert',
+    faqTitleHighlight: 'Answers',
+    faqDesc:
+      'Quick guide to understanding how Horizon Truth protects the digital frontier.',
+    faqButton: 'Full Knowledge Base',
+    faq1Q: 'What is Horizon Truth?',
+    faq1A:
+      'A gamified digital literacy platform designed to combat misinformation through interactive learning and community verification.',
+    faq2Q: 'How does the game work?',
+    faq2A:
+      'You engage in simulated real-world misinformation challenges, learning to spot fake news through quizzes and critical exercises.',
+    faq3Q: 'Is my data secure?',
+    faq3A:
+      'Absolutely. We use industry-standard encryption and collect minimal data necessary for your learning progress.',
+    faq4Q: 'How can I contribute?',
+    faq4A:
+      'By reporting suspicious content you find online and participating in community verification votes.',
+
+    newsletterTitle: 'Stay Ahead of Deception',
+    newsletterDesc:
+      'Join our community of digital defenders. Subscribe to get the latest insights on media literacy, platform updates, and verified news straight to your inbox.',
+    newsletterPlaceholder: 'Enter your email address',
+    newsletterSubscribe: 'Subscribe Now',
+    newsletterSubscribing: 'Subscribing...',
+    newsletterSuccessTitle: 'Welcome to the Frontline',
+    newsletterSuccessDesc:
+      'Your subscription is confirmed. You are now part of a global network of digital defenders. Watch your inbox for high-priority updates.',
+    newsletterAnother: 'Subscribe another email',
+    newsletterDisclaimer:
+      'By subscribing, you agree to our Privacy Policy. No spam, just truth.',
+    newsletterSuccessToast:
+      'Newsletter Subscription Successful! You will receive an email reservation notification.',
+    newsletterErrorToast: 'Failed to subscribe. Please try again.',
+  },
+
+  about: {
+    heroTitle: 'About',
+    heroHighlight: 'Horizon Truth',
+    heroDesc:
+      "We're on a mission to combat misinformation through education, technology, and community engagement.",
+    ourStory: 'Our Story',
+    meetTeam: 'Meet Our Team',
+
+    genesisEyebrow: 'Our Genesis',
+    storyTitle: 'How Horizon',
+    storyTitleHighlight: 'Truth Began.',
+    storyP1:
+      'Horizon Truth was founded in 2023 by a team of digital literacy advocates, educators, and technology experts who recognized the growing threat of misinformation in our increasingly connected world.',
+    storyP2:
+      "What started as a university research project quickly evolved into a comprehensive platform dedicated to helping individuals, especially youth, develop the critical thinking skills needed to navigate today's complex information landscape.",
+    journeyTitle: 'The Journey',
+    journey1Title: 'Research Phase',
+    journey1Date: 'Jan 2023 - April 2023',
+    journey1Desc:
+      'Conducted extensive research on misinformation patterns and digital literacy gaps.',
+    journey2Title: 'Platform Development',
+    journey2Date: 'May 2023 - Sept 2023',
+    journey2Desc:
+      'Built the initial version of our gamified learning platform and community tools.',
+    journey3Title: 'Launch & Growth',
+    journey3Date: 'Oct 2023 - Present',
+    journey3Desc:
+      'Launched publicly and continuously expanded our resources based on feedback.',
+
+    missionTitle: 'Our Mission',
+    missionDesc:
+      'To empower individuals with the critical thinking skills and digital literacy needed to identify, analyze, and combat misinformation in all its forms, creating a more informed and resilient society.',
+    visionTitle: 'Our Vision',
+    visionDesc:
+      'We envision a world where individuals are equipped to navigate the digital landscape responsibly, where truth prevails over falsehood, and where communities collaboratively foster information integrity.',
+
+    valuesEyebrow: 'Our North Star',
+    valuesTitle: 'Intrinsic',
+    valuesTitleHighlight: 'Values.',
+    value1Title: 'Integrity',
+    value1Desc:
+      'We practice what we preach, ensuring our content is accurate and transparent.',

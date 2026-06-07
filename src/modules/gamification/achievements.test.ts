@@ -15,3 +15,14 @@ const ctx = (over: Partial<AchievementContext> = {}): AchievementContext => ({
     calibration: EMPTY_CALIBRATION,
     daily: null,
     masteryTiers: [],
+    totalPreventedReach: 0,
+    totalReached: 0,
+    ...over,
+});
+
+describe('catalog integrity', () => {
+    it('has unique keys and valid categories', () => {
+        const keys = ACHIEVEMENTS.map(a => a.key);
+        expect(new Set(keys).size).toBe(keys.length);
+        for (const a of ACHIEVEMENTS) {
+            expect(ACHIEVEMENT_CATEGORIES[a.category]).toBeDefined();

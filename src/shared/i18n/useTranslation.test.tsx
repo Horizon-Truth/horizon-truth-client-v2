@@ -13,3 +13,10 @@ describe('useTranslation', () => {
         const { result } = renderHook(() => useTranslation());
         expect(result.current.t('common.save')).toBe('Save');
         expect(result.current.language).toBe(ContentLanguage.ENGLISH);
+    });
+
+    it('returns translated strings after switching language', () => {
+        const { result } = renderHook(() => useTranslation());
+        act(() => result.current.setLanguage(ContentLanguage.AMHARIC));
+        expect(result.current.t('common.save')).toBe('አስቀምጥ');
+    });

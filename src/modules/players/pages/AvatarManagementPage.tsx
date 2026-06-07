@@ -110,3 +110,139 @@ const AvatarManagementPage: React.FC = () => {
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search avatars..."
+                        className="pl-8"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="rounded-md border bg-card">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[80px]">Preview</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Gender</TableHead>
+                            <TableHead>Age Group</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                </TableCell>
+                            </TableRow>
+                        ) : data?.data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    No avatars found.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            data?.data.map((avatar: Avatar) => (
+                                <TableRow key={avatar.id}>
+                                    <TableCell>
+                                        <div className="h-10 w-10 rounded-full overflow-hidden border">
+                                            <img
+                                                src={avatar.imageUrl}
+                                                alt={avatar.name}
+                                                className="h-full w-full object-cover"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + avatar.name;
+                                                }}
+                                            />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-medium">{avatar.name}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">{avatar.gender}</Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline">{avatar.ageGroup}</Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant={avatar.isActive ? "default" : "secondary"}>
+                                            {avatar.isActive ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => toggleStatus(avatar)}
+                                                title={avatar.isActive ? 'Deactivate' : 'Activate'}
+                                            >
+                                                {avatar.isActive ? (
+                                                    <ToggleRight className="h-4 w-4 text-primary" />
+                                                ) : (
+                                                    <ToggleLeft className="h-4 w-4 text-muted-foreground" />
+                                                )}
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    setEditingAvatar(avatar);
+                                                    setIsModalOpen(true);
+                                                }}
+                                            >
+                                                <Edit2 className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-destructive hover:text-destructive"
+                                                onClick={() => handleDelete(avatar.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex-1 text-sm text-muted-foreground">
+                    Page {page} of {data?.meta?.totalPages || 1}
+                </div>
+                <div className="space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.min(data?.meta?.totalPages || 1, p + 1))}
+                        disabled={page >= (data?.meta?.totalPages || 1)}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
+
+            <AvatarFormModal
+                isOpen={isModalOpen}
+                onClose={() => { setIsModalOpen(false); setEditingAvatar(null); }}
+                onSubmit={editingAvatar ? handleUpdate : handleCreate}
+                initialData={editingAvatar}
+                isSubmitting={createMutation.isPending || updateMutation.isPending}
+            />
+        </div>
+    );
+};
+
+export default AvatarManagementPage;

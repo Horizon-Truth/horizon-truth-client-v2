@@ -34,3 +34,17 @@ Scope: player-facing game experience (mission hub, game session, learning feedba
 | H10 | `custom-scrollbar` class referenced across every game screen but never defined in CSS. |
 
 ### Medium (polish / a11y)
+
+- 7–10 px uppercase text used for primary information; low-contrast slate-on-white labels.
+- Icon-only buttons without `aria-label`; progress bars without `role="progressbar"`.
+- `useReducedMotion` consulted once, then ignored by dozens of pulse/bounce/confetti-style animations.
+- Leftover `console.log` in `GameOutcome`; broad `as any` casts.
+- Empty `gamification` module directory despite gamification being the product's core loop.
+
+---
+
+## 2. What was redesigned (this pass)
+
+### New gamification core — `src/modules/gamification/`
+
+- **`progression.ts`** — single source of truth for XP → level → rank. Eleven named ranks (🎓 Recruit → 🌱 Beginner → 🧭 Explorer → 🔍 Fact Checker → 💡 Truth Seeker → 🕵️ Investigator → 📊 Analyst → 🎯 Expert → 🛡️ Guardian → ⚔️ Master Defender → 👑 Legend), each with a tagline and color identity. Level math kept compatible with persisted store data. Fully unit-tested (`progression.test.ts`).
