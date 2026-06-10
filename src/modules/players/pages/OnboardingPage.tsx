@@ -104,3 +104,33 @@ const OnboardingPage: React.FC = () => {
 
                         <div className="space-y-8">
                             {/* Nickname Input */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Nickname</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-blue-400/50 transition-colors">
+                                        <User size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={nickname}
+                                        onChange={(e) => setNickname(e.target.value)}
+                                        placeholder="e.g. Alex"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-white/10"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Avatar Selection */}
+                            <div className="space-y-3">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1 flex justify-between">
+                                    <span>Select Avatar</span>
+                                </label>
+                                <div className="grid grid-cols-5 gap-3">
+                                    {loadingAvatars ? (
+                                        [...Array(5)].map((_, i) => (
+                                            <div key={i} className="aspect-square bg-white/5 rounded-2xl animate-pulse" />
+                                        ))
+                                    ) : (
+                                        avatars?.filter(a => a.ageGroup === 'YOUTH').map((avatar) => (
+                                            <motion.button
+                                                key={avatar.id}
