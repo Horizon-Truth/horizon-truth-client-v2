@@ -1,4 +1,5 @@
 import api from './api';
+import type { LanguageCode } from '@/shared/i18n/languages';
 
 export interface User {
     id: string;
@@ -32,6 +33,7 @@ export interface Blog {
     imageUrl?: string;
     category: string;
     readTime: string;
+    language: LanguageCode;
     publishedAt: string;
     createdAt: string;
 }
@@ -47,6 +49,7 @@ export interface Resource {
     icon: string;
     fullContent?: string;
     linkUrl?: string;
+    language: LanguageCode;
     createdAt: string;
 }
 
@@ -115,8 +118,8 @@ class AdminService {
     }
 
     // Blog Methods
-    async getBlogs() {
-        const response = await api.get('/blogs');
+    async getBlogs(params?: { language?: LanguageCode; search?: string }) {
+        const response = await api.get('/blogs', { params });
         return response.data;
     }
 
@@ -141,8 +144,8 @@ class AdminService {
     }
 
     // Resource Methods
-    async getResources() {
-        const response = await api.get('/resources');
+    async getResources(params?: { language?: LanguageCode; search?: string }) {
+        const response = await api.get('/resources', { params });
         return response.data;
     }
 

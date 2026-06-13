@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet"
 import { Button } from "@/shared/components/ui/button";
 import { useAuthStore } from "@/store/auth.store";
 import { ThemeToggle } from "@/shared/components/theme-toggle";
+import { LanguageSwitcher } from "@/shared/i18n/components/LanguageSwitcher";
 
 export const PublicNavbar = () => {
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const PublicNavbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
+                        <LanguageSwitcher variant="compact" />
                         <ThemeToggle />
                         <button
                             onClick={() => navigate("/about")}
@@ -116,6 +118,10 @@ export const PublicNavbar = () => {
                                         FAQ
                                     </button>
                                     <hr className="border-border" />
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-lg font-medium">Language</span>
+                                        <LanguageSwitcher variant="compact" />
+                                    </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-lg font-medium">Theme</span>
                                         <ThemeToggle />

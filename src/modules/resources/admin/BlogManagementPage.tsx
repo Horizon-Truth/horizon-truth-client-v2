@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, User, Tag, Clock } from "lucide-react";
+import { FileText, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, User, Tag, Clock, Languages } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
 import { adminService, type Blog } from "@/services/admin.service";
 import { toast } from "sonner";
+import { LanguageBadge } from "@/shared/i18n/components/LanguageBadge";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@/shared/i18n/languages";
 
 export default function BlogManagementPage() {
     const navigate = useNavigate();
@@ -13,11 +15,16 @@ export default function BlogManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("all");
+    const [languageFilter, setLanguageFilter] = useState<"all" | LanguageCode>("all");
 
     const fetchBlogs = async () => {
         setIsLoading(true);
         try {
-            const data = await adminService.getBlogs();
+            // Language filtering is applied server-side so admins can scope the
+            // list to one language; "all" omits the param to show every language.
+            const data = await adminService.getBlogs(
+                languageFilter === "all" ? undefined : { language: languageFilter },
+            );
             setBlogs(data || []);
         } catch (error) {
             console.error("Failed to fetch blogs:", error);
@@ -29,7 +36,8 @@ export default function BlogManagementPage() {
 
     useEffect(() => {
         fetchBlogs();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [languageFilter]);
 
     const handleDelete = async (blog: Blog) => {
         if (!confirm(`Are you sure you want to delete "${blog.title}"?`)) return;
@@ -91,6 +99,19 @@ export default function BlogManagementPage() {
                         ))}
                     </select>
                 </div>
+                <div className="flex items-center gap-2 px-4 h-12 border-t md:border-t-0 md:border-l border-border/50">
+                    <Languages size={18} className="text-muted-foreground" />
+                    <select
+                        className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
+                        value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value as "all" | LanguageCode)}
+                    >
+                        <option value="all">All Languages</option>
+                        {SUPPORTED_LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>{lang.englishName}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div className="bg-card border border-border/50 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm">
@@ -141,10 +162,13 @@ export default function BlogManagementPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-5">
-                                        <Badge variant="outline" className="rounded-lg h-7 px-3 font-black tracking-widest text-[9px] uppercase border-primary/20 bg-primary/5 text-primary">
-                                            <Tag size={10} className="mr-1.5" />
-                                            {blog.category}
-                                        </Badge>
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant="outline" className="rounded-lg h-7 px-3 font-black tracking-widest text-[9px] uppercase border-primary/20 bg-primary/5 text-primary">
+                                                <Tag size={10} className="mr-1.5" />
+                                                {blog.category}
+                                            </Badge>
+                                            <LanguageBadge language={blog.language} />
+                                        </div>
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">

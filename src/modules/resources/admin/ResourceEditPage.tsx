@@ -24,6 +24,7 @@ import {
 } from "@/shared/components/ui/select";
 import { adminService } from "@/services/admin.service";
 import { toast } from "sonner";
+import { SUPPORTED_LANGUAGE_CODES, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, type LanguageCode } from "@/shared/i18n/languages";
 
 const resourceSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
@@ -35,6 +36,9 @@ const resourceSchema = z.object({
     icon: z.string().min(2, "Icon name is required"),
     fullContent: z.string().optional().or(z.literal("")),
     linkUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
 });
 
 type ResourceFormValues = z.infer<typeof resourceSchema>;
@@ -57,6 +61,7 @@ export default function ResourceEditPage() {
             icon: "BookOpen",
             fullContent: "",
             linkUrl: "",
+            language: DEFAULT_LANGUAGE,
         },
     });
 
@@ -75,6 +80,7 @@ export default function ResourceEditPage() {
                     icon: resource.icon,
                     fullContent: resource.fullContent || "",
                     linkUrl: resource.linkUrl || "",
+                    language: resource.language || DEFAULT_LANGUAGE,
                 });
             } catch (error) {
                 console.error("Failed to fetch resource:", error);
@@ -92,7 +98,7 @@ export default function ResourceEditPage() {
         if (!id) return;
         setIsSaving(true);
         try {
-            await adminService.updateResource(id, values);
+            await adminService.updateResource(id, { ...values, language: values.language as LanguageCode });
             toast.success("Resource updated successfully");
             navigate("/dashboard/resources/library");
         } catch (error) {
@@ -206,6 +212,31 @@ export default function ResourceEditPage() {
                                         <FormControl>
                                             <Input {...field} placeholder="e.g. Clearance Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
                                         </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Language *</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-none font-bold uppercase tracking-widest text-[10px]">
+                                                    <SelectValue placeholder="Select language" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                                {SUPPORTED_LANGUAGES.map((lang) => (
+                                                    <SelectItem key={lang.code} value={lang.code} className="font-bold uppercase tracking-widest text-[10px]">
+                                                        {lang.englishName}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage className="text-[10px]" />
                                     </FormItem>
                                 )}
