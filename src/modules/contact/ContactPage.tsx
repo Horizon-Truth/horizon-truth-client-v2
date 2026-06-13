@@ -7,8 +7,10 @@ import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { PageHero } from "@/shared/components/layout/PageHero";
 import { useState } from "react";
 import { contactService } from "@/services/contact.service";
+import { useTranslation } from "@/shared/i18n/useTranslation";
 
 export default function ContactPage() {
+    const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formData, setFormData] = useState({
@@ -24,7 +26,7 @@ export default function ContactPage() {
         setIsSubmitting(true);
         try {
             await contactService.submit(formData);
-            toast.success("Thank you! Your message has been sent successfully.");
+            toast.success(t("contact.successToast"));
             setIsSubmitted(true);
             setFormData({
                 firstName: "",
@@ -34,7 +36,7 @@ export default function ContactPage() {
                 message: ""
             });
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to send message. Please try again.");
+            toast.error(error.response?.data?.message || t("contact.errorToast"));
         } finally {
             setIsSubmitting(false);
         }
@@ -48,9 +50,9 @@ export default function ContactPage() {
     return (
         <PublicLayout>
             <PageHero
-                title="Connect With"
-                subtitle="The Truth"
-                description="Have questions? We're here to help you navigate the digital landscape."
+                title={t("contact.heroTitle")}
+                subtitle={t("contact.heroSubtitle")}
+                description={t("contact.heroDesc")}
             />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -58,14 +60,14 @@ export default function ContactPage() {
                     {/* Contact Information */}
                     <div className="space-y-12">
                         <div>
-                            <h2 className="text-3xl font-bold mb-8">Contact Information</h2>
+                            <h2 className="text-3xl font-bold mb-8">{t("contact.infoTitle")}</h2>
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4 p-6 bg-secondary/10 rounded-2xl border border-border">
                                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
                                         <Mail className="text-primary" size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-lg mb-1">Email Us</h4>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.emailUs")}</h4>
                                         <p className="text-muted-foreground">info@horizontruth.com</p>
                                         <p className="text-muted-foreground">support@horizontruth.com</p>
                                     </div>
@@ -75,7 +77,7 @@ export default function ContactPage() {
                                         <Phone className="text-primary" size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-lg mb-1">Call Us</h4>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.callUs")}</h4>
                                         <p className="text-muted-foreground">+251 911 234 567</p>
                                         <p className="text-muted-foreground">+251 116 789 012</p>
                                     </div>
@@ -85,9 +87,9 @@ export default function ContactPage() {
                                         <MapPin className="text-primary" size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-lg mb-1">Visit Us</h4>
-                                        <p className="text-muted-foreground">Bole Road, Addis Ababa</p>
-                                        <p className="text-muted-foreground">Ethiopia</p>
+                                        <h4 className="font-bold text-lg mb-1">{t("contact.visitUs")}</h4>
+                                        <p className="text-muted-foreground">{t("contact.visitLine1")}</p>
+                                        <p className="text-muted-foreground">{t("contact.visitLine2")}</p>
                                     </div>
                                 </div>
                             </div>
@@ -96,12 +98,12 @@ export default function ContactPage() {
                         <div className="p-8 bg-primary rounded-3xl text-primary-foreground shadow-xl">
                             <div className="flex items-center gap-3 mb-4">
                                 <Clock className="opacity-80" size={20} />
-                                <h4 className="font-bold text-xl">Business Hours</h4>
+                                <h4 className="font-bold text-xl">{t("contact.businessHours")}</h4>
                             </div>
                             <div className="space-y-2 opacity-90">
-                                <p className="flex justify-between border-b border-white/20 pb-2"><span>Monday - Friday</span> <span>9:00 AM - 5:00 PM</span></p>
-                                <p className="flex justify-between border-b border-white/20 pb-2"><span>Saturday</span> <span>10:00 AM - 2:00 PM</span></p>
-                                <p className="flex justify-between"><span>Sunday</span> <span>Closed</span></p>
+                                <p className="flex justify-between border-b border-white/20 pb-2"><span>{t("contact.weekdays")}</span> <span>9:00 AM - 5:00 PM</span></p>
+                                <p className="flex justify-between border-b border-white/20 pb-2"><span>{t("contact.saturday")}</span> <span>10:00 AM - 2:00 PM</span></p>
+                                <p className="flex justify-between"><span>{t("contact.sunday")}</span> <span>{t("contact.closed")}</span></p>
                             </div>
                         </div>
                     </div>
@@ -116,29 +118,29 @@ export default function ContactPage() {
                                     <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-20" />
                                     <CheckCircle size={48} className="text-primary relative z-10" />
                                 </div>
-                                <h3 className="text-3xl font-black italic uppercase tracking-wider">Transmission Received</h3>
+                                <h3 className="text-3xl font-black italic uppercase tracking-wider">{t("contact.successTitle")}</h3>
                                 <p className="text-muted-foreground max-w-sm leading-relaxed">
-                                    Our operatives have secured your transmission. We will review the data and respond via your provided channel within the next briefing cycle.
+                                    {t("contact.successDesc")}
                                 </p>
                                 <Button
                                     onClick={() => setIsSubmitted(false)}
                                     variant="outline"
                                     className="rounded-2xl px-10 h-14 font-bold text-lg border-primary/20 hover:bg-primary/5 transition-all"
                                 >
-                                    Send New Message
+                                    {t("contact.sendNew")}
                                 </Button>
                             </div>
                         ) : (
                             <div className="relative z-10">
                                 <div className="mb-8">
-                                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Send a Message</h2>
-                                    <p className="text-muted-foreground">Initialize a direct communication vector with our team.</p>
+                                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">{t("contact.formTitle")}</h2>
+                                    <p className="text-muted-foreground">{t("contact.formDesc")}</p>
                                 </div>
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">First Name</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.firstName")}</label>
                                             <Input
                                                 name="firstName"
                                                 placeholder="Caspian"
@@ -149,7 +151,7 @@ export default function ContactPage() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Last Name</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.lastName")}</label>
                                             <Input
                                                 name="lastName"
                                                 placeholder="Miller"
@@ -161,7 +163,7 @@ export default function ContactPage() {
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Comms Email</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.email")}</label>
                                         <Input
                                             name="email"
                                             type="email"
@@ -173,10 +175,10 @@ export default function ContactPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Subject Vector</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.subject")}</label>
                                         <Input
                                             name="subject"
-                                            placeholder="Technical Support / Partnership"
+                                            placeholder={t("contact.subjectPlaceholder")}
                                             required
                                             value={formData.subject}
                                             onChange={handleChange}
@@ -184,10 +186,10 @@ export default function ContactPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Message Payload</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.message")}</label>
                                         <Textarea
                                             name="message"
-                                            placeholder="Enter your message transmission..."
+                                            placeholder={t("contact.messagePlaceholder")}
                                             required
                                             value={formData.message}
                                             onChange={handleChange}
@@ -199,7 +201,7 @@ export default function ContactPage() {
                                         className="w-full h-16 rounded-2xl text-xl font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all border-none"
                                         disabled={isSubmitting}
                                     >
-                                        {isSubmitting ? "Transmitting..." : "Send Message"}
+                                        {isSubmitting ? t("contact.sending") : t("contact.send")}
                                     </Button>
                                 </form>
                             </div>

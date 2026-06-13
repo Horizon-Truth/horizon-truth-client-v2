@@ -3,14 +3,15 @@ import { Search, ChevronDown, ChevronUp, Info, User, Gamepad, CheckCircle, Setti
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
+import { useTranslation } from "@/shared/i18n/useTranslation";
 
 const categories = [
-    { id: 'general', name: 'General', icon: Info },
-    { id: 'account', name: 'Account & Access', icon: User },
-    { id: 'game', name: 'Game & Learning', icon: Gamepad },
-    { id: 'verification', name: 'Content Verification', icon: CheckCircle },
-    { id: 'technical', name: 'Technical Support', icon: Settings },
-    { id: 'privacy', name: 'Privacy & Security', icon: Shield }
+    { id: 'general', nameKey: 'faq.catGeneral', icon: Info },
+    { id: 'account', nameKey: 'faq.catAccount', icon: User },
+    { id: 'game', nameKey: 'faq.catGame', icon: Gamepad },
+    { id: 'verification', nameKey: 'faq.catVerification', icon: CheckCircle },
+    { id: 'technical', nameKey: 'faq.catTechnical', icon: Settings },
+    { id: 'privacy', nameKey: 'faq.catPrivacy', icon: Shield }
 ];
 
 const faqs = [
@@ -176,6 +177,7 @@ export default function FaqPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [openItems, setOpenItems] = useState<string[]>(['what-is-horizon-truth']);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const toggleItem = (id: string) => {
         setOpenItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
@@ -194,15 +196,15 @@ export default function FaqPage() {
                 {/* Header Section */}
                 <section className="py-16 bg-primary/5">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6">Frequently Asked <span className="text-primary">Questions</span></h1>
+                        <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6">{t("faq.title")} <span className="text-primary">{t("faq.titleHighlight")}</span></h1>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                            Find answers to common questions about Horizon Truth and how to make the most of our platform.
+                            {t("faq.desc")}
                         </p>
                         <div className="relative max-w-2xl mx-auto">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                             <input
                                 type="text"
-                                placeholder="Search FAQs..."
+                                placeholder={t("faq.searchPlaceholder")}
                                 className="w-full pl-12 pr-4 py-4 rounded-2xl border bg-background shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -216,7 +218,7 @@ export default function FaqPage() {
                         <div className="flex flex-col lg:flex-row gap-12">
                             {/* Sidebar Categories */}
                             <div className="lg:w-1/4 space-y-2">
-                                <h3 className="text-lg font-bold mb-6 px-4">Categories</h3>
+                                <h3 className="text-lg font-bold mb-6 px-4">{t("faq.categories")}</h3>
                                 <div className="flex lg:flex-col overflow-x-auto pb-4 lg:pb-0 gap-2">
                                     {categories.map((cat) => (
                                         <button
@@ -226,14 +228,14 @@ export default function FaqPage() {
                                                 }`}
                                         >
                                             <cat.icon size={18} />
-                                            <span className="font-semibold">{cat.name}</span>
+                                            <span className="font-semibold">{t(cat.nameKey)}</span>
                                         </button>
                                     ))}
                                 </div>
                                 <div className="hidden lg:block mt-12 p-6 bg-secondary/30 rounded-2xl border border-border">
-                                    <h4 className="font-bold mb-2">Still have questions?</h4>
-                                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">Can't find what you're looking for? Our support team is here to help you.</p>
-                                    <Button onClick={() => navigate("/contact")} className="w-full rounded-xl">Contact Support</Button>
+                                    <h4 className="font-bold mb-2">{t("faq.stillQuestions")}</h4>
+                                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{t("faq.stillDesc")}</p>
+                                    <Button onClick={() => navigate("/contact")} className="w-full rounded-xl">{t("faq.contactSupport")}</Button>
                                 </div>
                             </div>
 
@@ -241,10 +243,10 @@ export default function FaqPage() {
                             <div className="lg:w-3/4">
                                 <div className="mb-8">
                                     <h2 className="text-3xl font-bold mb-2">
-                                        {searchTerm ? `Search Results for "${searchTerm}"` :
-                                            categories.find(c => c.id === activeCategory)?.name + " Questions"}
+                                        {searchTerm ? `${t("faq.searchResultsFor")} "${searchTerm}"` :
+                                            t(categories.find(c => c.id === activeCategory)?.nameKey || 'faq.catGeneral') + " " + t("faq.questionsSuffix")}
                                     </h2>
-                                    <p className="text-muted-foreground">{filteredFAQs.length} questions found</p>
+                                    <p className="text-muted-foreground">{filteredFAQs.length} {t("faq.questionsFound")}</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -270,9 +272,9 @@ export default function FaqPage() {
                                             <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
                                                 <Search size={32} className="text-muted-foreground" />
                                             </div>
-                                            <h3 className="text-2xl font-bold mb-2">No results found</h3>
-                                            <p className="text-muted-foreground">Try using different keywords or selecting a different category.</p>
-                                            <Button variant="outline" className="mt-6" onClick={() => { setSearchTerm(''); setActiveCategory('general'); }}>Clear all filters</Button>
+                                            <h3 className="text-2xl font-bold mb-2">{t("faq.noResults")}</h3>
+                                            <p className="text-muted-foreground">{t("faq.noResultsDesc")}</p>
+                                            <Button variant="outline" className="mt-6" onClick={() => { setSearchTerm(''); setActiveCategory('general'); }}>{t("faq.clearFilters")}</Button>
                                         </div>
                                     )}
                                 </div>
@@ -280,12 +282,12 @@ export default function FaqPage() {
                                 {/* Help Banner */}
                                 <div className="mt-16 bg-primary p-8 rounded-3xl text-primary-foreground flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
                                     <div>
-                                        <h3 className="text-2xl font-bold mb-2">Still need help?</h3>
-                                        <p className="opacity-80">Our experts are available to clarify any doubts about our platform.</p>
+                                        <h3 className="text-2xl font-bold mb-2">{t("faq.stillNeedHelp")}</h3>
+                                        <p className="opacity-80">{t("faq.stillNeedHelpDesc")}</p>
                                     </div>
                                     <div className="flex gap-4">
-                                        <Button onClick={() => navigate("/contact")} variant="secondary" className="rounded-xl px-8 py-6 font-bold">Contact Us</Button>
-                                        <Button variant="outline" className="rounded-xl px-8 py-6 font-bold bg-transparent border-white text-white hover:bg-white hover:text-primary" onClick={() => window.location.href = "mailto:support@horizontruth.com"}>Email Support</Button>
+                                        <Button onClick={() => navigate("/contact")} variant="secondary" className="rounded-xl px-8 py-6 font-bold">{t("common.contactUs")}</Button>
+                                        <Button variant="outline" className="rounded-xl px-8 py-6 font-bold bg-transparent border-white text-white hover:bg-white hover:text-primary" onClick={() => window.location.href = "mailto:support@horizontruth.com"}>{t("faq.emailSupport")}</Button>
                                     </div>
                                 </div>
                             </div>
