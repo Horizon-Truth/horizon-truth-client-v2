@@ -17,6 +17,7 @@ import {
 } from "@/shared/components/ui/form";
 import { adminService } from "@/services/admin.service";
 import { toast } from "sonner";
+import { SUPPORTED_LANGUAGE_CODES, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, type LanguageCode } from "@/shared/i18n/languages";
 
 const blogSchema = z.object({
     title: z.string().min(5, "Title must be at least 5 characters"),
@@ -29,6 +30,9 @@ const blogSchema = z.object({
     imageUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
     category: z.string().min(2, "Category is required"),
     readTime: z.string().min(2, "Read time is required"),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
     publishedAt: z.string().min(10, "Published date is required"),
 });
 
@@ -53,6 +57,7 @@ export default function BlogEditPage() {
             imageUrl: "",
             category: "",
             readTime: "",
+            language: DEFAULT_LANGUAGE,
             publishedAt: "",
         },
     });
@@ -73,6 +78,7 @@ export default function BlogEditPage() {
                     imageUrl: blog.imageUrl || "",
                     category: blog.category,
                     readTime: blog.readTime,
+                    language: blog.language || DEFAULT_LANGUAGE,
                     publishedAt: new Date(blog.publishedAt).toISOString().split("T")[0],
                 });
             } catch (error) {
@@ -91,7 +97,7 @@ export default function BlogEditPage() {
         if (!id) return;
         setIsSaving(true);
         try {
-            await adminService.updateBlog(id, values);
+            await adminService.updateBlog(id, { ...values, language: values.language as LanguageCode });
             toast.success("Blog post updated successfully");
             navigate("/dashboard/resources/blogs");
         } catch (error) {
@@ -178,6 +184,32 @@ export default function BlogEditPage() {
                                         <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Read Time</FormLabel>
                                         <FormControl>
                                             <Input {...field} placeholder="e.g. 5 min read" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">
+                                            Language <span className="text-destructive">*</span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <select
+                                                {...field}
+                                                className="w-full h-11 rounded-xl bg-muted/30 border-none px-3 text-sm appearance-none focus-visible:ring-1 focus-visible:ring-primary"
+                                            >
+                                                <option value="">Select a language…</option>
+                                                {SUPPORTED_LANGUAGES.map((lang) => (
+                                                    <option key={lang.code} value={lang.code}>
+                                                        {lang.englishName} ({lang.nativeName})
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </FormControl>
                                         <FormMessage className="text-[10px]" />
                                     </FormItem>

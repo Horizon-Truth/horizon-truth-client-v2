@@ -4,9 +4,11 @@ import { Button } from "@/shared/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import TeamSection from "./components/TeamSection";
+import { useTranslation } from "@/shared/i18n/useTranslation";
 
 export default function AboutPage() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         <PublicLayout>
@@ -14,24 +16,24 @@ export default function AboutPage() {
             <section className="relative pt-32 pb-20 bg-primary/5 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                     <h1 className="text-4xl lg:text-7xl font-extrabold tracking-tight mb-6">
-                        About <span className="text-primary">Horizon Truth</span>
+                        {t("about.heroTitle")} <span className="text-primary">{t("about.heroHighlight")}</span>
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                        We're on a mission to combat misinformation through education, technology, and community engagement.
+                        {t("about.heroDesc")}
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Button
                             onClick={() => document.getElementById('our-story')?.scrollIntoView({ behavior: 'smooth' })}
                             className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold text-lg"
                         >
-                            Our Story
+                            {t("about.ourStory")}
                         </Button>
                         <Button
                             variant="outline"
                             onClick={() => document.getElementById('our-team')?.scrollIntoView({ behavior: 'smooth' })}
                             className="w-full sm:w-auto px-8 py-6 rounded-xl font-bold text-lg"
                         >
-                            Meet Our Team
+                            {t("about.meetTeam")}
                         </Button>
                     </div>
                 </div>
@@ -50,27 +52,27 @@ export default function AboutPage() {
                         >
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
                                 <History size={16} className="text-secondary" />
-                                <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em]">Our Genesis</span>
+                                <span className="text-xs font-bold text-secondary uppercase tracking-[0.2em]">{t("about.genesisEyebrow")}</span>
                             </div>
 
                             <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
-                                How Horizon <br />
-                                <span className="text-primary italic">Truth Began.</span>
+                                {t("about.storyTitle")} <br />
+                                <span className="text-primary italic">{t("about.storyTitleHighlight")}</span>
                             </h2>
 
                             <p className="text-xl text-muted-foreground leading-relaxed font-medium">
-                                Horizon Truth was founded in 2023 by a team of digital literacy advocates, educators, and technology experts who recognized the growing threat of misinformation in our increasingly connected world.
+                                {t("about.storyP1")}
                             </p>
 
                             <p className="text-xl text-muted-foreground leading-relaxed font-medium">
-                                What started as a university research project quickly evolved into a comprehensive platform dedicated to helping individuals, especially youth, develop the critical thinking skills needed to navigate today's complex information landscape.
+                                {t("about.storyP2")}
                             </p>
 
                             <Button
                                 onClick={() => navigate("/contact")}
                                 className="rounded-2xl px-10 py-8 text-xl font-black bg-secondary text-secondary-foreground hover:shadow-2xl transition-all group"
                             >
-                                Get in Touch <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={24} />
+                                {t("common.getInTouch")} <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={24} />
                             </Button>
                         </motion.div>
 
@@ -87,14 +89,14 @@ export default function AboutPage() {
 
                                 <h3 className="text-3xl font-black mb-10 flex items-center gap-3">
                                     <Calendar className="text-primary" size={32} />
-                                    The Journey
+                                    {t("about.journeyTitle")}
                                 </h3>
 
                                 <div className="space-y-12">
                                     {[
-                                        { title: "Research Phase", date: "Jan 2023 - April 2023", desc: "Conducted extensive research on misinformation patterns and digital literacy gaps." },
-                                        { title: "Platform Development", date: "May 2023 - Sept 2023", desc: "Built the initial version of our gamified learning platform and community tools." },
-                                        { title: "Launch & Growth", date: "Oct 2023 - Present", desc: "Launched publicly and continuously expanded our resources based on feedback." }
+                                        { title: t("about.journey1Title"), date: t("about.journey1Date"), desc: t("about.journey1Desc") },
+                                        { title: t("about.journey2Title"), date: t("about.journey2Date"), desc: t("about.journey2Desc") },
+                                        { title: t("about.journey3Title"), date: t("about.journey3Date"), desc: t("about.journey3Desc") }
                                     ].map((item, i) => (
                                         <div key={i} className="relative pl-12 border-l-4 border-primary/20">
                                             <div className="absolute left-[-14px] top-0 w-6 h-6 rounded-full bg-primary border-4 border-background" />
@@ -119,15 +121,15 @@ export default function AboutPage() {
                         {[
                             {
                                 icon: Target,
-                                title: "Our Mission",
-                                desc: "To empower individuals with the critical thinking skills and digital literacy needed to identify, analyze, and combat misinformation in all its forms, creating a more informed and resilient society.",
+                                title: t("about.missionTitle"),
+                                desc: t("about.missionDesc"),
                                 color: "text-primary",
                                 bg: "bg-primary/10"
                             },
                             {
                                 icon: Eye,
-                                title: "Our Vision",
-                                desc: "We envision a world where individuals are equipped to navigate the digital landscape responsibly, where truth prevails over falsehood, and where communities collaboratively foster information integrity.",
+                                title: t("about.visionTitle"),
+                                desc: t("about.visionDesc"),
                                 color: "text-secondary",
                                 bg: "bg-secondary/10"
                             }
@@ -158,16 +160,16 @@ export default function AboutPage() {
             <section className="py-32 bg-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-20 space-y-4">
-                        <span className="text-primary font-bold uppercase tracking-[0.3em] text-xs">Our North Star</span>
-                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter">Intrinsic <span className="text-primary">Values.</span></h2>
+                        <span className="text-primary font-bold uppercase tracking-[0.3em] text-xs">{t("about.valuesEyebrow")}</span>
+                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter">{t("about.valuesTitle")} <span className="text-primary">{t("about.valuesTitleHighlight")}</span></h2>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { icon: ShieldCheck, title: "Integrity", desc: "We practice what we preach, ensuring our content is accurate and transparent." },
-                            { icon: Lightbulb, title: "Innovation", desc: "We continuously develop new approaches to make digital literacy engaging." },
-                            { icon: Users, title: "Collaboration", desc: "We believe combating misinformation requires collective effort." },
-                            { icon: GraduationCap, title: "Education", desc: "We prioritize empowering people with knowledge over simply debunking." }
+                            { icon: ShieldCheck, title: t("about.value1Title"), desc: t("about.value1Desc") },
+                            { icon: Lightbulb, title: t("about.value2Title"), desc: t("about.value2Desc") },
+                            { icon: Users, title: t("about.value3Title"), desc: t("about.value3Desc") },
+                            { icon: GraduationCap, title: t("about.value4Title"), desc: t("about.value4Desc") }
                         ].map((value, i) => (
                             <motion.div
                                 key={i}
@@ -206,12 +208,12 @@ export default function AboutPage() {
                         className="space-y-10"
                     >
                         <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
-                            Ready to Join <br />
-                            <span className="text-primary italic">the Fight?</span>
+                            {t("about.ctaTitle")} <br />
+                            <span className="text-primary italic">{t("about.ctaTitleHighlight")}</span>
                         </h2>
 
                         <p className="text-2xl text-muted-foreground font-medium leading-relaxed">
-                            Sign up now and start your journey towards becoming a misinformation warrior today.
+                            {t("about.ctaDesc")}
                         </p>
 
                         <div className="flex flex-col sm:flex-row justify-center gap-6">
@@ -219,14 +221,14 @@ export default function AboutPage() {
                                 onClick={() => navigate("/dashboard/game")}
                                 className="w-full sm:w-auto px-12 py-10 rounded-[2rem] font-black text-2xl bg-primary text-primary-foreground hover:shadow-[0_20px_40px_rgba(var(--primary-rgb),0.3)] hover:-translate-y-2 transition-all group"
                             >
-                                Start Playing <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={32} />
+                                {t("about.ctaStartPlaying")} <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={32} />
                             </Button>
                             <Button
                                 onClick={() => navigate("/contact")}
                                 variant="outline"
                                 className="w-full sm:w-auto px-12 py-10 rounded-[2rem] font-black text-2xl border-4 hover:bg-white/10 transition-all"
                             >
-                                Contact Us
+                                {t("common.contactUs")}
                             </Button>
                         </div>
                     </motion.div>

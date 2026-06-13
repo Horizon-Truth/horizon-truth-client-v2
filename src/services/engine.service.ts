@@ -1,9 +1,12 @@
 import api from './api';
+import { getCurrentLanguage } from '@/store/language.store';
+import type { LanguageCode } from '@/shared/i18n/languages';
 
 export interface Scenario {
     id: string;
     title: string;
     description: string;
+    language: LanguageCode;
     type: 'SOCIAL_POST' | 'NEWS_STORY' | 'CHAT_CONVERSATION';
     difficulty: 'EASY' | 'MEDIUM' | 'HARD';
     scenarioType: 'TUTORIAL' | 'CHALLENGE' | 'STORY';
@@ -112,19 +115,25 @@ export interface GameOutcome {
 }
 
 class EngineService {
-    async getScenarios(params?: { 
-        difficulty?: string; 
-        scenarioType?: string; 
-        isActive?: boolean; 
+    async getScenarios(params?: {
+        difficulty?: string;
+        scenarioType?: string;
+        isActive?: boolean;
         isArchived?: boolean;
+        language?: LanguageCode;
+        search?: string;
         page?: number;
         limit?: number;
     }): Promise<{ data: Scenario[]; total: number; page: number; limit: number }> {
-        const response = await api.get('/engine/scenarios', { params });
+        // Player-facing listing: always scope to a single language so content is
+        // never mixed. Default to the user's currently selected language.
+        const resolved = { language: getCurrentLanguage(), ...params };
+        const response = await api.get('/engine/scenarios', { params: resolved });
         return response.data;
     }
 
-    async getAdminScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean }) {
+    async getAdminScenarios(params?: { difficulty?: string; scenarioType?: string; isArchived?: boolean; language?: LanguageCode; search?: string }) {
+        // Admin listing: language is optional so admins can browse every language.
         const response = await api.get('/engine/admin/scenarios', { params });
         return response.data;
     }

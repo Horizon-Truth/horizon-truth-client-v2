@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, Tag, Clock, ExternalLink } from "lucide-react";
+import { BookOpen, Plus, Search, Filter, MoreVertical, Trash2, Edit2, Calendar, Tag, Clock, ExternalLink, Languages } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
 import { adminService, type Resource } from "@/services/admin.service";
 import { toast } from "sonner";
+import { LanguageBadge } from "@/shared/i18n/components/LanguageBadge";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@/shared/i18n/languages";
 
 export default function ResourceManagementPage() {
     const navigate = useNavigate();
@@ -13,11 +15,14 @@ export default function ResourceManagementPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [typeFilter, setTypeFilter] = useState("all");
+    const [languageFilter, setLanguageFilter] = useState<"all" | LanguageCode>("all");
 
     const fetchResources = async () => {
         setIsLoading(true);
         try {
-            const data = await adminService.getResources();
+            const data = await adminService.getResources(
+                languageFilter === "all" ? undefined : { language: languageFilter },
+            );
             setResources(data || []);
         } catch (error) {
             console.error("Failed to fetch resources:", error);
@@ -29,7 +34,8 @@ export default function ResourceManagementPage() {
 
     useEffect(() => {
         fetchResources();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [languageFilter]);
 
     const handleDelete = async (resource: Resource) => {
         if (!confirm(`Are you sure you want to delete "${resource.title}"?`)) return;
@@ -91,6 +97,19 @@ export default function ResourceManagementPage() {
                         ))}
                     </select>
                 </div>
+                <div className="flex items-center gap-2 px-4 h-12 border-t md:border-t-0 md:border-l border-border/50">
+                    <Languages size={18} className="text-muted-foreground" />
+                    <select
+                        className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
+                        value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value as "all" | LanguageCode)}
+                    >
+                        <option value="all">All Languages</option>
+                        {SUPPORTED_LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>{lang.englishName}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div className="bg-card border border-border/50 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm">
@@ -139,10 +158,13 @@ export default function ResourceManagementPage() {
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex flex-col gap-1.5">
-                                            <Badge variant="outline" className="rounded-lg h-7 px-3 w-fit font-black tracking-widest text-[9px] uppercase border-secondary/20 bg-secondary/5 text-secondary">
-                                                <Tag size={10} className="mr-1.5" />
-                                                {resource.type}
-                                            </Badge>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="outline" className="rounded-lg h-7 px-3 w-fit font-black tracking-widest text-[9px] uppercase border-secondary/20 bg-secondary/5 text-secondary">
+                                                    <Tag size={10} className="mr-1.5" />
+                                                    {resource.type}
+                                                </Badge>
+                                                <LanguageBadge language={resource.language} />
+                                            </div>
                                             {resource.badge && (
                                                 <span className="text-[8px] font-black uppercase tracking-tighter text-emerald-500 ml-1">{resource.badge}</span>
                                             )}

@@ -7,53 +7,43 @@ import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { newsletterService } from "@/services/newsletter.service";
+import { useTranslation } from "@/shared/i18n/useTranslation";
 
-const carouselSlides = [
+const slideMeta = [
     {
         id: 1,
-        title: "Defending Truth in the Digital Age",
-        subtitle: "Together Against Misinformation",
-        description: "Horizon Truth equips you with interactive, real-world simulations to detect fake news, analyze sources, and outsmart digital deception through engaging gamified experiences.",
-        image: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=2070", // Person analyzing news on laptop
-        ctaText: "Start Your Training",
+        key: "slide1",
+        image: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&q=80&w=2070",
         ctaLink: "/dashboard/game",
-        badge: "Community Verified Content"
     },
     {
         id: 2,
-        title: "Power of Collective Intelligence",
-        subtitle: "Community-Driven Verification",
-        description: "Join a growing network of digital defenders reporting, reviewing, and validating suspicious content. Together, we create a safer and more trustworthy information ecosystem.",
-        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2070", // Team collaboration discussion
-        ctaText: "View Community Reports",
+        key: "slide2",
+        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2070",
         ctaLink: "/crowdsourcing",
-        badge: "Crowdsourced Transparency"
     },
     {
         id: 3,
-        title: "Learn. Play. Protect.",
-        subtitle: "Gamified Digital Literacy",
-        description: "Sharpen your critical thinking skills through interactive challenges, quizzes, and scenario-based missions designed to make media literacy engaging and rewarding.",
-        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=2070", // Student learning with digital tools
-        ctaText: "Begin the Journey",
+        key: "slide3",
+        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=2070",
         ctaLink: "/about",
-        badge: "Skill Up & Earn Rewards"
-    }
+    },
 ];
 
 const HeroCarousel = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
     const { setGuest } = useAuthStore();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % carouselSlides.length);
+            setCurrentIndex((prev) => (prev + 1) % slideMeta.length);
         }, 6000);
         return () => clearInterval(timer);
     }, []);
 
-    const slide = carouselSlides[currentIndex];
+    const slide = slideMeta[currentIndex];
 
     return (
         <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-black">
@@ -69,7 +59,7 @@ const HeroCarousel = () => {
                     <div className="absolute inset-0 bg-black/60 z-10" />
                     <img
                         src={slide.image}
-                        alt={slide.title}
+                        alt={t(`landing.${slide.key}Title`)}
                         className="w-full h-full object-cover"
                     />
                 </motion.div>
@@ -88,16 +78,16 @@ const HeroCarousel = () => {
                         >
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/30 backdrop-blur-md border border-white/20 mb-2">
                                 <ShieldCheck size={14} className="text-primary-foreground" />
-                                <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">{slide.badge}</span>
+                                <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">{t(`landing.${slide.key}Badge`)}</span>
                             </div>
 
                             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white leading-tight">
-                                {slide.title} <br />
-                                <span className="text-primary-foreground italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl opacity-90">{slide.subtitle}</span>
+                                {t(`landing.${slide.key}Title`)} <br />
+                                <span className="text-primary-foreground italic text-2xl sm:text-3xl md:text-4xl lg:text-5xl opacity-90">{t(`landing.${slide.key}Subtitle`)}</span>
                             </h1>
 
                             <p className="text-base sm:text-lg text-white/80 max-w-xl mx-auto leading-relaxed font-medium">
-                                {slide.description}
+                                {t(`landing.${slide.key}Desc`)}
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
@@ -105,7 +95,7 @@ const HeroCarousel = () => {
                                     onClick={() => navigate(slide.ctaLink)}
                                     className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-12 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all border-none w-full sm:w-auto"
                                 >
-                                    {slide.ctaText}
+                                    {t(`landing.${slide.key}Cta`)}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -115,7 +105,7 @@ const HeroCarousel = () => {
                                     }}
                                     className="h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-12 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 font-black uppercase tracking-[0.2em] transition-all w-full sm:w-auto"
                                 >
-                                    Play as Guest
+                                    {t("landing.playAsGuest")}
                                 </Button>
                             </div>
                         </motion.div>
@@ -123,7 +113,7 @@ const HeroCarousel = () => {
 
                     {/* Indicators */}
                     <div className="flex items-center justify-center gap-2 mt-12">
-                        {carouselSlides.map((_, index) => (
+                        {slideMeta.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentIndex(index)}
@@ -141,6 +131,7 @@ const HeroCarousel = () => {
 export default function LandingPage() {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuthStore();
+    const { t } = useTranslation();
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -157,11 +148,11 @@ export default function LandingPage() {
             setLoading(true);
             try {
                 await newsletterService.subscribe(email);
-                toast.success("Newsletter Subscription Successful! You will receive an email reservation notification.");
+                toast.success(t("landing.newsletterSuccessToast"));
                 setIsSubscribed(true);
                 setEmail("");
             } catch (error: any) {
-                toast.error(error.response?.data?.message || "Failed to subscribe. Please try again.");
+                toast.error(error.response?.data?.message || t("landing.newsletterErrorToast"));
             } finally {
                 setLoading(false);
             }
@@ -183,17 +174,17 @@ export default function LandingPage() {
                             transition={{ duration: 0.8 }}
                             className="lg:w-1/2"
                         >
-                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Interactive Learning</span>
-                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Master Digital Literacy <br /><span className="text-primary">Through Play</span></h2>
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">{t("landing.featuresEyebrow")}</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{t("landing.featuresTitle")} <br /><span className="text-primary">{t("landing.featuresTitleHighlight")}</span></h2>
                             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-                                Our gamified platform transforms complex media literacy concepts into engaging challenges. Learn to spot deepfakes, verify sources, and understand viral mechanics in a safe, simulated environment.
+                                {t("landing.featuresDesc")}
                             </p>
                             <div className="grid sm:grid-cols-2 gap-6">
                                 {[
-                                    { title: "Real Scenarios", desc: "Face actual misinformation cases reconstructed for learning." },
-                                    { title: "Instant Feedback", desc: "Understand why content is misleading as you play." },
-                                    { title: "Skill Progression", desc: "Level up your 'Truth-Seeker' rank as you master new skills." },
-                                    { title: "Earn Rewards", desc: "Get recognized for your growth with badges and points." }
+                                    { title: t("landing.feature1Title"), desc: t("landing.feature1Desc") },
+                                    { title: t("landing.feature2Title"), desc: t("landing.feature2Desc") },
+                                    { title: t("landing.feature3Title"), desc: t("landing.feature3Desc") },
+                                    { title: t("landing.feature4Title"), desc: t("landing.feature4Desc") }
                                 ].map((item, i) => (
                                     <div key={i} className="flex flex-col gap-2 p-4 rounded-3xl bg-primary/5 border border-primary/10">
                                         <h4 className="font-extrabold text-foreground">{item.title}</h4>
@@ -225,10 +216,10 @@ export default function LandingPage() {
             <section className="py-24 bg-secondary/5 relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-20">
-                        <span className="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">Collective Intelligence</span>
-                        <h2 className="text-4xl md:text-5xl font-black mb-6">Together Against Deception</h2>
+                        <span className="text-secondary font-bold tracking-widest uppercase text-sm mb-4 block">{t("landing.crowdEyebrow")}</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6">{t("landing.crowdTitle")}</h2>
                         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                            Harness the power of thousands. Our community-driven reporting system allows every user to be a guardian of the digital truth.
+                            {t("landing.crowdDesc")}
                         </p>
                     </div>
 
@@ -236,20 +227,20 @@ export default function LandingPage() {
                         {[
                             {
                                 icon: Megaphone,
-                                title: "Report Suspicious Content",
-                                desc: "Find something fishy? Flag it instantly for community review with our simple reporting tools.",
+                                title: t("landing.crowd1Title"),
+                                desc: t("landing.crowd1Desc"),
                                 color: "text-primary"
                             },
                             {
                                 icon: Users,
-                                title: "Community Verification",
-                                desc: "Join the 'Truth Nodes'—users who vote and provide evidence to verify or debunk reported content.",
+                                title: t("landing.crowd2Title"),
+                                desc: t("landing.crowd2Desc"),
                                 color: "text-secondary"
                             },
                             {
                                 icon: ShieldCheck,
-                                title: "Consensus Credibility",
-                                desc: "Our algorithm calculates a credibility score based on community consensus and expert verification.",
+                                title: t("landing.crowd3Title"),
+                                desc: t("landing.crowd3Desc"),
                                 color: "text-green-500"
                             }
                         ].map((card, i) => (
@@ -287,15 +278,15 @@ export default function LandingPage() {
                             transition={{ duration: 0.8 }}
                             className="lg:w-1/2"
                         >
-                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Our North Star</span>
-                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Why Horizon <br /><span className="text-primary">Truth Matters</span></h2>
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">{t("landing.missionEyebrow")}</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">{t("landing.missionTitle")} <br /><span className="text-primary">{t("landing.missionTitleHighlight")}</span></h2>
                             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                                In an era where information can be weaponized, truth is our most valuable asset. We believe that empowering citizens with critical thinking is more effective than any censorship.
+                                {t("landing.missionDesc")}
                             </p>
                             <div className="space-y-6">
                                 {[
-                                    { title: "Radical Transparency", desc: "Every verification is backed by community consensus and open data." },
-                                    { title: "Empowerment First", desc: "We don't tell you what to believe; we give you the tools to decide." }
+                                    { title: t("landing.mission1Title"), desc: t("landing.mission1Desc") },
+                                    { title: t("landing.mission2Title"), desc: t("landing.mission2Desc") }
                                 ].map((item, i) => (
                                     <div key={i} className="flex gap-4 p-6 rounded-3xl bg-secondary/5 border border-secondary/10 hover:border-secondary transition-all">
                                         <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0">
@@ -321,7 +312,7 @@ export default function LandingPage() {
                                 <div className="relative z-10 p-1 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/30">
                                     <div className="bg-background rounded-[2.8rem] p-12 aspect-square flex flex-col justify-center">
                                         <h3 className="text-6xl font-black text-center mb-4">98%</h3>
-                                        <p className="text-center text-muted-foreground font-bold uppercase tracking-widest text-sm">User Confidence Score</p>
+                                        <p className="text-center text-muted-foreground font-bold uppercase tracking-widest text-sm">{t("landing.confidenceScore")}</p>
                                         <div className="mt-8 flex justify-center gap-2">
                                             {[1, 2, 3, 4, 5].map(star => (
                                                 <Trophy key={star} className="text-yellow-500" size={32} />
@@ -339,18 +330,18 @@ export default function LandingPage() {
             <section className="py-24 bg-secondary/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Trusted Ecosystem</span>
-                        <h2 className="text-4xl md:text-5xl font-black mb-6">Our Foundational Partners</h2>
+                        <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">{t("landing.partnersEyebrow")}</span>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6">{t("landing.partnersTitle")}</h2>
                         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                            Collaborating with leading institutions to build digital resilience across the nation.
+                            {t("landing.partnersDesc")}
                         </p>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { title: "Jimma University", desc: "Academic curriculum integration & research." },
-                            { title: "Ministry of Peace", desc: "National youth ambassador programs." },
-                            { title: "Sheger City", desc: "Community-driven digital literacy workshops." }
+                            { title: t("landing.partner1Title"), desc: t("landing.partner1Desc") },
+                            { title: t("landing.partner2Title"), desc: t("landing.partner2Desc") },
+                            { title: t("landing.partner3Title"), desc: t("landing.partner3Desc") }
                         ].map((partner, i) => (
                             <motion.div
                                 key={i}
@@ -374,10 +365,10 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-center">
                         {[
-                            { label: "Active Users", value: "5,247+" },
-                            { label: "Reports Debunked", value: "2,847+" },
-                            { label: "Community Verifiers", value: "1,592+" },
-                            { label: "Accuracy Rate", value: "99.8%" }
+                            { label: t("landing.statActiveUsers"), value: "5,247+" },
+                            { label: t("landing.statReportsDebunked"), value: "2,847+" },
+                            { label: t("landing.statVerifiers"), value: "1,592+" },
+                            { label: t("landing.statAccuracy"), value: "99.8%" }
                         ].map((stat, i) => (
                             <motion.div
                                 key={i}
@@ -399,25 +390,25 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-16">
                         <div className="lg:w-1/3">
-                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Help Center</span>
-                            <h2 className="text-4xl md:text-5xl font-black mb-6">Expert <br />Answers</h2>
+                            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">{t("landing.faqEyebrow")}</span>
+                            <h2 className="text-4xl md:text-5xl font-black mb-6">{t("landing.faqTitle")} <br />{t("landing.faqTitleHighlight")}</h2>
                             <p className="text-lg text-muted-foreground mb-8">
-                                Quick guide to understanding how Horizon Truth protects the digital frontier.
+                                {t("landing.faqDesc")}
                             </p>
                             <Button
                                 variant="outline"
                                 onClick={() => navigate("/faq")}
                                 className="px-8 py-6 rounded-2xl font-bold border-2 flex items-center gap-2 group"
                             >
-                                Full Knowledge Base <ArrowRight size={20} className="group-hover:translate-x-1 transition-all" />
+                                {t("landing.faqButton")} <ArrowRight size={20} className="group-hover:translate-x-1 transition-all" />
                             </Button>
                         </div>
                         <div className="lg:w-2/3 space-y-4">
                             {[
-                                { q: "What is Horizon Truth?", a: "A gamified digital literacy platform designed to combat misinformation through interactive learning and community verification." },
-                                { q: "How does the game work?", a: "You engage in simulated real-world misinformation challenges, learning to spot fake news through quizzes and critical exercises." },
-                                { q: "Is my data secure?", a: "Absolutely. We use industry-standard encryption and collect minimal data necessary for your learning progress." },
-                                { q: "How can I contribute?", a: "By reporting suspicious content you find online and participating in community verification votes." }
+                                { q: t("landing.faq1Q"), a: t("landing.faq1A") },
+                                { q: t("landing.faq2Q"), a: t("landing.faq2A") },
+                                { q: t("landing.faq3Q"), a: t("landing.faq3A") },
+                                { q: t("landing.faq4Q"), a: t("landing.faq4A") }
                             ].map((faq, i) => (
                                 <motion.div
                                     key={i}
@@ -453,16 +444,16 @@ export default function LandingPage() {
                                         <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-20" />
                                         <CheckCircle size={40} className="text-primary relative z-10" />
                                     </div>
-                                    <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">Welcome to the Frontline</h2>
+                                    <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">{t("landing.newsletterSuccessTitle")}</h2>
                                     <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
-                                        Your subscription is confirmed. You are now part of a global network of digital defenders. Watch your inbox for high-priority updates.
+                                        {t("landing.newsletterSuccessDesc")}
                                     </p>
                                     <Button
                                         onClick={() => setIsSubscribed(false)}
                                         variant="ghost"
                                         className="text-primary font-bold hover:bg-primary/5 rounded-xl"
                                     >
-                                        Subscribe another email
+                                        {t("landing.newsletterAnother")}
                                     </Button>
                                 </div>
                             ) : (
@@ -470,16 +461,16 @@ export default function LandingPage() {
                                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 transform group-hover:rotate-12 transition-transform duration-500">
                                         <Mail className="w-8 h-8 text-primary" />
                                     </div>
-                                    <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Stay Ahead of Deception</h2>
+                                    <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">{t("landing.newsletterTitle")}</h2>
                                     <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-                                        Join our community of digital defenders. Subscribe to get the latest insights on media literacy, platform updates, and verified news straight to your inbox.
+                                        {t("landing.newsletterDesc")}
                                     </p>
 
                                     <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 w-full max-w-xl">
                                         <div className="relative flex-1">
                                             <input
                                                 type="email"
-                                                placeholder="Enter your email address"
+                                                placeholder={t("landing.newsletterPlaceholder")}
                                                 required
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
@@ -492,7 +483,7 @@ export default function LandingPage() {
                                             disabled={loading}
                                             className="h-14 rounded-2xl px-10 font-bold text-lg shadow-lg hover:shadow-primary/30 transition-all"
                                         >
-                                            {loading ? "Subscribing..." : "Subscribe Now"}
+                                            {loading ? t("landing.newsletterSubscribing") : t("landing.newsletterSubscribe")}
                                             <ArrowRight size={20} className="ml-2" />
                                         </Button>
                                     </form>
@@ -500,7 +491,7 @@ export default function LandingPage() {
                             )}
                             {!isSubscribed && (
                                 <p className="mt-6 text-xs text-muted-foreground opacity-70">
-                                    By subscribing, you agree to our <span className="underline cursor-pointer">Privacy Policy</span>. No spam, just truth.
+                                    {t("landing.newsletterDisclaimer")}
                                 </p>
                             )}
                         </div>

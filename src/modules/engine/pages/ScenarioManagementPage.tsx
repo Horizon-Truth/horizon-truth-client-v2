@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import ScenarioForm from "../components/ScenarioForm";
 import ScenarioFeedbackList from "../components/ScenarioFeedbackList";
 import LevelManagement from "../components/LevelManagement";
+import { LanguageBadge } from "@/shared/i18n/components/LanguageBadge";
+import { SUPPORTED_LANGUAGES, type LanguageCode } from "@/shared/i18n/languages";
 
 export default function ScenarioManagementPage() {
     const navigate = useNavigate();
@@ -20,15 +22,17 @@ export default function ScenarioManagementPage() {
     const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
     const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
+    const [languageFilter, setLanguageFilter] = useState<'all' | LanguageCode>('all');
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isImporting, setIsImporting] = useState(false);
 
     const fetchScenarios = async () => {
         setIsLoading(true);
         try {
-            const response = await engineService.getAdminScenarios({ 
+            const response = await engineService.getAdminScenarios({
                 isArchived: activeTab === 'archived',
-                limit: 100 
+                language: languageFilter === 'all' ? undefined : languageFilter,
+                limit: 100
             } as any);
             setScenarios(response.data || []);
         } catch (error) {
@@ -41,7 +45,8 @@ export default function ScenarioManagementPage() {
 
     useEffect(() => {
         fetchScenarios();
-    }, [activeTab]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, languageFilter]);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this scenario? This will remove all associated scenes.")) return;
@@ -223,25 +228,41 @@ export default function ScenarioManagementPage() {
                 </div>
             </div>
 
-            {scenarios.length > 0 && (
-                <div className="flex items-center gap-2 px-2">
-                    <button
-                        onClick={toggleSelectAll}
-                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
-                    >
-                        {selectedIds.length === scenarios.length ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
-                        {selectedIds.length === 0 ? 'Select All' : `Selected ${selectedIds.length}`}
-                    </button>
-                    {selectedIds.length > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-2 px-2">
+                {scenarios.length > 0 ? (
+                    <div className="flex items-center gap-2">
                         <button
-                            onClick={() => setSelectedIds([])}
-                            className="text-[10px] font-black uppercase tracking-widest text-destructive hover:underline ml-2"
+                            onClick={toggleSelectAll}
+                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
                         >
-                            Clear
+                            {selectedIds.length === scenarios.length ? <CheckSquare size={14} className="text-primary" /> : <Square size={14} />}
+                            {selectedIds.length === 0 ? 'Select All' : `Selected ${selectedIds.length}`}
                         </button>
-                    )}
-                </div>
-            )}
+                        {selectedIds.length > 0 && (
+                            <button
+                                onClick={() => setSelectedIds([])}
+                                className="text-[10px] font-black uppercase tracking-widest text-destructive hover:underline ml-2"
+                            >
+                                Clear
+                            </button>
+                        )}
+                    </div>
+                ) : <span />}
+
+                <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    Language
+                    <select
+                        value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value as 'all' | LanguageCode)}
+                        className="bg-muted/30 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-widest outline-none"
+                    >
+                        <option value="all">All</option>
+                        {SUPPORTED_LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>{lang.englishName}</option>
+                        ))}
+                    </select>
+                </label>
+            </div>
 
             <div className="grid grid-cols-1 gap-4">
                 {isLoading ? (
@@ -295,6 +316,7 @@ export default function ScenarioManagementPage() {
                                         <Badge variant={scenario.isActive ? "default" : "secondary"} className="rounded-lg font-black tracking-[0.1em] text-[10px] uppercase">
                                             {scenario.isActive ? "Active" : "Inactive"}
                                         </Badge>
+                                        <LanguageBadge language={(scenario as any).language} />
                                     </div>
                                     <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 sm:line-clamp-1 max-w-xl">{scenario.description}</p>
                                     <div className="flex flex-wrap items-center gap-2 sm:gap-4 pt-1">

@@ -30,9 +30,12 @@ import {
     CheckCircle2,
     AlertCircle,
     Trash2,
-    Lock
+    Lock,
+    Globe
 } from 'lucide-react';
 import { AnonymizeConfirmModal } from '@/shared/components/modals/AnonymizeConfirmModal';
+import { LanguageSwitcher } from '@/shared/i18n/components/LanguageSwitcher';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 
 const profileSchema = z.object({
@@ -48,6 +51,7 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { user, updateUser, logout } = useAuthStore();
+    const { t: tt } = useTranslation();
 
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -258,6 +262,18 @@ const ProfilePage = () => {
                                     </div>
                                 </div>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/50 backdrop-blur-xl border-white/5 shadow-xl lg:hover:border-primary/20 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-bold flex items-center gap-2">
+                                <Globe className="text-primary h-5 w-5" />
+                                {tt("settings.languageSection")}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <LanguageSwitcher variant="menu" />
                         </CardContent>
                     </Card>
 

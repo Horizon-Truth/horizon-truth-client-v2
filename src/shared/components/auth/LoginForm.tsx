@@ -16,6 +16,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { Lock, User as UserIcon, LogIn, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 const loginSchema = z.object({
     email: z.string().min(3, { message: 'Enter a valid email or username' }),
@@ -25,6 +26,7 @@ const loginSchema = z.object({
 export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     const navigate = useNavigate();
     const { setAuth, loading, setLoading, error, setError } = useAuthStore();
+    const { t } = useTranslation();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -40,15 +42,15 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
         try {
             const data = await authService.login(values);
             setAuth(data.user, data.access_token);
-            toast.success('Welcome back!');
+            toast.success(t('auth.welcomeToast'));
             if (onSuccess) {
                 onSuccess();
             } else {
                 navigate(data.user.role === 'PLAYER' ? '/dashboard/game' : '/dashboard');
             }
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
-            toast.error('Authentication failed');
+            setError(err.response?.data?.message || t('auth.loginFailed'));
+            toast.error(t('auth.authFailedToast'));
         } finally {
             setLoading(false);
         }
@@ -63,12 +65,12 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
             <div className="relative z-10 space-y-8">
                 <div className="space-y-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2">
-                        <Sparkles size={14} /> Next-Gen Trust Protocol
+                        <Sparkles size={14} /> {t('auth.loginBadge')}
                     </div>
                     <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                        Welcome Back
+                        {t('auth.loginTitle')}
                     </h2>
-                    <p className="text-muted-foreground">Access your decentralized verification dashboard</p>
+                    <p className="text-muted-foreground">{t('auth.loginDashboard')}</p>
                 </div>
 
                 <Form {...form}>
@@ -79,12 +81,12 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
-                                        <UserIcon size={12} /> Email or Username
+                                        <UserIcon size={12} /> {t('auth.emailOrUsername')}
                                     </FormLabel>
                                     <FormControl>
                                         <div className="group relative">
                                             <Input
-                                                placeholder="Enter your email or username"
+                                                placeholder={t('auth.emailOrUsernamePlaceholder')}
                                                 className="bg-background/50 backdrop-blur-sm border-input group-focus-within:border-primary/50 group-focus-within:ring-4 group-focus-within:ring-primary/5 h-12 rounded-2xl transition-all duration-300 pl-4"
                                                 {...field}
                                             />
@@ -101,9 +103,9 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                                 <FormItem>
                                     <div className="flex items-center justify-between px-1">
                                         <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
-                                            <Lock size={12} /> Password
+                                            <Lock size={12} /> {t('auth.password')}
                                         </FormLabel>
-                                        <button type="button" className="text-[10px] font-bold text-primary hover:underline">Forgot?</button>
+                                        <button type="button" className="text-[10px] font-bold text-primary hover:underline">{t('auth.forgot')}</button>
                                     </div>
                                     <FormControl>
                                         <div className="group relative">
@@ -137,11 +139,11 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                                 {loading ? (
                                     <div className="flex items-center gap-2">
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Authenticating...
+                                        {t('auth.authenticating')}
                                     </div>
                                 ) : (
                                     <span className="flex items-center justify-center gap-2">
-                                        Sign In <LogIn size={18} className="group-hover:translate-x-1 transition-transform" />
+                                        {t('auth.signIn')} <LogIn size={18} className="group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 )}
                             </Button>
@@ -151,12 +153,12 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
 
                 <div className="pt-8 border-t border-border/50 text-center">
                     <p className="text-sm text-muted-foreground font-medium">
-                        Don't have an account?{' '}
+                        {t('auth.noAccount')}{' '}
                         <button
                             onClick={() => navigate('/register')}
                             className="font-black text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 group"
                         >
-                            Create One <Sparkles size={14} className="group-hover:scale-125 transition-transform" />
+                            {t('auth.createOne')} <Sparkles size={14} className="group-hover:scale-125 transition-transform" />
                         </button>
                     </p>
                 </div>

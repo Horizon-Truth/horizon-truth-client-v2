@@ -9,12 +9,19 @@ import { toast } from "sonner";
 import { X, Lock } from "lucide-react";
 import SceneEditor from "./SceneEditor";
 import { useEffect, useState } from "react";
+import { SUPPORTED_LANGUAGE_CODES, DEFAULT_LANGUAGE } from "@/shared/i18n/languages";
+import { LanguageSelect } from "@/shared/i18n/components/LanguageSelect";
+import { useLanguageStore } from "@/store/language.store";
+import { useTranslation } from "@/shared/i18n/useTranslation";
 
 const scenarioSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
     description: z.string().min(10, "Description must be at least 10 characters"),
     type: z.enum(["SOCIAL_POST", "NEWS_STORY", "CHAT_CONVERSATION"]),
     difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+    language: z.enum(SUPPORTED_LANGUAGE_CODES as unknown as [string, ...string[]], {
+        message: "Please select a language",
+    }),
     isActive: z.boolean(),
     learningObjective: z.string().optional(),
     behavioralRisk: z.string().optional(),
@@ -39,6 +46,7 @@ interface ScenarioFormProps {
 }
 
 export default function ScenarioForm({ scenario, onSuccess, onCancel }: ScenarioFormProps) {
+    const { t } = useTranslation();
     const [allScenarios, setAllScenarios] = useState<Scenario[]>([]);
     const [levels, setLevels] = useState<{ id: string; levelNumber: number }[]>([]);
 
@@ -66,6 +74,9 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
             description: scenario?.description || "",
             type: scenario?.type || "SOCIAL_POST",
             difficulty: scenario?.difficulty || "EASY",
+            // Preserve the existing language when editing; default to the admin's
+            // current language when creating new content.
+            language: (scenario as any)?.language || useLanguageStore.getState().language || DEFAULT_LANGUAGE,
             isActive: scenario?.isActive ?? true,
             minimumScore: scenario?.minimumScore ?? 70,
             totalScenes: scenario?.totalScenes ?? 1,
@@ -85,15 +96,15 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
         try {
             if (scenario) {
                 await engineService.updateScenario(scenario.id, data);
-                toast.success("Scenario updated successfully");
+                toast.success(t("scenario.updatedSuccess"));
             } else {
                 await engineService.createScenario(data);
-                toast.success("Scenario created successfully");
+                toast.success(t("scenario.createdSuccess"));
             }
             onSuccess();
         } catch (error) {
             console.error("Form submission error:", error);
-            toast.error("Failed to save scenario");
+            toast.error(t("scenario.saveError"));
         }
     };
 
@@ -158,6 +169,17 @@ export default function ScenarioForm({ scenario, onSuccess, onCancel }: Scenario
                             <option value="HARD">Hard</option>
                         </select>
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="language" className="text-[10px] font-black uppercase tracking-widest ml-1">
+                        Content Language <span className="text-destructive">*</span>
+                    </Label>
+                    <LanguageSelect id="language" {...register("language")} />
+                    {errors.language && <p className="text-xs text-destructive font-medium ml-1">{errors.language.message}</p>}
+                    <p className="text-[10px] text-muted-foreground ml-1">
+                        This scenario and all of its scenes will only be shown to players viewing this language.
+                    </p>
                 </div>
 
                 <div className="flex items-center gap-2 pt-4">
