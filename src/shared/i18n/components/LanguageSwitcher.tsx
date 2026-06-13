@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Check, Globe } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, Globe, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "../useTranslation";
 import type { LanguageCode } from "../languages";
@@ -25,8 +25,33 @@ export function LanguageSwitcher({
     const { t, language, setLanguage, languages } = useTranslation();
     const { isAuthenticated, updateUser } = useAuthStore();
     const [saving, setSaving] = useState<LanguageCode | null>(null);
+    const [open, setOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    const current =
+        languages.find((l) => l.code === language) ?? languages[0];
+
+    // Close the compact dropdown when clicking outside or pressing Escape.
+    useEffect(() => {
+        if (!open) return;
+        const onPointerDown = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        };
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+        document.addEventListener("mousedown", onPointerDown);
+        document.addEventListener("keydown", onKeyDown);
+        return () => {
+            document.removeEventListener("mousedown", onPointerDown);
+            document.removeEventListener("keydown", onKeyDown);
+        };
+    }, [open]);
 
     const handleSelect = async (code: LanguageCode) => {
+        setOpen(false);
         if (code === language) return;
         setLanguage(code);
 
@@ -46,24 +71,74 @@ export function LanguageSwitcher({
 
     if (variant === "compact") {
         return (
-            <div className={cn("inline-flex items-center gap-1", className)}>
-                {languages.map((lang) => (
-                    <button
-                        key={lang.code}
-                        type="button"
-                        onClick={() => handleSelect(lang.code)}
-                        aria-pressed={language === lang.code}
+            <div ref={menuRef} className={cn("relative", className)}>
+                <button
+                    type="button"
+                    onClick={() => setOpen((v) => !v)}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                    title={t("language.switcher")}
+                    className={cn(
+                        "inline-flex h-10 items-center gap-1.5 rounded-xl px-2.5 transition-colors cursor-pointer",
+                        "hover:bg-black/5 dark:hover:bg-white/10",
+                        open && "bg-black/5 dark:bg-white/10",
+                    )}
+                >
+                    <Globe className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-xs font-bold uppercase tracking-wide">
+                        {current.short}
+                    </span>
+                    <ChevronDown
                         className={cn(
-                            "rounded-md px-2 py-1 text-[11px] font-black uppercase tracking-widest transition-colors",
-                            language === lang.code
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:bg-muted",
+                            "h-3.5 w-3.5 text-muted-foreground transition-transform",
+                            open && "rotate-180",
                         )}
-                        title={lang.englishName}
+                    />
+                </button>
+
+                {open && (
+                    <div
+                        role="listbox"
+                        className="absolute right-0 top-full z-50 mt-2 min-w-[10rem] overflow-hidden rounded-xl border border-border bg-popover p-1 shadow-lg"
                     >
-                        {lang.short}
-                    </button>
-                ))}
+                        {languages.map((lang) => {
+                            const active = language === lang.code;
+                            return (
+                                <button
+                                    key={lang.code}
+                                    type="button"
+                                    role="option"
+                                    aria-selected={active}
+                                    disabled={saving !== null}
+                                    onClick={() => handleSelect(lang.code)}
+                                    className={cn(
+                                        "flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                                        active
+                                            ? "bg-primary/10 text-primary font-semibold"
+                                            : "hover:bg-muted",
+                                    )}
+                                >
+                                    <span className="flex flex-col">
+                                        <span>{lang.nativeName}</span>
+                                        <span className="text-[11px] text-muted-foreground">
+                                            {lang.englishName}
+                                        </span>
+                                    </span>
+                                    {saving === lang.code ? (
+                                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+                                    ) : (
+                                        active && (
+                                            <Check
+                                                size={16}
+                                                className="text-primary shrink-0"
+                                            />
+                                        )
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         );
     }
