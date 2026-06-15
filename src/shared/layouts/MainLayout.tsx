@@ -45,7 +45,7 @@ const navigationGroups = [
         items: [
             { name: "Organizations", icon: Building2, href: "/dashboard/organizations", roles: ["SYSTEM_ADMIN"] },
             { name: "User Directory", icon: Users, href: "/dashboard/users", roles: ["SYSTEM_ADMIN"] },
-            { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
+            // { name: "Player Network", icon: Users, href: "/dashboard/players", roles: ["SYSTEM_ADMIN"] },
             { name: "Avatar Manager", icon: Settings, href: "/dashboard/players/avatars", roles: ["SYSTEM_ADMIN"] },
         ]
     },

@@ -17,10 +17,13 @@ import {
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { Label } from "@/shared/components/ui/label";
+import { AuthModal } from "@/shared/components/auth/AuthModal";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function CrowdsourcingDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuthStore();
     const [report, setReport] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isVerifying, setIsVerifying] = useState(false);
@@ -30,6 +33,10 @@ export default function CrowdsourcingDetailPage() {
     const [verificationComment, setVerificationComment] = useState("");
     const [verificationStatus, setVerificationStatus] = useState("NEEDS_REVIEW");
     const [verificationRating, setVerificationRating] = useState("3");
+
+    // Auth gating — verification can be filled out by guests, but submitting requires login.
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [pendingVerification, setPendingVerification] = useState(false);
 
     const fetchReport = async () => {
         if (!id) return;
@@ -53,13 +60,8 @@ export default function CrowdsourcingDetailPage() {
         toast.info(`Verification ${type === 'up' ? 'upvoted' : 'downvoted'} (Simulation)`);
     };
 
-    const handleSubmitVerification = async () => {
+    const submitVerification = async () => {
         if (!id) return;
-        if (!verificationComment.trim()) {
-            toast.error("Please add a comment");
-            return;
-        }
-
         setIsSubmitting(true);
         try {
             await reportService.addVerification(id, {
@@ -73,9 +75,37 @@ export default function CrowdsourcingDetailPage() {
             fetchReport(); // Refresh data
         } catch (error) {
             console.error("Error submitting verification:", error);
-            toast.error("Failed to submit verification. Are you logged in?");
+            toast.error("Failed to submit verification. Please try again.");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleSubmitVerification = async () => {
+        if (!id) return;
+        if (!verificationComment.trim()) {
+            toast.error("Please add a comment");
+            return;
+        }
+
+        // Guests can fill out the verification; auth is only enforced at submission time.
+        if (!isAuthenticated) {
+            setPendingVerification(true); // remember the intent so we can resume after login
+            setIsVerifying(false);        // close the verification dialog behind the auth modal
+            setIsAuthModalOpen(true);
+            toast.info("Please login or register to submit your verification");
+            return;
+        }
+
+        submitVerification();
+    };
+
+    const handleAuthSuccess = () => {
+        setIsAuthModalOpen(false);
+        // Resume the held verification now that the user is authenticated.
+        if (pendingVerification) {
+            setPendingVerification(false);
+            submitVerification();
         }
     };
 
@@ -317,7 +347,7 @@ export default function CrowdsourcingDetailPage() {
                                                     <p className="opacity-70">Verifiers</p>
                                                 </div>
                                                 <div className="text-center flex-1">
-                                                    <p className="text-2xl font-bold">{Math.floor(Math.random() * 20) + 5}</p>
+                                                    <p className="text-2xl font-bold">{report.verifications?.filter((v: any) => v.comment?.trim()).length || 0}</p>
                                                     <p className="opacity-70">Discussions</p>
                                                 </div>
                                             </div>
@@ -377,6 +407,13 @@ export default function CrowdsourcingDetailPage() {
                     </div>
                 </section>
             </div>
+
+            <AuthModal
+                isOpen={isAuthModalOpen}
+                onClose={() => setIsAuthModalOpen(false)}
+                initialMode="login"
+                onSuccess={handleAuthSuccess}
+            />
         </PublicLayout>
     );
 }

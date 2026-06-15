@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus } from "lucide-react";
+import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
@@ -8,20 +8,30 @@ import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 
 export default function UserManagementPage() {
+    const PAGE_SIZE = 10;
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [newUser, setNewUser] = useState({ fullName: '', email: '', username: '', role: 'PLAYER' });
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (targetPage = page) => {
         setIsLoading(true);
         try {
-            const response = await adminService.getUsers();
-            // The response for users seems to be the array itself or { data: { data: [] } }
-            // Given the adminService.getUsers() returns response.data
-            setUsers(response.data?.data || response.data || []);
+            const response = await adminService.getUsers({
+                page: targetPage,
+                limit: PAGE_SIZE,
+                search: searchTerm || undefined,
+                role: roleFilter === "all" ? undefined : roleFilter,
+            });
+            setUsers(response.data || []);
+            const meta = response.meta;
+            setTotalPages(meta?.totalPages || 1);
+            setTotal(meta?.total ?? (response.data?.length || 0));
         } catch (error) {
             console.error("Failed to fetch users:", error);
             toast.error("Failed to load users");
@@ -43,9 +53,17 @@ export default function UserManagementPage() {
         }
     };
 
+    // Reset to the first page whenever the search or role filter changes.
     useEffect(() => {
-        fetchUsers();
-    }, []);
+        setPage(1);
+    }, [searchTerm, roleFilter]);
+
+    // Fetch from the server (debounced for search) on page/filter changes.
+    useEffect(() => {
+        const timeoutId = setTimeout(() => fetchUsers(page), searchTerm ? 400 : 0);
+        return () => clearTimeout(timeoutId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, searchTerm, roleFilter]);
 
     const handleStatusToggle = async (user: User) => {
         try {
@@ -68,14 +86,6 @@ export default function UserManagementPage() {
             toast.error("Failed to delete user");
         }
     };
-
-    const filteredUsers = users.filter(user => {
-        const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.username.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = roleFilter === "all" || user.role === roleFilter;
-        return matchesSearch && matchesRole;
-    });
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -208,7 +218,7 @@ export default function UserManagementPage() {
                                         </div>
                                     </td>
                                 </tr>
-                            ) : filteredUsers.length === 0 ? (
+                            ) : users.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
@@ -217,7 +227,7 @@ export default function UserManagementPage() {
                                         </div>
                                     </td>
                                 </tr>
-                            ) : filteredUsers.map((user) => (
+                            ) : users.map((user) => (
                                 <tr key={user.id} className="group hover:bg-accent/5 transition-colors">
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-4">
@@ -282,6 +292,35 @@ export default function UserManagementPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination */}
+                {!isLoading && total > 0 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 sm:px-8 py-5 border-t border-border/50">
+                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                            Page {page} of {totalPages} · {total} {total === 1 ? "record" : "records"}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-xl gap-1 font-bold"
+                                disabled={page <= 1}
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            >
+                                <ChevronLeft size={16} /> Prev
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="rounded-xl gap-1 font-bold"
+                                disabled={page >= totalPages}
+                                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            >
+                                Next <ChevronRight size={16} />
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

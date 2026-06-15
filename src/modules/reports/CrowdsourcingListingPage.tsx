@@ -178,14 +178,22 @@ export default function CrowdsourcingListingPage() {
 
                                                                 <div className="flex flex-wrap items-center gap-6 pt-4">
                                                                     <div className="flex items-center gap-2">
-                                                                        <div className="flex -space-x-2">
-                                                                            {[1, 2, 3].map(i => (
-                                                                                <div key={i} className="w-8 h-8 rounded-full bg-secondary border-2 border-card flex items-center justify-center text-[10px] font-bold">
-                                                                                    {String.fromCharCode(64 + i)}
+                                                                        {report.verificationCount > 0 ? (
+                                                                            <>
+                                                                                <div className="flex -space-x-2">
+                                                                                    {report.verifications?.slice(0, 3).map((v: any) => (
+                                                                                        <div key={v.id} className="w-8 h-8 rounded-full bg-secondary border-2 border-card flex items-center justify-center text-[10px] font-bold uppercase">
+                                                                                            {v.user?.fullName?.[0] || 'U'}
+                                                                                        </div>
+                                                                                    ))}
                                                                                 </div>
-                                                                            ))}
-                                                                        </div>
-                                                                        <span className="text-sm font-medium text-muted-foreground">+{report.verificationCount} verifications</span>
+                                                                                <span className="text-sm font-medium text-muted-foreground">
+                                                                                    {report.verificationCount} {report.verificationCount === 1 ? 'verification' : 'verifications'}
+                                                                                </span>
+                                                                            </>
+                                                                        ) : (
+                                                                            <span className="text-sm font-medium text-muted-foreground">No verifications yet</span>
+                                                                        )}
                                                                     </div>
 
                                                                     <div className="flex items-center gap-1.5 px-3 py-1 bg-secondary/30 rounded-lg">

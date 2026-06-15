@@ -62,8 +62,8 @@ export interface PlayerProfile {
 }
 
 class AdminService {
-    async getUsers() {
-        const response = await api.get('/users');
+    async getUsers(params?: { page?: number; limit?: number; search?: string; role?: string }) {
+        const response = await api.get('/users', { params });
         return response.data;
     }
 
