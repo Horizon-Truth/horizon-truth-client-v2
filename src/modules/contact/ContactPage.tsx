@@ -78,8 +78,8 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-lg mb-1">{t("contact.callUs")}</h4>
-                                        <p className="text-muted-foreground">+251 911 234 567</p>
-                                        <p className="text-muted-foreground">+251 116 789 012</p>
+                                        <p className="text-muted-foreground">+251 941 667 729</p>
+                                        <p className="text-muted-foreground">+251 921 859 449</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4 p-6 bg-secondary/10 rounded-2xl border border-border">
