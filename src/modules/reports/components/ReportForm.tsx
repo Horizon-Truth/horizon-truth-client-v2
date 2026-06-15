@@ -31,14 +31,18 @@ interface ReportFormProps {
     onSuccess: () => void;
     onRequireAuth: () => void;
     onCancel: () => void;
+    /** Increments each time authentication completes, so a pending submission can resume. */
+    authResolvedSignal?: number;
 }
 
-export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormProps) {
+export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSignal }: ReportFormProps) {
     const { isAuthenticated } = useAuthStore();
     const [tags, setTags] = useState<ReportTag[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [loading, setLoading] = useState(false);
     const [fetchingData, setFetchingData] = useState(true);
+    // Holds the form values captured when a guest tried to submit, so we can resume after login.
+    const [pendingValues, setPendingValues] = useState<z.infer<typeof reportSchema> | null>(null);
 
     const form = useForm<z.infer<typeof reportSchema>>({
         resolver: zodResolver(reportSchema),
@@ -74,13 +78,7 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
         loadData();
     }, []);
 
-    async function onSubmit(values: z.infer<typeof reportSchema>) {
-        if (!isAuthenticated) {
-            toast.info("Please login or register to submit a report");
-            onRequireAuth();
-            return;
-        }
-
+    async function submitReport(values: z.infer<typeof reportSchema>) {
         setLoading(true);
         try {
             await reportService.submitReport({
@@ -96,6 +94,27 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel }: ReportFormPro
             setLoading(false);
         }
     }
+
+    function onSubmit(values: z.infer<typeof reportSchema>) {
+        // Guests can fill out the form; auth is only enforced at submission time.
+        if (!isAuthenticated) {
+            setPendingValues(values); // keep the entered data so we can resume after login
+            toast.info("Please login or register to submit your report");
+            onRequireAuth();
+            return;
+        }
+        submitReport(values);
+    }
+
+    // Resume the held submission once the user has authenticated via the modal.
+    useEffect(() => {
+        if (isAuthenticated && pendingValues) {
+            const values = pendingValues;
+            setPendingValues(null);
+            submitReport(values);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authResolvedSignal]);
 
     if (fetchingData) {
         return (

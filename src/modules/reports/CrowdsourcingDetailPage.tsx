@@ -317,7 +317,7 @@ export default function CrowdsourcingDetailPage() {
                                                     <p className="opacity-70">Verifiers</p>
                                                 </div>
                                                 <div className="text-center flex-1">
-                                                    <p className="text-2xl font-bold">{Math.floor(Math.random() * 20) + 5}</p>
+                                                    <p className="text-2xl font-bold">{report.verifications?.filter((v: any) => v.comment?.trim()).length || 0}</p>
                                                     <p className="opacity-70">Discussions</p>
                                                 </div>
                                             </div>

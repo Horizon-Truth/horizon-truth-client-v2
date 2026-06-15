@@ -11,23 +11,13 @@ import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { Button } from "@/shared/components/ui/button";
 import { ReportForm } from "./components/ReportForm";
 import { AuthModal } from "@/shared/components/auth/AuthModal";
-import { useAuthStore } from "@/store/auth.store";
-import { toast } from "sonner";
-import { useEffect } from "react";
 
 export default function ReportSubmissionPage() {
     const navigate = useNavigate();
-    const { isGuest } = useAuthStore();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [authMode, setAuthMode] = useState<"login" | "register">("login");
-
-    useEffect(() => {
-        if (isGuest) {
-            toast.error("Guest users cannot submit intelligence reports. Please create an account.");
-            navigate("/");
-        }
-    }, [isGuest, navigate]);
+    const [authResolved, setAuthResolved] = useState(0);
 
     const handleSuccess = () => {
         setIsSubmitted(true);
@@ -41,6 +31,8 @@ export default function ReportSubmissionPage() {
 
     const handleAuthSuccess = () => {
         setIsAuthModalOpen(false);
+        // Signal the form that authentication completed so it can resume the pending submission.
+        setAuthResolved((n) => n + 1);
     };
 
     if (isSubmitted) {
@@ -148,6 +140,7 @@ export default function ReportSubmissionPage() {
                                         onSuccess={handleSuccess}
                                         onRequireAuth={() => openAuth("login")}
                                         onCancel={() => navigate("/crowdsourcing")}
+                                        authResolvedSignal={authResolved}
                                     />
                                 </div>
                             </div>
