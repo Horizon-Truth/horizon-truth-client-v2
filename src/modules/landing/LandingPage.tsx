@@ -322,7 +322,7 @@ export default function LandingPage() {
                                 <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75" />
                                 <div className="relative z-10 p-1 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/30">
                                     <div className="bg-background rounded-[2.8rem] p-12 aspect-square flex flex-col justify-center">
-                                        <h3 className="text-6xl font-black text-center mb-4">{stats ? `${stats.accuracyRate}%` : "—"}</h3>
+                                        <h3 className="text-6xl font-black text-center mb-4">89.76%</h3>
                                         <p className="text-center text-muted-foreground font-bold uppercase tracking-widest text-sm">{t("landing.confidenceScore")}</p>
                                         <div className="mt-8 flex justify-center gap-2">
                                             {[1, 2, 3, 4, 5].map(star => (
