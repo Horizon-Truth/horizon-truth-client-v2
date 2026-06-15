@@ -7,6 +7,7 @@ import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { newsletterService } from "@/services/newsletter.service";
+import { statsService, type PublicStats } from "@/services/stats.service";
 import { useTranslation } from "@/shared/i18n/useTranslation";
 
 const slideMeta = [
@@ -135,12 +136,22 @@ export default function LandingPage() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(false);
+    const [stats, setStats] = useState<PublicStats | null>(null);
 
     useEffect(() => {
         if (isAuthenticated) {
             navigate("/dashboard");
         }
     }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
+        statsService
+            .getPublicStats()
+            .then(setStats)
+            .catch((error) => console.error("Failed to load public stats:", error));
+    }, []);
+
+    const formatCount = (value: number) => `${value.toLocaleString()}+`;
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -311,7 +322,7 @@ export default function LandingPage() {
                                 <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75" />
                                 <div className="relative z-10 p-1 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/30">
                                     <div className="bg-background rounded-[2.8rem] p-12 aspect-square flex flex-col justify-center">
-                                        <h3 className="text-6xl font-black text-center mb-4">98%</h3>
+                                        <h3 className="text-6xl font-black text-center mb-4">{stats ? `${stats.accuracyRate}%` : "—"}</h3>
                                         <p className="text-center text-muted-foreground font-bold uppercase tracking-widest text-sm">{t("landing.confidenceScore")}</p>
                                         <div className="mt-8 flex justify-center gap-2">
                                             {[1, 2, 3, 4, 5].map(star => (
@@ -365,10 +376,10 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-center">
                         {[
-                            { label: t("landing.statActiveUsers"), value: "5,247+" },
-                            { label: t("landing.statReportsDebunked"), value: "2,847+" },
-                            { label: t("landing.statVerifiers"), value: "1,592+" },
-                            { label: t("landing.statAccuracy"), value: "99.8%" }
+                            { label: t("landing.statActiveUsers"), value: stats ? formatCount(stats.activeUsers) : "—" },
+                            { label: t("landing.statReportsDebunked"), value: stats ? formatCount(stats.reportsDebunked) : "—" },
+                            { label: t("landing.statVerifiers"), value: stats ? formatCount(stats.verifiers) : "—" },
+                            { label: t("landing.statAccuracy"), value: stats ? `${stats.accuracyRate}%` : "—" }
                         ].map((stat, i) => (
                             <motion.div
                                 key={i}
