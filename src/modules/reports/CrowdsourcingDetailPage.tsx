@@ -60,6 +60,16 @@ export default function CrowdsourcingDetailPage() {
         toast.info(`Verification ${type === 'up' ? 'upvoted' : 'downvoted'} (Simulation)`);
     };
 
+    const handleShare = async () => {
+        const url = window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied to clipboard!");
+        } catch (error) {
+            toast.error("Failed to copy link");
+        }
+    };
+
     const submitVerification = async () => {
         if (!id) return;
         setIsSubmitting(true);
@@ -367,7 +377,7 @@ export default function CrowdsourcingDetailPage() {
                                                 ADD VERIFICATION
                                             </Button>
                                             <div className="flex gap-2">
-                                                <Button variant="outline" className="flex-1 rounded-xl bg-transparent border-white/30 hover:bg-white/10 text-white">
+                                                <Button onClick={handleShare} variant="outline" className="flex-1 rounded-xl bg-transparent border-white/30 hover:bg-white/10 text-white">
                                                     <Share2 size={16} className="mr-2" /> Share
                                                 </Button>
                                                 <Button variant="outline" className="flex-1 rounded-xl bg-transparent border-white/30 hover:bg-white/10 text-white">
