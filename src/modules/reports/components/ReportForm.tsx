@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
+import { useLanguageStore } from "@/store/language.store";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -35,8 +36,29 @@ interface ReportFormProps {
     authResolvedSignal?: number;
 }
 
+/**
+ * Resolve the navbar/system language code (en/am/om) to the matching option in
+ * the report `languages` table. Codes can differ (e.g. Afaan Oromo is `om` in
+ * the UI language store but seeded as `or` here), so fall back through known
+ * aliases before defaulting to the first available language.
+ */
+function resolveReportLanguageCode(
+    systemLanguage: string,
+    available: Language[],
+): string | undefined {
+    if (available.length === 0) return undefined;
+    const aliases: Record<string, string[]> = {
+        om: ["om", "or"],
+        or: ["or", "om"],
+    };
+    const candidates = aliases[systemLanguage] ?? [systemLanguage];
+    const match = available.find((l) => candidates.includes(l.code));
+    return (match ?? available[0]).code;
+}
+
 export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSignal }: ReportFormProps) {
     const { isAuthenticated } = useAuthStore();
+    const systemLanguage = useLanguageStore((s) => s.language);
     const [tags, setTags] = useState<ReportTag[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [loading, setLoading] = useState(false);
@@ -51,7 +73,7 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
             description: "",
             contentType: "ARTICLE",
             sourceUrl: "",
-            language: "en",
+            language: systemLanguage,
             tagIds: [],
         },
     });
@@ -64,11 +86,8 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
                     reportService.getLanguages()
                 ]);
                 setTags(tagsRes.data);
+                // Language defaulting is handled by the system-language sync effect below.
                 setLanguages(langsRes.data);
-
-                if (langsRes.data.length > 0) {
-                    form.setValue("language", langsRes.data[0].code);
-                }
             } catch (error) {
                 toast.error("Failed to load form data");
             } finally {
@@ -77,6 +96,15 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
         }
         loadData();
     }, []);
+
+    // Keep the report language in sync when the user switches the navbar language.
+    useEffect(() => {
+        const resolved = resolveReportLanguageCode(systemLanguage, languages);
+        if (resolved) {
+            form.setValue("language", resolved, { shouldValidate: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [systemLanguage, languages]);
 
     async function submitReport(values: z.infer<typeof reportSchema>) {
         setLoading(true);
