@@ -9,3 +9,10 @@ describe('cast integrity', () => {
         for (const character of CHARACTERS) {
             for (const disposition of Object.keys(DISPOSITIONS)) {
                 expect(character.lines[disposition as keyof typeof character.lines]).toBeTruthy();
+            }
+        }
+    });
+
+    it('only references real skills', () => {
+        const skillKeys = new Set(SKILLS.map(s => s.key));
+        for (const character of CHARACTERS) {

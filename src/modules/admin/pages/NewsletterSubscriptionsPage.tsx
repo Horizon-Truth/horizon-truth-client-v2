@@ -76,3 +76,20 @@ export default function NewsletterSubscriptionsPage() {
                             {isLoading ? (
                                 <tr>
                                     <td colSpan={4} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Syncing Network Base...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredSubscriptions.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <Megaphone size={40} className="text-muted-foreground/30" />
+                                            <p className="text-sm font-bold text-muted-foreground">No subscribers found.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredSubscriptions.map((s) => (
+                                <tr key={s.id} className="group hover:bg-accent/5 transition-colors">

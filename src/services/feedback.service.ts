@@ -45,3 +45,36 @@ class FeedbackService {
         const response = await api.post('/feedback', data);
         return response.data;
     }
+
+    async createGuestFeedback(data: Partial<Feedback>) {
+        const response = await api.post('/feedback/guest', data);
+        return response.data;
+    }
+
+    async getFeedbacks(params?: any) {
+        const response = await api.get('/feedback', { params });
+        return response.data;
+    }
+
+    async getFeedbackById(id: string) {
+        const response = await api.get(`/feedback/${id}`);
+        return response.data;
+    }
+
+    async updateFeedback(id: string, data: Partial<Feedback>) {
+        const response = await api.patch(`/feedback/${id}`, data);
+        return response.data;
+    }
+
+    async deleteFeedback(id: string) {
+        const response = await api.delete(`/feedback/${id}`);
+        return response.data;
+    }
+
+    async getStats() {
+        const response = await api.get('/feedback/stats');
+        return response.data;
+    }
+}
+
+export const feedbackService = new FeedbackService();
