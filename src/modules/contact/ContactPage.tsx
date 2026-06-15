@@ -123,3 +123,29 @@ export default function ContactPage() {
                                     {t("contact.successDesc")}
                                 </p>
                                 <Button
+                                    onClick={() => setIsSubmitted(false)}
+                                    variant="outline"
+                                    className="rounded-2xl px-10 h-14 font-bold text-lg border-primary/20 hover:bg-primary/5 transition-all"
+                                >
+                                    {t("contact.sendNew")}
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="relative z-10">
+                                <div className="mb-8">
+                                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">{t("contact.formTitle")}</h2>
+                                    <p className="text-muted-foreground">{t("contact.formDesc")}</p>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.firstName")}</label>
+                                            <Input
+                                                name="firstName"
+                                                placeholder="Caspian"
+                                                required
+                                                value={formData.firstName}
+                                                onChange={handleChange}
+                                                className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                            />
