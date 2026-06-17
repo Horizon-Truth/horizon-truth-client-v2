@@ -75,3 +75,34 @@ export default function AboutPage() {
                                 {t("common.getInTouch")} <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={24} />
                             </Button>
                         </motion.div>
+
+                        <motion.div
+                            initial={{ x: 30, opacity: 0 }}
+                            whileInView={{ x: 0, opacity: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="lg:w-1/2 w-full"
+                        >
+                            <div className="relative p-10 rounded-[3rem] bg-secondary/5 border-4 border-secondary/10 backdrop-blur-xl shadow-2xl">
+                                <div className="absolute -top-6 -left-6 w-20 h-20 bg-primary/20 rounded-full blur-2xl" />
+                                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-secondary/20 rounded-full blur-3xl" />
+
+                                <h3 className="text-3xl font-black mb-10 flex items-center gap-3">
+                                    <Calendar className="text-primary" size={32} />
+                                    {t("about.journeyTitle")}
+                                </h3>
+
+                                <div className="space-y-12">
+                                    {[
+                                        { title: t("about.journey1Title"), date: t("about.journey1Date"), desc: t("about.journey1Desc") },
+                                        { title: t("about.journey2Title"), date: t("about.journey2Date"), desc: t("about.journey2Desc") },
+                                        { title: t("about.journey3Title"), date: t("about.journey3Date"), desc: t("about.journey3Desc") }
+                                    ].map((item, i) => (
+                                        <div key={i} className="relative pl-12 border-l-4 border-primary/20">
+                                            <div className="absolute left-[-14px] top-0 w-6 h-6 rounded-full bg-primary border-4 border-background" />
+                                            <h4 className="text-2xl font-black mb-1">{item.title}</h4>
+                                            <p className="text-sm text-primary font-black uppercase tracking-widest mb-3">{item.date}</p>
+                                            <p className="text-lg text-muted-foreground font-medium leading-normal">{item.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
