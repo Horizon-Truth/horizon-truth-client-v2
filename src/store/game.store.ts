@@ -179,3 +179,56 @@ export const useGameStore = create<GameState>()(
                             accuracyRate: averageAccuracy,
                             influence: totalInfluence,
                             trustScore: playerStats?.trustScore ?? 50
+                        },
+                        isLoading: false
+                    }));
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to fetch history', isLoading: false });
+                }
+            },
+
+            startGame: async (scenarioId: string) => {
+                set({ isLoading: true, error: null, currentOutcome: null });
+                try {
+                    const progress = await engineService.startGame(scenarioId);
+                    set({ activeProgress: progress, isLoading: false, missionImpact: emptyImpact(progress.id) });
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to start game', isLoading: false });
+                }
+            },
+
+            loadProgress: async (progressId: string) => {
+                set({ isLoading: true, error: null });
+                try {
+                    const progress = await engineService.getGameProgress(progressId);
+                    set(state => ({
+                        activeProgress: progress,
+                        isLoading: false,
+                        // Keep the impact ledger only if it belongs to this mission.
+                        missionImpact: state.missionImpact?.progressId === progress.id
+                            ? state.missionImpact
+                            : emptyImpact(progress.id),
+                    }));
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to load progress', isLoading: false });
+                }
+            },
+
+            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => {
+                const { activeProgress, isLoading } = get();
+                if (!activeProgress || isLoading) return;
+
+                // Attribute a resolved decision to the skill graph and calibration ledger.
+                const recordDecision = (correct: boolean | null, trap: string | null | undefined) => {
+                    if (correct === null) return {};
+                    const skill = skillForTechnique(matchTechnique(trap)?.key);
+                    const prev = get().skillBook[skill.key] ?? { xp: 0, correct: 0, total: 0 };
+                    const skillBook = {
+                        ...get().skillBook,
+                        [skill.key]: {
+                            xp: prev.xp + (correct ? XP_PER_CORRECT_DECISION : XP_PER_INCORRECT_DECISION),
+                            correct: prev.correct + (correct ? 1 : 0),
+                            total: prev.total + 1,
+                        },
+                    };
+                    let calibration = get().calibration;
