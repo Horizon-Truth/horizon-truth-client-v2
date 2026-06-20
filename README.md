@@ -87,3 +87,40 @@ test/                   # Test files
    ```env
    VITE_API_URL=http://localhost:3000/api
    VITE_APP_NAME=Horizon Truth
+   VITE_ENVIRONMENT=development
+   ```
+
+5. **Start the development server**
+   ```bash
+   yarn dev
+   ```
+   The application will be available at `http://localhost:5173`.
+
+## 🌍 Environment Configuration
+
+Vite uses environment variables prefixed with `VITE_`. Configuration files:
+
+| File | Purpose | When to Use |
+|------|---------|-------------|
+| `.env.development` | Development defaults | Template for local development |
+| `.env.staging` | Staging configuration | For staging deployments |
+| `.env.production` | Production configuration | For production builds |
+| `.env.local` | Local overrides | Git-ignored, for personal settings |
+
+### Key Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API base URL | `http://localhost:3000/api` |
+| `VITE_APP_NAME` | Application display name | `Horizon Truth` |
+| `VITE_ENVIRONMENT` | Runtime environment | `development` |
+| `VITE_SENTRY_DSN` | Sentry error tracking DSN | - |
+
+## 📜 Available Scripts
+
+### Development
+```bash
+yarn dev              # Start development server with HMR
+yarn build            # Build for production
+yarn preview          # Preview production build locally
+```

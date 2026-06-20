@@ -127,3 +127,108 @@ export const useGameStore = create<GameState>()(
                         img.src = url;
                     }
                 });
+            },
+
+            fetchGameHistory: async () => {
+                set({ isLoading: true, error: null });
+                try {
+                    const [history, playerStats, learningProfile] = await Promise.all([
+                        engineService.getMyGameHistory(),
+                        userService.getMyStats().catch(() => null), // graceful fallback
+                        userService.getMyLearningProfile().catch(() => null) // guests / older servers
+                    ]);
+
+                    // Reconcile server-synced ledgers with local ones (element-wise
+                    // max, so neither side can lose progress).
+                    if (learningProfile) {
+                        set(state => ({
+                            skillBook: mergeSkillBooks(state.skillBook, learningProfile.skillBook),
+                            calibration: mergeCalibrations(state.calibration, learningProfile.calibration),
+                        }));
+                    }
+
+                    // Calculate average accuracy from completed items in history
+                    const completedGames = history.filter((game: GameProgress) => game.status === 'COMPLETED' && typeof game.accuracyRate === 'number');
+                    let averageAccuracy = 0;
+                    if (completedGames.length > 0) {
+                        const sumAccuracy = completedGames.reduce((sum: number, game: GameProgress) => sum + (game.accuracyRate || 0), 0);
+                        averageAccuracy = Math.round(sumAccuracy / completedGames.length);
+                    }
+
+                    // Calculate total influence
+                    let totalInfluence = 0;
+                    history.forEach((game: GameProgress) => {
+                        if (game.influenceScore) totalInfluence += game.influenceScore;
+                    });
+
+                    // Determine level and experience 
+                    // Let's use playerStats.totalScore as experience (fallback to computing from history if API fails)
+                    let experience = playerStats?.totalScore ?? 0;
+                    if (!playerStats) {
+                        experience = history.reduce((sum: number, game: GameProgress) => sum + (game.totalScore || 0), 0);
+                    }
+                    const level = Math.max(1, Math.floor(Math.sqrt(experience / 100)) + 1);
+
+                    set(state => ({
+                        history,
+                        stats: {
+                            ...state.stats,
+                            missionsCompleted: playerStats?.gamesCompleted ?? completedGames.length,
+                            experience: experience,
+                            level: level,
+                            accuracyRate: averageAccuracy,
+                            influence: totalInfluence,
+                            trustScore: playerStats?.trustScore ?? 50
+                        },
+                        isLoading: false
+                    }));
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to fetch history', isLoading: false });
+                }
+            },
+
+            startGame: async (scenarioId: string) => {
+                set({ isLoading: true, error: null, currentOutcome: null });
+                try {
+                    const progress = await engineService.startGame(scenarioId);
+                    set({ activeProgress: progress, isLoading: false, missionImpact: emptyImpact(progress.id) });
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to start game', isLoading: false });
+                }
+            },
+
+            loadProgress: async (progressId: string) => {
+                set({ isLoading: true, error: null });
+                try {
+                    const progress = await engineService.getGameProgress(progressId);
+                    set(state => ({
+                        activeProgress: progress,
+                        isLoading: false,
+                        // Keep the impact ledger only if it belongs to this mission.
+                        missionImpact: state.missionImpact?.progressId === progress.id
+                            ? state.missionImpact
+                            : emptyImpact(progress.id),
+                    }));
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to load progress', isLoading: false });
+                }
+            },
+
+            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => {
+                const { activeProgress, isLoading } = get();
+                if (!activeProgress || isLoading) return;
+
+                // Attribute a resolved decision to the skill graph and calibration ledger.
+                const recordDecision = (correct: boolean | null, trap: string | null | undefined) => {
+                    if (correct === null) return {};
+                    const skill = skillForTechnique(matchTechnique(trap)?.key);
+                    const prev = get().skillBook[skill.key] ?? { xp: 0, correct: 0, total: 0 };
+                    const skillBook = {
+                        ...get().skillBook,
+                        [skill.key]: {
+                            xp: prev.xp + (correct ? XP_PER_CORRECT_DECISION : XP_PER_INCORRECT_DECISION),
+                            correct: prev.correct + (correct ? 1 : 0),
+                            total: prev.total + 1,
+                        },
+                    };
+                    let calibration = get().calibration;
