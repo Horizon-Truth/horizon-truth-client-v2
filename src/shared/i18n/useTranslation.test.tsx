@@ -20,3 +20,9 @@ describe('useTranslation', () => {
         act(() => result.current.setLanguage(ContentLanguage.AMHARIC));
         expect(result.current.t('common.save')).toBe('አስቀምጥ');
     });
+
+    it('falls back to English for keys missing in the active language', () => {
+        const { result } = renderHook(() => useTranslation());
+        act(() => result.current.setLanguage(ContentLanguage.AFAAN_OROMO));
+        // scenario.title exists in en; if a key were missing it should fall back.
+        expect(result.current.t('scenario.title')).toBe('Mata-duree');

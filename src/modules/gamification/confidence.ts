@@ -25,3 +25,14 @@ export const CONFIDENCE_OPTIONS: ConfidenceOption[] = [
 ];
 
 export interface CalibrationBucket {
+    correct: number;
+    total: number;
+}
+
+export type CalibrationLedger = Record<ConfidenceOption['key'], CalibrationBucket>;
+
+export const EMPTY_CALIBRATION: CalibrationLedger = {
+    guessing: { correct: 0, total: 0 },
+    somewhat: { correct: 0, total: 0 },
+    certain: { correct: 0, total: 0 },
+};

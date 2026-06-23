@@ -5,3 +5,9 @@
  * truth for the languages the UI knows about — switchers, dropdowns and badges
  * all read from `SUPPORTED_LANGUAGES`, so adding a language is a one-place
  * change here (plus a translation dictionary).
+ */
+export const ContentLanguage = {
+  ENGLISH: 'en',
+  AMHARIC: 'am',
+  AFAAN_OROMO: 'om',
+} as const;

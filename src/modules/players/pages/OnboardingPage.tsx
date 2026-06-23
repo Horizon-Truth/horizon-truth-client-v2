@@ -104,3 +104,62 @@ const OnboardingPage: React.FC = () => {
 
                         <div className="space-y-8">
                             {/* Nickname Input */}
+                            <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Nickname</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-blue-400/50 transition-colors">
+                                        <User size={18} />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={nickname}
+                                        onChange={(e) => setNickname(e.target.value)}
+                                        placeholder="e.g. Alex"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all placeholder:text-white/10"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Avatar Selection */}
+                            <div className="space-y-3">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1 flex justify-between">
+                                    <span>Select Avatar</span>
+                                </label>
+                                <div className="grid grid-cols-5 gap-3">
+                                    {loadingAvatars ? (
+                                        [...Array(5)].map((_, i) => (
+                                            <div key={i} className="aspect-square bg-white/5 rounded-2xl animate-pulse" />
+                                        ))
+                                    ) : (
+                                        avatars?.filter(a => a.ageGroup === 'YOUTH').map((avatar) => (
+                                            <motion.button
+                                                key={avatar.id}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={() => setSelectedAvatar(avatar)}
+                                                className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${selectedAvatar?.id === avatar.id
+                                                    ? 'border-blue-500 bg-blue-500/10'
+                                                    : 'border-white/5 hover:border-white/20'
+                                                    }`}
+                                            >
+                                                <div className={`absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity ${selectedAvatar?.id === avatar.id ? 'opacity-100' : ''}`} />
+                                                <img
+                                                    src={avatar.imageUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + avatar.name}
+                                                    alt={avatar.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                {selectedAvatar?.id === avatar.id && (
+                                                    <div className="absolute bottom-1 right-1 bg-blue-500 rounded-full p-0.5">
+                                                        <Check size={10} strokeWidth={4} />
+                                                    </div>
+                                                )}
+                                            </motion.button>
+                                        ))
+                                    )}
+                                </div>
+                                {selectedAvatar && (
+                                    <motion.p
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className="text-center text-xs text-white/40 italic"
+                                    >

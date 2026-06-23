@@ -85,3 +85,29 @@ export default function ReportAdminManagementPage() {
                 <div>
                     <h2 className="text-3xl font-black tracking-tight italic uppercase tracking-wider">Report Management</h2>
                     <p className="text-sm text-muted-foreground mt-1 text-premium-muted">Oversee and verify community crowdsourced reports.</p>
+                </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                        placeholder="Search reports by title or description..."
+                        className="pl-10 h-12 rounded-xl bg-card border-none ring-1 ring-border focus-visible:ring-primary"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <select
+                        className="h-12 px-4 rounded-xl bg-card border-none ring-1 ring-border text-sm font-bold focus:ring-2 focus:ring-primary outline-none min-w-[150px] appearance-none"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="all">All Statuses</option>
+                        <option value="NEW">New</option>
+                        <option value="UNDER_REVIEW">Under Review</option>
+                        <option value="NEEDS_MORE_EVIDENCE">Needs More Evidence</option>
+                        <option value="VERIFIED_FALSE">Verified False</option>
+                        <option value="VERIFIED_TRUE">Verified True</option>
+                        <option value="DUPLICATE">Duplicate</option>

@@ -3,3 +3,6 @@ import { useAuthStore } from '@/store/auth.store';
 import type { UserRole } from '@/store/auth.store';
 
 interface PrivateRouteProps {
+    children: React.ReactNode;
+    roles?: UserRole[];
+}
