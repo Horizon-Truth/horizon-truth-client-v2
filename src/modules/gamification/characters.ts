@@ -101,3 +101,24 @@ export const CHARACTERS: Character[] = [
         bio: 'Watches how rumors move through neighborhoods, group chats, and hashtags.',
         skillKey: 'network-awareness',
         lines: {
+            wary: 'You mistake a crowd for a consensus. Half that crowd was bought.',
+            neutral: "You're starting to notice when a trend is manufactured. Look at the accounts.",
+            warm: 'You can tell an authentic wave from a coordinated one. That takes real attention.',
+            devoted: "When our community gets swarmed, you're who I call to map it out.",
+        },
+    },
+    {
+        key: 'almaz',
+        name: 'Almaz',
+        role: 'Your neighbor',
+        emoji: '🏡',
+        bio: "Forwards everything to the family group chat. Whether that's a problem depends on you.",
+        skillKey: null,
+        lines: {
+            wary: "You sent me that story about the water supply. My sister still believes it.",
+            neutral: "You're more careful than most in the group chat. That counts for something.",
+            warm: 'I check with you before I forward things now. You saved me some embarrassment.',
+            devoted: "The whole building asks you first. You've made this a harder place to fool.",
+        },
+    },
+];
