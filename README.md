@@ -124,3 +124,39 @@ yarn dev              # Start development server with HMR
 yarn build            # Build for production
 yarn preview          # Preview production build locally
 ```
+
+### Code Quality
+```bash
+yarn lint             # Run ESLint with auto-fix
+# Type checking is integrated into Vite build process
+```
+
+### Testing
+```bash
+yarn test             # Run tests in headless mode
+yarn test:ui          # Open Vitest UI for visual test running
+```
+
+## 🧪 Testing Strategy
+
+The project uses Vitest with React Testing Library for comprehensive testing:
+
+### Test Configuration
+- **Test Environment:** jsdom for browser-like environment
+- **Setup:** Custom test setup in `test/setup.ts`
+- **Coverage:** Built-in coverage reporting
+
+### Running Tests
+```bash
+# Run all tests
+yarn test
+
+# Run tests in watch mode
+yarn test --watch
+
+# Run tests with UI
+yarn test:ui
+
+# Run specific test file
+yarn test src/components/Button.test.tsx
+```
