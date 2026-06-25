@@ -26,3 +26,13 @@ describe('catalog integrity', () => {
         expect(new Set(keys).size).toBe(keys.length);
         for (const a of ACHIEVEMENTS) {
             expect(ACHIEVEMENT_CATEGORIES[a.category]).toBeDefined();
+        }
+    });
+
+    it('offers a substantial catalog', () => {
+        expect(ACHIEVEMENTS.length).toBeGreaterThanOrEqual(30);
+    });
+
+    it('unlocks nothing for a brand-new player', () => {
+        expect(unlockedCount(ctx())).toBe(0);
+    });

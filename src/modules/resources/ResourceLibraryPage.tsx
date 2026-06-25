@@ -66,3 +66,23 @@ export default function ResourceLibraryPage() {
                             <div className="flex flex-wrap gap-2">
                                 {filters.map((filter) => (
                                     <Button
+                                        key={filter}
+                                        variant={activeFilter === filter ? "default" : "outline"}
+                                        onClick={() => setActiveFilter(filter)}
+                                        className={`rounded-full px-6 capitalize font-black ${activeFilter === filter ? 'bg-primary' : 'hover:border-primary/50'}`}
+                                    >
+                                        {filter}
+                                    </Button>
+                                ))}
+                            </div>
+                            <div className="relative w-full max-w-md">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                                <input
+                                    type="text"
+                                    placeholder="Search the library..."
+                                    className="w-full pl-12 pr-4 py-4 rounded-2xl border bg-secondary/5 focus:ring-2 focus:ring-primary focus:outline-none transition-all font-medium"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>

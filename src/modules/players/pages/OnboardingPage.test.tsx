@@ -35,3 +35,14 @@ vi.mock('../../../store/auth.store', () => ({
 
 vi.mock('sonner', () => ({
     toast: {
+        success: vi.fn(),
+        error: vi.fn(),
+    },
+}));
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: false,
+        },
+    },
