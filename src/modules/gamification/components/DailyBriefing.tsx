@@ -54,3 +54,19 @@ export const DailyBriefing = memo(function DailyBriefing() {
     return (
         <section
             aria-label="Today's briefing"
+            className="border border-border rounded-3xl p-6 bg-card shadow-sm space-y-4 animate-in fade-in slide-in-from-top-4 duration-700"
+        >
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                    <CalendarDays size={16} className="text-primary" aria-hidden />
+                    <h2 className="font-black text-xs tracking-widest uppercase">Today's briefing</h2>
+                </div>
+                {currentStreak > 0 && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-orange-500/25 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[11px] font-bold">
+                        <Flame size={11} aria-hidden /> {currentStreak}-day streak
+                    </span>
+                )}
+            </div>
+
+            {/* Mission of the day */}
+            {featured && (
