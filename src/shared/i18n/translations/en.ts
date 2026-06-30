@@ -260,3 +260,40 @@ export const en = {
     value1Title: 'Integrity',
     value1Desc:
       'We practice what we preach, ensuring our content is accurate and transparent.',
+    value2Title: 'Innovation',
+    value2Desc:
+      'We continuously develop new approaches to make digital literacy engaging.',
+    value3Title: 'Collaboration',
+    value3Desc:
+      'We believe combating misinformation requires collective effort.',
+    value4Title: 'Education',
+    value4Desc:
+      'We prioritize empowering people with knowledge over simply debunking.',
+
+    ctaTitle: 'Ready to Join',
+    ctaTitleHighlight: 'the Fight?',
+    ctaDesc:
+      'Sign up now and start your journey towards becoming a misinformation warrior today.',
+    ctaStartPlaying: 'Start Playing',
+  },
+
+  contact: {
+    heroTitle: 'Connect With',
+    heroSubtitle: 'The Truth',
+    heroDesc:
+      "Have questions? We're here to help you navigate the digital landscape.",
+    infoTitle: 'Contact Information',
+    emailUs: 'Email Us',
+    callUs: 'Call Us',
+    visitUs: 'Visit Us',
+    visitLine1: 'Bole Road, Addis Ababa',
+    visitLine2: 'Ethiopia',
+    businessHours: 'Business Hours',
+    weekdays: 'Monday - Friday',
+    saturday: 'Saturday',
+    sunday: 'Sunday',
+    closed: 'Closed',
+    successTitle: 'Transmission Received',
+    successDesc:
+      'Our operatives have secured your transmission. We will review the data and respond via your provided channel within the next briefing cycle.',
+    sendNew: 'Send New Message',
