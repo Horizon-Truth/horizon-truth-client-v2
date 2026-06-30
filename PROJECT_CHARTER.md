@@ -68,4 +68,55 @@ The frontend follows the same **Maintainer-Led Consensus Model** as the backend 
 
 ## 5. Contribution Model
 
-*   All UI changes require screenshots or previews
+*   All UI changes require screenshots or previews
+*   Accessibility checks encouraged
+*   API contracts must not be broken
+*   Follow `CONTRIBUTING.md` and style guidelines
+
+## 6. Design & UX Principles
+
+*   Clarity over complexity
+*   Accessibility by default
+*   Performance-first rendering
+*   Minimal but extensible design system
+
+## 7. Release & Versioning Strategy
+
+*   **Semantic Versioning**
+*   UI breaking changes documented clearly
+*   Coordinated releases with backend when needed
+
+## 8. Security & Privacy
+
+*   No sensitive logic in client
+*   Secure handling of tokens
+*   Avoid storing private data in local storage
+*   Follow best frontend security practices
+
+## 9. Licensing Strategy
+
+*   **Open Source First:** We use the MIT License to ensure maximum accessibility and encourage widespread adoption.
+*   **Contributor Alignment:** All contributions are licensed under the same terms to maintain project integrity.
+*   **Dependency Transparency:** We prioritize open-source libraries and maintain clear documentation of all third-party licenses.
+
+## 10. Community Engagement
+
+We are committed to building an open and inclusive ecosystem. We actively seek collaboration with researchers, fact-checkers, and the open-source community. Our engagement strategy includes:
+
+*   **Open Dialogue:** Using GitHub Discussions and Issues for transparent planning and feedback.
+*   **Collaborative Design:** Involving the community in UX/UI decisions to ensure the platform meets diverse user needs.
+*   **Supportive Environment:** Maintaining a welcoming space for contributors of all skill levels, guided by our Code of Conduct.
+
+## 11. Communication Channels
+
+*   GitHub Issues & Discussions
+*   Design review threads
+*   Optional community UX feedback sessions
+
+## 12. Amendments
+
+Changes to this charter require:
+
+1.  Maintainer proposal
+2.  Maintainer approval
+3.  Public change log

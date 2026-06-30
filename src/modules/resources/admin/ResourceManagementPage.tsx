@@ -72,3 +72,33 @@ export default function ResourceManagementPage() {
                     <Plus size={20} />
                     Onboard New Asset
                 </Button>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-card border border-border/50 p-2 sm:p-4 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm">
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                        placeholder="Search assets by title, description, or type..."
+                        className="pl-12 h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-secondary"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex items-center gap-2 px-4 h-12 border-t md:border-t-0 md:border-l border-border/50">
+                    <Filter size={18} className="text-muted-foreground" />
+                    <select
+                        className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                    >
+                        <option value="all">All Types</option>
+                        {types.map(type => (
+                            <option key={type} value={type}>{type.toUpperCase()}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex items-center gap-2 px-4 h-12 border-t md:border-t-0 md:border-l border-border/50">
+                    <Languages size={18} className="text-muted-foreground" />
+                    <select
+                        className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
+                        value={languageFilter}
