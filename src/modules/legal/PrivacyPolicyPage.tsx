@@ -56,3 +56,27 @@ export default function PrivacyPolicyPage() {
                                 <div id="introduction" className="scroll-mt-32">
                                     <h2 className="text-3xl font-bold mb-6">Introduction</h2>
                                     <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-4">
+                                        <p>
+                                            This Privacy Policy describes how Dabbal Software Development PLC ("we," "our," or "us") collects, uses,
+                                            and shares your personal information when you use the Horizon Truth platform ("Platform"). Horizon Truth
+                                            is a gamified digital literacy platform combined with a crowdsourced content verification system, enhanced by AI.
+                                        </p>
+                                        <p>
+                                            We are committed to protecting your privacy and ensuring the security of your personal information.
+                                            By using our Platform, you agree to the collection and use of information in accordance with this policy.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div id="collection" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">Information We Collect</h2>
+                                    <div className="grid md:grid-cols-2 gap-8 mt-8">
+                                        <div className="p-8 bg-secondary/20 rounded-2xl border border-border">
+                                            <h4 className="font-bold text-xl mb-4 text-foreground">Personal Information</h4>
+                                            <ul className="space-y-4 text-muted-foreground">
+                                                <li>• Basic profile information (username, email address)</li>
+                                                <li>• Demographic information (age, location - if voluntarily provided)</li>
+                                                <li>• Language preferences (Amharic, Afaan Oromo, English)</li>
+                                                <li>• Game progress, scores, and achievements</li>
+                                                <li>• Content you report or verify through our crowdsourced system</li>
+                                            </ul>
