@@ -32,3 +32,25 @@ interface SourceComparisonProps {
     onChoice?: (choice: string) => void;
     isLoading?: boolean;
 }
+
+interface SourceCard {
+    name: string;
+    handle?: string;
+    avatarUrl?: string;
+    verified?: boolean;
+    timestamp?: string;
+    headline: string;
+    excerpt?: string;
+    signals?: { label: string; detail: string; suspicious?: boolean }[];
+}
+
+export const SourceComparison: React.FC<SourceComparisonProps> = memo(({ scene }) => {
+    const shouldReduceMotion = useReducedMotion();
+    const { activeProgress } = useGameStore();
+    const content = scene.content ?? {};
+    const sources: SourceCard[] = Array.isArray(content.sources) ? content.sources : [];
+    const [examined, setExamined] = useState<Set<number>>(new Set());
+    const clicks = useRef(0);
+
+    const toggleExamine = (i: number) => {
+        setExamined(prev => {
