@@ -232,3 +232,51 @@ export const useGameStore = create<GameState>()(
                         },
                     };
                     let calibration = get().calibration;
+                    if (confidence) {
+                        const key = confidenceKeyForLevel(confidence);
+                        const bucket = calibration[key] ?? { correct: 0, total: 0 };
+                        calibration = {
+                            ...calibration,
+                            [key]: { correct: bucket.correct + (correct ? 1 : 0), total: bucket.total + 1 },
+                        };
+                    }
+                    // Fire-and-forget sync; the server merges element-wise max,
+                    // and guests / offline players simply keep local state.
+                    userService.saveMyLearningProfile({ skillBook, calibration }).catch(() => { });
+                    return { skillBook, calibration };
+                };
+
+                // Advance today's quest counters (rolling the ledger over at midnight).
+                const bumpDaily = (patch: Partial<Pick<DailyLedger, 'missions' | 'correctDecisions' | 'sharpMissions'>>) => {
+                    const today = ensureToday(get().dailyLedger);
+                    return {
+                        ...today,
+                        missions: today.missions + (patch.missions ?? 0),
+                        correctDecisions: today.correctDecisions + (patch.correctDecisions ?? 0),
+                        sharpMissions: today.sharpMissions + (patch.sharpMissions ?? 0),
+                    };
+                };
+
+                // Fold this decision into the mission's community-impact ledger.
+                const foldImpact = (
+                    spread: { reach: number; reshares: number; credibility_loss: number } | null,
+                    correct: boolean | null,
+                ) => {
+                    const current = get().missionImpact?.progressId === activeProgress.id
+                        ? get().missionImpact!
+                        : emptyImpact(activeProgress.id);
+                    return applyDecisionImpact(current, spread, correct, activeProgress.currentScene?.choices);
+                };
+
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null, lastConfidence: confidence ?? null });
+                try {
+                    const result = await engineService.submitChoice({
+                        progressId: activeProgress.id,
+                        sceneId,
+                        choiceKey
+                    });
+
+                    if (result.status === 'scene_completed') {
+                        // Check if the choice had a spread simulation (wrong choice)
+                        const choiceData = activeProgress.currentScene?.choices?.find(
+                            (c: any) => c.label === choiceKey || c.id === choiceKey
