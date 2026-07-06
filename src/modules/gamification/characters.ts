@@ -122,3 +122,55 @@ export const CHARACTERS: Character[] = [
         },
     },
 ];
+
+export interface CharacterState {
+    character: Character;
+    disposition: Disposition;
+    line: string;
+    /** Accuracy driving the disposition, or null when there isn't enough data. */
+    accuracy: number | null;
+    /** Decisions recorded in this character's area. */
+    decisions: number;
+}
+
+/** Minimum decisions before a character forms an opinion. */
+export const OPINION_THRESHOLD = 3;
+
+function dispositionFor(accuracy: number | null, decisions: number): Disposition {
+    if (accuracy === null || decisions < OPINION_THRESHOLD) return 'neutral';
+    if (accuracy >= 90) return 'devoted';
+    if (accuracy >= 70) return 'warm';
+    if (accuracy >= 50) return 'neutral';
+    return 'wary';
+}
+
+/**
+ * Resolve the cast's current feelings toward the player.
+ *
+ * @param skillBook   per-skill accuracy record
+ * @param overall     overall accuracy 0–100 (drives characters with no skill)
+ * @param totalDecisions overall decision count, for the opinion threshold
+ */
+export function castState(
+    skillBook: Record<string, SkillProgress>,
+    overall: number | null,
+    totalDecisions: number,
+): CharacterState[] {
+    return CHARACTERS.map(character => {
+        if (character.skillKey === null) {
+            const disposition = dispositionFor(overall, totalDecisions);
+            return { character, disposition, line: character.lines[disposition], accuracy: overall, decisions: totalDecisions };
+        }
+        const progress = skillBook[character.skillKey];
+        const accuracy = progress ? skillAccuracy(progress) : null;
+        const decisions = progress?.total ?? 0;
+        const disposition = dispositionFor(accuracy, decisions);
+        return { character, disposition, line: character.lines[disposition], accuracy, decisions };
+    });
+}
+
+/** Skills that have no character attached — useful when extending the cast. */
+export function skillsWithoutCharacter(): string[] {
+    const covered = new Set(CHARACTERS.map(c => c.skillKey).filter(Boolean));
+    return SKILLS.filter(s => !covered.has(s.key)).map(s => s.key);
+}
