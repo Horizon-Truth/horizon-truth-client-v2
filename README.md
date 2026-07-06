@@ -160,3 +160,120 @@ yarn test:ui
 # Run specific test file
 yarn test src/components/Button.test.tsx
 ```
+
+### Writing Tests
+- Tests are co-located with components or in `test/` directory
+- Use `*.test.tsx` or `*.spec.tsx` naming convention
+- Follow React Testing Library best practices
+
+## 🎨 Styling & Design System
+
+### Tailwind CSS 4
+- Uses the new Tailwind CSS v4 with zero configuration
+- Integrated via `@tailwindcss/vite` plugin
+- Custom styles in `src/index.css`
+
+### CSS Architecture
+```css
+/* src/index.css */
+@import "tailwindcss";
+
+/* Custom theme variables */
+@theme {
+  --color-primary: #2563eb;
+  --color-secondary: #7c3aed;
+}
+
+/* Global styles */
+body {
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+}
+```
+
+### Component Styling Pattern
+```tsx
+// Use Tailwind utility classes directly
+const Button = ({ children }: ButtonProps) => (
+  <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+    {children}
+  </button>
+);
+```
+
+## 🔧 Development Workflow
+
+### Component Development
+1. Create component in `src/components/`
+2. Write tests in `src/components/ComponentName.test.tsx`
+3. Export from `src/components/index.ts`
+4. Use in feature components
+
+### State Management
+- React hooks for local state
+- Context API for global state where needed
+- Custom hooks for reusable logic
+
+### API Integration
+- Fetch or axios for API calls
+- Custom hooks for data fetching (e.g., `useClaims`, `useUsers`)
+- Error handling and loading states
+
+## 🚀 Building for Production
+
+### Production Build
+```bash
+yarn build
+```
+This will:
+1. Run TypeScript compilation
+2. Bundle with Vite
+3. Optimize assets
+4. Output to `dist/` directory
+
+### Deployment
+The `dist/` directory contains static files that can be deployed to:
+- **Static Hosting:** Vercel, Netlify, GitHub Pages
+- **Container:** Docker with Nginx
+- **CDN:** CloudFront, Cloudflare
+
+### Docker Example
+```dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN yarn install && yarn build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please start by reading our:
+- [Contributing Guide](../CONTRIBUTING.md) for development workflows.
+- [Code of Conduct](../CODE_OF_CONDUCT.md) to understand our community standards.
+
+### Development Checklist
+1. ✅ Write tests for new features
+2. ✅ Ensure all tests pass (`yarn test`)
+3. ✅ Run linter (`yarn lint`)
+4. ✅ Update documentation if needed
+5. ✅ Follow TypeScript strict mode
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](../LICENSE) file for details.
+
+---
+
+> **For the complete project vision and governance model, please see the [Project Charter](../PROJECT_CHARTER.md).**
+
+## 🔗 Related Repositories
+
+- **Backend API:** [horizon-truth-api-v2](https://github.com/Horizon-Truth/horizon-truth-api-v2)
+- **Documentation Repository:** [horizon-truth-docs](https://github.com/Horizon-Truth/horizon-truth-docs)
+- **Live Documentation:** [docs.horizontruth.org](https://docs.horizontruth.org)
+- **API Reference (Swagger):** [horizontruth.org/api/v1/docs](https://horizontruth.org/api/v1/docs)
