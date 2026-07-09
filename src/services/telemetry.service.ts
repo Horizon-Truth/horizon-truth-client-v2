@@ -111,3 +111,30 @@ class TelemetryService {
         const payload = this.getPayload(sessionId);
         payload.verification = { ...payload.verification, ...verification };
     }
+
+    trackTiming(progressId: string, sceneId: string, timing: TelemetryPayload['response_timing']) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.getPayload(sessionId);
+        payload.response_timing = { ...payload.response_timing, ...timing };
+    }
+
+    /**
+     * Finalizes the scene session and sends the accumulated payload to the backend.
+     */
+    async flush(progressId: string, sceneId: string) {
+        const sessionId = this.getSessionId(progressId, sceneId);
+        const payload = this.buffer[sessionId];
+        if (!payload) return; // Nothing to send
+
+        try {
+            await api.post('/telemetry/record', payload);
+        } catch (error) {
+            console.error('Failed to flush telemetry payload:', error);
+        } finally {
+            // Clear buffer after sync attempt to prevent massive memory growth
+            delete this.buffer[sessionId];
+        }
+    }
+}
+
+export const telemetryService = new TelemetryService();

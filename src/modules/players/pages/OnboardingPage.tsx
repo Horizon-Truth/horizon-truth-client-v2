@@ -163,3 +163,26 @@ const OnboardingPage: React.FC = () => {
                                         animate={{ opacity: 1, x: 0 }}
                                         className="text-center text-xs text-white/40 italic"
                                     >
+                                        Chosen: {selectedAvatar.name}
+                                    </motion.p>
+                                )}
+                            </div>
+
+                            {/* Region Selection */}
+                            {/* <div className="space-y-2">
+                                <label className="text-xs uppercase tracking-widest text-white/30 font-medium px-1">Digital Region</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-white/20 group-focus-within:text-purple-400/50 transition-colors">
+                                        <Compass size={18} />
+                                    </div>
+                                    <select
+                                        value={selectedRegion?.id || ''}
+                                        onChange={(e) => {
+                                            const region = regions?.find(r => r.id === e.target.value);
+                                            setSelectedRegion(region || null);
+                                        }}
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all appearance-none cursor-pointer"
+                                    >
+                                        <option value="" disabled className="bg-[#111111]">Select your sector...</option>
+                                        {regions?.map((region) => (
+                                            <option key={region.id} value={region.id} className="bg-[#111111]">

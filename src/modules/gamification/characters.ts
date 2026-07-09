@@ -101,3 +101,76 @@ export const CHARACTERS: Character[] = [
         bio: 'Watches how rumors move through neighborhoods, group chats, and hashtags.',
         skillKey: 'network-awareness',
         lines: {
+            wary: 'You mistake a crowd for a consensus. Half that crowd was bought.',
+            neutral: "You're starting to notice when a trend is manufactured. Look at the accounts.",
+            warm: 'You can tell an authentic wave from a coordinated one. That takes real attention.',
+            devoted: "When our community gets swarmed, you're who I call to map it out.",
+        },
+    },
+    {
+        key: 'almaz',
+        name: 'Almaz',
+        role: 'Your neighbor',
+        emoji: '🏡',
+        bio: "Forwards everything to the family group chat. Whether that's a problem depends on you.",
+        skillKey: null,
+        lines: {
+            wary: "You sent me that story about the water supply. My sister still believes it.",
+            neutral: "You're more careful than most in the group chat. That counts for something.",
+            warm: 'I check with you before I forward things now. You saved me some embarrassment.',
+            devoted: "The whole building asks you first. You've made this a harder place to fool.",
+        },
+    },
+];
+
+export interface CharacterState {
+    character: Character;
+    disposition: Disposition;
+    line: string;
+    /** Accuracy driving the disposition, or null when there isn't enough data. */
+    accuracy: number | null;
+    /** Decisions recorded in this character's area. */
+    decisions: number;
+}
+
+/** Minimum decisions before a character forms an opinion. */
+export const OPINION_THRESHOLD = 3;
+
+function dispositionFor(accuracy: number | null, decisions: number): Disposition {
+    if (accuracy === null || decisions < OPINION_THRESHOLD) return 'neutral';
+    if (accuracy >= 90) return 'devoted';
+    if (accuracy >= 70) return 'warm';
+    if (accuracy >= 50) return 'neutral';
+    return 'wary';
+}
+
+/**
+ * Resolve the cast's current feelings toward the player.
+ *
+ * @param skillBook   per-skill accuracy record
+ * @param overall     overall accuracy 0–100 (drives characters with no skill)
+ * @param totalDecisions overall decision count, for the opinion threshold
+ */
+export function castState(
+    skillBook: Record<string, SkillProgress>,
+    overall: number | null,
+    totalDecisions: number,
+): CharacterState[] {
+    return CHARACTERS.map(character => {
+        if (character.skillKey === null) {
+            const disposition = dispositionFor(overall, totalDecisions);
+            return { character, disposition, line: character.lines[disposition], accuracy: overall, decisions: totalDecisions };
+        }
+        const progress = skillBook[character.skillKey];
+        const accuracy = progress ? skillAccuracy(progress) : null;
+        const decisions = progress?.total ?? 0;
+        const disposition = dispositionFor(accuracy, decisions);
+        return { character, disposition, line: character.lines[disposition], accuracy, decisions };
+    });
+}
+
+/** Skills that have no character attached — useful when extending the cast. */
+export function skillsWithoutCharacter(): string[] {
+    const covered = new Set(CHARACTERS.map(c => c.skillKey).filter(Boolean));
+    return SKILLS.filter(s => !covered.has(s.key)).map(s => s.key);
+}

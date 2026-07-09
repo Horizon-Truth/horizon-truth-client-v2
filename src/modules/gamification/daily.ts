@@ -36,3 +36,14 @@ export function emptyLedger(date: string = todayKey()): DailyLedger {
 /** Roll the ledger over if it belongs to a previous day. */
 export function ensureToday(ledger: DailyLedger | null | undefined, now: Date = new Date()): DailyLedger {
     const key = todayKey(now);
+    return ledger && ledger.date === key ? ledger : emptyLedger(key);
+}
+
+export interface DailyQuest {
+    key: string;
+    label: string;
+    target: number;
+    progress: (ledger: DailyLedger) => number;
+}
+
+export const DAILY_QUESTS: DailyQuest[] = [

@@ -30,3 +30,16 @@ export const SkillsPanel = memo(function SkillsPanel({ skillBook, calibration }:
                     <Brain size={16} className="text-primary" aria-hidden />
                     <h2 className="font-black text-xs tracking-widest uppercase">Your skills</h2>
                 </div>
+                {focus && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold">
+                        <Crosshair size={11} aria-hidden />
+                        Focus area: {focus.emoji} {focus.name}
+                    </span>
+                )}
+            </div>
+
+            {!hasAnyProgress ? (
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    Every decision you make trains a specific media-literacy skill — source verification,
+                    emotional defense, media analysis and more. Play your first mission to start building your skill graph.
+                </p>

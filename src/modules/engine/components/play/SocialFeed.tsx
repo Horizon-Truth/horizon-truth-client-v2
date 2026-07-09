@@ -155,3 +155,25 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                         <p className="text-base text-slate-800 leading-relaxed font-medium">
                             {item.description}
                         </p>
+
+                        {item.mediaUrl && (
+                            <div className="rounded-2xl overflow-hidden border border-white/10 aspect-video relative group/media">
+                                <img
+                                    src={item.mediaUrl}
+                                    alt="Post media"
+                                    className="w-full h-full object-cover transition-transform group-hover/media:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/media:opacity-100 transition-opacity" />
+                            </div>
+                        )}
+
+                        <div className="flex flex-wrap items-center justify-between text-muted-foreground pt-1 pr-1 sm:pr-8 gap-y-4 gap-x-4 mt-2">
+                            <button
+                                onClick={handleShareClick}
+                                className="flex items-center gap-1.5 sm:gap-2 hover:text-blue-400 transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3"
+                            >
+                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{shares}</span>
+                            </button>
+                            <button className="flex items-center gap-1.5 sm:gap-2 hover:text-emerald-400 transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
+                                <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px]" />
