@@ -70,3 +70,18 @@ export const DailyBriefing = memo(function DailyBriefing() {
 
             {/* Mission of the day */}
             {featured && (
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-border bg-muted/40 p-4">
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mission of the day</p>
+                        <p className="font-bold text-sm leading-snug truncate">{featured.title}</p>
+                    </div>
+                    <Button
+                        onClick={handlePlay}
+                        disabled={starting}
+                        size="sm"
+                        className="h-10 px-5 rounded-xl font-bold shrink-0 active:scale-95 transition-all"
+                    >
+                        {starting
+                            ? <Loader2 size={14} className="animate-spin mr-2" aria-hidden />
+                            : <Play size={14} className="mr-2" aria-hidden />}
+                        {featured.activeProgressId ? 'Resume' : 'Play'}

@@ -26,3 +26,22 @@ describe('useTranslation', () => {
         act(() => result.current.setLanguage(ContentLanguage.AFAAN_OROMO));
         // scenario.title exists in en; if a key were missing it should fall back.
         expect(result.current.t('scenario.title')).toBe('Mata-duree');
+        // A key only present in English still resolves rather than echoing the key.
+        expect(result.current.t('settings.title')).not.toBe('settings.title');
+    });
+
+    it('returns the key (or provided fallback) for unknown keys', () => {
+        const { result } = renderHook(() => useTranslation());
+        expect(result.current.t('does.not.exist')).toBe('does.not.exist');
+        expect(result.current.t('does.not.exist', 'Fallback')).toBe('Fallback');
+    });
+
+    it('exposes all supported languages for switchers', () => {
+        const { result } = renderHook(() => useTranslation());
+        expect(result.current.languages.map((l) => l.code)).toEqual([
+            'en',
+            'am',
+            'om',
+        ]);
+    });
+});
