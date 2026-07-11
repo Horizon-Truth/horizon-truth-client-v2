@@ -80,3 +80,27 @@ export default function PrivacyPolicyPage() {
                                                 <li>• Game progress, scores, and achievements</li>
                                                 <li>• Content you report or verify through our crowdsourced system</li>
                                             </ul>
+                                        </div>
+                                        <div className="p-8 bg-secondary/20 rounded-2xl border border-border">
+                                            <h4 className="font-bold text-xl mb-4 text-foreground">Automatically Collected</h4>
+                                            <ul className="space-y-4 text-muted-foreground">
+                                                <li>• Device information (type, operating system, browser type)</li>
+                                                <li>• Log data (IP address, access times, pages viewed)</li>
+                                                <li>• Usage patterns and gameplay statistics</li>
+                                                <li>• Interaction with educational content and verification tools</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="usage" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">How We Use Your Information</h2>
+                                    <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-4">
+                                        <p>We use the information we collect for the following purposes:</p>
+                                        <ul className="space-y-4">
+                                            <li>• To provide, maintain, and improve our Platform and services</li>
+                                            <li>• To personalize your experience and educational content</li>
+                                            <li>• To develop and enhance our AI-powered misinformation detection system</li>
+                                            <li>• To track and reward your progress in the gamified learning system</li>
+                                            <li>• To analyze usage patterns and improve our Platform's effectiveness</li>
+                                            <li>• To communicate with you about updates, features, and educational content</li>
