@@ -93,3 +93,42 @@ export default function NewsletterSubscriptionsPage() {
                                 </tr>
                             ) : filteredSubscriptions.map((s) => (
                                 <tr key={s.id} className="group hover:bg-accent/5 transition-colors">
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                                <Mail size={18} />
+                                            </div>
+                                            <p className="font-extrabold text-sm tracking-tight">{s.email}</p>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-1.5 text-emerald-500 font-black tracking-widest text-[10px] uppercase">
+                                            <CheckCircle size={14} />
+                                            Active
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+                                            <Calendar size={12} />
+                                            {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'N/A'}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5 text-right">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
+                                            onClick={() => s.id && handleDelete(s.id)}
+                                        >
+                                            <Trash2 size={18} />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+}
