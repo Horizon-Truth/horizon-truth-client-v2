@@ -37,3 +37,31 @@ export const GlitchError: React.FC<GlitchErrorProps> = ({ message, onRetry }) =>
                             <p className="text-[10px] font-mono opacity-60">CRITICAL_PROTOCOL_FAIL // ERROR_0x429</p>
                         </div>
                     </div>
+
+                    <div className="bg-black/50 p-4 rounded-2xl border border-white/5 font-mono text-sm space-y-2">
+                        <div className="flex items-center gap-2 text-white/40">
+                            <Terminal size={14} />
+                            <span>System Log:</span>
+                        </div>
+                        <p className="text-red-400 leading-relaxed font-bold">
+                            {message || "The uplink has been compromised. Integrity check failed."}
+                        </p>
+                    </div>
+
+                    <div className="pt-4 flex flex-col gap-3">
+                        <Button
+                            onClick={onRetry}
+                            className="w-full h-14 bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-widest rounded-2xl transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-500/20"
+                        >
+                            <RefreshCcw size={20} className="mr-2" />
+                            Reboot Protocol
+                        </Button>
+                        <p className="text-center text-[10px] font-bold text-white/20 uppercase tracking-widest">
+                            Authorized personnel only // Zero-Trust architecture active
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
