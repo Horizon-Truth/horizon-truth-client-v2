@@ -162,3 +162,52 @@ export default function ResourceEditPage() {
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-secondary/60 flex items-center gap-2">
                                 <BookOpen size={14} /> Classification
                             </h3>
+
+                            <FormField
+                                control={form.control}
+                                name="type"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Asset Type</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-none">
+                                                    <SelectValue placeholder="Select type" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="guide">Technical Guide</SelectItem>
+                                                <SelectItem value="video">Intelligence Briefing (Video)</SelectItem>
+                                                <SelectItem value="course">Training Course</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="duration"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Asset Duration</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                                                <Input {...field} placeholder="e.g. 15 min" className="pl-9 h-11 rounded-xl bg-muted/30 border-none" />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="badge"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Access Level (Badge)</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="e.g. Clearance Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
