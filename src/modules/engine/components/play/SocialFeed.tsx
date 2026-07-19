@@ -177,3 +177,47 @@ const FeedItem = ({ item, index }: { item: any, index: number }) => {
                             </button>
                             <button className="flex items-center gap-1.5 sm:gap-2 hover:text-emerald-400 transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-emerald-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
                                 <BarChart3 size={16} className="sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{views}</span>
+                            </button>
+                            <button className="flex items-center gap-1.5 sm:gap-2 hover:text-rose-400 transition-all active:scale-90 cursor-pointer text-rose-400/80 focus-visible:ring-1 focus-visible:ring-rose-400 rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
+                                <Heart size={16} fill="currentColor" className="fill-rose-400/20 sm:w-[18px] sm:h-[18px]" />
+                                <span className="text-xs sm:text-sm font-bold">{likes}</span>
+                            </button>
+                            <button className="hover:text-primary transition-all active:scale-90 cursor-pointer focus-visible:ring-1 focus-visible:ring-primary rounded-xl p-2 sm:p-3 -m-2 sm:-m-3">
+                                <Bookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
+                            </button>
+                        </div>
+
+                        {/* Fake Comment Thread */}
+                        <div className="pt-2 space-y-3 border-t border-slate-100">
+                            <div className="flex gap-2">
+                                <div className="w-6 h-6 rounded-full bg-white/10 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold">anon_operative</span>
+                                        <span className="text-[10px] text-muted-foreground">· 1m</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-tight">Can anyone verify the source of this intel? Looks suspicious.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 opacity-60">
+                                <div className="w-6 h-6 rounded-full bg-white/5 flex-shrink-0" />
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold">sector_7_bot</span>
+                                        <span className="text-[10px] text-muted-foreground">· 34s</span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground leading-tight">Confirmed through secondary uplink. Proceed with caution.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {index === 0 && (
+                <div className="absolute -left-12 top-0 bottom-0 w-1 bg-primary/40 rounded-full" />
+            )}
+        </motion.div>
+    );
+};
