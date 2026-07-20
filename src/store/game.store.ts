@@ -280,3 +280,123 @@ export const useGameStore = create<GameState>()(
                         // Check if the choice had a spread simulation (wrong choice)
                         const choiceData = activeProgress.currentScene?.choices?.find(
                             (c: any) => c.label === choiceKey || c.id === choiceKey
+                        );
+                        const spreadSim = choiceData?.spreadSimulation || result.spreadSimulation || null;
+                        const trustDelta = result.trustScoreDelta ?? choiceData?.scoreImpact ?? 0;
+                        const choiceCorrect = trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0;
+
+                        set({
+                            ...recordDecision(choiceCorrect, choiceData?.psychologicalTrap),
+                            missionImpact: foldImpact(spreadSim, choiceCorrect),
+                            dailyLedger: bumpDaily({ correctDecisions: choiceCorrect === true ? 1 : 0 }),
+                            activeProgress: {
+                                ...activeProgress,
+                                currentScene: result.nextScene,
+                                totalScore: result.totalScore,
+                                influenceScore: result.influenceScore,
+                                accuracyRate: result.accuracyRate
+                            },
+                            stats: {
+                                ...get().stats,
+                                trustScore: Math.min(100, Math.max(0, get().stats.trustScore + (result.trustScoreDelta ?? 0))),
+                                influence: result.influenceScore ?? get().stats.influence,
+                                accuracyRate: result.accuracyRate ?? get().stats.accuracyRate
+                            },
+                            lastSpreadSimulation: spreadSim,
+                            lastChoiceLabel: choiceLabel || choiceKey,
+                            lastChoiceFeedback: result.message || null,
+                            lastChoiceCorrect: choiceCorrect,
+                            lastTrustDelta: trustDelta,
+                            lastChoiceTrap: choiceData?.psychologicalTrap ?? null,
+                            isLoading: false
+                        });
+                        // Phase 16: Prefetch next scene assets
+                        get().prefetchAssets(result.nextScene);
+                    } else if (result.status === 'game_completed') {
+                        const finalChoice = activeProgress.currentScene?.choices?.find(
+                            (c: any) => c.label === choiceKey || c.id === choiceKey
+                        );
+                        const finalDelta = result.outcome?.trustScoreDelta ?? finalChoice?.scoreImpact ?? 0;
+                        const finalCorrect = finalDelta === 0 ? null : finalDelta > 0;
+                        const finalImpact = foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect);
+                        const career = get().lifetimeImpact ?? { reached: 0, preventedReach: 0 };
+                        set({
+                            ...recordDecision(finalCorrect, finalChoice?.psychologicalTrap),
+                            missionImpact: finalImpact,
+                            // Career totals accumulate once, when a mission ends.
+                            lifetimeImpact: {
+                                reached: career.reached + finalImpact.reached,
+                                preventedReach: career.preventedReach + finalImpact.preventedReach,
+                            },
+                            dailyLedger: bumpDaily({
+                                missions: 1,
+                                correctDecisions: finalCorrect === true ? 1 : 0,
+                                sharpMissions: (result.outcome?.accuracyRate ?? 0) >= 80 ? 1 : 0,
+                            }),
+                            activeProgress: null,
+                            currentOutcome: result.outcome,
+                            isLoading: false,
+                            reputationRole: result.reputationRole || get().reputationRole,
+                            currentStreak: result.currentStreak || get().currentStreak,
+                            stats: {
+                                ...get().stats,
+                                // Optimistic update, ideally should fetch fresh stats
+                                missionsCompleted: get().stats.missionsCompleted + 1,
+                                experience: get().stats.experience + result.outcome.score,
+                                trustScore: Math.min(100, Math.max(0, get().stats.trustScore + (result.outcome.trustScoreDelta ?? 0))),
+                                influence: result.outcome.influenceScore ?? get().stats.influence
+                            },
+                            pendingBadges: result.badgesAwarded || []
+                        });
+                        // Refresh history after game completion to ensure scores are updated
+                        get().fetchGameHistory();
+                    } else if (result.status === 'scene_completed' && result.awardedBadges) {
+                        set(state => ({
+                            pendingBadges: [...state.pendingBadges, ...result.awardedBadges]
+                        }));
+                    }
+                } catch (error: any) {
+                    set({ error: error.message || 'Failed to submit choice', isLoading: false });
+                }
+            },
+
+            resetGame: () => set({
+                activeProgress: null,
+                currentOutcome: null,
+                error: null,
+                isLoading: false,
+                lastSpreadSimulation: null,
+                lastChoiceLabel: null,
+                lastChoiceFeedback: null,
+                lastChoiceCorrect: null,
+                lastTrustDelta: 0,
+                lastChoiceTrap: null,
+                lastConfidence: null,
+                missionImpact: null,
+            }),
+
+            clearError: () => set({ error: null }),
+
+            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null }),
+
+            removePendingBadge: (badgeId: string) => set(state => ({
+                pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)
+            }))
+        }),
+        {
+            name: 'horizon-game-storage',
+            partialize: (state) => ({
+                stats: state.stats,
+                activeProgress: state.activeProgress,
+                currentOutcome: state.currentOutcome,
+                reputationRole: state.reputationRole,
+                currentStreak: state.currentStreak,
+                skillBook: state.skillBook,
+                calibration: state.calibration,
+                missionImpact: state.missionImpact,
+                dailyLedger: state.dailyLedger,
+                lifetimeImpact: state.lifetimeImpact,
+            }),
+        }
+    )
+);
