@@ -111,3 +111,83 @@ export default function ReportAdminManagementPage() {
                         <option value="VERIFIED_FALSE">Verified False</option>
                         <option value="VERIFIED_TRUE">Verified True</option>
                         <option value="DUPLICATE">Duplicate</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="ARCHIVED">Archived</option>
+                    </select>
+                    <Button variant="outline" className="h-12 rounded-xl gap-2 font-bold px-6">
+                        <Filter size={18} /> Filters
+                    </Button>
+                </div>
+            </div>
+
+            <div className="rounded-2xl border bg-card/50 overflow-hidden shadow-sm backdrop-blur-sm">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-muted/30 border-none hover:bg-muted/30">
+                                <TableHead className="font-black uppercase text-[10px] tracking-widest pl-6">Report</TableHead>
+                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Type</TableHead>
+                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Priority</TableHead>
+                                <TableHead className="font-black uppercase text-[10px] tracking-widest">Created</TableHead>
+                                <TableHead className="text-right font-black uppercase text-[10px] tracking-widest pr-6">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-32 text-center border-none">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Loader2 className="animate-spin text-primary" size={32} />
+                                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Loading Reports...</span>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : filteredReports.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-32 text-center border-none">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <AlertCircle className="text-muted-foreground" size={32} />
+                                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No reports found</span>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                filteredReports.map((report) => (
+                                    <TableRow key={report.id} className="hover:bg-muted/20 border-border/50 transition-colors">
+                                        <TableCell className="py-5 pl-6">
+                                            <div>
+                                                <p className="font-bold text-sm leading-none mb-1 group-hover:text-primary transition-colors">{report.title}</p>
+                                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter truncate max-w-[200px]">
+                                                    {report.reporter?.fullName || "Anonymous"} • {report.language}
+                                                </p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant="secondary" className="text-[10px] font-black uppercase tracking-widest">{report.contentType}</Badge>
+                                        </TableCell>
+                                        <TableCell>{getStatusBadge(report.status)}</TableCell>
+                                        <TableCell>{getPriorityBadge(report.priority)}</TableCell>
+                                        <TableCell className="text-[10px] font-bold text-muted-foreground uppercase">
+                                            {new Date(report.createdAt).toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell className="text-right pr-6">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => navigate(`/dashboard/reports/${report.id}`)}
+                                                className="h-9 px-4 rounded-lg bg-primary/5 hover:bg-primary hover:text-primary-foreground font-bold transition-all text-xs flex items-center gap-2 ml-auto"
+                                            >
+                                                <Eye size={14} /> Review
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
+        </div>
+    );
+}
