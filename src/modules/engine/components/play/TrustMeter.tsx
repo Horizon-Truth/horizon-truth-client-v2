@@ -30,3 +30,17 @@ export const TrustMeter: React.FC<TrustMeterProps> = ({
         if (normalizedScore > 30) return { color: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'shadow-amber-500/20', label: 'Neutral', icon: <Shield size={20} /> };
         return { color: 'text-red-500', bg: 'bg-red-500/10', glow: 'shadow-red-500/20', label: 'Dangerous', icon: <ShieldAlert size={20} /> };
     }, [normalizedScore]);
+
+    return (
+        <div className={cn("relative flex flex-col items-center justify-center group", className)} style={{ width: size, height: size }}>
+            {/* Background Circle */}
+            <svg width={size} height={size} className="transform -rotate-90">
+                <circle
+                    cx={center}
+                    cy={center}
+                    r={radius}
+                    fill="transparent"
+                    stroke="currentColor"
+                    strokeWidth={strokeWidth}
+                    className="text-foreground/10"
+                />
