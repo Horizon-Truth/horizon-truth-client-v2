@@ -44,3 +44,58 @@ export const TrustMeter: React.FC<TrustMeterProps> = ({
                     strokeWidth={strokeWidth}
                     className="text-foreground/10"
                 />
+
+                {/* Progress Circle */}
+                <motion.circle
+                    cx={center}
+                    cy={center}
+                    r={radius}
+                    fill="transparent"
+                    stroke="currentColor"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={circumference}
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset: offset }}
+                    transition={{ duration: 1, ease: "easeInOut" }}
+                    strokeLinecap="round"
+                    className={cn("transition-colors duration-500", status.color)}
+                />
+            </svg>
+
+            {/* Inner Content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className={cn(
+                        "flex flex-col items-center justify-center p-4 rounded-full transition-all duration-500 backdrop-blur-sm",
+                        status.bg
+                    )}
+                >
+                    <span className={cn("text-2xl font-black italic", status.color)}>
+                        {normalizedScore}%
+                    </span>
+                    <div className={cn("mt-1 opacity-80", status.color)}>
+                        {status.icon}
+                    </div>
+                </motion.div>
+
+                {/* Label Tooltip (Subtle) */}
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    <span className={cn(
+                        "text-[10px] font-black uppercase tracking-[0.2em] px-2 py-1 rounded-md bg-black/80 border border-white/10",
+                        status.color
+                    )}>
+                        {status.label}
+                    </span>
+                </div>
+            </div>
+
+            {/* Glow/Ambience Effect */}
+            <div className={cn(
+                "absolute inset-0 rounded-full blur-2xl opacity-20 -z-10 transition-all duration-700",
+                status.bg.replace('bg-', 'bg-')
+            )} />
+        </div>
+    );
+};
