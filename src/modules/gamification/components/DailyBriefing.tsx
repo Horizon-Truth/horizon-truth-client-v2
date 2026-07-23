@@ -70,3 +70,54 @@ export const DailyBriefing = memo(function DailyBriefing() {
 
             {/* Mission of the day */}
             {featured && (
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-border bg-muted/40 p-4">
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mission of the day</p>
+                        <p className="font-bold text-sm leading-snug truncate">{featured.title}</p>
+                    </div>
+                    <Button
+                        onClick={handlePlay}
+                        disabled={starting}
+                        size="sm"
+                        className="h-10 px-5 rounded-xl font-bold shrink-0 active:scale-95 transition-all"
+                    >
+                        {starting
+                            ? <Loader2 size={14} className="animate-spin mr-2" aria-hidden />
+                            : <Play size={14} className="mr-2" aria-hidden />}
+                        {featured.activeProgressId ? 'Resume' : 'Play'}
+                    </Button>
+                </div>
+            )}
+
+            {/* Daily quests */}
+            <ul className="space-y-2.5" aria-label="Daily quests">
+                {DAILY_QUESTS.map(quest => {
+                    const done = questDone(quest, ledger);
+                    const progress = Math.min(quest.target, quest.progress(ledger));
+                    return (
+                        <li key={quest.key} className="flex items-center gap-3">
+                            {done
+                                ? <CheckCircle2 size={17} className="text-emerald-500 shrink-0" aria-hidden />
+                                : <Circle size={17} className="text-muted-foreground/50 shrink-0" aria-hidden />}
+                            <span className={cn('text-sm font-semibold flex-1 min-w-0', done && 'text-muted-foreground line-through decoration-emerald-500/50')}>
+                                {quest.label}
+                            </span>
+                            <span className={cn('text-xs font-black tabular-nums', done ? 'text-emerald-500' : 'text-muted-foreground')}>
+                                {progress}/{quest.target}
+                            </span>
+                        </li>
+                    );
+                })}
+            </ul>
+
+            {swept && (
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-3" role="status">
+                    <PartyPopper size={16} className="text-emerald-500 shrink-0" aria-hidden />
+                    <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                        Daily sweep — every quest cleared. Come back tomorrow to keep the streak alive.
+                    </p>
+                </div>
+            )}
+        </section>
+    );
+});

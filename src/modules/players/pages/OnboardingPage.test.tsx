@@ -46,3 +46,37 @@ const queryClient = new QueryClient({
             retry: false,
         },
     },
+});
+
+const renderComponent = () =>
+    render(
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <OnboardingPage />
+            </BrowserRouter>
+        </QueryClientProvider>
+    );
+
+describe('OnboardingPage', () => {
+    it('renders the onboarding title', () => {
+        renderComponent();
+        expect(screen.getByText(/Create Your Profile/i)).toBeDefined();
+        expect(screen.getByPlaceholderText(/e.g. Alex/i)).toBeDefined();
+    });
+
+    it('disables the submit button initially', () => {
+        renderComponent();
+        const button = screen.getByRole('button', { name: /Complete Profile/i });
+        expect(button).toBeDisabled();
+    });
+
+    it('updates nickname input', () => {
+        renderComponent();
+        const input = screen.getByPlaceholderText(/e.g. Alex/i) as HTMLInputElement;
+        fireEvent.change(input, { target: { value: 'Skywalker' } });
+        expect(input.value).toBe('Skywalker');
+    });
+
+    // More complex interaction tests would require mocking useQuery return values
+    // but this covers the basic rendering and initial state as planned.
+});

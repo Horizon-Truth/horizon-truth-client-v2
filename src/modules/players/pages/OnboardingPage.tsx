@@ -186,3 +186,49 @@ const OnboardingPage: React.FC = () => {
                                         <option value="" disabled className="bg-[#111111]">Select your sector...</option>
                                         {regions?.map((region) => (
                                             <option key={region.id} value={region.id} className="bg-[#111111]">
+                                                {region.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-white/10">
+                                        <ChevronRight size={18} />
+                                    </div>
+                                </div>
+                            </div> */}
+                        </div>
+
+                        <div className="mt-12 transition-all">
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={handleSubmit}
+                                disabled={isSubmitting || !nickname || !selectedAvatar}
+                                className={`group w-full relative h-16 rounded-2xl flex items-center justify-center font-medium tracking-wide transition-all ${isSubmitting || !nickname || !selectedAvatar
+                                    ? 'bg-white/5 text-white/20'
+                                    : 'bg-white text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]'
+                                    }`}
+                            >
+                                <span className={`flex items-center gap-2 ${isSubmitting ? 'opacity-0' : 'opacity-100'}`}>
+                                    Complete Profile
+                                    <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
+                                </span>
+                                {isSubmitting && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                    </div>
+                                )}
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+            {/* Micro Animation Background Elements */}
+            <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
+                <div className="h-full w-full" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+            </div>
+        </div>
+    );
+};
+
+export default OnboardingPage;

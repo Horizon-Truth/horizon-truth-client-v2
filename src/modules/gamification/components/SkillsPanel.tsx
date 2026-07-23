@@ -43,3 +43,58 @@ export const SkillsPanel = memo(function SkillsPanel({ skillBook, calibration }:
                     Every decision you make trains a specific media-literacy skill — source verification,
                     emotional defense, media analysis and more. Play your first mission to start building your skill graph.
                 </p>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                    {SKILLS.map(skill => {
+                        const progress = skillBook[skill.key] ?? { xp: 0, correct: 0, total: 0 };
+                        const level = skillLevel(progress.xp);
+                        const pct = skillLevelProgress(progress.xp);
+                        const acc = skillAccuracy(progress);
+                        const untouched = progress.total === 0;
+                        return (
+                            <div key={skill.key} className={cn('space-y-1.5', untouched && 'opacity-50')}>
+                                <div className="flex items-center justify-between gap-2 text-xs">
+                                    <span className="font-bold flex items-center gap-1.5 min-w-0">
+                                        <span aria-hidden>{skill.emoji}</span>
+                                        <span className="truncate">{skill.name}</span>
+                                    </span>
+                                    <span className="text-muted-foreground font-medium whitespace-nowrap">
+                                        Lv {level}{acc !== null && <span className={cn('ml-2 font-bold', skill.color)}>{acc}%</span>}
+                                    </span>
+                                </div>
+                                <div
+                                    className="w-full h-2 bg-muted rounded-full overflow-hidden"
+                                    role="progressbar"
+                                    aria-valuenow={pct}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label={`${skill.name} level ${level}`}
+                                >
+                                    <div
+                                        className={cn('h-full rounded-full transition-all duration-1000 ease-out', skill.bar)}
+                                        style={{ width: `${untouched ? 0 : Math.max(4, pct)}%` }}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {insight && (
+                <div className={cn(
+                    'flex items-start gap-3 rounded-2xl border px-4 py-3',
+                    insight.tone === 'warn'
+                        ? 'border-amber-500/25 bg-amber-500/5'
+                        : 'border-emerald-500/25 bg-emerald-500/5'
+                )}>
+                    <Scale size={15} className={cn('mt-0.5 shrink-0', insight.tone === 'warn' ? 'text-amber-500' : 'text-emerald-500')} aria-hidden />
+                    <p className="text-xs leading-relaxed text-foreground/80">
+                        <span className="font-bold text-foreground">Confidence check. </span>
+                        {insight.text}
+                    </p>
+                </div>
+            )}
+        </section>
+    );
+});

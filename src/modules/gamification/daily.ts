@@ -47,3 +47,37 @@ export interface DailyQuest {
 }
 
 export const DAILY_QUESTS: DailyQuest[] = [
+    { key: 'mission', label: 'Complete a mission', target: 1, progress: l => l.missions },
+    { key: 'decisions', label: 'Make 5 correct decisions', target: 5, progress: l => l.correctDecisions },
+    { key: 'sharp', label: 'Finish a mission with 80%+ accuracy', target: 1, progress: l => l.sharpMissions },
+];
+
+export function questDone(quest: DailyQuest, ledger: DailyLedger): boolean {
+    return quest.progress(ledger) >= quest.target;
+}
+
+export function allQuestsDone(ledger: DailyLedger): boolean {
+    return DAILY_QUESTS.every(q => questDone(q, ledger));
+}
+
+/** Deterministic hash so every player sees the same daily pick. */
+function hashKey(seed: string): number {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    return hash;
+}
+
+/**
+ * Mission of the day: a stable, date-seeded pick over the active scenario
+ * list. Locked scenarios are skipped for this player by walking forward from
+ * the seeded index, so everyone gets the same pick when their unlocks allow.
+ */
+export function dailyScenario(scenarios: Scenario[], dateKey: string = todayKey()): Scenario | null {
+    if (scenarios.length === 0) return null;
+    const start = hashKey(dateKey) % scenarios.length;
+    for (let offset = 0; offset < scenarios.length; offset++) {
+        const candidate = scenarios[(start + offset) % scenarios.length];
+        if (candidate.lockStatus !== 'LOCKED') return candidate;
+    }
+    return null;
+}

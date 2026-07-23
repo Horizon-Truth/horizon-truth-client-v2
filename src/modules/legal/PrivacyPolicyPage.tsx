@@ -80,3 +80,102 @@ export default function PrivacyPolicyPage() {
                                                 <li>• Game progress, scores, and achievements</li>
                                                 <li>• Content you report or verify through our crowdsourced system</li>
                                             </ul>
+                                        </div>
+                                        <div className="p-8 bg-secondary/20 rounded-2xl border border-border">
+                                            <h4 className="font-bold text-xl mb-4 text-foreground">Automatically Collected</h4>
+                                            <ul className="space-y-4 text-muted-foreground">
+                                                <li>• Device information (type, operating system, browser type)</li>
+                                                <li>• Log data (IP address, access times, pages viewed)</li>
+                                                <li>• Usage patterns and gameplay statistics</li>
+                                                <li>• Interaction with educational content and verification tools</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="usage" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">How We Use Your Information</h2>
+                                    <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-4">
+                                        <p>We use the information we collect for the following purposes:</p>
+                                        <ul className="space-y-4">
+                                            <li>• To provide, maintain, and improve our Platform and services</li>
+                                            <li>• To personalize your experience and educational content</li>
+                                            <li>• To develop and enhance our AI-powered misinformation detection system</li>
+                                            <li>• To track and reward your progress in the gamified learning system</li>
+                                            <li>• To analyze usage patterns and improve our Platform's effectiveness</li>
+                                            <li>• To communicate with you about updates, features, and educational content</li>
+                                            <li>• To ensure the security and integrity of our Platform</li>
+                                            <li>• To comply with legal obligations and protect our rights</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div id="security" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">Data Sharing & Security</h2>
+                                    <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-6">
+                                        <div className="bg-secondary/10 p-8 rounded-3xl border border-border">
+                                            <h4 className="text-xl font-bold mb-4 text-foreground text-center">Information Sharing</h4>
+                                            <p className="text-muted-foreground mb-4">We do not sell your personal information. We may share your information with:</p>
+                                            <ul className="space-y-2 text-sm">
+                                                <li><strong>Service Providers:</strong> Trusted partners assisting in operation.</li>
+                                                <li><strong>Research:</strong> Anonymized data for digital literacy improvement.</li>
+                                                <li><strong>Strategic Partners:</strong> Ministry of Peace and educational institutions.</li>
+                                                <li><strong>Legal Compliance:</strong> When required by law.</li>
+                                            </ul>
+                                        </div>
+                                        <div className="bg-secondary/10 p-8 rounded-3xl border border-border">
+                                            <h4 className="text-xl font-bold mb-4 text-foreground text-center">Security Measures</h4>
+                                            <p className="text-muted-foreground">
+                                                We implement encryption, secure infrastructure, and regular assessments.
+                                                While we strive to protect your data, no method is 100% secure.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="rights" className="scroll-mt-32">
+                                    <h2 className="text-3xl font-bold mb-6">Your Rights & Children's Privacy</h2>
+                                    <div className="prose prose-lg dark:prose-invert text-muted-foreground space-y-6">
+                                        <div>
+                                            <p className="mb-8 text-center font-bold">You have the right to access, correct, delete, or object to the processing of your data.</p>
+                                            <div className="flex flex-wrap justify-center gap-4">
+                                                <div className="px-6 py-4 bg-primary/10 rounded-xl border border-primary/20 font-bold text-primary">Access Data</div>
+                                                <div className="px-6 py-4 bg-primary/10 rounded-xl border border-primary/20 font-bold text-primary">Request Correction</div>
+                                                <div className="px-6 py-4 bg-red-500/10 rounded-xl border border-red-500/20 font-bold text-red-500">Delete Account</div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-secondary/20 p-8 rounded-3xl border border-border mt-12">
+                                            <h4 className="text-xl font-bold mb-4 text-foreground">Children's Privacy</h4>
+                                            <p className="text-sm">
+                                                Designed for youth (16-25). For users under 16, parental guidance is recommended.
+                                                We do not knowingly collect information from children under 13 without verifiable consent.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="contact" className="scroll-mt-32 p-10 bg-primary rounded-3xl text-primary-foreground shadow-2xl">
+                                    <h2 className="text-3xl font-bold mb-6">Contact Us</h2>
+                                    <p className="opacity-80 mb-8">If you have any questions, concerns, or requests regarding this Privacy Policy, please contact our team:</p>
+                                    <div className="grid md:grid-cols-2 gap-8 font-bold">
+                                        <div className="space-y-2">
+                                            <p className="text-lg">Dabbal Software Development PLC</p>
+                                            <p className="opacity-90">Addis Ababa, Ethiopia</p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p>Email: privacy@horizontruth.com</p>
+                                            <p className="text-sm opacity-70 italic font-normal">Response time: typically within 30 days.</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-12 pt-8 border-t border-white/20 text-xs opacity-60 text-center">
+                                        <p>Effective Date: January 1, 2025 | Last Updated: January 1, 2025</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </PublicLayout>
+    );
+}

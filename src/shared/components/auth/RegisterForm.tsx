@@ -85,3 +85,187 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                     <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                         Create Account
                     </h2>
+                    <p className="text-muted-foreground">Start your journey as a truth seeking investigator</p>
+                </div>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="fullName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
+                                        <User size={12} /> Full Name
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="John Doe"
+                                            className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-[10px] font-bold" />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="username"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
+                                            <AtSign size={12} /> Username
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="investigator_01"
+                                                className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4 text-sm"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
+                                            <AtSign size={12} /> Email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="john@example.com"
+                                                className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4 text-sm"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 pt-2">
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
+                                            <Lock size={12} /> Password
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="password"
+                                                placeholder="••••••••"
+                                                className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4 text-sm"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="confirmPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2 px-1">
+                                            <Lock size={12} /> Confirm
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="password"
+                                                placeholder="••••••••"
+                                                className="bg-background/50 backdrop-blur-sm border-input focus-visible:ring-primary/5 h-12 rounded-2xl transition-all pl-4 text-sm"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {error && (
+                            <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1 my-4">
+                                <p className="text-xs font-bold text-destructive">
+                                    {error}
+                                </p>
+                            </div>
+                        )}
+
+                        <FormField
+                            control={form.control}
+                            name="consent"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-2xl border border-border/50 p-4 bg-background/30 backdrop-blur-sm transition-all hover:bg-background/50">
+                                    <FormControl>
+                                        <div className="flex items-center h-5">
+                                            <input
+                                                type="checkbox"
+                                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary cursor-pointer"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel className="text-[11px] font-medium leading-relaxed text-muted-foreground cursor-pointer select-none">
+                                            By registering, I agree to the collection of my data as outlined in the{" "}
+                                            <button 
+                                                type="button"
+                                                onClick={() => navigate('/privacy-policy')}
+                                                className="text-primary font-bold hover:underline underline-offset-4"
+                                            >
+                                                Privacy Policy
+                                            </button>
+                                            . I understand my progress and contributions will be stored.
+                                        </FormLabel>
+                                        <FormMessage className="text-[10px] font-bold" />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <Button
+                            type="submit"
+                            className="w-full h-12 rounded-2xl font-black uppercase tracking-widest bg-primary text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 active:scale-[0.97] group mt-4"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    Creating Account...
+                                </div>
+                            ) : (
+                                <span className="flex items-center justify-center gap-2">
+                                    Create Account <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            )}
+                        </Button>
+                    </form>
+                </Form>
+
+                <div className="pt-8 border-t border-border/50 text-center">
+                    <p className="text-sm text-muted-foreground font-medium">
+                        Already have an account?{' '}
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="font-black text-primary hover:text-primary/80 transition-colors"
+                        >
+                            Sign In
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}

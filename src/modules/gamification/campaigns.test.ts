@@ -20,3 +20,12 @@ describe('campaignTitle', () => {
 
 describe('groupByCampaign', () => {
     it('groups consecutive runs and keeps standalone missions between arcs', () => {
+        const groups = groupByCampaign([
+            scenario('a', 'ARC_ONE'),
+            scenario('b', 'ARC_ONE'),
+            scenario('c', null),
+            scenario('d', 'ARC_TWO'),
+        ]);
+        expect(groups.map(g => [g.tag, g.scenarios.length])).toEqual([
+            ['ARC_ONE', 2],
+            [null, 1],
