@@ -23,3 +23,19 @@ import { masteryFor } from './mastery';
 /** The skill a scenario trains, resolved from its authored metadata. Null when unknown. */
 export function scenarioSkill(scenario: Pick<Scenario, 'psychologicalTrigger' | 'theme'>): Skill | null {
     const technique = matchTechnique(scenario.psychologicalTrigger) ?? matchTechnique(scenario.theme);
+    return technique ? skillForTechnique(technique.key) : null;
+}
+
+/** Overall decision accuracy (0–100) across the whole skill book, or null with no data. */
+export function overallAccuracy(book: Record<string, SkillProgress>): number | null {
+    let correct = 0;
+    let total = 0;
+    for (const skill of SKILLS) {
+        const p = book[skill.key];
+        if (p) {
+            correct += p.correct;
+            total += p.total;
+        }
+    }
+    return total > 0 ? Math.round((correct / total) * 100) : null;
+}

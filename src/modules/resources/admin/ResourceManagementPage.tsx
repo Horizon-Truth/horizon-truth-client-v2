@@ -102,3 +102,32 @@ export default function ResourceManagementPage() {
                     <select
                         className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
                         value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value as "all" | LanguageCode)}
+                    >
+                        <option value="all">All Languages</option>
+                        {SUPPORTED_LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>{lang.englishName}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="bg-card border border-border/50 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-[900px]">
+                        <thead>
+                            <tr className="bg-muted/30 border-b border-border/50">
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Asset Identity</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duration/Effort</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry Date</th>
+                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={5} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="w-10 h-10 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin" />
+                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Scanning Archive...</p>

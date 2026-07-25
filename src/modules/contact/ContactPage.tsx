@@ -149,3 +149,66 @@ export default function ContactPage() {
                                                 onChange={handleChange}
                                                 className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
                                             />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.lastName")}</label>
+                                            <Input
+                                                name="lastName"
+                                                placeholder="Miller"
+                                                required
+                                                value={formData.lastName}
+                                                onChange={handleChange}
+                                                className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.email")}</label>
+                                        <Input
+                                            name="email"
+                                            type="email"
+                                            placeholder="miller@truthwatch.io"
+                                            required
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.subject")}</label>
+                                        <Input
+                                            name="subject"
+                                            placeholder={t("contact.subjectPlaceholder")}
+                                            required
+                                            value={formData.subject}
+                                            onChange={handleChange}
+                                            className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">{t("contact.message")}</label>
+                                        <Textarea
+                                            name="message"
+                                            placeholder={t("contact.messagePlaceholder")}
+                                            required
+                                            value={formData.message}
+                                            onChange={handleChange}
+                                            className="min-h-[150px] rounded-2xl bg-muted/30 border-none font-bold italic resize-none"
+                                        />
+                                    </div>
+                                    <Button
+                                        type="submit"
+                                        className="w-full h-16 rounded-2xl text-xl font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all border-none"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? t("contact.sending") : t("contact.send")}
+                                    </Button>
+                                </form>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </PublicLayout>
+    );
+}
