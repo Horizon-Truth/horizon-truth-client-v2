@@ -211,3 +211,47 @@ export default function ResourceEditPage() {
                                         <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Access Level (Badge)</FormLabel>
                                         <FormControl>
                                             <Input {...field} placeholder="e.g. Clearance Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Language *</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-none font-bold uppercase tracking-widest text-[10px]">
+                                                    <SelectValue placeholder="Select language" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                                {SUPPORTED_LANGUAGES.map((lang) => (
+                                                    <SelectItem key={lang.code} value={lang.code} className="font-bold uppercase tracking-widest text-[10px]">
+                                                        {lang.englishName}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="icon"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Lucide Icon Name</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Type className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                                                <Input {...field} placeholder="BookOpen, Video, Shield..." className="pl-9 h-11 rounded-xl bg-muted/30 border-none" />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
