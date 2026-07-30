@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, Save, X, Info, Type, Image as ImageIcon, Video, MessageSquare, Layout, ArrowRight } from "lucide-react";
+import { Plus, Edit2, Trash2, Save, X, Info, Type, Image as ImageIcon, Video, MessageSquare, Layout, ArrowRight, Link2, Scale } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -60,6 +60,9 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
     const [textBody, setTextBody] = useState("");
     const [mediaUrl, setMediaUrl] = useState("");
+    // JSON payload for interactive challenge types (URL_INSPECTION / SOURCE_COMPARISON)
+    const [challengeJson, setChallengeJson] = useState("");
+    const isChallengeType = (t: string) => t === "URL_INSPECTION" || t === "SOURCE_COMPARISON";
     const [selectedNextSceneId, setSelectedNextSceneId] = useState<string>("");
     const [newChoiceScoreImpact, setNewChoiceScoreImpact] = useState(0);
     const [newChoiceInfluenceImpact, setNewChoiceInfluenceImpact] = useState(0);
@@ -93,6 +96,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setShowChoiceForm(false);
         setTextBody("");
         setMediaUrl("");
+        setChallengeJson("");
         setIsTerminal(false);
         setEditingScene(null);
         setIsFormOpen(false);
@@ -122,6 +126,12 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
         setChoices(loadedChoices);
         setTextBody(scene.content?.textBody || "");
         setMediaUrl(scene.content?.imageUrl || scene.content?.videoUrl || "");
+        if (isChallengeType(scene.contentType)) {
+            const { contentType: _ct, textBody: _tb, ...challenge } = scene.content ?? {};
+            setChallengeJson(Object.keys(challenge).length ? JSON.stringify(challenge, null, 2) : "");
+        } else {
+            setChallengeJson("");
+        }
         setIsFormOpen(true);
     };
 
@@ -136,6 +146,16 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             return;
         }
 
+        let challengeContent: Record<string, any> = {};
+        if (isChallengeType(contentType) && challengeJson.trim()) {
+            try {
+                challengeContent = JSON.parse(challengeJson);
+            } catch {
+                toast.error("Challenge content is not valid JSON");
+                return;
+            }
+        }
+
         const sceneData = {
             title,
             sceneType,
@@ -144,6 +164,7 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
             isTerminal,
             choices, // Replaces availableChoices
             content: {
+                ...challengeContent,
                 contentType,
                 textBody,
                 imageUrl: contentType === "IMAGE" ? mediaUrl : undefined,
@@ -537,12 +558,14 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
 
                         <div className="space-y-4">
                             <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Content Configuration</Label>
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                 {[
                                     { id: "TEXT", icon: Type, label: "Text" },
                                     { id: "IMAGE", icon: ImageIcon, label: "Image" },
                                     { id: "VIDEO", icon: Video, label: "Video" },
                                     { id: "CHAT", icon: MessageSquare, label: "Chat" },
+                                    { id: "URL_INSPECTION", icon: Link2, label: "URL" },
+                                    { id: "SOURCE_COMPARISON", icon: Scale, label: "Sources" },
                                 ].map(type => (
                                     <button
                                         key={type.id}
@@ -566,6 +589,23 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                     placeholder={contentType === "IMAGE" ? "https://...png" : "https://youtube.com/..."}
                                     className="rounded-xl h-12 bg-background border-none shadow-sm mt-4"
                                 />
+                            )}
+                            {isChallengeType(contentType) && (
+                                <div className="space-y-2 mt-4">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
+                                        Challenge content (JSON)
+                                    </Label>
+                                    <textarea
+                                        value={challengeJson}
+                                        onChange={(e) => setChallengeJson(e.target.value)}
+                                        rows={10}
+                                        spellCheck={false}
+                                        placeholder={contentType === "URL_INSPECTION"
+                                            ? '{\n  "url": "https://bbc-news24.co/breaking",\n  "pageTitle": "BREAKING: ...",\n  "pageSnippet": "...",\n  "prompt": "Is this link what it claims to be?",\n  "clues": [\n    { "label": "Domain registered 12 days ago", "detail": "...", "suspicious": true }\n  ]\n}'
+                                            : '{\n  "prompt": "Who should you trust on this story?",\n  "sources": [\n    {\n      "name": "National Desk", "handle": "@national_desk", "verified": true,\n      "timestamp": "2h", "headline": "...", "excerpt": "...",\n      "signals": [ { "label": "Named reporters", "detail": "...", "suspicious": false } ]\n    }\n  ]\n}'}
+                                        className="w-full rounded-xl bg-background shadow-sm p-4 font-mono text-xs leading-relaxed border border-transparent focus:border-primary/40 focus:outline-none resize-y"
+                                    />
+                                </div>
                             )}
                         </div>
                     </div>
@@ -637,6 +677,8 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                                     {scene.contentType === "IMAGE" && <ImageIcon size={10} />}
                                                     {scene.contentType === "VIDEO" && <Video size={10} />}
                                                     {scene.contentType === "CHAT" && <MessageSquare size={10} />}
+                                                    {scene.contentType === "URL_INSPECTION" && <Link2 size={10} />}
+                                                    {scene.contentType === "SOURCE_COMPARISON" && <Scale size={10} />}
                                                     {scene.contentType}
                                                 </div>
                                                 <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/5 px-2 py-0.5 rounded-md">

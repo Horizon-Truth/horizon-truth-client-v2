@@ -29,6 +29,8 @@ import { TrustMeter } from './play/TrustMeter';
 import { telemetryService } from '@/services/telemetry.service';
 import { LearningMomentCard } from '@/modules/gamification/components/LearningMomentCard';
 import { tipForSeed } from '@/modules/gamification/learning-content';
+import { ConfidenceCheck } from '@/modules/gamification/components/ConfidenceCheck';
+import type { ConfidenceLevel } from '@/modules/gamification/confidence';
 
 export function GameSession() {
     // Granular selectors to prevent broad rerenders
@@ -43,6 +45,7 @@ export function GameSession() {
     const lastChoiceCorrect = useGameStore(s => s.lastChoiceCorrect);
     const lastTrustDelta = useGameStore(s => s.lastTrustDelta);
     const lastChoiceTrap = useGameStore(s => s.lastChoiceTrap);
+    const lastConfidence = useGameStore(s => s.lastConfidence);
     const clearSpreadSimulation = useGameStore(s => s.clearSpreadSimulation);
     const reputationRole = useGameStore(s => s.reputationRole);
     const currentStreak = useGameStore(s => s.currentStreak);
@@ -89,10 +92,14 @@ export function GameSession() {
 
     const currentScene = activeProgress?.currentScene;
 
-    const handleChoice = useCallback((choiceKey: string) => {
+    // Choice picked but not yet submitted — awaiting the confidence check (Phase 15).
+    const [pendingChoice, setPendingChoice] = useState<{ key: string; label: string } | null>(null);
+
+    const performChoice = useCallback((choiceKey: string, confidence: ConfidenceLevel) => {
         if (!activeProgress || !currentScene) return;
         if (countdownRef.current) clearInterval(countdownRef.current);
         setTimeLeft(null);
+        setPendingChoice(null);
         const choiceObj = currentScene.choices?.find((c: any) => c.label === choiceKey || c.id === choiceKey);
 
         const progressId = activeProgress.id;
@@ -102,17 +109,28 @@ export function GameSession() {
         });
         telemetryService.trackDecision(progressId, sceneId, {
             player_decision_type: 'trust',
-            decision_confidence_level: 5,
+            decision_confidence_level: confidence,
         });
         telemetryService.flush(progressId, sceneId);
 
-        submitChoice(currentScene.id, choiceKey, choiceObj?.label || choiceKey);
+        submitChoice(currentScene.id, choiceKey, choiceObj?.label || choiceKey, confidence);
     }, [activeProgress, currentScene, submitChoice]);
+
+    const handleChoice = useCallback((choiceKey: string) => {
+        if (!activeProgress || !currentScene) return;
+        const choiceObj = currentScene.choices?.find((c: any) => c.label === choiceKey || c.id === choiceKey);
+        setPendingChoice({ key: choiceKey, label: choiceObj?.label || choiceKey });
+    }, [activeProgress, currentScene]);
+
+    // Keep a ref so the countdown interval sees the latest pending choice.
+    const pendingChoiceRef = useRef<{ key: string; label: string } | null>(null);
+    useEffect(() => { pendingChoiceRef.current = pendingChoice; }, [pendingChoice]);
 
     // Decision timer: when it expires the network "reacts without you"
     useEffect(() => {
         if (countdownRef.current) clearInterval(countdownRef.current);
         setTimedOut(false);
+        setPendingChoice(null);
         const limit = currentScene?.decisionTimeLimit;
         if (limit && limit > 0) {
             setTimeLeft(limit);
@@ -123,7 +141,10 @@ export function GameSession() {
                         const choices = currentScene?.availableChoices;
                         if (choices && choices.length > 0) {
                             setTimedOut(true);
-                            handleChoice(choices[0]);
+                            // If a choice was picked but the confidence check was still
+                            // open, honor it; either way a timed-out decision counts as
+                            // a guess (lowest confidence).
+                            performChoice(pendingChoiceRef.current?.key ?? choices[0], 1);
                         }
                         return 0;
                     }
@@ -182,7 +203,7 @@ export function GameSession() {
 
     // Keyboard hotkeys (1-9) — ignored while typing or holding modifiers
     useEffect(() => {
-        if (!activeProgress) return;
+        if (!activeProgress || pendingChoice) return; // confidence check owns the keys while open
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.metaKey || e.ctrlKey || e.altKey) return;
             const target = e.target as HTMLElement | null;
@@ -196,7 +217,7 @@ export function GameSession() {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeProgress, isLoading, handleChoice]);
+    }, [activeProgress, isLoading, handleChoice, pendingChoice]);
 
     // Floating impact numbers
     const [impacts, setImpacts] = useState<{
@@ -487,6 +508,7 @@ export function GameSession() {
                                         choiceLabel={lastChoiceLabel}
                                         trap={lastChoiceTrap}
                                         trustDelta={lastTrustDelta}
+                                        confidence={lastConfidence}
                                         tipSeed={currentScene.id}
                                         onDismiss={clearSpreadSimulation}
                                     />
@@ -604,6 +626,17 @@ export function GameSession() {
                     </div>
                 </div>
             </aside>
+
+            {/* Confidence check before submitting (Phase 15) */}
+            <AnimatePresence>
+                {pendingChoice && !isLoading && (
+                    <ConfidenceCheck
+                        choiceLabel={pendingChoice.label}
+                        onSelect={(level) => performChoice(pendingChoice.key, level)}
+                        onCancel={() => setPendingChoice(null)}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Spread simulation overlay */}
             <AnimatePresence>

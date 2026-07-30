@@ -47,7 +47,7 @@ export interface Scene {
     description: string;
     order: number;
     sceneType: 'NARRATIVE' | 'CHOICE' | 'CHALLENGE';
-    contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CHAT' | 'FEED' | 'PROPAGATION';
+    contentType: 'TEXT' | 'IMAGE' | 'VIDEO' | 'CHAT' | 'FEED' | 'PROPAGATION' | 'URL_INSPECTION' | 'SOURCE_COMPARISON';
     isTerminal?: boolean;
     content: any;
     chatMessages: any[];

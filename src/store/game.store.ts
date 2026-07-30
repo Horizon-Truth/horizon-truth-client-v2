@@ -3,6 +3,16 @@ import { persist } from 'zustand/middleware';
 import { engineService } from '@/services/engine.service';
 import { userService } from '@/services/user.service';
 import type { GameProgress, GameOutcome } from '@/services/engine.service';
+import { matchTechnique } from '@/modules/gamification/learning-content';
+import { skillForTechnique, XP_PER_CORRECT_DECISION, XP_PER_INCORRECT_DECISION } from '@/modules/gamification/skills';
+import type { SkillProgress } from '@/modules/gamification/skills';
+import { EMPTY_CALIBRATION, confidenceKeyForLevel } from '@/modules/gamification/confidence';
+import type { ConfidenceLevel, CalibrationLedger } from '@/modules/gamification/confidence';
+import { mergeSkillBooks, mergeCalibrations } from '@/modules/gamification/learning-profile';
+import { emptyImpact, applyDecisionImpact } from '@/modules/gamification/impact';
+import type { MissionImpact } from '@/modules/gamification/impact';
+import { ensureToday } from '@/modules/gamification/daily';
+import type { DailyLedger } from '@/modules/gamification/daily';
 
 export interface GameStats {
     trustScore: number;
@@ -33,11 +43,23 @@ export interface GameState {
     // Player identity
     reputationRole: string;
     currentStreak: number;
+    /** Per-skill competency ledger (Phase 7), keyed by skill key. */
+    skillBook: Record<string, SkillProgress>;
+    /** Confidence-vs-accuracy ledger (Phase 15). */
+    calibration: CalibrationLedger;
+    /** Confidence stated for the last submitted choice. */
+    lastConfidence: ConfidenceLevel | null;
+    /** Community-impact ledger for the current/just-finished mission (Phase 4). */
+    missionImpact: MissionImpact | null;
+    /** Per-day quest progress (Phase 14); rolls over at local midnight. */
+    dailyLedger: DailyLedger | null;
+    /** Career totals across all completed missions (Phase 13 achievements). */
+    lifetimeImpact: { reached: number; preventedReach: number };
 
     // Actions
     fetchGameHistory: () => Promise<void>;
     startGame: (scenarioId: string) => Promise<void>;
-    submitChoice: (sceneId: string, choiceKey: string, choiceLabel?: string) => Promise<void>;
+    submitChoice: (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => Promise<void>;
     loadProgress: (progressId: string) => Promise<void>;
     resetGame: () => void;
     clearError: () => void;
@@ -73,6 +95,12 @@ export const useGameStore = create<GameState>()(
             lastChoiceTrap: null,
             reputationRole: 'OBSERVER',
             currentStreak: 0,
+            skillBook: {},
+            calibration: EMPTY_CALIBRATION,
+            lastConfidence: null,
+            missionImpact: null,
+            dailyLedger: null,
+            lifetimeImpact: { reached: 0, preventedReach: 0 },
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -104,10 +132,20 @@ export const useGameStore = create<GameState>()(
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    const [history, playerStats] = await Promise.all([
+                    const [history, playerStats, learningProfile] = await Promise.all([
                         engineService.getMyGameHistory(),
-                        userService.getMyStats().catch(() => null) // graceful fallback
+                        userService.getMyStats().catch(() => null), // graceful fallback
+                        userService.getMyLearningProfile().catch(() => null) // guests / older servers
                     ]);
+
+                    // Reconcile server-synced ledgers with local ones (element-wise
+                    // max, so neither side can lose progress).
+                    if (learningProfile) {
+                        set(state => ({
+                            skillBook: mergeSkillBooks(state.skillBook, learningProfile.skillBook),
+                            calibration: mergeCalibrations(state.calibration, learningProfile.calibration),
+                        }));
+                    }
 
                     // Calculate average accuracy from completed items in history
                     const completedGames = history.filter((game: GameProgress) => game.status === 'COMPLETED' && typeof game.accuracyRate === 'number');
@@ -153,7 +191,7 @@ export const useGameStore = create<GameState>()(
                 set({ isLoading: true, error: null, currentOutcome: null });
                 try {
                     const progress = await engineService.startGame(scenarioId);
-                    set({ activeProgress: progress, isLoading: false });
+                    set({ activeProgress: progress, isLoading: false, missionImpact: emptyImpact(progress.id) });
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to start game', isLoading: false });
                 }
@@ -163,17 +201,74 @@ export const useGameStore = create<GameState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const progress = await engineService.getGameProgress(progressId);
-                    set({ activeProgress: progress, isLoading: false });
+                    set(state => ({
+                        activeProgress: progress,
+                        isLoading: false,
+                        // Keep the impact ledger only if it belongs to this mission.
+                        missionImpact: state.missionImpact?.progressId === progress.id
+                            ? state.missionImpact
+                            : emptyImpact(progress.id),
+                    }));
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to load progress', isLoading: false });
                 }
             },
 
-            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string) => {
+            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => {
                 const { activeProgress, isLoading } = get();
                 if (!activeProgress || isLoading) return;
 
-                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null });
+                // Attribute a resolved decision to the skill graph and calibration ledger.
+                const recordDecision = (correct: boolean | null, trap: string | null | undefined) => {
+                    if (correct === null) return {};
+                    const skill = skillForTechnique(matchTechnique(trap)?.key);
+                    const prev = get().skillBook[skill.key] ?? { xp: 0, correct: 0, total: 0 };
+                    const skillBook = {
+                        ...get().skillBook,
+                        [skill.key]: {
+                            xp: prev.xp + (correct ? XP_PER_CORRECT_DECISION : XP_PER_INCORRECT_DECISION),
+                            correct: prev.correct + (correct ? 1 : 0),
+                            total: prev.total + 1,
+                        },
+                    };
+                    let calibration = get().calibration;
+                    if (confidence) {
+                        const key = confidenceKeyForLevel(confidence);
+                        const bucket = calibration[key] ?? { correct: 0, total: 0 };
+                        calibration = {
+                            ...calibration,
+                            [key]: { correct: bucket.correct + (correct ? 1 : 0), total: bucket.total + 1 },
+                        };
+                    }
+                    // Fire-and-forget sync; the server merges element-wise max,
+                    // and guests / offline players simply keep local state.
+                    userService.saveMyLearningProfile({ skillBook, calibration }).catch(() => { });
+                    return { skillBook, calibration };
+                };
+
+                // Advance today's quest counters (rolling the ledger over at midnight).
+                const bumpDaily = (patch: Partial<Pick<DailyLedger, 'missions' | 'correctDecisions' | 'sharpMissions'>>) => {
+                    const today = ensureToday(get().dailyLedger);
+                    return {
+                        ...today,
+                        missions: today.missions + (patch.missions ?? 0),
+                        correctDecisions: today.correctDecisions + (patch.correctDecisions ?? 0),
+                        sharpMissions: today.sharpMissions + (patch.sharpMissions ?? 0),
+                    };
+                };
+
+                // Fold this decision into the mission's community-impact ledger.
+                const foldImpact = (
+                    spread: { reach: number; reshares: number; credibility_loss: number } | null,
+                    correct: boolean | null,
+                ) => {
+                    const current = get().missionImpact?.progressId === activeProgress.id
+                        ? get().missionImpact!
+                        : emptyImpact(activeProgress.id);
+                    return applyDecisionImpact(current, spread, correct, activeProgress.currentScene?.choices);
+                };
+
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null, lastConfidence: confidence ?? null });
                 try {
                     const result = await engineService.submitChoice({
                         progressId: activeProgress.id,
@@ -188,8 +283,12 @@ export const useGameStore = create<GameState>()(
                         );
                         const spreadSim = choiceData?.spreadSimulation || result.spreadSimulation || null;
                         const trustDelta = result.trustScoreDelta ?? choiceData?.scoreImpact ?? 0;
+                        const choiceCorrect = trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0;
 
                         set({
+                            ...recordDecision(choiceCorrect, choiceData?.psychologicalTrap),
+                            missionImpact: foldImpact(spreadSim, choiceCorrect),
+                            dailyLedger: bumpDaily({ correctDecisions: choiceCorrect === true ? 1 : 0 }),
                             activeProgress: {
                                 ...activeProgress,
                                 currentScene: result.nextScene,
@@ -206,7 +305,7 @@ export const useGameStore = create<GameState>()(
                             lastSpreadSimulation: spreadSim,
                             lastChoiceLabel: choiceLabel || choiceKey,
                             lastChoiceFeedback: result.message || null,
-                            lastChoiceCorrect: trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0,
+                            lastChoiceCorrect: choiceCorrect,
                             lastTrustDelta: trustDelta,
                             lastChoiceTrap: choiceData?.psychologicalTrap ?? null,
                             isLoading: false
@@ -214,7 +313,26 @@ export const useGameStore = create<GameState>()(
                         // Phase 16: Prefetch next scene assets
                         get().prefetchAssets(result.nextScene);
                     } else if (result.status === 'game_completed') {
+                        const finalChoice = activeProgress.currentScene?.choices?.find(
+                            (c: any) => c.label === choiceKey || c.id === choiceKey
+                        );
+                        const finalDelta = result.outcome?.trustScoreDelta ?? finalChoice?.scoreImpact ?? 0;
+                        const finalCorrect = finalDelta === 0 ? null : finalDelta > 0;
+                        const finalImpact = foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect);
+                        const career = get().lifetimeImpact ?? { reached: 0, preventedReach: 0 };
                         set({
+                            ...recordDecision(finalCorrect, finalChoice?.psychologicalTrap),
+                            missionImpact: finalImpact,
+                            // Career totals accumulate once, when a mission ends.
+                            lifetimeImpact: {
+                                reached: career.reached + finalImpact.reached,
+                                preventedReach: career.preventedReach + finalImpact.preventedReach,
+                            },
+                            dailyLedger: bumpDaily({
+                                missions: 1,
+                                correctDecisions: finalCorrect === true ? 1 : 0,
+                                sharpMissions: (result.outcome?.accuracyRate ?? 0) >= 80 ? 1 : 0,
+                            }),
                             activeProgress: null,
                             currentOutcome: result.outcome,
                             isLoading: false,
@@ -253,6 +371,8 @@ export const useGameStore = create<GameState>()(
                 lastChoiceCorrect: null,
                 lastTrustDelta: 0,
                 lastChoiceTrap: null,
+                lastConfidence: null,
+                missionImpact: null,
             }),
 
             clearError: () => set({ error: null }),
@@ -271,6 +391,11 @@ export const useGameStore = create<GameState>()(
                 currentOutcome: state.currentOutcome,
                 reputationRole: state.reputationRole,
                 currentStreak: state.currentStreak,
+                skillBook: state.skillBook,
+                calibration: state.calibration,
+                missionImpact: state.missionImpact,
+                dailyLedger: state.dailyLedger,
+                lifetimeImpact: state.lifetimeImpact,
             }),
         }
     )
