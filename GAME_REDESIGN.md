@@ -76,6 +76,20 @@ Scope: player-facing game experience (mission hub, game session, learning feedba
 - **"What you learned"** section built from the scenario's `learningObjective`, `psychologicalTrigger`, and `preventionLesson` (fetched on demand; falls back to a verification habit).
 - Decision review rewritten in plain language ("Your choice" vs "What actually happened", "The better move") and converted to theme tokens.
 
+### Public trial (`SimulationPage` + local demo data)
+
+- The old 2-scene local trial scenario was removed and replaced with **"One Day in the Feed"** (`simulation/data/trial-scenario.ts`): 7 scenes, one per manipulation technique in `learning-content.ts` (emotional manipulation, false urgency, fake authority, context manipulation, manufactured consensus, misleading statistics, impersonation). Each choice carries `trustImpact`, rich feedback, an `isBest` flag (drives accuracy), and a `trap` string that `matchTechnique()` resolves into a full technique explainer.
+- The scenario also carries `learningObjective` / `psychologicalTrigger` / `preventionLesson`, mirroring the backend scenario schema.
+- `SimulationPage` now uses the shared `LearningMomentCard` after every choice, tracks accuracy, clamps trust 0–100, and ends with a real results screen: trust + accuracy, "Techniques you faced" chips, "What you learned" cards, confetti on ≥70% accuracy, and a rank-ladder-aware sign-up CTA. Fully theme-token based with progress bars and aria labels.
+
+### Guest flow (`GuestGamePage` + `guest-game.store`)
+
+- Same theme-split problem as the main game (dark-glass hub + hardcoded-light play view) — now fully theme-token based.
+- **Guests now learn too**: `submitGuestChoice` previously discarded the outcome `message` and `psychologicalTrap` and advanced silently. The store now pauses on a learning moment (`lastChoice` + `pendingAdvance`), and the page shows the shared `LearningMomentCard` with a Continue button before each scene transition.
+- Scenes render through the shared `SceneRenderer` (CHAT/FEED/IMAGE/VIDEO now display properly instead of a text blob), with a label→choice mapping into the guest store.
+- Removed the second copy of the fake notification panel and locked-nav placeholders; replaced with an honest sidebar: TrustMeter, best-calls counter, per-scene verification habit, and a save-progress CTA.
+- Real results screen: trust + accuracy (derived from per-choice trust deltas, now recorded in the choices log), "What you learned" from scenario fields, confetti on ≥70%, rank-aware sign-up CTA. Scene progress bar and aria labels throughout; jargon copy replaced.
+
 ### Foundation fixes
 
 - `game.store`: trust clamped 0–100; new `lastChoiceCorrect` / `lastTrustDelta` / `lastChoiceTrap` state feeding the learning UI.
@@ -95,4 +109,3 @@ Verification: `tsc -b` clean, `vite build` clean, 27/27 tests pass (20 existing 
 4. **Challenge variety** — the engine supports TEXT/CHAT/FEED/IMAGE/VIDEO/PROPAGATION scenes; add new scene contracts for timeline-ordering, evidence drag-and-drop, and confidence rating.
 5. **Trophy cabinet** — badges currently appear once in an overlay and vanish; persist and display them on a profile/achievements page.
 6. **Bundle splitting** — the main chunk is 2.3 MB (638 kB gzip); route-level `manualChunks` would cut initial load significantly.
-7. **Guest flow parity** — `GuestGamePage` still uses the old visual language; port the Learning Moment + token design there.
