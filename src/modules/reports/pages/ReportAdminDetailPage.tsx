@@ -17,6 +17,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { Textarea } from "@/shared/components/ui/textarea";
 import { reportService } from "@/services/report.service";
 
 export default function ReportAdminDetailPage() {
@@ -30,6 +31,8 @@ export default function ReportAdminDetailPage() {
     // Form state for admin actions
     const [status, setStatus] = useState("");
     const [priority, setPriority] = useState("");
+    const [moderatorNotes, setModeratorNotes] = useState("");
+    const [evidenceText, setEvidenceText] = useState("");
 
     const fetchReport = async () => {
         if (!id) return;
@@ -39,6 +42,7 @@ export default function ReportAdminDetailPage() {
             setReport(data);
             setStatus(data.status);
             setPriority(data.priority);
+            setModeratorNotes(data.moderatorNotes || "");
         } catch (error) {
             console.error("Error fetching report details:", error);
             toast.error("Failed to load report details");
@@ -55,7 +59,7 @@ export default function ReportAdminDetailPage() {
         if (!id) return;
         setIsUpdating(true);
         try {
-            await reportService.updateReport(id, { status, priority });
+            await reportService.updateReport(id, { status, priority, moderatorNotes });
             toast.success("Report updated successfully");
             fetchReport();
         } catch (error) {
@@ -63,6 +67,25 @@ export default function ReportAdminDetailPage() {
             toast.error("Failed to update report");
         } finally {
             setIsUpdating(false);
+        }
+    };
+
+    const handleAddEvidence = async () => {
+        if (!id || !evidenceText.trim()) return;
+        try {
+            await reportService.addEvidence(id, {
+                evidenceType: 'LINK',
+                content: evidenceText,
+                sourceType: 'EXTERNAL',
+                credibilityScore: 60,
+                verificationStatus: 'PENDING',
+            });
+            toast.success('Evidence added');
+            setEvidenceText('');
+            fetchReport();
+        } catch (error) {
+            console.error('Error adding evidence:', error);
+            toast.error('Failed to add evidence');
         }
     };
 
@@ -256,9 +279,12 @@ export default function ReportAdminDetailPage() {
                                     <SelectContent className="bg-card border rounded-2xl">
                                         <SelectItem value="NEW" className="font-bold">NEW Dossier</SelectItem>
                                         <SelectItem value="UNDER_REVIEW" className="font-bold">UNDER REVIEW</SelectItem>
-                                        <SelectItem value="VERIFIED" className="font-bold text-emerald-500">VERIFIED Truth</SelectItem>
+                                        <SelectItem value="NEEDS_MORE_EVIDENCE" className="font-bold">NEEDS MORE EVIDENCE</SelectItem>
+                                        <SelectItem value="VERIFIED_FALSE" className="font-bold text-red-500">VERIFIED FALSE</SelectItem>
+                                        <SelectItem value="VERIFIED_TRUE" className="font-bold text-emerald-500">VERIFIED TRUE</SelectItem>
+                                        <SelectItem value="DUPLICATE" className="font-bold opacity-80">DUPLICATE</SelectItem>
                                         <SelectItem value="REJECTED" className="font-bold text-red-500">REJECTED Falsehood</SelectItem>
-                                        <SelectItem value="CLOSED" className="font-bold opacity-50">ARCHIVED / CLOSED</SelectItem>
+                                        <SelectItem value="ARCHIVED" className="font-bold opacity-50">ARCHIVED / CLOSED</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -278,6 +304,16 @@ export default function ReportAdminDetailPage() {
                                 </Select>
                             </div>
 
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-widest opacity-80 pl-1">Moderator Notes</label>
+                                <Textarea
+                                    value={moderatorNotes}
+                                    onChange={(e) => setModeratorNotes(e.target.value)}
+                                    placeholder="Private moderator notes"
+                                    className="min-h-[120px] rounded-2xl bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                                />
+                            </div>
+
                             <Button
                                 onClick={handleUpdate}
                                 disabled={isUpdating}
@@ -286,6 +322,17 @@ export default function ReportAdminDetailPage() {
                                 {isUpdating ? <Loader2 size={24} className="animate-spin" /> : <Save size={24} />}
                                 COMMIT CHANGES
                             </Button>
+
+                            <div className="space-y-3 border-t border-white/10 pt-4">
+                                <label className="text-[10px] font-black uppercase tracking-widest opacity-80 pl-1">Add Evidence</label>
+                                <Textarea
+                                    value={evidenceText}
+                                    onChange={(e) => setEvidenceText(e.target.value)}
+                                    placeholder="Paste a link, citation, or supporting note"
+                                    className="min-h-[100px] rounded-2xl bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                                />
+                                <Button onClick={handleAddEvidence} className="w-full rounded-2xl bg-white/15 border border-white/20">Add Evidence</Button>
+                            </div>
                         </CardContent>
                     </Card>
 

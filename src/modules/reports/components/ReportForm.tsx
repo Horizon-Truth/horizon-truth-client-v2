@@ -25,6 +25,10 @@ const reportSchema = z.object({
     contentType: z.string().min(1, { message: "Content type is required" }),
     sourceUrl: z.string().url().optional().or(z.literal("")),
     language: z.string().min(1, { message: "Language is required" }),
+    reason: z.string().optional(),
+    category: z.string().optional(),
+    reportedContentReference: z.string().optional(),
+    evidenceLinks: z.array(z.string()).optional(),
     tagIds: z.array(z.string()).min(1, { message: "Select at least one tag" }),
 });
 
@@ -74,6 +78,10 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
             contentType: "ARTICLE",
             sourceUrl: "",
             language: systemLanguage,
+            reason: "",
+            category: "False Information",
+            reportedContentReference: "",
+            evidenceLinks: [],
             tagIds: [],
         },
     });
@@ -250,6 +258,57 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
                                     />
                                 </FormControl>
                                 <FormMessage className="text-[10px] font-bold uppercase tracking-tighter" />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="reason"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Report Reason</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Example: False Information"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Category</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="False Information"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="reportedContentReference"
+                        render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 block">Reported Content Reference</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Claim, post, profile, or URL"
+                                        className="bg-background/50 border-none ring-1 ring-border focus-visible:ring-primary h-14 rounded-2xl font-bold transition-all"
+                                        {...field}
+                                    />
+                                </FormControl>
                             </FormItem>
                         )}
                     />

@@ -6,6 +6,11 @@ export interface CreateReportDto {
     contentType: string;
     sourceUrl?: string;
     language: string;
+    reason?: string;
+    category?: string;
+    reportedContentReference?: string;
+    evidenceLinks?: string[];
+    relatedReportIds?: string[];
     priority?: string;
     tagIds?: string[];
 }
@@ -75,6 +80,11 @@ export const reportService = {
 
     async addVerification(reportId: string, data: { comment: string; status: string; rating?: number }) {
         const response = await api.post(`/reports/${reportId}/verify`, data);
+        return response.data;
+    },
+
+    async addEvidence(reportId: string, data: { evidenceType: string; content: string; sourceType?: string; credibilityScore?: number; verificationStatus?: string }) {
+        const response = await api.post(`/reports/${reportId}/evidence`, data);
         return response.data;
     },
 

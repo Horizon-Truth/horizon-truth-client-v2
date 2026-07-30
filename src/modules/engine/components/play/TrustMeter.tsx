@@ -42,7 +42,7 @@ export const TrustMeter: React.FC<TrustMeterProps> = ({
                     fill="transparent"
                     stroke="currentColor"
                     strokeWidth={strokeWidth}
-                    className="text-white/5"
+                    className="text-foreground/10"
                 />
 
                 {/* Progress Circle */}

@@ -58,6 +58,10 @@ export default function ReportAdminManagementPage() {
         switch (status) {
             case 'NEW': return <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20">NEW</Badge>;
             case 'UNDER_REVIEW': return <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">UNDER REVIEW</Badge>;
+            case 'VERIFIED_FALSE': return <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20">VERIFIED FALSE</Badge>;
+            case 'VERIFIED_TRUE': return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">VERIFIED TRUE</Badge>;
+            case 'NEEDS_MORE_EVIDENCE': return <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">NEEDS MORE EVIDENCE</Badge>;
+            case 'DUPLICATE': return <Badge variant="outline" className="bg-slate-500/10 text-slate-500 border-slate-500/20">DUPLICATE</Badge>;
             case 'VERIFIED': return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">VERIFIED</Badge>;
             case 'CLOSED': return <Badge variant="outline" className="bg-gray-500/10 text-gray-500 border-gray-500/20">CLOSED</Badge>;
             case 'REJECTED': return <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20">REJECTED</Badge>;
@@ -103,9 +107,12 @@ export default function ReportAdminManagementPage() {
                         <option value="all">All Statuses</option>
                         <option value="NEW">New</option>
                         <option value="UNDER_REVIEW">Under Review</option>
-                        <option value="VERIFIED">Verified</option>
+                        <option value="NEEDS_MORE_EVIDENCE">Needs More Evidence</option>
+                        <option value="VERIFIED_FALSE">Verified False</option>
+                        <option value="VERIFIED_TRUE">Verified True</option>
+                        <option value="DUPLICATE">Duplicate</option>
                         <option value="REJECTED">Rejected</option>
-                        <option value="CLOSED">Closed</option>
+                        <option value="ARCHIVED">Archived</option>
                     </select>
                     <Button variant="outline" className="h-12 rounded-xl gap-2 font-bold px-6">
                         <Filter size={18} /> Filters
