@@ -26,3 +26,21 @@ export default function ScenarioFeedbackList({ scenarioId }: ScenarioFeedbackLis
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchFeedbacks();
+    }, [scenarioId, statusFilter]);
+
+    const updateStatus = async (id: string, status: string) => {
+        try {
+            await feedbackService.updateFeedback(id, { status: status as any });
+            toast.success("Feedback status updated");
+            fetchFeedbacks();
+        } catch (error) {
+            toast.error("Failed to update status");
+        }
+    };
+
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'HIGH': return 'text-red-500 bg-red-500/10';
