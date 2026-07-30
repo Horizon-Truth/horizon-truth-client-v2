@@ -72,31 +72,31 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[600px] space-y-4">
-                <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center border border-slate-200">
+                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center border border-border">
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
-                <p className="text-slate-900 font-mono animate-pulse uppercase tracking-[0.3em] text-xs">Decrypting Internal Logs...</p>
+                <p className="text-foreground font-mono animate-pulse uppercase tracking-[0.3em] text-xs">Reviewing your decisions...</p>
             </div>
         );
     }
 
     return (
-        <div className="flex-1 overflow-y-auto custom-scrollbar w-full h-full pb-20 bg-white">
+        <div className="flex-1 overflow-y-auto custom-scrollbar w-full h-full pb-20 bg-background text-foreground">
             <div className="w-full max-w-4xl mx-auto py-12 px-6">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-20 space-y-4"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-slate-50 border border-slate-200 text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-muted border border-border text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">
                         <Fingerprint size={14} />
-                        Post-Action Investigation
+                        Decision Review
                     </div>
-                    <h2 className="text-5xl font-black italic uppercase tracking-tighter text-slate-900">
-                        Reality vs. Decision_
+                    <h2 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground">
+                        What really happened
                     </h2>
-                    <p className="text-slate-500 font-medium italic">
-                        Comparing internal protocol directives with observed network impact.
+                    <p className="text-muted-foreground font-medium">
+                        Compare each choice you made with its real impact on the network.
                     </p>
                 </motion.div>
 
@@ -106,7 +106,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                         initial={{ height: 0 }}
                         animate={{ height: '100%' }}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
-                        className="absolute left-1/2 top-0 -translate-x-1/2 w-px bg-gradient-to-b from-primary via-slate-200 to-transparent z-0"
+                        className="absolute left-1/2 top-0 -translate-x-1/2 w-px bg-gradient-to-b from-primary via-border to-transparent z-0"
                     />
 
                     <div className="space-y-32 relative z-10 pb-32">
@@ -120,14 +120,14 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                     >
                                         {/* Scene Title Center Node */}
                                         <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-8 z-30">
-                                            <div className="px-4 py-1 rounded-full bg-slate-50 border border-slate-200 text-[8px] font-black text-slate-400 uppercase tracking-[0.3em] whitespace-nowrap">
+                                            <div className="px-4 py-1 rounded-full bg-muted border border-border text-[8px] font-black text-muted-foreground uppercase tracking-[0.3em] whitespace-nowrap">
                                                 Phase {index + 1}: {choice.sceneTitle}
                                             </div>
                                         </div>
 
                                         {/* Timeline Node Icon */}
                                         <div className={cn(
-                                            "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-white border-2 z-20 flex items-center justify-center transition-all duration-500",
+                                            "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-card border-2 z-20 flex items-center justify-center transition-all duration-500",
                                             choice.isPerfect
                                                 ? "border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                                                 : "border-primary shadow-[0_0_20px_rgba(var(--primary),0.2)]"
@@ -138,17 +138,17 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                                             {/* Left Side: Your Action */}
                                             <div className="text-right space-y-4">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Your Action</span>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Your choice</span>
                                                 <div className={cn(
-                                                    "p-6 rounded-3xl bg-slate-50 border transition-all duration-700",
-                                                    choice.isPerfect ? "border-emerald-200" : "border-slate-200",
-                                                    choice.userTrustDelta < 0 && "border-red-200 shadow-[0_0_30px_rgba(239,68,68,0.05)] ring-1 ring-red-100"
+                                                    "p-6 rounded-3xl bg-card border transition-all duration-700",
+                                                    choice.isPerfect ? "border-emerald-500/30" : "border-border",
+                                                    choice.userTrustDelta < 0 && "border-red-500/30 ring-1 ring-red-500/10"
                                                 )}>
-                                                    <p className="text-lg font-bold text-slate-900 mb-2">{choice.userAction}</p>
-                                                    <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase text-slate-400">
+                                                    <p className="text-lg font-bold text-foreground mb-2">{choice.userAction}</p>
+                                                    <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase text-muted-foreground">
                                                         <span className={cn(
                                                             "px-2 py-0.5 rounded-full font-bold",
-                                                            choice.userTrustDelta >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                                                            choice.userTrustDelta >= 0 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-red-500/10 text-red-600 dark:text-red-400"
                                                         )}>
                                                             {choice.userTrustDelta > 0 ? '+' : ''}{choice.userTrustDelta} Trust
                                                         </span>
@@ -158,34 +158,34 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
 
                                             {/* Right Side: Reality & Recommended */}
                                             <div className="text-left space-y-4">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Protocol Analysis</span>
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">What actually happened</span>
                                                 <div className={cn(
-                                                    "p-6 rounded-3xl bg-slate-50 border transition-all duration-300 relative overflow-hidden group",
-                                                    choice.isPerfect ? "border-emerald-200" : "border-slate-200"
+                                                    "p-6 rounded-3xl bg-card border transition-all duration-300 relative overflow-hidden group",
+                                                    choice.isPerfect ? "border-emerald-500/30" : "border-border"
                                                 )}>
                                                     <div className="space-y-4">
                                                         <div className="flex items-start gap-4">
                                                             <div className={cn(
                                                                 "mt-1 p-2 rounded-xl",
-                                                                choice.userTrustDelta < 0 ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"
+                                                                choice.userTrustDelta < 0 ? "bg-red-500/10 text-red-600 dark:text-red-400" : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                                                             )}>
                                                                 {choice.userTrustDelta < 0 ? <ShieldAlert size={20} /> : <CheckCircle2 size={20} />}
                                                             </div>
                                                             <div>
-                                                                <p className="text-sm leading-relaxed text-slate-900 font-medium italic">
+                                                                <p className="text-sm leading-relaxed text-foreground font-medium italic">
                                                                     "{choice.userConsequence}"
                                                                 </p>
                                                             </div>
                                                         </div>
 
                                                         {!choice.isPerfect && (
-                                                            <div className="pt-4 border-t border-slate-200 space-y-4">
+                                                            <div className="pt-4 border-t border-border space-y-4">
                                                                 <div className="space-y-2">
                                                                     <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
                                                                         <ArrowRight size={12} />
-                                                                        Recommended Protocol
+                                                                        The better move
                                                                     </div>
-                                                                    <p className="text-sm font-bold text-slate-700 pl-4 border-l-2 border-primary/30">
+                                                                    <p className="text-sm font-bold text-foreground/80 pl-4 border-l-2 border-primary/30">
                                                                         {choice.bestAction}
                                                                     </p>
                                                                 </div>
@@ -197,7 +197,7 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                                         </div>
 
                                         {/* Link Line to Reality */}
-                                        <div className="hidden md:block absolute left-1/2 top-1/2 -translate-y-1/2 w-12 h-[1px] bg-slate-100 -translate-x-1/2 z-10" />
+                                        <div className="hidden md:block absolute left-1/2 top-1/2 -translate-y-1/2 w-12 h-[1px] bg-border -translate-x-1/2 z-10" />
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -210,18 +210,18 @@ export const InvestigationReveal: React.FC<InvestigationRevealProps> = ({ progre
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex flex-col items-center pt-20 border-t border-slate-200 space-y-6"
+                        className="flex flex-col items-center pt-20 border-t border-border space-y-6"
                     >
                         <div className="text-center space-y-2">
-                            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Final Analysis Complete</p>
-                            <p className="text-2xl font-black italic text-slate-900 uppercase italic tracking-tighter">Proceed to Briefing_</p>
+                            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Review complete</p>
+                            <p className="text-2xl font-black text-foreground tracking-tighter">Ready for your results?</p>
                         </div>
                         <Button
                             size="lg"
                             onClick={handleComplete}
                             className="h-16 px-12 rounded-2xl bg-primary text-white font-black hover:bg-primary/90 group shadow-lg shadow-primary/20"
                         >
-                            Review Full Impact
+                            See my results
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </motion.div>

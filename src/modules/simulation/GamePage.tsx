@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/store/game.store';
 import { useAuthStore } from '@/store/auth.store';
@@ -6,13 +6,15 @@ import { useDevice } from '@/shared/hooks/useDevice';
 import { cn } from '@/shared/lib/utils';
 import {
     ShieldCheck,
-    Zap,
-    Users,
+    Target,
     Trophy,
-    LayoutDashboard,
-    Activity,
+    Flame,
     MessageSquare,
-    LogOut
+    Megaphone,
+    LogOut,
+    HelpCircle,
+    Sparkles,
+    CheckCircle2,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { ScenarioList } from '../engine/components/ScenarioList';
@@ -23,12 +25,15 @@ import { GlitchError } from '../engine/components/play/GlitchError';
 import { Button } from '@/shared/components/ui/button';
 import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 import { useNavigate } from 'react-router-dom';
+import { getRank, getNextRank, rankProgress, xpToNextRank } from '@/modules/gamification/progression';
+import { HowToPlayDialog, hasSeenHowToPlay } from '@/modules/gamification/components/HowToPlayDialog';
 
 export default function GamePage() {
     const { isLowEndDevice } = useDevice();
-    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge } = useGameStore();
+    const { stats, history, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge, currentStreak } = useGameStore();
     const { user, logout } = useAuthStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [isGuideOpen, setIsGuideOpen] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
     const navigate = useNavigate();
 
@@ -36,146 +41,190 @@ export default function GamePage() {
     useEffect(() => {
         setIsHydrated(true);
         fetchGameHistory();
+        if (!hasSeenHowToPlay()) setIsGuideOpen(true);
     }, [fetchGameHistory]);
+
+    const rank = getRank(stats.experience);
+    const nextRank = getNextRank(stats.experience);
+    const rankPct = rankProgress(stats.experience);
+
+    // Daily goal: complete 1 mission today
+    const completedToday = useMemo(() => {
+        const today = new Date().toDateString();
+        return history.filter(g => g.status === 'COMPLETED' && g.completedAt && new Date(g.completedAt).toDateString() === today).length;
+    }, [history]);
 
     if (!isHydrated) return null;
 
     return (
-        <div className="flex flex-col min-h-full gap-6 sm:gap-8 p-4 sm:p-8 overflow-y-auto bg-background/50 selection:bg-primary/20 relative">
-            {/* Ambient Background Dashboard */}
+        <div className="flex flex-col min-h-full gap-6 p-4 sm:p-8 overflow-y-auto bg-background selection:bg-primary/20 relative">
+            {/* Ambient background */}
             {!isLowEndDevice && (
                 <>
                     <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 blur-[120px] rounded-full pointer-events-none" />
                 </>
             )}
 
             {/* Global Glitch Error Overlay */}
             {error && <GlitchError message={error} onRetry={clearError} />}
 
-            {/* Standard Dashboard View (Scenario List) */}
+            {/* Mission hub */}
             {!activeProgress && !currentOutcome && (
-                <>
-                    {/* User Profile Bar */}
-                    <div className={cn(
-                        "flex flex-col sm:flex-row items-center justify-between gap-4 border border-white/5 rounded-3xl p-6 mb-2",
-                        !isLowEndDevice && "bg-card/10 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-500",
-                        isLowEndDevice && "bg-card/40"
-                    )}>
-                        <div className="flex items-center gap-5">
-                            <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                                <Avatar className="h-16 w-16 border-2 border-background relative">
-                                    <AvatarImage src={user?.avatarUrl} alt={user?.nickname || user?.fullName} />
+                <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 relative z-10">
+                    {/* Player identity card */}
+                    <section
+                        aria-label="Your profile and rank"
+                        className="flex flex-col lg:flex-row gap-6 border border-border rounded-3xl p-6 bg-card shadow-sm animate-in fade-in slide-in-from-top-4 duration-500"
+                    >
+                        <div className="flex items-center gap-5 flex-1 min-w-0">
+                            <div className="relative shrink-0">
+                                <Avatar className="h-16 w-16 border-2 border-border">
+                                    <AvatarImage src={user?.avatarUrl} alt="" />
                                     <AvatarFallback className="bg-primary/10 text-primary font-black text-xl">
                                         {(user?.nickname || user?.fullName)?.[0]?.toUpperCase() || 'P'}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-5 h-5 rounded-full border-4 border-background" />
+                                <span className="absolute -bottom-1 -right-1 text-lg" aria-hidden>{rank.emoji}</span>
                             </div>
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                    <h2 className="text-xl font-black tracking-tight">{user?.nickname || user?.fullName}</h2>
-                                    <span className="px-2 py-0.5 rounded text-[10px] font-black bg-primary/20 text-primary border border-primary/20 uppercase tracking-widest">
-                                        Level {stats.level}
+                            <div className="space-y-1.5 min-w-0">
+                                <h1 className="text-xl font-black tracking-tight truncate">
+                                    {user?.nickname || user?.fullName || 'Player'}
+                                </h1>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-bold', rank.chip, rank.color)}>
+                                        {rank.emoji} {rank.name}
                                     </span>
+                                    <span className="text-[11px] text-muted-foreground font-medium">Level {stats.level}</span>
                                 </div>
-                                <p className="text-xs text-muted-foreground font-medium uppercase tracking-[0.2em]">Operational Pulse: <span className="text-blue-400">Stable</span></p>
+                                <p className="text-xs text-muted-foreground truncate">{rank.tagline}</p>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
-                            <Button
-                                onClick={() => setIsFeedbackOpen(true)}
-                                variant="ghost"
-                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
+                        {/* Rank progress */}
+                        <div className="flex-1 flex flex-col justify-center gap-2 lg:max-w-sm">
+                            <div className="flex items-center justify-between text-xs font-bold">
+                                <span className="text-muted-foreground">{stats.experience.toLocaleString()} XP</span>
+                                {nextRank ? (
+                                    <span className={nextRank.color}>
+                                        {xpToNextRank(stats.experience).toLocaleString()} XP to {nextRank.emoji} {nextRank.name}
+                                    </span>
+                                ) : (
+                                    <span className={rank.color}>Max rank reached</span>
+                                )}
+                            </div>
+                            <div
+                                className="w-full h-3 bg-muted rounded-full overflow-hidden"
+                                role="progressbar"
+                                aria-valuenow={rankPct}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-label={nextRank ? `Progress towards ${nextRank.name}` : 'Rank progress'}
                             >
-                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
-                                <span className="text-[10px] sm:text-xs">Feedback</span>
-                            </Button>
-                            <Button
-                                onClick={() => navigate("/crowdsourcing/submit")}
-                                variant="ghost"
-                                className="flex-1 min-w-[100px] sm:flex-none rounded-xl h-10 px-2 sm:px-4 font-bold gap-1 sm:gap-2 text-muted-foreground hover:text-white hover:bg-white/5 transition-all"
-                            >
-                                <MessageSquare size={16} className="sm:w-[18px] sm:h-[18px]" />
-                                <span className="text-[10px] sm:text-xs whitespace-nowrap">Report</span>
-                            </Button>
-
-                            <Button
-                                onClick={() => logout()}
-                                variant="ghost"
-                                className="flex-none rounded-xl h-10 px-3 sm:px-4 font-bold gap-1 sm:gap-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                            >
-                                <LogOut size={16} className="sm:w-[18px] sm:h-[18px]" />
-                                <span className="hidden sm:inline text-xs">Log Out</span>
-                            </Button>
+                                <div
+                                    className="h-full rounded-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-out"
+                                    style={{ width: `${rankPct}%` }}
+                                />
+                            </div>
+                            {/* Daily goal */}
+                            <div className="flex items-center gap-2 text-xs font-medium mt-1">
+                                {completedToday > 0 ? (
+                                    <>
+                                        <CheckCircle2 size={14} className="text-emerald-500 shrink-0" aria-hidden />
+                                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">Daily goal done!</span>
+                                        <span className="text-muted-foreground">You completed {completedToday} mission{completedToday > 1 ? 's' : ''} today.</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles size={14} className="text-primary shrink-0" aria-hidden />
+                                        <span className="text-muted-foreground">Daily goal: complete <span className="font-bold text-foreground">1 mission</span> to keep your streak.</span>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Stats Header */}
-                    <header className="grid grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                        {/* Actions */}
+                        <div className="flex lg:flex-col items-center lg:items-end justify-between gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
+                            <Button
+                                onClick={() => setIsGuideOpen(true)}
+                                variant="ghost"
+                                size="sm"
+                                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+                            >
+                                <HelpCircle size={16} aria-hidden /> How to play
+                            </Button>
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    onClick={() => setIsFeedbackOpen(true)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+                                >
+                                    <MessageSquare size={15} aria-hidden /> Feedback
+                                </Button>
+                                <Button
+                                    onClick={() => navigate('/crowdsourcing/submit')}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+                                >
+                                    <Megaphone size={15} aria-hidden /> Report misinfo
+                                </Button>
+                                <Button
+                                    onClick={() => logout()}
+                                    variant="ghost"
+                                    size="sm"
+                                    aria-label="Log out"
+                                    className="rounded-xl font-bold gap-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10"
+                                >
+                                    <LogOut size={15} aria-hidden />
+                                </Button>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Stats */}
+                    <section aria-label="Your stats" className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-in fade-in slide-in-from-top-4 duration-700">
                         <StatCard
-                            label="Protocol Trust"
+                            label="Trust Score"
+                            hint="How much the community trusts your judgment"
                             value={`${stats.trustScore}%`}
-                            icon={<ShieldCheck className="text-emerald-500 w-4 h-4 sm:w-6 sm:h-6" />}
+                            icon={<ShieldCheck className="text-emerald-500" size={20} aria-hidden />}
                             progress={stats.trustScore}
-                            color="bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                            barClass="bg-emerald-500"
                         />
                         <StatCard
-                            label="Network Accuracy"
+                            label="Accuracy"
+                            hint="How often you make the best call"
                             value={`${stats.accuracyRate}%`}
-                            icon={<Activity className="text-indigo-500 w-4 h-4 sm:w-6 sm:h-6" />}
+                            icon={<Target className="text-indigo-500" size={20} aria-hidden />}
                             progress={stats.accuracyRate}
-                            color="bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+                            barClass="bg-indigo-500"
                         />
                         <StatCard
-                            label="Operational Level"
-                            value={`Lvl ${stats.level}`}
-                            subValue={`${stats.experience} / ${stats.level * 100} XP`}
-                            icon={<Zap className="text-amber-500 w-4 h-4 sm:w-6 sm:h-6" />}
-                            progress={(stats.experience / (stats.level * 100)) * 100}
-                            color="bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
-                        />
-                        <StatCard
-                            label="Influencer Status"
-                            value={stats.influence.toString()}
-                            subValue="Nodes"
-                            icon={<Users className="text-blue-500 w-4 h-4 sm:w-6 sm:h-6" />}
-                        />
-                        <StatCard
-                            label="Missions Verified"
+                            label="Missions Completed"
+                            hint="Scenarios you've finished"
                             value={stats.missionsCompleted.toString()}
-                            subValue="Verified"
-                            icon={<Trophy className="text-purple-500 w-4 h-4 sm:w-6 sm:h-6" />}
+                            icon={<Trophy className="text-purple-500" size={20} aria-hidden />}
                         />
-                    </header>
+                        <StatCard
+                            label="Day Streak"
+                            hint={currentStreak > 0 ? 'Keep it going — play daily!' : 'Play today to start a streak'}
+                            value={currentStreak > 0 ? `${currentStreak} 🔥` : '—'}
+                            icon={<Flame className="text-orange-500" size={20} aria-hidden />}
+                        />
+                    </section>
 
-                    {/* Main Content Area */}
-                    <main className="flex-1 flex gap-8 relative z-10">
-                        <div className={cn(
-                            "flex-1 flex flex-col gap-6 border border-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-10 relative overflow-hidden shadow-2xl isolation-isolate [transform:translateZ(0)] backface-visibility-hidden w-full max-w-6xl 2xl:max-w-7xl 3xl:max-w-[90rem] mx-auto",
-                            !isLowEndDevice && "bg-card/20 backdrop-blur-3xl",
-                            isLowEndDevice && "bg-card/40"
-                        )}>
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
-                                <LayoutDashboard size={240} />
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 relative z-10 w-full">
-                                <h1 className="text-2xl sm:text-4xl font-black italic uppercase tracking-wider">Mission Command</h1>
-                            </div>
-
-                            <ScenarioList />
-                        </div>
+                    {/* Learning path */}
+                    <main className="border border-border rounded-3xl p-4 sm:p-10 bg-card shadow-sm relative overflow-hidden">
+                        <ScenarioList />
                     </main>
-                </>
+                </div>
             )}
 
-            {/* Immersive Full-Screen Game View */}
+            {/* Immersive full-screen game view */}
             {(activeProgress || currentOutcome) && (
-                <div className="fixed inset-0 z-[100] bg-white flex flex-col overflow-hidden animate-in fade-in duration-500">
-                    {/* Background Ambient Glows */}
+                <div className="fixed inset-0 z-[100] bg-background flex flex-col overflow-hidden animate-in fade-in duration-500">
                     {!isLowEndDevice && (
                         <>
                             <div className="absolute top-0 left-0 w-[50vw] h-[50vh] bg-primary/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
@@ -184,30 +233,13 @@ export default function GamePage() {
                     )}
 
                     <div className="flex-1 relative z-10 w-full h-full overflow-hidden flex flex-col">
-                        {/* Exit Button for Immersive Mode */}
-                        <div className="absolute top-4 right-4 z-[110]">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    // Use window.confirm for safety if progress exists
-                                    if (activeProgress && !window.confirm("Exit mission? Progress will be lost.")) return;
-                                    navigate("/dashboard");
-                                    window.location.reload(); // Force refresh to clear game state if needed, or just navigate
-                                }}
-                                className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 font-bold uppercase tracking-widest text-[10px] h-8 rounded-full px-4"
-                            >
-                                <LogOut size={14} className="mr-2" />
-                                Exit Mission
-                            </Button>
-                        </div>
                         {activeProgress && <GameSession />}
                         {currentOutcome && <GameOutcome />}
                     </div>
                 </div>
             )}
 
-            {/* Feedback Modal Overlay */}
+            {/* Feedback modal */}
             {isFeedbackOpen && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
                     <div
@@ -223,7 +255,10 @@ export default function GamePage() {
                 </div>
             )}
 
-            {/* Badge Award Overlay Global */}
+            {/* How to play guide */}
+            <HowToPlayDialog open={isGuideOpen} onOpenChange={setIsGuideOpen} />
+
+            {/* Badge award overlay */}
             <AnimatePresence>
                 {pendingBadges && pendingBadges.length > 0 && (
                     <div className="fixed inset-0 z-[300] flex items-center justify-center pointer-events-none">
@@ -241,24 +276,29 @@ export default function GamePage() {
     );
 }
 
-function StatCard({ label, value, subValue, icon, progress, color }: { label: string, value: string, subValue?: string, icon: React.ReactNode, progress?: number, color?: string }) {
+function StatCard({ label, hint, value, icon, progress, barClass }: {
+    label: string;
+    hint: string;
+    value: string;
+    icon: React.ReactNode;
+    progress?: number;
+    barClass?: string;
+}) {
     return (
-        <div className="bg-card/20 border border-white/10 rounded-[1.2rem] sm:rounded-[2rem] p-3 sm:p-6 backdrop-blur-xl relative overflow-hidden group hover:border-white/20 hover:bg-card/30 transition-all duration-300">
-            <div className="flex items-center justify-between mb-3 sm:mb-6">
-                <span className="text-[8px] sm:text-[10px] font-black text-muted-foreground tracking-[0.1em] sm:tracking-[0.2em] uppercase truncate pr-1 sm:pr-2">{label}</span>
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 group-hover:rotate-12 transition-transform">
+        <div className="bg-card border border-border rounded-2xl p-4 sm:p-5 relative overflow-hidden group hover:border-primary/30 hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider truncate pr-2">{label}</span>
+                <div className="w-9 h-9 bg-muted rounded-xl flex items-center justify-center shrink-0">
                     {icon}
                 </div>
             </div>
-            <div className="space-y-1 sm:space-y-1.5">
-                <h4 className="text-xl sm:text-4xl font-black tracking-tighter truncate">{value}</h4>
-                {subValue && <p className="text-[8px] sm:text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none truncate">{subValue}</p>}
-            </div>
+            <p className="text-2xl sm:text-3xl font-black tracking-tight tabular-nums">{value}</p>
+            <p className="text-[11px] text-muted-foreground mt-1 leading-snug">{hint}</p>
             {progress !== undefined && (
-                <div className="mt-4 sm:mt-6 w-full h-1 sm:h-2 bg-white/5 rounded-full overflow-hidden p-[0.5px] sm:p-[1px]">
+                <div className="mt-3 w-full h-1.5 bg-muted rounded-full overflow-hidden" aria-hidden>
                     <div
-                        className={cn("h-full rounded-full transition-all duration-1000 ease-out", color)}
-                        style={{ width: `${progress}%` }}
+                        className={cn('h-full rounded-full transition-all duration-1000 ease-out', barClass)}
+                        style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
                     />
                 </div>
             )}

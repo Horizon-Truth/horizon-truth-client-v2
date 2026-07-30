@@ -25,6 +25,11 @@ export interface GameState {
     lastSpreadSimulation: { reach: number; reshares: number; credibility_loss: number } | null;
     lastChoiceLabel: string | null;
     lastChoiceFeedback: string | null;
+    /** Whether the previous choice gained (true), lost (false) or kept (null) trust. */
+    lastChoiceCorrect: boolean | null;
+    lastTrustDelta: number;
+    /** The psychological trap attached to the last chosen option, if any. */
+    lastChoiceTrap: string | null;
     // Player identity
     reputationRole: string;
     currentStreak: number;
@@ -63,6 +68,9 @@ export const useGameStore = create<GameState>()(
             lastSpreadSimulation: null,
             lastChoiceLabel: null,
             lastChoiceFeedback: null,
+            lastChoiceCorrect: null,
+            lastTrustDelta: 0,
+            lastChoiceTrap: null,
             reputationRole: 'OBSERVER',
             currentStreak: 0,
 
@@ -165,7 +173,7 @@ export const useGameStore = create<GameState>()(
                 const { activeProgress, isLoading } = get();
                 if (!activeProgress || isLoading) return;
 
-                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null });
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null });
                 try {
                     const result = await engineService.submitChoice({
                         progressId: activeProgress.id,
@@ -179,6 +187,7 @@ export const useGameStore = create<GameState>()(
                             (c: any) => c.label === choiceKey || c.id === choiceKey
                         );
                         const spreadSim = choiceData?.spreadSimulation || result.spreadSimulation || null;
+                        const trustDelta = result.trustScoreDelta ?? choiceData?.scoreImpact ?? 0;
 
                         set({
                             activeProgress: {
@@ -190,13 +199,16 @@ export const useGameStore = create<GameState>()(
                             },
                             stats: {
                                 ...get().stats,
-                                trustScore: get().stats.trustScore + (result.trustScoreDelta ?? 0),
+                                trustScore: Math.min(100, Math.max(0, get().stats.trustScore + (result.trustScoreDelta ?? 0))),
                                 influence: result.influenceScore ?? get().stats.influence,
                                 accuracyRate: result.accuracyRate ?? get().stats.accuracyRate
                             },
                             lastSpreadSimulation: spreadSim,
                             lastChoiceLabel: choiceLabel || choiceKey,
                             lastChoiceFeedback: result.message || null,
+                            lastChoiceCorrect: trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0,
+                            lastTrustDelta: trustDelta,
+                            lastChoiceTrap: choiceData?.psychologicalTrap ?? null,
                             isLoading: false
                         });
                         // Phase 16: Prefetch next scene assets
@@ -213,7 +225,7 @@ export const useGameStore = create<GameState>()(
                                 // Optimistic update, ideally should fetch fresh stats
                                 missionsCompleted: get().stats.missionsCompleted + 1,
                                 experience: get().stats.experience + result.outcome.score,
-                                trustScore: get().stats.trustScore + (result.outcome.trustScoreDelta ?? 0),
+                                trustScore: Math.min(100, Math.max(0, get().stats.trustScore + (result.outcome.trustScoreDelta ?? 0))),
                                 influence: result.outcome.influenceScore ?? get().stats.influence
                             },
                             pendingBadges: result.badgesAwarded || []
@@ -238,11 +250,14 @@ export const useGameStore = create<GameState>()(
                 lastSpreadSimulation: null,
                 lastChoiceLabel: null,
                 lastChoiceFeedback: null,
+                lastChoiceCorrect: null,
+                lastTrustDelta: 0,
+                lastChoiceTrap: null,
             }),
 
             clearError: () => set({ error: null }),
 
-            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null }),
+            clearSpreadSimulation: () => set({ lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null }),
 
             removePendingBadge: (badgeId: string) => set(state => ({
                 pendingBadges: state.pendingBadges.filter(b => b.id !== badgeId)

@@ -33,33 +33,33 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
     const fetchScenarios = useCallback(async (pageNum: number) => {
         if (pageNum > 1) setLoadingMore(true);
         try {
-            const response = await engineService.getScenarios({ 
-                isActive: true, 
-                page: pageNum, 
-                limit: 10 
+            const response = await engineService.getScenarios({
+                isActive: true,
+                page: pageNum,
+                limit: 10
             } as any);
-            
+
             const newData = Array.isArray(response) ? response : (response.data || []);
             const totalCount = response.total || newData.length;
 
             setScenarios(prev => {
                 const combined = [...prev, ...newData];
                 // De-duplicate just in case
-                return Array.from(new Map(combined.map(item => [item.id, item])).values());
+                const deduped = Array.from(new Map(combined.map(item => [item.id, item])).values());
+                setHasMore(deduped.length < totalCount);
+                return deduped;
             });
-            
-            setHasMore(scenarios.length + newData.length < totalCount);
         } catch (err) {
             console.error('Failed to fetch scenarios', err);
             setHasMore(false);
         } finally {
             if (pageNum === 1) {
-                setTimeout(() => setLocalLoading(false), 800);
+                setLocalLoading(false);
             } else {
                 setLoadingMore(false);
             }
         }
-    }, [scenarios.length]);
+    }, []);
 
     useEffect(() => {
         fetchScenarios(page);
@@ -82,8 +82,8 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
         return (
             <div className="flex flex-col gap-6">
                 <div className="space-y-2 opacity-40">
-                    <h2 className="text-3xl font-extrabold tracking-tight">Active Operations</h2>
-                    <p className="text-lg">Scanning network for available protocols...</p>
+                    <h2 className="text-3xl font-extrabold tracking-tight">Learning Path</h2>
+                    <p className="text-lg">Loading your missions...</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <ScenarioSkeleton />
@@ -98,12 +98,12 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
         return (
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6">
                 <div className="w-20 h-20 bg-muted rounded-3xl flex items-center justify-center text-muted-foreground mb-2">
-                    <Info size={40} />
+                    <Info size={40} aria-hidden />
                 </div>
                 <div className="space-y-2">
-                    <h2 className="text-2xl font-bold">No Operations Available</h2>
+                    <h2 className="text-2xl font-bold">No missions yet</h2>
                     <p className="text-muted-foreground max-w-md mx-auto">
-                        There are currently no active protocol training operations. Please check back later.
+                        New missions are on the way. Check back soon — misinformation never sleeps, and neither do we.
                     </p>
                 </div>
             </div>
@@ -113,15 +113,15 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
     return (
         <div className="flex flex-col gap-6 animate-in fade-in duration-500 overflow-x-hidden">
             <div className="space-y-2 mb-4 text-center">
-                <h2 className="text-4xl font-extrabold tracking-tight">Protocol Training</h2>
-                <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-                    Complete missions to build your expertise.
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Learning Path</h2>
+                <p className="text-muted-foreground text-base sm:text-lg max-w-xl mx-auto">
+                    Each mission teaches you a new way misinformation works — and how to beat it.
                 </p>
             </div>
 
             <div className="relative max-w-3xl mx-auto w-full py-8 text-left">
                 {/* Continuous Central connecting line on the left (Desktop only) */}
-                <div className="absolute left-[3rem] top-12 bottom-[120px] w-2 bg-white/10 rounded-full hidden sm:block overflow-hidden z-0">
+                <div className="absolute left-[3rem] top-12 bottom-[120px] w-2 bg-foreground/10 rounded-full hidden sm:block overflow-hidden z-0">
                 </div>
 
                 <div className="flex flex-col gap-10 relative z-10 w-full">
@@ -144,13 +144,13 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                 <div className="relative w-20 sm:w-24 shrink-0 flex items-center justify-center z-20">
                                     {/* Connecting Line Segment for mobile */}
                                     {!isLast && (
-                                        <div className="absolute top-[90px] bottom-[-2.5rem] left-1/2 w-2 bg-white/10 -translate-x-1/2 sm:hidden rounded-full z-0" />
+                                        <div className="absolute top-[90px] bottom-[-2.5rem] left-1/2 w-2 bg-foreground/10 -translate-x-1/2 sm:hidden rounded-full z-0" />
                                     )}
 
                                     <div className="relative group rounded-full p-2">
                                         {/* SVG Progress Ring */}
                                         <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none">
-                                            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="8" className={isLocked ? "text-white/5" : "text-white/10"} />
+                                            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="8" className={isLocked ? "text-foreground/5" : "text-foreground/10"} />
                                             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="8"
                                                 strokeDasharray={`${accuracy * 2.89} 289`}
                                                 className={cn(
@@ -186,31 +186,31 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
 
                                 {/* Description Card - Right aside on desktop */}
                                 <div className={cn(
-                                    "flex-1 p-6 rounded-3xl border bg-card/40 backdrop-blur-md transition-all duration-300 shadow-xl",
-                                    isLocked ? "opacity-60 border-white/5" :
-                                        accuracy === 100 ? "border-emerald-500/30 bg-emerald-500/5 shadow-[0_10px_40px_rgba(16,185,129,0.05)]" :
-                                            "border-white/10 hover:border-primary/30 hover:bg-card/60"
+                                    "flex-1 p-6 rounded-3xl border bg-card transition-all duration-300 shadow-sm",
+                                    isLocked ? "opacity-60 border-border" :
+                                        accuracy === 100 ? "border-emerald-500/30 bg-emerald-500/5" :
+                                            "border-border hover:border-primary/30 hover:shadow-md"
                                 )}>
                                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-3">
                                         <div>
-                                            <h3 className={cn("text-xl font-bold", isLocked ? "text-muted-foreground" : accuracy === 100 ? "text-emerald-400" : "text-foreground")}>
+                                            <h3 className={cn("text-xl font-bold", isLocked ? "text-muted-foreground" : accuracy === 100 ? "text-emerald-600 dark:text-emerald-400" : "text-foreground")}>
                                                 {scenario.title}
                                             </h3>
                                             <div className="flex flex-wrap gap-2 mt-2">
                                                 <span className={cn(
                                                     "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest",
-                                                    scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-500" :
-                                                        scenario.difficulty === 'MEDIUM' ? "bg-amber-500/10 text-amber-500" : "bg-red-500/10 text-red-500"
+                                                    scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                                                        scenario.difficulty === 'MEDIUM' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-red-500/10 text-red-500"
                                                 )}>
                                                     {scenario.difficulty}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-2.5 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2.5 py-0.5 rounded-full">
                                                     Lvl {scenario.gameLevel?.level || 0}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-2.5 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2.5 py-0.5 rounded-full">
                                                     Target: {scenario.minimumScore}%
                                                 </span>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 px-2.5 py-0.5 rounded-full">
+                                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2.5 py-0.5 rounded-full">
                                                     {scenario.scenarioType}
                                                 </span>
                                             </div>
@@ -218,7 +218,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
 
                                         {/* Stats */}
                                         {!isLocked && hasPlayed && (
-                                            <div className="flex items-center gap-4 text-sm font-bold bg-white/5 px-4 py-2 rounded-xl border border-white/5 shadow-inner">
+                                            <div className="flex items-center gap-4 text-sm font-bold bg-muted px-4 py-2 rounded-xl border border-border">
                                                 <span className={accuracy === 100 ? "text-emerald-500" : "text-primary"}>
                                                     {accuracy}% Accuracy
                                                 </span>
@@ -274,14 +274,14 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                 <div className="flex justify-center py-10">
                     <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest animate-pulse">Loading more operations...</p>
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest animate-pulse">Loading more missions...</p>
                     </div>
                 </div>
             )}
             
             {!hasMore && scenarios.length > 10 && (
                 <div className="text-center py-10 opacity-40">
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">End of encrypted records</p>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">You've reached the end — more missions coming soon</p>
                 </div>
             )}
         </div>
