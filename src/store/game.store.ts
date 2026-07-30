@@ -53,6 +53,8 @@ export interface GameState {
     missionImpact: MissionImpact | null;
     /** Per-day quest progress (Phase 14); rolls over at local midnight. */
     dailyLedger: DailyLedger | null;
+    /** Career totals across all completed missions (Phase 13 achievements). */
+    lifetimeImpact: { reached: number; preventedReach: number };
 
     // Actions
     fetchGameHistory: () => Promise<void>;
@@ -98,6 +100,7 @@ export const useGameStore = create<GameState>()(
             lastConfidence: null,
             missionImpact: null,
             dailyLedger: null,
+            lifetimeImpact: { reached: 0, preventedReach: 0 },
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -315,9 +318,16 @@ export const useGameStore = create<GameState>()(
                         );
                         const finalDelta = result.outcome?.trustScoreDelta ?? finalChoice?.scoreImpact ?? 0;
                         const finalCorrect = finalDelta === 0 ? null : finalDelta > 0;
+                        const finalImpact = foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect);
+                        const career = get().lifetimeImpact ?? { reached: 0, preventedReach: 0 };
                         set({
                             ...recordDecision(finalCorrect, finalChoice?.psychologicalTrap),
-                            missionImpact: foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect),
+                            missionImpact: finalImpact,
+                            // Career totals accumulate once, when a mission ends.
+                            lifetimeImpact: {
+                                reached: career.reached + finalImpact.reached,
+                                preventedReach: career.preventedReach + finalImpact.preventedReach,
+                            },
                             dailyLedger: bumpDaily({
                                 missions: 1,
                                 correctDecisions: finalCorrect === true ? 1 : 0,
@@ -385,6 +395,7 @@ export const useGameStore = create<GameState>()(
                 calibration: state.calibration,
                 missionImpact: state.missionImpact,
                 dailyLedger: state.dailyLedger,
+                lifetimeImpact: state.lifetimeImpact,
             }),
         }
     )

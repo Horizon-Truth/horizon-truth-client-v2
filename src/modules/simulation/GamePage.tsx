@@ -145,6 +145,14 @@ export default function GamePage() {
                                     </span>
                                 </Button>
                                 <Button
+                                    onClick={() => navigate('/dashboard/achievements')}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+                                >
+                                    <Trophy size={16} aria-hidden /> Achievements
+                                </Button>
+                                <Button
                                     onClick={() => setIsGuideOpen(true)}
                                     variant="ghost"
                                     size="sm"
