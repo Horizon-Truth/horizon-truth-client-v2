@@ -8,6 +8,7 @@ import { skillForTechnique, XP_PER_CORRECT_DECISION, XP_PER_INCORRECT_DECISION }
 import type { SkillProgress } from '@/modules/gamification/skills';
 import { EMPTY_CALIBRATION, confidenceKeyForLevel } from '@/modules/gamification/confidence';
 import type { ConfidenceLevel, CalibrationLedger } from '@/modules/gamification/confidence';
+import { mergeSkillBooks, mergeCalibrations } from '@/modules/gamification/learning-profile';
 
 export interface GameStats {
     trustScore: number;
@@ -118,10 +119,20 @@ export const useGameStore = create<GameState>()(
             fetchGameHistory: async () => {
                 set({ isLoading: true, error: null });
                 try {
-                    const [history, playerStats] = await Promise.all([
+                    const [history, playerStats, learningProfile] = await Promise.all([
                         engineService.getMyGameHistory(),
-                        userService.getMyStats().catch(() => null) // graceful fallback
+                        userService.getMyStats().catch(() => null), // graceful fallback
+                        userService.getMyLearningProfile().catch(() => null) // guests / older servers
                     ]);
+
+                    // Reconcile server-synced ledgers with local ones (element-wise
+                    // max, so neither side can lose progress).
+                    if (learningProfile) {
+                        set(state => ({
+                            skillBook: mergeSkillBooks(state.skillBook, learningProfile.skillBook),
+                            calibration: mergeCalibrations(state.calibration, learningProfile.calibration),
+                        }));
+                    }
 
                     // Calculate average accuracy from completed items in history
                     const completedGames = history.filter((game: GameProgress) => game.status === 'COMPLETED' && typeof game.accuracyRate === 'number');
@@ -209,6 +220,9 @@ export const useGameStore = create<GameState>()(
                             [key]: { correct: bucket.correct + (correct ? 1 : 0), total: bucket.total + 1 },
                         };
                     }
+                    // Fire-and-forget sync; the server merges element-wise max,
+                    // and guests / offline players simply keep local state.
+                    userService.saveMyLearningProfile({ skillBook, calibration }).catch(() => { });
                     return { skillBook, calibration };
                 };
 
