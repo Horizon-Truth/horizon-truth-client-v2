@@ -3,9 +3,10 @@ import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Play, Loader2, Info, Trophy, Lock, Star } from 'lucide-react';
+import { Play, Loader2, Info, Trophy, Lock, Star, ChevronUp } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
+import { masteryFor, nextMasteryGoal } from '@/modules/gamification/mastery';
 
 export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenario) => void, guestMode?: boolean }) {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -130,6 +131,11 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                         const accuracy = scenario.userRecord?.bestAccuracyRate ?? 0;
                         const hasPlayed = (scenario.userRecord?.attempts || 0) > 0;
                         const prereqScenario = scenario.unlockScenarioId ? scenarios.find(s => s.id === scenario.unlockScenarioId) : null;
+                        const masteryRecord = scenario.userRecord
+                            ? { ...scenario.userRecord, totalPossibleScore: scenario.totalPossibleScore }
+                            : null;
+                        const mastery = masteryFor(masteryRecord);
+                        const masteryGoal = !isLocked && hasPlayed ? nextMasteryGoal(masteryRecord) : null;
 
                         const isLast = index === scenarios.length - 1;
 
@@ -218,10 +224,20 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
 
                                         {/* Stats */}
                                         {!isLocked && hasPlayed && (
-                                            <div className="flex items-center gap-4 text-sm font-bold bg-muted px-4 py-2 rounded-xl border border-border">
-                                                <span className={accuracy === 100 ? "text-emerald-500" : "text-primary"}>
-                                                    {accuracy}% Accuracy
-                                                </span>
+                                            <div className="flex items-center gap-3 shrink-0">
+                                                {mastery && (
+                                                    <span className={cn(
+                                                        "inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-black uppercase tracking-wider",
+                                                        mastery.chip, mastery.color
+                                                    )}>
+                                                        <span aria-hidden>{mastery.emoji}</span> {mastery.name}
+                                                    </span>
+                                                )}
+                                                <div className="flex items-center gap-4 text-sm font-bold bg-muted px-4 py-2 rounded-xl border border-border">
+                                                    <span className={accuracy === 100 ? "text-emerald-500" : "text-primary"}>
+                                                        {accuracy}% Accuracy
+                                                    </span>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -253,6 +269,19 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                             {isLocked ? <Lock size={16} className="mr-2" /> : null}
                                             {isLocked ? 'Locked' : scenario.activeProgressId ? 'Resume Mission' : accuracy === 100 ? 'Replay Mission' : hasPlayed ? 'Improve Score' : 'Start Mission'}
                                         </Button>
+
+                                        {/* Replay motivation: next mastery tier */}
+                                        {masteryGoal && (
+                                            <div className={cn(
+                                                "flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border",
+                                                masteryGoal.tier.chip, masteryGoal.tier.color
+                                            )}>
+                                                <ChevronUp size={14} aria-hidden />
+                                                <span>
+                                                    Next: {masteryGoal.tier.emoji} {masteryGoal.tier.name} — {masteryGoal.requirement}
+                                                </span>
+                                            </div>
+                                        )}
 
                                         {/* Display Unlock Requirement if Locked */}
                                         {isLocked && prereqScenario && (

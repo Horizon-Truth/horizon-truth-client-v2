@@ -66,6 +66,7 @@ const BlogEditPage = lazy(() => import('./modules/resources/admin/BlogEditPage')
 const ResourceManagementPage = lazy(() => import('./modules/resources/admin/ResourceManagementPage'));
 const ResourceCreatePage = lazy(() => import('./modules/resources/admin/ResourceCreatePage'));
 const ResourceEditPage = lazy(() => import('./modules/resources/admin/ResourceEditPage'));
+const FieldManualPage = lazy(() => import('./modules/gamification/pages/FieldManualPage'));
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -140,6 +141,7 @@ function App() {
                 <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>}>
                   <Routes>
                     <Route path="game" element={<GamePage />} />
+                    <Route path="manual" element={<FieldManualPage />} />
                     <Route path="*" element={
                       <MainLayout>
                         <Routes>

@@ -15,6 +15,7 @@ import {
     HelpCircle,
     Sparkles,
     CheckCircle2,
+    BookOpen,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { ScenarioList } from '../engine/components/ScenarioList';
@@ -27,10 +28,12 @@ import AddFeedbackModal from '../engine/components/AddFeedbackModal';
 import { useNavigate } from 'react-router-dom';
 import { getRank, getNextRank, rankProgress, xpToNextRank } from '@/modules/gamification/progression';
 import { HowToPlayDialog, hasSeenHowToPlay } from '@/modules/gamification/components/HowToPlayDialog';
+import { SkillsPanel } from '@/modules/gamification/components/SkillsPanel';
+import { MANUAL_ARTICLES, isArticleUnlocked } from '@/modules/gamification/encyclopedia';
 
 export default function GamePage() {
     const { isLowEndDevice } = useDevice();
-    const { stats, history, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge, currentStreak } = useGameStore();
+    const { stats, history, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge, currentStreak, skillBook, calibration } = useGameStore();
     const { user, logout } = useAuthStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isGuideOpen, setIsGuideOpen] = useState(false);
@@ -53,6 +56,11 @@ export default function GamePage() {
         const today = new Date().toDateString();
         return history.filter(g => g.status === 'COMPLETED' && g.completedAt && new Date(g.completedAt).toDateString() === today).length;
     }, [history]);
+
+    const unlockedArticleCount = useMemo(() => {
+        const snapshot = { missionsCompleted: stats.missionsCompleted, xp: stats.experience };
+        return MANUAL_ARTICLES.filter(a => isArticleUnlocked(a, snapshot)).length;
+    }, [stats.missionsCompleted, stats.experience]);
 
     if (!isHydrated) return null;
 
@@ -145,14 +153,27 @@ export default function GamePage() {
 
                         {/* Actions */}
                         <div className="flex lg:flex-col items-center lg:items-end justify-between gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
-                            <Button
-                                onClick={() => setIsGuideOpen(true)}
-                                variant="ghost"
-                                size="sm"
-                                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
-                            >
-                                <HelpCircle size={16} aria-hidden /> How to play
-                            </Button>
+                            <div className="flex items-center gap-1">
+                                <Button
+                                    onClick={() => navigate('/dashboard/manual')}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="rounded-xl font-bold gap-2 text-primary hover:text-primary hover:bg-primary/10"
+                                >
+                                    <BookOpen size={16} aria-hidden /> Field Manual
+                                    <span className="px-1.5 py-0.5 rounded-md bg-primary/15 text-[10px] font-black tabular-nums">
+                                        {unlockedArticleCount}/{MANUAL_ARTICLES.length}
+                                    </span>
+                                </Button>
+                                <Button
+                                    onClick={() => setIsGuideOpen(true)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+                                >
+                                    <HelpCircle size={16} aria-hidden /> How to play
+                                </Button>
+                            </div>
                             <div className="flex items-center gap-1">
                                 <Button
                                     onClick={() => setIsFeedbackOpen(true)}
@@ -214,6 +235,9 @@ export default function GamePage() {
                             icon={<Flame className="text-orange-500" size={20} aria-hidden />}
                         />
                     </section>
+
+                    {/* Skill graph + calibration insight */}
+                    <SkillsPanel skillBook={skillBook} calibration={calibration} />
 
                     {/* Learning path */}
                     <main className="border border-border rounded-3xl p-4 sm:p-10 bg-card shadow-sm relative overflow-hidden">

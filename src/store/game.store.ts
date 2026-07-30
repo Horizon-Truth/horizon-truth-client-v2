@@ -3,6 +3,11 @@ import { persist } from 'zustand/middleware';
 import { engineService } from '@/services/engine.service';
 import { userService } from '@/services/user.service';
 import type { GameProgress, GameOutcome } from '@/services/engine.service';
+import { matchTechnique } from '@/modules/gamification/learning-content';
+import { skillForTechnique, XP_PER_CORRECT_DECISION, XP_PER_INCORRECT_DECISION } from '@/modules/gamification/skills';
+import type { SkillProgress } from '@/modules/gamification/skills';
+import { EMPTY_CALIBRATION, confidenceKeyForLevel } from '@/modules/gamification/confidence';
+import type { ConfidenceLevel, CalibrationLedger } from '@/modules/gamification/confidence';
 
 export interface GameStats {
     trustScore: number;
@@ -33,11 +38,17 @@ export interface GameState {
     // Player identity
     reputationRole: string;
     currentStreak: number;
+    /** Per-skill competency ledger (Phase 7), keyed by skill key. */
+    skillBook: Record<string, SkillProgress>;
+    /** Confidence-vs-accuracy ledger (Phase 15). */
+    calibration: CalibrationLedger;
+    /** Confidence stated for the last submitted choice. */
+    lastConfidence: ConfidenceLevel | null;
 
     // Actions
     fetchGameHistory: () => Promise<void>;
     startGame: (scenarioId: string) => Promise<void>;
-    submitChoice: (sceneId: string, choiceKey: string, choiceLabel?: string) => Promise<void>;
+    submitChoice: (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => Promise<void>;
     loadProgress: (progressId: string) => Promise<void>;
     resetGame: () => void;
     clearError: () => void;
@@ -73,6 +84,9 @@ export const useGameStore = create<GameState>()(
             lastChoiceTrap: null,
             reputationRole: 'OBSERVER',
             currentStreak: 0,
+            skillBook: {},
+            calibration: EMPTY_CALIBRATION,
+            lastConfidence: null,
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -169,11 +183,36 @@ export const useGameStore = create<GameState>()(
                 }
             },
 
-            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string) => {
+            submitChoice: async (sceneId: string, choiceKey: string, choiceLabel?: string, confidence?: ConfidenceLevel) => {
                 const { activeProgress, isLoading } = get();
                 if (!activeProgress || isLoading) return;
 
-                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null });
+                // Attribute a resolved decision to the skill graph and calibration ledger.
+                const recordDecision = (correct: boolean | null, trap: string | null | undefined) => {
+                    if (correct === null) return {};
+                    const skill = skillForTechnique(matchTechnique(trap)?.key);
+                    const prev = get().skillBook[skill.key] ?? { xp: 0, correct: 0, total: 0 };
+                    const skillBook = {
+                        ...get().skillBook,
+                        [skill.key]: {
+                            xp: prev.xp + (correct ? XP_PER_CORRECT_DECISION : XP_PER_INCORRECT_DECISION),
+                            correct: prev.correct + (correct ? 1 : 0),
+                            total: prev.total + 1,
+                        },
+                    };
+                    let calibration = get().calibration;
+                    if (confidence) {
+                        const key = confidenceKeyForLevel(confidence);
+                        const bucket = calibration[key] ?? { correct: 0, total: 0 };
+                        calibration = {
+                            ...calibration,
+                            [key]: { correct: bucket.correct + (correct ? 1 : 0), total: bucket.total + 1 },
+                        };
+                    }
+                    return { skillBook, calibration };
+                };
+
+                set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null, lastConfidence: confidence ?? null });
                 try {
                     const result = await engineService.submitChoice({
                         progressId: activeProgress.id,
@@ -188,8 +227,10 @@ export const useGameStore = create<GameState>()(
                         );
                         const spreadSim = choiceData?.spreadSimulation || result.spreadSimulation || null;
                         const trustDelta = result.trustScoreDelta ?? choiceData?.scoreImpact ?? 0;
+                        const choiceCorrect = trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0;
 
                         set({
+                            ...recordDecision(choiceCorrect, choiceData?.psychologicalTrap),
                             activeProgress: {
                                 ...activeProgress,
                                 currentScene: result.nextScene,
@@ -206,7 +247,7 @@ export const useGameStore = create<GameState>()(
                             lastSpreadSimulation: spreadSim,
                             lastChoiceLabel: choiceLabel || choiceKey,
                             lastChoiceFeedback: result.message || null,
-                            lastChoiceCorrect: trustDelta === 0 ? (spreadSim ? false : null) : trustDelta > 0,
+                            lastChoiceCorrect: choiceCorrect,
                             lastTrustDelta: trustDelta,
                             lastChoiceTrap: choiceData?.psychologicalTrap ?? null,
                             isLoading: false
@@ -214,7 +255,12 @@ export const useGameStore = create<GameState>()(
                         // Phase 16: Prefetch next scene assets
                         get().prefetchAssets(result.nextScene);
                     } else if (result.status === 'game_completed') {
+                        const finalChoice = activeProgress.currentScene?.choices?.find(
+                            (c: any) => c.label === choiceKey || c.id === choiceKey
+                        );
+                        const finalDelta = result.outcome?.trustScoreDelta ?? finalChoice?.scoreImpact ?? 0;
                         set({
+                            ...recordDecision(finalDelta === 0 ? null : finalDelta > 0, finalChoice?.psychologicalTrap),
                             activeProgress: null,
                             currentOutcome: result.outcome,
                             isLoading: false,
@@ -253,6 +299,7 @@ export const useGameStore = create<GameState>()(
                 lastChoiceCorrect: null,
                 lastTrustDelta: 0,
                 lastChoiceTrap: null,
+                lastConfidence: null,
             }),
 
             clearError: () => set({ error: null }),
@@ -271,6 +318,8 @@ export const useGameStore = create<GameState>()(
                 currentOutcome: state.currentOutcome,
                 reputationRole: state.reputationRole,
                 currentStreak: state.currentStreak,
+                skillBook: state.skillBook,
+                calibration: state.calibration,
             }),
         }
     )

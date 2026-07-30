@@ -66,6 +66,34 @@ export const TECHNIQUES: ManipulationTechnique[] = [
         howToSpot: 'Check the exact handle and domain character by character. “bbc-news24.com” is not the BBC.',
         example: 'A screenshot of a “breaking news” tweet from an account with one letter changed in the name.',
     },
+    {
+        key: 'deepfake',
+        title: 'Synthetic Media',
+        description: 'AI-generated or AI-altered images, video, or audio that show people saying or doing things that never happened.',
+        howToSpot: 'Look for warped hands, jewelry, and text; unnatural blinking or lip-sync; and — most importantly — whether any trusted outlet carries the same footage.',
+        example: 'A “leaked” audio clip of a politician that no journalist can trace to a real recording.',
+    },
+    {
+        key: 'clickbait',
+        title: 'Clickbait Framing',
+        description: 'Headlines engineered for clicks — curiosity gaps, superlatives, and promises the article never delivers. The business model rewards attention, not accuracy.',
+        howToSpot: '“You won\'t believe…”, “Number 7 will shock you”, or a headline that asks a question it never answers. If the payoff is withheld, the headline is the product.',
+        example: 'A “miracle cure DOCTORS HATE” article that resolves to an ad for supplements.',
+    },
+    {
+        key: 'cherry-picking',
+        title: 'Cherry-Picking',
+        description: 'Presenting only the evidence that supports a claim while omitting the fuller record that contradicts it. Each fact may be true; the picture is false.',
+        howToSpot: 'Ask what\'s missing: the full time range, the control group, the other studies. One cold day doesn\'t disprove a warming trend.',
+        example: 'Quoting the single study that found an effect while ignoring the ten that found none.',
+    },
+    {
+        key: 'conspiracy',
+        title: 'Conspiracy Framing',
+        description: 'Explaining events through hidden all-powerful plotters, where every piece of counter-evidence becomes proof of the cover-up. The theory is unfalsifiable by design.',
+        howToSpot: 'Ask what evidence would change the believer\'s mind. If the answer is “nothing — that\'s what they want you to think”, it\'s a closed loop, not an argument.',
+        example: '“The absence of evidence just shows how deep it goes.”',
+    },
 ];
 
 export interface VerificationTip {
@@ -91,6 +119,10 @@ export function matchTechnique(raw?: string | null): ManipulationTechnique | nul
     if (!raw) return null;
     const s = raw.toLowerCase();
     const patterns: [RegExp, string][] = [
+        [/deepfake|synthetic|ai[- ](generated|image|video|audio|content)|face swap|voice clone/, 'deepfake'],
+        [/clickbait|curiosity gap|headline|you won'?t believe/, 'clickbait'],
+        [/cherry|selective|omit|one[- ]sided|incomplete (data|evidence)/, 'cherry-picking'],
+        [/conspir|cover[- ]?up|hidden (agenda|plot)|they don'?t want/, 'conspiracy'],
         [/emotion|fear|anger|outrage|panic/, 'emotional'],
         [/urgen|hurry|act now|deadline|before it/, 'urgency'],
         [/authorit|expert|doctor|scientist|official/, 'authority'],
