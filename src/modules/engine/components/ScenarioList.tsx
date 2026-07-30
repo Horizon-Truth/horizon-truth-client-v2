@@ -1,12 +1,15 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, Fragment } from 'react';
 import type { Scenario } from '@/services/engine.service';
 import { engineService } from '@/services/engine.service';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Play, Loader2, Info, Trophy, Lock, Star, ChevronUp } from 'lucide-react';
+import { Play, Loader2, Info, Trophy, Lock, Star, ChevronUp, Compass, Sparkles, BookMarked } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { ScenarioSkeleton } from './play/ImmersiveSkeleton';
 import { masteryFor, nextMasteryGoal } from '@/modules/gamification/mastery';
+import { recommendScenario } from '@/modules/gamification/recommendation';
+import { campaignTitle, campaignWorldState } from '@/modules/gamification/campaigns';
+import type { CampaignWorldState } from '@/modules/gamification/campaigns';
 
 export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenario) => void, guestMode?: boolean }) {
     const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -16,7 +19,38 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
     const [localLoading, setLocalLoading] = useState(true);
     const [loadingScenarioId, setLoadingScenarioId] = useState<string | null>(null);
     const gameStore = useGameStore();
+    const skillBook = useGameStore(s => s.skillBook);
     const observer = useRef<IntersectionObserver | null>(null);
+
+    // Adaptive pick (Phase 9): trains the weakest skill / covers new ground.
+    // Guest mode has no skill history, so recommendations stay generic there.
+    const recommendation = useMemo(
+        () => recommendScenario(scenarios, skillBook),
+        [scenarios, skillBook]
+    );
+
+    // Campaign arcs (Phase 3): chapter numbering + world state per campaignTag.
+    const campaignMeta = useMemo(() => {
+        const byTag = new Map<string, Scenario[]>();
+        for (const s of scenarios) {
+            if (s.campaignTag) byTag.set(s.campaignTag, [...(byTag.get(s.campaignTag) ?? []), s]);
+        }
+        const meta = new Map<string, { title: string; chapter: number; total: number; isArcStart: boolean; state: CampaignWorldState }>();
+        const seen = new Map<string, number>();
+        for (const s of scenarios) {
+            if (!s.campaignTag) continue;
+            const chapter = (seen.get(s.campaignTag) ?? 0) + 1;
+            seen.set(s.campaignTag, chapter);
+            meta.set(s.id, {
+                title: campaignTitle(s.campaignTag),
+                chapter,
+                total: byTag.get(s.campaignTag)!.length,
+                isArcStart: chapter === 1,
+                state: campaignWorldState(byTag.get(s.campaignTag)!),
+            });
+        }
+        return meta;
+    }, [scenarios]);
 
     const lastElementRef = useCallback((node: HTMLDivElement | null) => {
         if (loadingMore || !hasMore) return;
@@ -120,6 +154,48 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                 </p>
             </div>
 
+            {/* Adaptive recommendation (Phase 9) */}
+            {recommendation && (
+                <section
+                    aria-label="Recommended mission"
+                    className="max-w-3xl mx-auto w-full rounded-3xl border border-primary/25 bg-primary/5 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-500"
+                >
+                    <div className="w-12 h-12 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                        <Compass size={22} aria-hidden />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+                            {recommendation.resume ? 'Continue your mission' : 'Recommended next'}
+                        </p>
+                        <h3 className="font-black tracking-tight leading-snug truncate">{recommendation.scenario.title}</h3>
+                        <div className="flex flex-wrap gap-1.5">
+                            {recommendation.reasons.slice(0, 3).map((reason, i) => (
+                                <span key={i} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-card border border-border text-[11px] font-semibold text-muted-foreground">
+                                    <Sparkles size={10} className="text-primary shrink-0" aria-hidden />
+                                    {reason}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <Button
+                        onClick={() => {
+                            if (recommendation.scenario.activeProgressId) {
+                                gameStore.loadProgress(recommendation.scenario.activeProgressId);
+                            } else {
+                                handleStartGame(recommendation.scenario);
+                            }
+                        }}
+                        disabled={loadingScenarioId !== null}
+                        className="h-11 px-6 rounded-xl font-bold shrink-0 bg-primary text-white shadow-lg shadow-primary/25 active:scale-95 transition-all"
+                    >
+                        {loadingScenarioId === recommendation.scenario.id
+                            ? <Loader2 className="w-4 h-4 animate-spin mr-2" aria-hidden />
+                            : <Play size={16} className="mr-2" aria-hidden />}
+                        {recommendation.resume ? 'Resume' : 'Start'}
+                    </Button>
+                </section>
+            )}
+
             <div className="relative max-w-3xl mx-auto w-full py-8 text-left">
                 {/* Continuous Central connecting line on the left (Desktop only) */}
                 <div className="absolute left-[3rem] top-12 bottom-[120px] w-2 bg-foreground/10 rounded-full hidden sm:block overflow-hidden z-0">
@@ -138,10 +214,12 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                         const masteryGoal = !isLocked && hasPlayed ? nextMasteryGoal(masteryRecord) : null;
 
                         const isLast = index === scenarios.length - 1;
+                        const arc = campaignMeta.get(scenario.id);
 
                         return (
-                            <div 
-                                key={scenario.id} 
+                            <Fragment key={scenario.id}>
+                            {arc?.isArcStart && <CampaignHeader title={arc.title} state={arc.state} />}
+                            <div
                                 ref={isLast ? lastElementRef : null}
                                 className="relative flex flex-col sm:flex-row items-center sm:items-stretch gap-6 w-full"
                             >
@@ -203,6 +281,16 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                                 {scenario.title}
                                             </h3>
                                             <div className="flex flex-wrap gap-2 mt-2">
+                                                {recommendation?.scenario.id === scenario.id && (
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/15 text-primary border border-primary/25">
+                                                        <Compass size={10} aria-hidden /> Recommended
+                                                    </span>
+                                                )}
+                                                {arc && (
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                                                        <BookMarked size={10} aria-hidden /> Chapter {arc.chapter} of {arc.total}
+                                                    </span>
+                                                )}
                                                 <span className={cn(
                                                     "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest",
                                                     scenario.difficulty === 'EASY' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
@@ -293,6 +381,7 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                                     </div>
                                 </div>
                             </div>
+                            </Fragment>
                         );
                     })}
                 </div>
@@ -314,5 +403,52 @@ export function ScenarioList({ onStartGame }: { onStartGame?: (scenario: Scenari
                 </div>
             )}
         </div>
+    );
+}
+
+const WORLD_STATE_STYLES: Record<CampaignWorldState['tone'], { chip: string; bar: string }> = {
+    neutral: { chip: 'text-muted-foreground', bar: 'bg-muted-foreground/40' },
+    thriving: { chip: 'text-emerald-600 dark:text-emerald-400', bar: 'bg-emerald-500' },
+    contested: { chip: 'text-amber-600 dark:text-amber-400', bar: 'bg-amber-500' },
+    crisis: { chip: 'text-red-600 dark:text-red-400', bar: 'bg-red-500' },
+};
+
+/** Story-arc divider: campaign name, arc progress, and the community's state. */
+function CampaignHeader({ title, state }: { title: string; state: CampaignWorldState }) {
+    const styles = WORLD_STATE_STYLES[state.tone];
+    return (
+        <section
+            aria-label={`Campaign: ${title}`}
+            className="w-full rounded-3xl border border-border bg-gradient-to-br from-violet-500/10 to-primary/5 p-5 sm:p-6 space-y-3"
+        >
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <BookMarked size={16} className="text-violet-500 shrink-0" aria-hidden />
+                    <h3 className="font-black tracking-tight truncate">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-violet-600 dark:text-violet-400 block">Story campaign</span>
+                        {title}
+                    </h3>
+                </div>
+                <span className="text-xs font-bold text-muted-foreground whitespace-nowrap">
+                    {state.completed} of {state.total} chapters complete
+                </span>
+            </div>
+            <div
+                className="w-full h-2 bg-muted rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={state.pct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${title} campaign progress`}
+            >
+                <div className={cn('h-full rounded-full transition-all duration-1000 ease-out', styles.bar)} style={{ width: `${state.pct}%` }} />
+            </div>
+            <p className={cn('text-xs font-semibold leading-relaxed italic', styles.chip)}>
+                {state.narrative}
+                {state.avgAccuracy !== null && (
+                    <span className="not-italic text-muted-foreground font-medium"> · {state.avgAccuracy}% campaign accuracy</span>
+                )}
+            </p>
+        </section>
     );
 }

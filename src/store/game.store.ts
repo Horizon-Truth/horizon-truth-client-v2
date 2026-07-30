@@ -9,6 +9,8 @@ import type { SkillProgress } from '@/modules/gamification/skills';
 import { EMPTY_CALIBRATION, confidenceKeyForLevel } from '@/modules/gamification/confidence';
 import type { ConfidenceLevel, CalibrationLedger } from '@/modules/gamification/confidence';
 import { mergeSkillBooks, mergeCalibrations } from '@/modules/gamification/learning-profile';
+import { emptyImpact, applyDecisionImpact } from '@/modules/gamification/impact';
+import type { MissionImpact } from '@/modules/gamification/impact';
 
 export interface GameStats {
     trustScore: number;
@@ -45,6 +47,8 @@ export interface GameState {
     calibration: CalibrationLedger;
     /** Confidence stated for the last submitted choice. */
     lastConfidence: ConfidenceLevel | null;
+    /** Community-impact ledger for the current/just-finished mission (Phase 4). */
+    missionImpact: MissionImpact | null;
 
     // Actions
     fetchGameHistory: () => Promise<void>;
@@ -88,6 +92,7 @@ export const useGameStore = create<GameState>()(
             skillBook: {},
             calibration: EMPTY_CALIBRATION,
             lastConfidence: null,
+            missionImpact: null,
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -178,7 +183,7 @@ export const useGameStore = create<GameState>()(
                 set({ isLoading: true, error: null, currentOutcome: null });
                 try {
                     const progress = await engineService.startGame(scenarioId);
-                    set({ activeProgress: progress, isLoading: false });
+                    set({ activeProgress: progress, isLoading: false, missionImpact: emptyImpact(progress.id) });
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to start game', isLoading: false });
                 }
@@ -188,7 +193,14 @@ export const useGameStore = create<GameState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const progress = await engineService.getGameProgress(progressId);
-                    set({ activeProgress: progress, isLoading: false });
+                    set(state => ({
+                        activeProgress: progress,
+                        isLoading: false,
+                        // Keep the impact ledger only if it belongs to this mission.
+                        missionImpact: state.missionImpact?.progressId === progress.id
+                            ? state.missionImpact
+                            : emptyImpact(progress.id),
+                    }));
                 } catch (error: any) {
                     set({ error: error.message || 'Failed to load progress', isLoading: false });
                 }
@@ -226,6 +238,17 @@ export const useGameStore = create<GameState>()(
                     return { skillBook, calibration };
                 };
 
+                // Fold this decision into the mission's community-impact ledger.
+                const foldImpact = (
+                    spread: { reach: number; reshares: number; credibility_loss: number } | null,
+                    correct: boolean | null,
+                ) => {
+                    const current = get().missionImpact?.progressId === activeProgress.id
+                        ? get().missionImpact!
+                        : emptyImpact(activeProgress.id);
+                    return applyDecisionImpact(current, spread, correct, activeProgress.currentScene?.choices);
+                };
+
                 set({ isLoading: true, error: null, lastSpreadSimulation: null, lastChoiceLabel: null, lastChoiceFeedback: null, lastChoiceCorrect: null, lastTrustDelta: 0, lastChoiceTrap: null, lastConfidence: confidence ?? null });
                 try {
                     const result = await engineService.submitChoice({
@@ -245,6 +268,7 @@ export const useGameStore = create<GameState>()(
 
                         set({
                             ...recordDecision(choiceCorrect, choiceData?.psychologicalTrap),
+                            missionImpact: foldImpact(spreadSim, choiceCorrect),
                             activeProgress: {
                                 ...activeProgress,
                                 currentScene: result.nextScene,
@@ -273,8 +297,10 @@ export const useGameStore = create<GameState>()(
                             (c: any) => c.label === choiceKey || c.id === choiceKey
                         );
                         const finalDelta = result.outcome?.trustScoreDelta ?? finalChoice?.scoreImpact ?? 0;
+                        const finalCorrect = finalDelta === 0 ? null : finalDelta > 0;
                         set({
-                            ...recordDecision(finalDelta === 0 ? null : finalDelta > 0, finalChoice?.psychologicalTrap),
+                            ...recordDecision(finalCorrect, finalChoice?.psychologicalTrap),
+                            missionImpact: foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect),
                             activeProgress: null,
                             currentOutcome: result.outcome,
                             isLoading: false,
@@ -314,6 +340,7 @@ export const useGameStore = create<GameState>()(
                 lastTrustDelta: 0,
                 lastChoiceTrap: null,
                 lastConfidence: null,
+                missionImpact: null,
             }),
 
             clearError: () => set({ error: null }),
@@ -334,6 +361,7 @@ export const useGameStore = create<GameState>()(
                 currentStreak: state.currentStreak,
                 skillBook: state.skillBook,
                 calibration: state.calibration,
+                missionImpact: state.missionImpact,
             }),
         }
     )

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '@/store/game.store';
 import { Button } from '@/shared/components/ui/button';
-import { Trophy, LayoutDashboard, ShieldCheck, Activity, Target, TrendingDown, Shield, Globe, Sparkles, BookOpen, Brain, GraduationCap, Lightbulb } from 'lucide-react';
+import { Trophy, LayoutDashboard, ShieldCheck, Activity, Target, TrendingDown, Shield, Globe, Sparkles, BookOpen, Brain, GraduationCap, Lightbulb, Users, Share2, ShieldAlert } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { InvestigationReveal } from './play/InvestigationReveal';
 import PlayerFeedbackModal from './play/PlayerFeedbackModal';
@@ -11,6 +11,7 @@ import type { Scenario } from '@/services/engine.service';
 import { getRank, getNextRank, rankProgress, xpToNextRank } from '@/modules/gamification/progression';
 import { Confetti } from '@/modules/gamification/components/Confetti';
 import { tipForSeed } from '@/modules/gamification/learning-content';
+import { hasImpact, impactVerdict, formatPeople } from '@/modules/gamification/impact';
 
 const NARRATIVE_CONFIG: Record<string, {
     title: string;
@@ -45,7 +46,7 @@ const NARRATIVE_CONFIG: Record<string, {
 };
 
 export function GameOutcome() {
-    const { currentOutcome, resetGame, stats } = useGameStore();
+    const { currentOutcome, resetGame, stats, missionImpact } = useGameStore();
     const [view, setView] = useState<'reveal' | 'summary'>('reveal');
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [scenario, setScenario] = useState<Scenario | null>(null);
@@ -80,6 +81,14 @@ export function GameOutcome() {
         const tip = tipForSeed(currentOutcome.scenario?.id || 'fallback');
         lessons.push({ icon: <Lightbulb size={18} aria-hidden />, label: tip.title, text: tip.tip });
     }
+
+    // Community impact (Phase 4): only show the ledger of this very mission.
+    const impact = missionImpact
+        && (!currentOutcome.progressId || missionImpact.progressId === currentOutcome.progressId)
+        && hasImpact(missionImpact)
+        ? missionImpact
+        : null;
+    const verdict = impact ? impactVerdict(impact) : null;
 
     if (view === 'reveal' && currentOutcome.progressId) {
         return (
@@ -207,6 +216,46 @@ export function GameOutcome() {
                         <p className="text-muted-foreground leading-relaxed font-medium italic">
                             &ldquo;{currentOutcome.feedback}&rdquo;
                         </p>
+                    </motion.div>
+                )}
+
+                {/* Community impact — consequences as people, not points */}
+                {impact && verdict && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.45 }}
+                        className="w-full space-y-3 text-left"
+                    >
+                        <div className="flex items-center gap-2 px-1">
+                            <Users size={16} className="text-primary" aria-hidden />
+                            <h2 className="text-sm font-black uppercase tracking-widest">Community impact</h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div className="rounded-2xl border border-red-500/25 bg-red-500/5 p-5 text-center space-y-1">
+                                <ShieldAlert size={18} className="text-red-500 mx-auto" aria-hidden />
+                                <p className="text-2xl font-black tabular-nums text-red-600 dark:text-red-400">{formatPeople(impact.reached)}</p>
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground leading-snug">People reached by misinformation you spread</p>
+                            </div>
+                            <div className="rounded-2xl border border-border bg-muted/50 p-5 text-center space-y-1">
+                                <Share2 size={18} className="text-muted-foreground mx-auto" aria-hidden />
+                                <p className="text-2xl font-black tabular-nums">{impact.reshares.toLocaleString()}</p>
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground leading-snug">Reshares your choices triggered</p>
+                            </div>
+                            <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-5 text-center space-y-1">
+                                <ShieldCheck size={18} className="text-emerald-500 mx-auto" aria-hidden />
+                                <p className="text-2xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">{formatPeople(impact.preventedReach)}</p>
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground leading-snug">People you shielded by verifying first</p>
+                            </div>
+                        </div>
+                        <div className={cn(
+                            'rounded-2xl border px-5 py-4 text-sm leading-relaxed font-medium',
+                            verdict.tone === 'good' && 'border-emerald-500/25 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300',
+                            verdict.tone === 'mixed' && 'border-amber-500/25 bg-amber-500/5 text-amber-700 dark:text-amber-300',
+                            verdict.tone === 'bad' && 'border-red-500/25 bg-red-500/5 text-red-700 dark:text-red-300',
+                        )}>
+                            {verdict.text}
+                        </div>
                     </motion.div>
                 )}
 
