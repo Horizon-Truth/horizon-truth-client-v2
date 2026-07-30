@@ -8,6 +8,8 @@ const ChatStream = lazy(() => import('./ChatStream').then(m => ({ default: m.Cha
 const SocialFeed = lazy(() => import('./SocialFeed').then(m => ({ default: m.SocialFeed })));
 const VideoPlayer = lazy(() => import('./VideoPlayer').then(m => ({ default: m.VideoPlayer })));
 const NetworkPropagationMap = lazy(() => import('./NetworkPropagationMap').then(m => ({ default: m.NetworkPropagationMap })));
+const UrlInspection = lazy(() => import('./UrlInspection').then(m => ({ default: m.UrlInspection })));
+const SourceComparison = lazy(() => import('./SourceComparison').then(m => ({ default: m.SourceComparison })));
 
 interface SceneRendererProps {
     scene: Scene;
@@ -68,6 +70,10 @@ export const SceneRenderer: React.FC<SceneRendererProps> = memo(({ scene, onChoi
                 return <SocialFeed scene={scene} onChoice={onChoice} isLoading={isLoading} />;
             case 'PROPAGATION':
                 return <NetworkPropagationMap scene={scene} />;
+            case 'URL_INSPECTION':
+                return <UrlInspection scene={scene} onChoice={onChoice} isLoading={isLoading} />;
+            case 'SOURCE_COMPARISON':
+                return <SourceComparison scene={scene} onChoice={onChoice} isLoading={isLoading} />;
             case 'IMAGE':
                 return (
                     <div className="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">

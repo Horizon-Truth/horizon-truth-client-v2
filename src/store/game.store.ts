@@ -11,6 +11,8 @@ import type { ConfidenceLevel, CalibrationLedger } from '@/modules/gamification/
 import { mergeSkillBooks, mergeCalibrations } from '@/modules/gamification/learning-profile';
 import { emptyImpact, applyDecisionImpact } from '@/modules/gamification/impact';
 import type { MissionImpact } from '@/modules/gamification/impact';
+import { ensureToday } from '@/modules/gamification/daily';
+import type { DailyLedger } from '@/modules/gamification/daily';
 
 export interface GameStats {
     trustScore: number;
@@ -49,6 +51,8 @@ export interface GameState {
     lastConfidence: ConfidenceLevel | null;
     /** Community-impact ledger for the current/just-finished mission (Phase 4). */
     missionImpact: MissionImpact | null;
+    /** Per-day quest progress (Phase 14); rolls over at local midnight. */
+    dailyLedger: DailyLedger | null;
 
     // Actions
     fetchGameHistory: () => Promise<void>;
@@ -93,6 +97,7 @@ export const useGameStore = create<GameState>()(
             calibration: EMPTY_CALIBRATION,
             lastConfidence: null,
             missionImpact: null,
+            dailyLedger: null,
 
             prefetchAssets: (scene: any) => {
                 if (!scene || !scene.content) return;
@@ -238,6 +243,17 @@ export const useGameStore = create<GameState>()(
                     return { skillBook, calibration };
                 };
 
+                // Advance today's quest counters (rolling the ledger over at midnight).
+                const bumpDaily = (patch: Partial<Pick<DailyLedger, 'missions' | 'correctDecisions' | 'sharpMissions'>>) => {
+                    const today = ensureToday(get().dailyLedger);
+                    return {
+                        ...today,
+                        missions: today.missions + (patch.missions ?? 0),
+                        correctDecisions: today.correctDecisions + (patch.correctDecisions ?? 0),
+                        sharpMissions: today.sharpMissions + (patch.sharpMissions ?? 0),
+                    };
+                };
+
                 // Fold this decision into the mission's community-impact ledger.
                 const foldImpact = (
                     spread: { reach: number; reshares: number; credibility_loss: number } | null,
@@ -269,6 +285,7 @@ export const useGameStore = create<GameState>()(
                         set({
                             ...recordDecision(choiceCorrect, choiceData?.psychologicalTrap),
                             missionImpact: foldImpact(spreadSim, choiceCorrect),
+                            dailyLedger: bumpDaily({ correctDecisions: choiceCorrect === true ? 1 : 0 }),
                             activeProgress: {
                                 ...activeProgress,
                                 currentScene: result.nextScene,
@@ -301,6 +318,11 @@ export const useGameStore = create<GameState>()(
                         set({
                             ...recordDecision(finalCorrect, finalChoice?.psychologicalTrap),
                             missionImpact: foldImpact(finalChoice?.spreadSimulation ?? null, finalCorrect),
+                            dailyLedger: bumpDaily({
+                                missions: 1,
+                                correctDecisions: finalCorrect === true ? 1 : 0,
+                                sharpMissions: (result.outcome?.accuracyRate ?? 0) >= 80 ? 1 : 0,
+                            }),
                             activeProgress: null,
                             currentOutcome: result.outcome,
                             isLoading: false,
@@ -362,6 +384,7 @@ export const useGameStore = create<GameState>()(
                 skillBook: state.skillBook,
                 calibration: state.calibration,
                 missionImpact: state.missionImpact,
+                dailyLedger: state.dailyLedger,
             }),
         }
     )

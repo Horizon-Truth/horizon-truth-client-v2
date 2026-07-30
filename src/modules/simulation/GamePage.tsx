@@ -13,8 +13,6 @@ import {
     Megaphone,
     LogOut,
     HelpCircle,
-    Sparkles,
-    CheckCircle2,
     BookOpen,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
@@ -29,11 +27,12 @@ import { useNavigate } from 'react-router-dom';
 import { getRank, getNextRank, rankProgress, xpToNextRank } from '@/modules/gamification/progression';
 import { HowToPlayDialog, hasSeenHowToPlay } from '@/modules/gamification/components/HowToPlayDialog';
 import { SkillsPanel } from '@/modules/gamification/components/SkillsPanel';
+import { DailyBriefing } from '@/modules/gamification/components/DailyBriefing';
 import { MANUAL_ARTICLES, isArticleUnlocked } from '@/modules/gamification/encyclopedia';
 
 export default function GamePage() {
     const { isLowEndDevice } = useDevice();
-    const { stats, history, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge, currentStreak, skillBook, calibration } = useGameStore();
+    const { stats, activeProgress, currentOutcome, error, clearError, fetchGameHistory, pendingBadges, removePendingBadge, currentStreak, skillBook, calibration } = useGameStore();
     const { user, logout } = useAuthStore();
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [isGuideOpen, setIsGuideOpen] = useState(false);
@@ -52,11 +51,6 @@ export default function GamePage() {
     const rankPct = rankProgress(stats.experience);
 
     // Daily goal: complete 1 mission today
-    const completedToday = useMemo(() => {
-        const today = new Date().toDateString();
-        return history.filter(g => g.status === 'COMPLETED' && g.completedAt && new Date(g.completedAt).toDateString() === today).length;
-    }, [history]);
-
     const unlockedArticleCount = useMemo(() => {
         const snapshot = { missionsCompleted: stats.missionsCompleted, xp: stats.experience };
         return MANUAL_ARTICLES.filter(a => isArticleUnlocked(a, snapshot)).length;
@@ -133,21 +127,6 @@ export default function GamePage() {
                                     className="h-full rounded-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-out"
                                     style={{ width: `${rankPct}%` }}
                                 />
-                            </div>
-                            {/* Daily goal */}
-                            <div className="flex items-center gap-2 text-xs font-medium mt-1">
-                                {completedToday > 0 ? (
-                                    <>
-                                        <CheckCircle2 size={14} className="text-emerald-500 shrink-0" aria-hidden />
-                                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">Daily goal done!</span>
-                                        <span className="text-muted-foreground">You completed {completedToday} mission{completedToday > 1 ? 's' : ''} today.</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Sparkles size={14} className="text-primary shrink-0" aria-hidden />
-                                        <span className="text-muted-foreground">Daily goal: complete <span className="font-bold text-foreground">1 mission</span> to keep your streak.</span>
-                                    </>
-                                )}
                             </div>
                         </div>
 
@@ -236,8 +215,11 @@ export default function GamePage() {
                         />
                     </section>
 
-                    {/* Skill graph + calibration insight */}
-                    <SkillsPanel skillBook={skillBook} calibration={calibration} />
+                    {/* Today's briefing + skill graph */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                        <DailyBriefing />
+                        <SkillsPanel skillBook={skillBook} calibration={calibration} />
+                    </div>
 
                     {/* Learning path */}
                     <main className="border border-border rounded-3xl p-4 sm:p-10 bg-card shadow-sm relative overflow-hidden">
