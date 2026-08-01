@@ -1,15 +1,23 @@
 import { useEffect, useState } from "react";
-import { Mail, Trash2, Search, Calendar, MessageSquare, Tag } from "lucide-react";
+import { Mail, Trash2, Search, Calendar, MessageSquare, Tag, Eye } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
 import { contactService, type ContactSubmission } from "@/services/contact.service";
+import ContactDetailDialog from "../components/ContactDetailDialog";
 import { toast } from "sonner";
+
+const statusStyles: Record<string, string> = {
+    new: "border-amber-500/20 bg-amber-500/10 text-amber-600",
+    read: "border-border bg-muted/50 text-muted-foreground",
+    replied: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+};
 
 export default function ContactSubmissionsPage() {
     const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selected, setSelected] = useState<ContactSubmission | null>(null);
 
     const fetchSubmissions = async () => {
         setIsLoading(true);
@@ -37,6 +45,12 @@ export default function ContactSubmissionsPage() {
         } catch (error) {
             toast.error("Failed to delete submission");
         }
+    };
+
+    const handleUpdated = (updated: ContactSubmission) => {
+        setSubmissions((current) =>
+            current.map((s) => (s.id === updated.id ? { ...s, ...updated } : s))
+        );
     };
 
     const filteredSubmissions = submissions.filter(s =>
@@ -73,6 +87,7 @@ export default function ContactSubmissionsPage() {
                                 <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sender</th>
                                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Subject</th>
                                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Message</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
                                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Date</th>
                                 <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Actions</th>
                             </tr>
@@ -80,7 +95,7 @@ export default function ContactSubmissionsPage() {
                         <tbody className="divide-y divide-border/50">
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={5} className="py-20 text-center">
+                                    <td colSpan={6} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
                                             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Accessing Comms Database...</p>
@@ -89,7 +104,7 @@ export default function ContactSubmissionsPage() {
                                 </tr>
                             ) : filteredSubmissions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="py-20 text-center">
+                                    <td colSpan={6} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <MessageSquare size={40} className="text-muted-foreground/30" />
                                             <p className="text-sm font-bold text-muted-foreground">No submissions found.</p>
@@ -97,7 +112,11 @@ export default function ContactSubmissionsPage() {
                                     </td>
                                 </tr>
                             ) : filteredSubmissions.map((s) => (
-                                <tr key={s.id} className="group hover:bg-accent/5 transition-colors">
+                                <tr
+                                    key={s.id}
+                                    className="group hover:bg-accent/5 transition-colors cursor-pointer"
+                                    onClick={() => setSelected(s)}
+                                >
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black uppercase">
@@ -119,9 +138,20 @@ export default function ContactSubmissionsPage() {
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-5">
-                                        <p className="text-xs text-muted-foreground max-w-xs truncate" title={s.message}>
+                                        <p className="text-xs text-muted-foreground max-w-xs truncate">
                                             {s.message}
                                         </p>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                            Read full message
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <Badge
+                                            variant="outline"
+                                            className={`rounded-lg h-6 px-2 font-black tracking-widest text-[9px] uppercase ${statusStyles[s.status ?? "new"]}`}
+                                        >
+                                            {s.status ?? "new"}
+                                        </Badge>
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
@@ -129,15 +159,27 @@ export default function ContactSubmissionsPage() {
                                             {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'N/A'}
                                         </div>
                                     </td>
-                                    <td className="px-8 py-5 text-right">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
-                                            onClick={() => s.id && handleDelete(s.id)}
-                                        >
-                                            <Trash2 size={18} />
-                                        </Button>
+                                    <td className="px-8 py-5 text-right" onClick={(e) => e.stopPropagation()}>
+                                        <div className="flex items-center justify-end gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="rounded-xl hover:bg-primary/10 hover:text-primary"
+                                                title="Open and reply"
+                                                onClick={() => setSelected(s)}
+                                            >
+                                                <Eye size={18} />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
+                                                title="Delete submission"
+                                                onClick={() => s.id && handleDelete(s.id)}
+                                            >
+                                                <Trash2 size={18} />
+                                            </Button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -145,6 +187,13 @@ export default function ContactSubmissionsPage() {
                     </table>
                 </div>
             </div>
+
+            <ContactDetailDialog
+                submission={selected}
+                open={selected !== null}
+                onOpenChange={(open) => !open && setSelected(null)}
+                onUpdated={handleUpdated}
+            />
         </div>
     );
 }
