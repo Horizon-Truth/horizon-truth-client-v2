@@ -26,3 +26,7 @@ Thank you for your interest in contributing to Horizon Truth! We welcome contrib
 
 Please note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
+## License
+
+This project is released under the [MIT License](LICENSE). By submitting a contribution, you agree that it is licensed under the same terms (inbound = outbound).
+

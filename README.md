@@ -265,11 +265,11 @@ We welcome contributions! Please start by reading our:
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See the [LICENSE](../LICENSE) file for details.
+This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for details.
 
 ---
 
-> **For the complete project vision and governance model, please see the [Project Charter](../PROJECT_CHARTER.md).**
+> **For the complete project vision and governance model, please see the [Project Charter](./PROJECT_CHARTER.md).**
 
 ## 🔗 Related Repositories
 
