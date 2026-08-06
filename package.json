@@ -2,6 +2,13 @@
   "name": "horizon-truth-fe",
   "private": true,
   "version": "0.0.0",
+  "description": "Horizon-Truth client — open-source web app for collaborative fact-checking, media literacy scenarios, and gamified learning.",
+  "author": "Horizon Truth Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Horizon-Truth/horizon-truth-client-v2.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
