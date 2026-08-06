@@ -102,3 +102,128 @@ export default function ResourceManagementPage() {
                     <select
                         className="flex-1 bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-bold uppercase tracking-wider outline-none"
                         value={languageFilter}
+                        onChange={(e) => setLanguageFilter(e.target.value as "all" | LanguageCode)}
+                    >
+                        <option value="all">All Languages</option>
+                        {SUPPORTED_LANGUAGES.map(lang => (
+                            <option key={lang.code} value={lang.code}>{lang.englishName}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="bg-card border border-border/50 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full border-collapse min-w-[900px]">
+                        <thead>
+                            <tr className="bg-muted/30 border-b border-border/50">
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Asset Identity</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duration/Effort</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry Date</th>
+                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/50">
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={5} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <div className="w-10 h-10 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin" />
+                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Scanning Archive...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredResources.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="py-20 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <BookOpen size={40} className="text-muted-foreground/30" />
+                                            <p className="text-sm font-bold text-muted-foreground">No asset records found in this sector.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : filteredResources.map((resource) => (
+                                <tr key={resource.id} className="group hover:bg-accent/5 transition-colors">
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary font-black transition-transform group-hover:rotate-12 group-hover:scale-110">
+                                                <BookOpen size={24} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="font-extrabold text-lg tracking-tight truncate group-hover:text-secondary transition-colors">{resource.title}</p>
+                                                <p className="text-xs text-muted-foreground font-medium line-clamp-1 italic">{resource.description}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex flex-col gap-1.5">
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="outline" className="rounded-lg h-7 px-3 w-fit font-black tracking-widest text-[9px] uppercase border-secondary/20 bg-secondary/5 text-secondary">
+                                                    <Tag size={10} className="mr-1.5" />
+                                                    {resource.type}
+                                                </Badge>
+                                                <LanguageBadge language={resource.language} />
+                                            </div>
+                                            {resource.badge && (
+                                                <span className="text-[8px] font-black uppercase tracking-tighter text-emerald-500 ml-1">{resource.badge}</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                                            <Clock size={14} className="text-secondary/60" />
+                                            {resource.duration}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                                            <Calendar size={14} className="text-secondary/60" />
+                                            {new Date(resource.createdAt).toLocaleDateString()}
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center justify-end gap-2 text-secondary">
+                                            {resource.linkUrl && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="rounded-xl hover:bg-secondary/10 transition-colors"
+                                                    onClick={() => window.open(resource.linkUrl, '_blank')}
+                                                    title="Open Link"
+                                                >
+                                                    <ExternalLink size={18} />
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="rounded-xl hover:bg-secondary/10 transition-colors"
+                                                title="Edit Asset"
+                                                onClick={() => navigate(`/dashboard/resources/library/edit/${resource.id}`)}
+                                            >
+                                                <Edit2 size={18} />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors"
+                                                onClick={() => handleDelete(resource)}
+                                                title="Delete Asset"
+                                            >
+                                                <Trash2 size={18} />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="rounded-xl">
+                                                <MoreVertical size={18} />
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+}

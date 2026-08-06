@@ -106,3 +106,134 @@ export default function AboutPage() {
                                         </div>
                                     ))}
                                 </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Mission & Vision Section */}
+            <section className="py-32 bg-secondary/5 relative overflow-hidden">
+                <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -translate-x-1/2" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid md:grid-cols-2 gap-12">
+                        {[
+                            {
+                                icon: Target,
+                                title: t("about.missionTitle"),
+                                desc: t("about.missionDesc"),
+                                color: "text-primary",
+                                bg: "bg-primary/10"
+                            },
+                            {
+                                icon: Eye,
+                                title: t("about.visionTitle"),
+                                desc: t("about.visionDesc"),
+                                color: "text-secondary",
+                                bg: "bg-secondary/10"
+                            }
+                        ].map((item, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ y: 20, opacity: 0 }}
+                                whileInView={{ y: 0, opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: i * 0.2 }}
+                                whileHover={{ y: -5 }}
+                                className="p-12 bg-white/40 backdrop-blur-xl border border-white/40 rounded-[3rem] shadow-xl dark:bg-white/5 dark:border-white/10 group"
+                            >
+                                <div className={`w-20 h-20 ${item.bg} rounded-3xl flex items-center justify-center mb-8 transition-transform group-hover:scale-110 duration-500`}>
+                                    <item.icon className={`${item.color} w-10 h-10`} />
+                                </div>
+                                <h3 className="text-4xl font-black mb-6">{item.title}</h3>
+                                <p className="text-xl text-muted-foreground leading-relaxed font-medium">
+                                    {item.desc}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Values Section */}
+            <section className="py-32 bg-background">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-20 space-y-4">
+                        <span className="text-primary font-bold uppercase tracking-[0.3em] text-xs">{t("about.valuesEyebrow")}</span>
+                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter">{t("about.valuesTitle")} <span className="text-primary">{t("about.valuesTitleHighlight")}</span></h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[
+                            { icon: ShieldCheck, title: t("about.value1Title"), desc: t("about.value1Desc") },
+                            { icon: Lightbulb, title: t("about.value2Title"), desc: t("about.value2Desc") },
+                            { icon: Users, title: t("about.value3Title"), desc: t("about.value3Desc") },
+                            { icon: GraduationCap, title: t("about.value4Title"), desc: t("about.value4Desc") }
+                        ].map((value, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                whileInView={{ scale: 1, opacity: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                whileHover={{ y: -10 }}
+                                className="p-10 bg-secondary/5 border-2 border-transparent hover:border-primary/20 rounded-[2.5rem] text-center transition-all duration-500"
+                            >
+                                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-8">
+                                    <value.icon className="text-primary w-8 h-8" />
+                                </div>
+                                <h3 className="text-2xl font-black mb-4">{value.title}</h3>
+                                <p className="text-muted-foreground font-medium leading-relaxed">{value.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+
+            {/* Team Section */}
+            <TeamSection />
+
+            {/* CTA Section */}
+            <section className="py-32 bg-secondary/10 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                    <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        whileInView={{ y: 0, opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="space-y-10"
+                    >
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">
+                            {t("about.ctaTitle")} <br />
+                            <span className="text-primary italic">{t("about.ctaTitleHighlight")}</span>
+                        </h2>
+
+                        <p className="text-2xl text-muted-foreground font-medium leading-relaxed">
+                            {t("about.ctaDesc")}
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row justify-center gap-6">
+                            <Button
+                                onClick={() => navigate("/dashboard/game")}
+                                className="w-full sm:w-auto px-12 py-10 rounded-[2rem] font-black text-2xl bg-primary text-primary-foreground hover:shadow-[0_20px_40px_rgba(var(--primary-rgb),0.3)] hover:-translate-y-2 transition-all group"
+                            >
+                                {t("about.ctaStartPlaying")} <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={32} />
+                            </Button>
+                            <Button
+                                onClick={() => navigate("/contact")}
+                                variant="outline"
+                                className="w-full sm:w-auto px-12 py-10 rounded-[2rem] font-black text-2xl border-4 hover:bg-white/10 transition-all"
+                            >
+                                {t("common.contactUs")}
+                            </Button>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+        </PublicLayout>
+    );
+}

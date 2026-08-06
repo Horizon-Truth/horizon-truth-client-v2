@@ -211,3 +211,156 @@ export default function ResourceEditPage() {
                                         <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Access Level (Badge)</FormLabel>
                                         <FormControl>
                                             <Input {...field} placeholder="e.g. Clearance Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="language"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Language *</FormLabel>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-none font-bold uppercase tracking-widest text-[10px]">
+                                                    <SelectValue placeholder="Select language" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                                {SUPPORTED_LANGUAGES.map((lang) => (
+                                                    <SelectItem key={lang.code} value={lang.code} className="font-bold uppercase tracking-widest text-[10px]">
+                                                        {lang.englishName}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="icon"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Lucide Icon Name</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Type className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                                                <Input {...field} placeholder="BookOpen, Video, Shield..." className="pl-9 h-11 rounded-xl bg-muted/30 border-none" />
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="bg-card border border-border/50 p-6 rounded-[2rem] shadow-sm space-y-6">
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-secondary/60 flex items-center gap-2">
+                                <ExternalLink size={14} /> External Links
+                            </h3>
+
+                            <FormField
+                                control={form.control}
+                                name="linkUrl"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Reference URL</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} placeholder="https://..." className="h-11 rounded-xl bg-muted/30 border-none" />
+                                        </FormControl>
+                                        <FormMessage className="text-[10px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Right Column: Main Content */}
+                    <div className="md:col-span-2 space-y-6">
+                        <div className="bg-card border border-border/50 p-8 rounded-[2.5rem] shadow-sm space-y-8">
+                            <div className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Asset Designation (Title)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="Quantum Encryption Fundamentals"
+                                                    className="text-2xl font-black h-16 rounded-2xl bg-muted/20 border-border/30 focus:bg-background transition-all"
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        form.setValue("slug", e.target.value.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""));
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="slug"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Protocol Identifier (Slug)</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="quantum-encryption-fundamentals" className="font-mono text-xs h-10 rounded-xl bg-muted/30 border-none" />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Asset Abstract</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                {...field}
+                                                placeholder="Executive summary of the intelligence asset..."
+                                                className="min-h-[120px] rounded-2xl bg-muted/20 border-border/30 resize-none font-medium leading-relaxed"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="fullContent"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Technical Documentation (HTML Enabled)</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                {...field}
+                                                placeholder="<p>Full technical documentation details...</p>"
+                                                className="min-h-[300px] rounded-[2rem] bg-muted/10 border-border/30 font-mono text-sm leading-relaxed p-6"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </Form>
+        </div>
+    );
+}
