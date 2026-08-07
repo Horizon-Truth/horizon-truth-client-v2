@@ -1,5 +1,7 @@
 # Horizon Truth Client (v2)
 
+[![CI](https://github.com/Horizon-Truth/horizon-truth-client-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/Horizon-Truth/horizon-truth-client-v2/actions/workflows/ci.yml)
+
 ## 📌 Project Governance
 
 - 📜 [Project Charter](../PROJECT_CHARTER.md)
@@ -144,15 +146,15 @@ The project uses Vitest with React Testing Library for comprehensive testing:
 ### Test Configuration
 - **Test Environment:** jsdom for browser-like environment
 - **Setup:** Custom test setup in `test/setup.ts`
-- **Coverage:** Built-in coverage reporting
+- **Coverage:** v8 provider, configured in `vite.config.ts`
 
 ### Running Tests
 ```bash
-# Run all tests
+# Run all tests (watch mode locally, single run in CI)
 yarn test
 
-# Run tests in watch mode
-yarn test --watch
+# Run once and exit
+yarn test:run
 
 # Run tests with UI
 yarn test:ui
@@ -160,6 +162,50 @@ yarn test:ui
 # Run specific test file
 yarn test src/components/Button.test.tsx
 ```
+
+### 📊 Test Coverage
+
+Generate a coverage report locally:
+
+```bash
+yarn test:coverage      # Runs the suite once and writes coverage/ to disk
+```
+
+This prints a summary to the terminal and writes the report to `coverage/`:
+
+- `coverage/index.html` — browsable HTML report (open it in a browser)
+- `coverage/lcov.info` — LCOV data for external coverage tooling
+- `coverage/coverage-summary.json` — machine-readable totals
+
+**Enforced thresholds.** A global minimum of **15%** is configured under
+`test.coverage.thresholds` in `vite.config.ts` for statements, branches,
+functions and lines. `yarn test:coverage` exits non-zero if any metric falls
+below that floor, so **CI fails when coverage regresses past 15%**.
+
+Coverage is measured across the whole of `src/` — not only the files a test
+happens to import — so untested modules count against the total. Excluded:
+test files, type declarations, `main.tsx`, static assets and mock data.
+
+**Where to see results.** Every CI run executes `yarn test:coverage` and publishes:
+
+1. A **coverage table in the run summary** — open the latest run from the
+   [Actions tab](https://github.com/Horizon-Truth/horizon-truth-client-v2/actions/workflows/ci.yml)
+   and the per-metric breakdown appears on the job summary page.
+2. A downloadable **`coverage-report` artifact** attached to the run
+   (retained 30 days) containing the full HTML report.
+
+Current coverage on the unit suite (452 tests across 32 files):
+
+| Metric | Coverage |
+| :--- | ---: |
+| Statements | 20.72% |
+| Branches | 15.29% |
+| Functions | 20.02% |
+| Lines | 20.46% |
+
+> **Note:** branch coverage sits closest to the floor. Adding a module with
+> untested conditionals is the most likely way to trip the threshold — pair
+> new branching logic with tests.
 
 ### Writing Tests
 - Tests are co-located with components or in `test/` directory
