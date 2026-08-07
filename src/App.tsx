@@ -23,7 +23,7 @@ import { ScrollToTop } from "./shared/components/layout/ScrollToTop";
 import { LoginForm } from "./shared/components/auth/LoginForm";
 import { RegisterForm } from "./shared/components/auth/RegisterForm";
 import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
-import { useAuthStore } from "./store/auth.store";
+import { MODERATION_ROLES, useAuthStore } from "./store/auth.store";
 import ProfilePage from "./modules/profile/ProfilePage";
 import SimulationPage from "./modules/simulation/SimulationPage";
 import GamePage from "./modules/simulation/GamePage";
@@ -66,11 +66,21 @@ const BlogEditPage = lazy(() => import('./modules/resources/admin/BlogEditPage')
 const ResourceManagementPage = lazy(() => import('./modules/resources/admin/ResourceManagementPage'));
 const ResourceCreatePage = lazy(() => import('./modules/resources/admin/ResourceCreatePage'));
 const ResourceEditPage = lazy(() => import('./modules/resources/admin/ResourceEditPage'));
+const ModerationDashboardPage = lazy(() => import('./modules/moderation/pages/ModerationDashboardPage'));
+const ModerationQueuePage = lazy(() => import('./modules/moderation/pages/ModerationQueuePage'));
+const CaseDetailPage = lazy(() => import('./modules/moderation/pages/CaseDetailPage'));
+const UserReviewPage = lazy(() => import('./modules/moderation/pages/UserReviewPage'));
+const AppealsPage = lazy(() => import('./modules/moderation/pages/AppealsPage'));
+const ModerationAnalyticsPage = lazy(() => import('./modules/moderation/pages/ModerationAnalyticsPage'));
+const ModerationAuditPage = lazy(() => import('./modules/moderation/pages/ModerationAuditPage'));
+const ModerationSettingsPage = lazy(() => import('./modules/moderation/pages/ModerationSettingsPage'));
+const MyRecordPage = lazy(() => import('./modules/moderation/pages/MyRecordPage'));
 const FieldManualPage = lazy(() => import('./modules/gamification/pages/FieldManualPage'));
 const AchievementsPage = lazy(() => import('./modules/gamification/pages/AchievementsPage'));
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
+  const isModerationStaff = !!user?.role && MODERATION_ROLES.includes(user.role);
 
   useEffect(() => {
     const handleOnline = () => {
@@ -168,7 +178,22 @@ function App() {
                           <Route path="engine/:id" element={user?.role !== 'PLAYER' ? <ScenarioDetailPage /> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="analytics" element={user?.role !== 'PLAYER' ? <GameAnalyticsPage /> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="health" element={user?.role === 'SYSTEM_ADMIN' ? <SystemHealthPage /> : <Navigate to="/dashboard" replace />} />
-                          <Route path="incidents" element={user?.role !== 'PLAYER' ? <div>Incidents Page</div> : <Navigate to="/dashboard/game" replace />} />
+                          {/* Q2M2A3 — moderation. `isModerationStaff` gates the
+                              whole surface; individual actions inside are gated
+                              server-side by the permission matrix. */}
+                          <Route path="moderation" element={isModerationStaff ? <ModerationDashboardPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/queue" element={isModerationStaff ? <ModerationQueuePage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/cases/:id" element={isModerationStaff ? <CaseDetailPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/users/:id" element={isModerationStaff ? <UserReviewPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/appeals" element={isModerationStaff ? <AppealsPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/analytics" element={isModerationStaff ? <ModerationAnalyticsPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/audit" element={isModerationStaff ? <ModerationAuditPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="moderation/settings" element={isModerationStaff ? <ModerationSettingsPage /> : <Navigate to="/dashboard" replace />} />
+                          {/* Any signed-in user can see decisions about themselves
+                              and appeal them — no moderation role required. */}
+                          <Route path="my-record" element={<MyRecordPage />} />
+                          {/* Legacy path, kept so existing links keep working. */}
+                          <Route path="incidents" element={<Navigate to="/dashboard/moderation" replace />} />
                           <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="profile" element={<ProfilePage />} />
                           <Route path="simulation" element={<SimulationPage />} />

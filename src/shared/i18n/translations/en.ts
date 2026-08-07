@@ -368,6 +368,86 @@ export const en = {
     authFailedToast: 'Authentication failed',
     loginFailed: 'Login failed. Please check your credentials.',
   },
+
+  moderation: {
+    title: 'Moderation',
+    subtitle: 'Queue health, trends, and the work waiting for an owner.',
+    queue: 'Moderation queue',
+    dashboard: 'Moderation dashboard',
+    appeals: 'Appeals',
+    analytics: 'Moderation analytics',
+    audit: 'Moderation audit',
+    settings: 'Moderation settings',
+
+    // Overview cards
+    pendingReports: 'Pending reports',
+    awaitingReview: 'Awaiting review',
+    escalated: 'Escalated',
+    flaggedContent: 'Flagged content',
+    suspendedUsers: 'Suspended users',
+    activeModerators: 'Active moderators',
+    resolvedToday: 'Resolved today',
+    averageResolution: 'Average resolution',
+
+    // Case
+    caseNumber: 'Case number',
+    reportedContent: 'Reported content',
+    reportDetails: 'Report details',
+    history: 'History',
+    reporter: 'Reporter',
+    reportedUser: 'Reported user',
+    anonymous: 'Anonymous',
+    owner: 'Owner',
+    unassigned: 'Unassigned',
+    evidence: 'Evidence',
+    outcome: 'Outcome',
+    severity: 'Severity',
+    status: 'Status',
+
+    // Actions
+    claimCase: 'Claim case',
+    startReview: 'Start review',
+    applyFlags: 'Apply flags',
+    hideContent: 'Hide content',
+    deleteContent: 'Delete content',
+    restoreContent: 'Restore content',
+    escalate: 'Escalate',
+    uphold: 'Uphold and close',
+    dismiss: 'Dismiss as unfounded',
+    reopen: 'Reopen case',
+    merge: 'Merge duplicates',
+
+    // User moderation
+    riskScore: 'Risk score',
+    violationRecord: 'Violation record',
+    issueWarning: 'Issue a warning',
+    suspendUser: 'Suspend temporarily',
+    banUser: 'Ban permanently',
+    liftSanctions: 'Lift sanctions',
+    sanctionHistory: 'Sanction history',
+
+    // Notes and reasons
+    moderatorNotes: 'Moderator notes',
+    addNote: 'Add note',
+    notesPrivate: 'Private to the moderation team.',
+    reason: 'Reason',
+    reasonRequired: 'A reason is required — this is a permanent record.',
+    internalNotes: 'Internal notes (optional)',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+
+    // Appeals
+    appealNumber: 'Appeal number',
+    appealReason: 'Why the user is appealing',
+    upholdAppeal: 'Uphold appeal',
+    rejectAppeal: 'Reject appeal',
+    appealResponse: 'Your response to the user',
+
+    // Empty and error states
+    emptyQueue: 'The queue is empty — nothing to moderate.',
+    noMatches: 'No cases match this view.',
+    loadFailed: 'The moderation dashboard could not be loaded.',
+  },
 };
 
 export type TranslationDict = typeof en;

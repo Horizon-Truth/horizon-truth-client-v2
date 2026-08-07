@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { ReportButton } from "@/modules/moderation/components/ReportContentDialog";
 import { useState, useEffect } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
@@ -119,6 +120,13 @@ export default function BlogDetailPage() {
                                 <Button variant="ghost" size="icon" className="rounded-full">
                                     <Facebook size={18} />
                                 </Button>
+                                <ReportButton
+                                    variant="icon"
+                                    targetType="CAPTURED_CONTENT"
+                                    targetId={blog.id}
+                                    contentLabel={blog.title}
+                                    className="rounded-full"
+                                />
                             </div>
                         </div>
                     </motion.div>
