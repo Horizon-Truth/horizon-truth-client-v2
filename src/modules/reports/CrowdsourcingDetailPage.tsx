@@ -5,6 +5,7 @@ import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
 import { reportService } from "@/services/report.service";
+import { ReportButton } from "@/modules/moderation/components/ReportContentDialog";
 import {
     Dialog,
     DialogContent,
@@ -206,6 +207,18 @@ export default function CrowdsourcingDetailPage() {
                                                 <p className="text-xs text-muted-foreground">Date Submitted</p>
                                                 <p className="font-bold">{new Date(report.createdAt).toLocaleDateString()}</p>
                                             </div>
+                                        </div>
+
+                                        {/* Crowdsourced submissions are user-authored, so
+                                            they need a route into moderation like any
+                                            other user content. */}
+                                        <div className="ml-auto">
+                                            <ReportButton
+                                                targetType="CROWDSOURCE_REPORT"
+                                                targetId={report.id}
+                                                reportedUserId={report.reporter?.id}
+                                                contentLabel={report.title}
+                                            />
                                         </div>
                                     </div>
 

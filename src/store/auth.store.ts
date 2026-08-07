@@ -1,14 +1,28 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type UserRole = 'PLAYER' | 'MODERATOR' | 'ORG_ADMIN' | 'SYSTEM_ADMIN';
+export type UserRole =
+    | 'PLAYER'
+    | 'MODERATOR'
+    | 'SENIOR_MODERATOR'
+    | 'ORG_ADMIN'
+    | 'SYSTEM_ADMIN';
 
 export const UserRoles = {
     PLAYER: 'PLAYER' as UserRole,
     MODERATOR: 'MODERATOR' as UserRole,
+    SENIOR_MODERATOR: 'SENIOR_MODERATOR' as UserRole,
     ORG_ADMIN: 'ORG_ADMIN' as UserRole,
     SYSTEM_ADMIN: 'SYSTEM_ADMIN' as UserRole,
 };
+
+/** Roles with access to any part of the moderation surface. */
+export const MODERATION_ROLES: UserRole[] = [
+    'MODERATOR',
+    'SENIOR_MODERATOR',
+    'ORG_ADMIN',
+    'SYSTEM_ADMIN',
+];
 
 interface User {
     id: string;
