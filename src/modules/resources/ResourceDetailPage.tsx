@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { ReportButton } from "@/modules/moderation/components/ReportContentDialog";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Download, BookOpen, ShieldCheck, FileText } from "lucide-react";
@@ -90,6 +91,12 @@ export default function ResourceDetailPage() {
                         <Button size="lg" variant="outline" className="px-8 py-7 rounded-2xl font-black text-xl hover:bg-secondary/10 transition-all border-2 h-auto">
                             Full Access
                         </Button>
+
+                        <ReportButton
+                            targetType="CAPTURED_CONTENT"
+                            targetId={resource.id}
+                            contentLabel={resource.title}
+                        />
                     </motion.div>
 
                     <div className="grid lg:grid-cols-3 gap-12">

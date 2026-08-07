@@ -20,7 +20,8 @@ import {
     BarChart3,
     Shield,
     Inbox,
-    Scale
+    Scale,
+    ScrollText
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDevice } from "@/shared/hooks/useDevice";
@@ -32,6 +33,7 @@ import { authService } from "@/services/auth.service";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/components/ui/sheet";
 import { Button } from "@/shared/components/ui/button";
 import { Logo } from "@/shared/components/ui/logo";
+import { NotificationBell } from "@/modules/moderation/components/NotificationBell";
 
 const navigationGroups = [
     {
@@ -228,6 +230,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                         </div>
 
                         <div className="flex items-center gap-2 md:gap-4 relative">
+                            <NotificationBell />
                             <ThemeToggle />
                             <button
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -264,6 +267,14 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                                         >
                                             <UserIcon size={16} className="text-muted-foreground" />
                                             <span>My Profile</span>
+                                        </Link>
+                                        <Link
+                                            to="/dashboard/my-record"
+                                            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
+                                            onClick={() => setIsUserMenuOpen(false)}
+                                        >
+                                            <ScrollText size={16} className="text-muted-foreground" />
+                                            <span>My Moderation Record</span>
                                         </Link>
                                         <button
                                             onClick={handleLogout}

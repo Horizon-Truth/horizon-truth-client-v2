@@ -74,6 +74,7 @@ const AppealsPage = lazy(() => import('./modules/moderation/pages/AppealsPage'))
 const ModerationAnalyticsPage = lazy(() => import('./modules/moderation/pages/ModerationAnalyticsPage'));
 const ModerationAuditPage = lazy(() => import('./modules/moderation/pages/ModerationAuditPage'));
 const ModerationSettingsPage = lazy(() => import('./modules/moderation/pages/ModerationSettingsPage'));
+const MyRecordPage = lazy(() => import('./modules/moderation/pages/MyRecordPage'));
 const FieldManualPage = lazy(() => import('./modules/gamification/pages/FieldManualPage'));
 const AchievementsPage = lazy(() => import('./modules/gamification/pages/AchievementsPage'));
 
@@ -188,6 +189,9 @@ function App() {
                           <Route path="moderation/analytics" element={isModerationStaff ? <ModerationAnalyticsPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="moderation/audit" element={isModerationStaff ? <ModerationAuditPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="moderation/settings" element={isModerationStaff ? <ModerationSettingsPage /> : <Navigate to="/dashboard" replace />} />
+                          {/* Any signed-in user can see decisions about themselves
+                              and appeal them — no moderation role required. */}
+                          <Route path="my-record" element={<MyRecordPage />} />
                           {/* Legacy path, kept so existing links keep working. */}
                           <Route path="incidents" element={<Navigate to="/dashboard/moderation" replace />} />
                           <Route path="auth" element={user?.role !== 'PLAYER' ? <div>Auth Settings Page</div> : <Navigate to="/dashboard/game" replace />} />
