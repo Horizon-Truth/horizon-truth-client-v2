@@ -17,7 +17,10 @@ import {
     BookOpen,
     Megaphone,
     ShieldCheck,
-    BarChart3
+    BarChart3,
+    Shield,
+    Inbox,
+    Scale
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDevice } from "@/shared/hooks/useDevice";
@@ -34,7 +37,7 @@ const navigationGroups = [
     {
         title: "Operations",
         items: [
-            { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR"] },
+            { name: "Overview", icon: LayoutDashboard, href: "/dashboard", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "MODERATOR", "SENIOR_MODERATOR"] },
             { name: "Game Analytics", icon: BarChart3, href: "/dashboard/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
             { name: "Mission Ops", icon: LayoutDashboard, href: "/dashboard/game", roles: ["PLAYER"] },
             { name: "Submit Report", icon: AlertTriangle, href: "/crowdsourcing/submit", roles: ["PLAYER"] },
@@ -52,7 +55,7 @@ const navigationGroups = [
     {
         title: "Engine",
         items: [
-            { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Scenario Engine", icon: Cpu, href: "/dashboard/engine", roles: ["SYSTEM_ADMIN", "MODERATOR", "SENIOR_MODERATOR"] },
             { name: "Feedback", icon: MessageSquare, href: "/dashboard/feedback", roles: ["SYSTEM_ADMIN"] },
         ]
     },
@@ -66,9 +69,20 @@ const navigationGroups = [
         ]
     },
     {
-        title: "Reports & Safety",
+        title: "Trust & Safety",
         items: [
-            { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "MODERATOR"] },
+            { name: "Moderation", icon: Shield, href: "/dashboard/moderation", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "SENIOR_MODERATOR", "MODERATOR"] },
+            { name: "Moderation Queue", icon: Inbox, href: "/dashboard/moderation/queue", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "SENIOR_MODERATOR", "MODERATOR"] },
+            { name: "Appeals", icon: Scale, href: "/dashboard/moderation/appeals", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "SENIOR_MODERATOR"] },
+            { name: "Moderation Analytics", icon: BarChart3, href: "/dashboard/moderation/analytics", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "SENIOR_MODERATOR", "MODERATOR"] },
+            { name: "Moderation Audit", icon: ShieldCheck, href: "/dashboard/moderation/audit", roles: ["SYSTEM_ADMIN", "ORG_ADMIN", "SENIOR_MODERATOR"] },
+            { name: "Moderation Settings", icon: Settings, href: "/dashboard/moderation/settings", roles: ["SYSTEM_ADMIN", "ORG_ADMIN"] },
+        ]
+    },
+    {
+        title: "Reports & Records",
+        items: [
+            { name: "Report Management", icon: FileText, href: "/dashboard/reports", roles: ["SYSTEM_ADMIN", "MODERATOR", "SENIOR_MODERATOR"] },
             { name: "Reporting Config", icon: Settings, href: "/dashboard/reports-config", roles: ["SYSTEM_ADMIN"] },
             { name: "Audit Logs", icon: ShieldCheck, href: "/dashboard/audit-logs", roles: ["SYSTEM_ADMIN"] },
         ]
