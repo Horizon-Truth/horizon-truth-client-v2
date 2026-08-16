@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/sha
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { reportService } from "@/services/report.service";
+import { AiVerificationCard } from "@/modules/reports/components/AiVerificationCard";
 
 export default function ReportAdminDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -217,6 +218,15 @@ export default function ReportAdminDetailPage() {
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* AI analysis is shown to moderators as evidence with full
+                        provenance — it never sets the report status itself. */}
+                    <AiVerificationCard
+                        reportId={report.id}
+                        initialVerification={report.aiVerification}
+                        variant="moderator"
+                        className="rounded-[2rem] shadow-xl bg-card/40 backdrop-blur-sm border-border/50"
+                    />
 
                     <Card className="rounded-[2rem] border shadow-xl bg-card/20 backdrop-blur-sm border-border/40">
                         <CardHeader className="px-10 pt-10">
