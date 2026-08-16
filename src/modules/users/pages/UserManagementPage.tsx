@@ -1,14 +1,33 @@
 import { useEffect, useState } from "react";
-import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus, ChevronLeft, ChevronRight, Eye, Pencil, ShieldCheck, X, Clock, RotateCcw } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
-import { adminService, type User } from "@/services/admin.service";
+import { adminService, type User, type UserActivityEntry, type UserStatus } from "@/services/admin.service";
+import { MODERATION_ROLES, useAuthStore, type UserRole } from "@/store/auth.store";
 import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils";
 
+/**
+ * Role vocabulary. These values must match the backend `UserRole` enum
+ * exactly — the page previously offered `ORGANIZATION_ADMIN`, which no role
+ * has ever been called, so both creating and filtering by it silently failed.
+ */
+const ROLE_OPTIONS: { value: UserRole; label: string; hint: string }[] = [
+    { value: 'PLAYER', label: 'Field Agent (Player)', hint: 'Plays missions. No moderation access.' },
+    { value: 'MODERATOR', label: 'Moderator', hint: 'Reviews reports, flags and hides content, warns users.' },
+    { value: 'SENIOR_MODERATOR', label: 'Senior Moderator', hint: 'Adds deletions, suspensions, appeals and audit access.' },
+    { value: 'ORG_ADMIN', label: 'Organisation Admin', hint: 'Adds bans, the flag catalogue and the moderator roster.' },
+    { value: 'SYSTEM_ADMIN', label: 'System Admin', hint: 'Full platform access.' },
+];
+
+const roleLabel = (role: UserRole) =>
+    ROLE_OPTIONS.find(r => r.value === role)?.label ?? role.replace(/_/g, ' ');
+
 export default function UserManagementPage() {
     const PAGE_SIZE = 10;
+    const currentUser = useAuthStore(s => s.user);
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -17,7 +36,13 @@ export default function UserManagementPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [newUser, setNewUser] = useState({ fullName: '', email: '', username: '', role: 'PLAYER' });
+    const [newUser, setNewUser] = useState<{ fullName: string; email: string; username: string; role: UserRole }>({ fullName: '', email: '', username: '', role: 'PLAYER' });
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const [detailUser, setDetailUser] = useState<User | null>(null);
+    const [activity, setActivity] = useState<UserActivityEntry[] | null>(null);
+    const [editUser, setEditUser] = useState<User | null>(null);
+    const [editForm, setEditForm] = useState<{ fullName: string; username: string; email: string; role: UserRole }>({ fullName: '', username: '', email: '', role: 'PLAYER' });
+    const [isSaving, setIsSaving] = useState(false);
 
     const fetchUsers = async (targetPage = page) => {
         setIsLoading(true);
@@ -58,6 +83,19 @@ export default function UserManagementPage() {
         setPage(1);
     }, [searchTerm, roleFilter]);
 
+    // Close the row menu on an outside click or Escape.
+    useEffect(() => {
+        if (!openMenuId) return;
+        const close = () => setOpenMenuId(null);
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+        window.addEventListener('click', close);
+        window.addEventListener('keydown', onKey);
+        return () => {
+            window.removeEventListener('click', close);
+            window.removeEventListener('keydown', onKey);
+        };
+    }, [openMenuId]);
+
     // Fetch from the server (debounced for search) on page/filter changes.
     useEffect(() => {
         const timeoutId = setTimeout(() => fetchUsers(page), searchTerm ? 400 : 0);
@@ -67,23 +105,78 @@ export default function UserManagementPage() {
 
     const handleStatusToggle = async (user: User) => {
         try {
-            const newStatus = user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+            // DEACTIVATED, not INACTIVE — the latter is not in the backend enum
+            // and used to fail once it reached the database.
+            const newStatus: UserStatus = user.status === 'ACTIVE' ? 'DEACTIVATED' : 'ACTIVE';
             await adminService.updateUserStatus(user.id, newStatus);
-            toast.success(`User ${user.email} status updated to ${newStatus}`);
+            toast.success(`${user.fullName} is now ${newStatus.toLowerCase()}`);
             fetchUsers();
         } catch (error) {
-            toast.error("Failed to update user status");
+            toast.error(apiMessage(error, "Failed to update user status"));
         }
     };
 
+    const handleRoleChange = async (user: User, role: UserRole) => {
+        if (role === user.role) return;
+        const label = roleLabel(role);
+        if (!confirm(`Change ${user.fullName}'s role to ${label}?`)) return;
+        try {
+            await adminService.updateUser(user.id, { role });
+            toast.success(`${user.fullName} is now ${label}`);
+            setDetailUser(prev => (prev && prev.id === user.id ? { ...prev, role } : prev));
+            fetchUsers();
+        } catch (error) {
+            toast.error(apiMessage(error, "Failed to change role"));
+        }
+    };
+
+    const handleSaveEdit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editUser) return;
+        setIsSaving(true);
+        try {
+            await adminService.updateUser(editUser.id, editForm);
+            toast.success("User updated");
+            setEditUser(null);
+            fetchUsers();
+        } catch (error) {
+            toast.error(apiMessage(error, "Failed to update user"));
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const openDetail = async (user: User) => {
+        setDetailUser(user);
+        setActivity(null);
+        try {
+            const response = await adminService.getUserActivity(user.id, { limit: 8 });
+            setActivity(response.data ?? []);
+        } catch {
+            // Activity is supplementary — the panel still shows the profile.
+            setActivity([]);
+        }
+    };
+
+    const openEdit = (user: User) => {
+        setEditUser(user);
+        setEditForm({
+            fullName: user.fullName,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+        });
+    };
+
     const handleDelete = async (user: User) => {
-        if (!confirm(`Are you sure you want to delete user ${user.email}?`)) return;
+        if (!confirm(`Permanently delete ${user.fullName} (${user.email})? This cannot be undone.`)) return;
         try {
             await adminService.deleteUser(user.id);
             toast.success("User deleted successfully");
+            setDetailUser(prev => (prev?.id === user.id ? null : prev));
             fetchUsers();
         } catch (error) {
-            toast.error("Failed to delete user");
+            toast.error(apiMessage(error, "Failed to delete user"));
         }
     };
 
@@ -153,12 +246,15 @@ export default function UserManagementPage() {
                                 <select
                                     className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none cursor-pointer"
                                     value={newUser.role}
-                                    onChange={e => setNewUser({ ...newUser, role: e.target.value })}
+                                    onChange={e => setNewUser({ ...newUser, role: e.target.value as UserRole })}
                                 >
-                                    <option value="PLAYER">Field Agent (Player)</option>
-                                    <option value="ORGANIZATION_ADMIN">Lead Investigator (Org Admin)</option>
-                                    <option value="SYSTEM_ADMIN">High Overseer (System Admin)</option>
+                                    {ROLE_OPTIONS.map(option => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    ))}
                                 </select>
+                                <p className="text-[11px] text-muted-foreground px-1">
+                                    {ROLE_OPTIONS.find(r => r.value === newUser.role)?.hint}
+                                </p>
                             </div>
                             <p className="text-[10px] font-medium italic text-muted-foreground px-1">
                                 Note: Initial authentication credentials will be dispatched to the provided communications channel upon verification.
@@ -189,9 +285,9 @@ export default function UserManagementPage() {
                         onChange={(e) => setRoleFilter(e.target.value)}
                     >
                         <option value="all">All Roles</option>
-                        <option value="SYSTEM_ADMIN">Super Admin</option>
-                        <option value="ORGANIZATION_ADMIN">Org Admin</option>
-                        <option value="PLAYER">Player</option>
+                        {ROLE_OPTIONS.map(option => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
                     </select>
                 </div>
             </div>
@@ -246,7 +342,7 @@ export default function UserManagementPage() {
                                     <td className="px-6 py-5">
                                         <Badge variant="outline" className="rounded-lg h-7 px-3 font-black tracking-widest text-[9px] uppercase border-primary/20 bg-primary/5 text-primary">
                                             <Shield size={10} className="mr-1.5" />
-                                            {user.role.replace('_', ' ')}
+                                            {user.role.replace(/_/g, ' ')}
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-5">
@@ -269,6 +365,7 @@ export default function UserManagementPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                title={user.status === 'ACTIVE' ? 'Deactivate account' : 'Reactivate account'}
                                                 className="rounded-xl hover:bg-primary/10 hover:text-primary"
                                                 onClick={() => handleStatusToggle(user)}
                                             >
@@ -277,14 +374,78 @@ export default function UserManagementPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                title="Delete account"
                                                 className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
                                                 onClick={() => handleDelete(user)}
                                             >
                                                 <Trash2 size={18} />
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="rounded-xl">
-                                                <MoreVertical size={18} />
-                                            </Button>
+
+                                            {/* Row menu. Hand-rolled rather than pulling in a dropdown
+                                                dependency the design system does not ship. */}
+                                            <div className="relative" onClick={e => e.stopPropagation()}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="rounded-xl"
+                                                    aria-haspopup="menu"
+                                                    aria-expanded={openMenuId === user.id}
+                                                    aria-label={`Actions for ${user.fullName}`}
+                                                    onClick={() => setOpenMenuId(openMenuId === user.id ? null : user.id)}
+                                                >
+                                                    <MoreVertical size={18} />
+                                                </Button>
+
+                                                {openMenuId === user.id && (
+                                                    <div
+                                                        role="menu"
+                                                        className="absolute right-0 top-full mt-2 z-30 w-64 rounded-2xl border border-border bg-card shadow-xl p-2 animate-in fade-in zoom-in-95 duration-150 text-left"
+                                                    >
+                                                        <MenuItem icon={<Eye size={15} />} onClick={() => { setOpenMenuId(null); openDetail(user); }}>
+                                                            View details
+                                                        </MenuItem>
+                                                        <MenuItem icon={<Pencil size={15} />} onClick={() => { setOpenMenuId(null); openEdit(user); }}>
+                                                            Edit user
+                                                        </MenuItem>
+
+                                                        <div className="my-2 h-px bg-border" />
+                                                        <p className="px-3 pb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                                            Assign role
+                                                        </p>
+                                                        {ROLE_OPTIONS.map(option => (
+                                                            <MenuItem
+                                                                key={option.value}
+                                                                icon={option.value === user.role
+                                                                    ? <ShieldCheck size={15} className="text-primary" />
+                                                                    : <Shield size={15} />}
+                                                                disabled={option.value === user.role || user.id === currentUser?.id}
+                                                                onClick={() => { setOpenMenuId(null); handleRoleChange(user, option.value); }}
+                                                            >
+                                                                {option.label}
+                                                            </MenuItem>
+                                                        ))}
+
+                                                        {user.id === currentUser?.id && (
+                                                            <p className="px-3 py-2 text-[11px] text-muted-foreground leading-snug">
+                                                                You cannot change your own role.
+                                                            </p>
+                                                        )}
+
+                                                        {MODERATION_ROLES.includes(user.role) && (
+                                                            <>
+                                                                <div className="my-2 h-px bg-border" />
+                                                                <Link
+                                                                    to={`/dashboard/moderation/users/${user.id}`}
+                                                                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
+                                                                    onClick={() => setOpenMenuId(null)}
+                                                                >
+                                                                    <Shield size={15} /> Moderation record
+                                                                </Link>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -322,6 +483,194 @@ export default function UserManagementPage() {
                     </div>
                 )}
             </div>
+
+            {/* Detail panel */}
+            {detailUser && (
+                <div className="fixed inset-0 z-50 flex justify-end">
+                    <div
+                        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        onClick={() => setDetailUser(null)}
+                        aria-hidden
+                    />
+                    <aside
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={`Details for ${detailUser.fullName}`}
+                        className="relative z-10 w-full max-w-md h-full overflow-y-auto bg-card border-l border-border p-8 space-y-8 shadow-2xl animate-in slide-in-from-right duration-300"
+                    >
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center text-primary font-black text-2xl uppercase">
+                                    {detailUser.fullName.charAt(0)}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-black tracking-tight capitalize">{detailUser.fullName}</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">@{detailUser.username}</p>
+                                </div>
+                            </div>
+                            <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setDetailUser(null)} aria-label="Close details">
+                                <X size={20} />
+                            </Button>
+                        </div>
+
+                        <dl className="space-y-4">
+                            <DetailRow label="Email" value={detailUser.email} />
+                            <DetailRow label="Role" value={roleLabel(detailUser.role)} />
+                            <DetailRow label="Status" value={detailUser.status} />
+                            <DetailRow label="Joined" value={new Date(detailUser.createdAt).toLocaleString()} />
+                            {detailUser.lastLoginAt && (
+                                <DetailRow label="Last seen" value={new Date(detailUser.lastLoginAt).toLocaleString()} />
+                            )}
+                            <DetailRow label="User ID" value={detailUser.id} mono />
+                        </dl>
+
+                        <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" className="rounded-xl font-bold gap-2" onClick={() => { openEdit(detailUser); setDetailUser(null); }}>
+                                <Pencil size={15} /> Edit
+                            </Button>
+                            <Button variant="outline" className="rounded-xl font-bold gap-2" onClick={() => handleStatusToggle(detailUser)}>
+                                {detailUser.status === 'ACTIVE' ? <><UserX size={15} /> Deactivate</> : <><RotateCcw size={15} /> Reactivate</>}
+                            </Button>
+                            {MODERATION_ROLES.includes(detailUser.role) && (
+                                <Button asChild variant="outline" className="rounded-xl font-bold gap-2">
+                                    <Link to={`/dashboard/moderation/users/${detailUser.id}`}>
+                                        <Shield size={15} /> Moderation record
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Recent activity</h4>
+                            {activity === null ? (
+                                <p className="text-xs text-muted-foreground">Loading…</p>
+                            ) : activity.length === 0 ? (
+                                <p className="text-xs text-muted-foreground">No recorded activity.</p>
+                            ) : (
+                                <ul className="space-y-2">
+                                    {activity.map(entry => (
+                                        <li key={entry.id} className="flex items-start gap-3 rounded-2xl bg-muted/40 px-4 py-3">
+                                            <Clock size={14} className="mt-0.5 text-muted-foreground shrink-0" />
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-bold">{entry.action}</p>
+                                                <p className="text-[11px] text-muted-foreground">
+                                                    {new Date(entry.createdAt).toLocaleString()}
+                                                    {entry.ipAddressPartial ? ` · ${entry.ipAddressPartial}` : ''}
+                                                </p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </aside>
+                </div>
+            )}
+
+            {/* Edit dialog */}
+            {editUser && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+                    <div className="bg-card border border-border/50 w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-2xl font-black italic uppercase tracking-tighter">Edit personnel</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setEditUser(null)} className="rounded-full" aria-label="Close">
+                                <X size={22} />
+                            </Button>
+                        </div>
+
+                        <form onSubmit={handleSaveEdit} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Full name</label>
+                                <Input
+                                    required
+                                    className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                    value={editForm.fullName}
+                                    onChange={e => setEditForm({ ...editForm, fullName: e.target.value })}
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Email</label>
+                                    <Input
+                                        required
+                                        type="email"
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={editForm.email}
+                                        onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Username</label>
+                                    <Input
+                                        required
+                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                        value={editForm.username}
+                                        onChange={e => setEditForm({ ...editForm, username: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Role</label>
+                                <select
+                                    className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                    value={editForm.role}
+                                    disabled={editUser.id === currentUser?.id}
+                                    onChange={e => setEditForm({ ...editForm, role: e.target.value as UserRole })}
+                                >
+                                    {ROLE_OPTIONS.map(option => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    ))}
+                                </select>
+                                <p className="text-[11px] text-muted-foreground px-1">
+                                    {editUser.id === currentUser?.id
+                                        ? 'You cannot change your own role — ask another administrator.'
+                                        : ROLE_OPTIONS.find(r => r.value === editForm.role)?.hint}
+                                </p>
+                            </div>
+                            <Button type="submit" disabled={isSaving} className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                {isSaving ? 'Saving…' : 'Save changes'}
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
+}
+
+function MenuItem({ icon, children, onClick, disabled }: {
+    icon: React.ReactNode;
+    children: React.ReactNode;
+    onClick: () => void;
+    disabled?: boolean;
+}) {
+    return (
+        <button
+            role="menuitem"
+            type="button"
+            disabled={disabled}
+            onClick={onClick}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold hover:bg-muted transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+        >
+            {icon}
+            {children}
+        </button>
+    );
+}
+
+function DetailRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+    return (
+        <div className="flex items-start justify-between gap-4">
+            <dt className="text-[10px] font-black uppercase tracking-widest text-muted-foreground pt-0.5">{label}</dt>
+            <dd className={cn("text-sm font-semibold text-right break-all", mono && "font-mono text-xs")}>{value}</dd>
+        </div>
+    );
+}
+
+/** Surface the backend's message (e.g. the self-edit and uniqueness rules). */
+function apiMessage(error: unknown, fallback: string): string {
+    const message = (error as { response?: { data?: { message?: string | string[] } } })
+        ?.response?.data?.message;
+    if (Array.isArray(message)) return message[0] ?? fallback;
+    return message ?? fallback;
 }
