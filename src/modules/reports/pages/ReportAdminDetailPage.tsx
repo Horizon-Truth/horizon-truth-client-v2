@@ -5,7 +5,6 @@ import {
     Calendar,
     User,
     Globe,
-    ExternalLink,
     ShieldAlert,
     MessageSquare,
     Trash2,
@@ -19,6 +18,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/sha
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { reportService } from "@/services/report.service";
+import { DefangedUrl } from "@/shared/components/DefangedUrl";
+import { defangText } from "@/shared/utils/defang";
 import { AiVerificationCard } from "@/modules/reports/components/AiVerificationCard";
 
 export default function ReportAdminDetailPage() {
@@ -199,20 +200,19 @@ export default function ReportAdminDetailPage() {
                                     <div className="w-1.5 h-6 bg-primary rounded-full" /> Narrative Dossier
                                 </h3>
                                 <div className="p-8 bg-black/20 rounded-3xl border border-white/5 text-lg leading-relaxed text-muted-foreground/90 whitespace-pre-wrap italic font-medium shadow-inner">
-                                    "{report.description}"
+                                    "{defangText(report.description)}"
                                 </div>
                             </div>
 
                             {report.sourceUrl && (
-                                <div className="p-6 bg-primary/5 rounded-[1.5rem] border border-primary/20 flex items-start gap-4 hover:bg-primary/10 transition-colors group cursor-pointer">
-                                    <div className="p-3 bg-primary/10 rounded-xl group-hover:scale-110 transition-transform">
-                                        <ExternalLink size={20} className="text-primary" />
+                                <div className="p-6 bg-primary/5 rounded-[1.5rem] border border-primary/20 flex items-start gap-4">
+                                    <div className="p-3 bg-primary/10 rounded-xl">
+                                        <ShieldAlert size={20} className="text-primary" />
                                     </div>
                                     <div className="flex-1 overflow-hidden">
-                                        <h4 className="font-black text-xs uppercase tracking-widest mb-1 opacity-70">External Intelligence Link</h4>
-                                        <a href={report.sourceUrl} className="text-primary underline break-all font-bold text-sm block" target="_blank" rel="noreferrer">
-                                            {report.sourceUrl}
-                                        </a>
+                                        {/* Moderators review this content constantly, so they are
+                                            the most exposed to a live link to it. Copy, don't click. */}
+                                        <DefangedUrl url={report.sourceUrl} label="Reported source URL" />
                                     </div>
                                 </div>
                             )}

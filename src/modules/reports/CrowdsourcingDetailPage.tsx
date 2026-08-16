@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Clock, ChevronLeft, Star, Share2, Flag, ThumbsUp, ThumbsDown, ExternalLink, Activity, Info, Loader2, Send, AlertCircle } from "lucide-react";
+import { Clock, ChevronLeft, Star, Share2, Flag, ThumbsUp, ThumbsDown, ShieldAlert, Activity, Info, Loader2, Send, AlertCircle } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { toast } from "sonner";
 import { PublicLayout } from "@/shared/layouts/PublicLayout";
@@ -21,6 +21,8 @@ import { Label } from "@/shared/components/ui/label";
 import { AuthModal } from "@/shared/components/auth/AuthModal";
 import { useAuthStore } from "@/store/auth.store";
 import { AiVerificationCard } from "@/modules/reports/components/AiVerificationCard";
+import { DefangedUrl } from "@/shared/components/DefangedUrl";
+import { defangText } from "@/shared/utils/defang";
 
 export default function CrowdsourcingDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -235,17 +237,17 @@ export default function CrowdsourcingDetailPage() {
                                             <h3 className="text-2xl font-bold">Community Report</h3>
                                             <p className="text-sm text-muted-foreground">What the reporter submitted</p>
                                         </div>
-                                        <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap">{report.description}</p>
+                                        {/* Links pasted into the description are defanged too —
+                                            the reported content is exactly what readers must not
+                                            reach by accident. */}
+                                        <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap">
+                                            {defangText(report.description)}
+                                        </p>
 
                                         {report.sourceUrl && (
                                             <div className="p-6 bg-secondary/20 rounded-2xl border flex items-start gap-4">
-                                                <ExternalLink size={24} className="text-primary shrink-0 mt-1" />
-                                                <div>
-                                                    <h4 className="font-bold mb-1">Source URL</h4>
-                                                    <a href={report.sourceUrl} className="text-primary underline break-all font-medium" target="_blank" rel="noreferrer">
-                                                        {report.sourceUrl}
-                                                    </a>
-                                                </div>
+                                                <ShieldAlert size={24} className="text-primary shrink-0 mt-1" />
+                                                <DefangedUrl url={report.sourceUrl} label="Reported source URL" />
                                             </div>
                                         )}
                                     </div>
