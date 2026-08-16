@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/shared/components/ui/label";
 import { AuthModal } from "@/shared/components/auth/AuthModal";
 import { useAuthStore } from "@/store/auth.store";
+import { AiVerificationCard } from "@/modules/reports/components/AiVerificationCard";
 
 export default function CrowdsourcingDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -56,6 +57,13 @@ export default function CrowdsourcingDetailPage() {
     useEffect(() => {
         fetchReport();
     }, [id]);
+
+    // Requesting AI verification hits an authenticated endpoint, so guests are
+    // routed through the same login modal the community verification flow uses.
+    const handleRequireAuthForAi = () => {
+        toast.info("Please login or register to request AI verification");
+        setIsAuthModalOpen(true);
+    };
 
     const handleVote = (type: 'up' | 'down') => {
         toast.info(`Verification ${type === 'up' ? 'upvoted' : 'downvoted'} (Simulation)`);
@@ -223,7 +231,10 @@ export default function CrowdsourcingDetailPage() {
                                     </div>
 
                                     <div className="prose prose-lg dark:prose-invert max-w-none space-y-6">
-                                        <h3 className="text-2xl font-bold">Case Summary</h3>
+                                        <div className="space-y-1">
+                                            <h3 className="text-2xl font-bold">Community Report</h3>
+                                            <p className="text-sm text-muted-foreground">What the reporter submitted</p>
+                                        </div>
                                         <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap">{report.description}</p>
 
                                         {report.sourceUrl && (
@@ -240,73 +251,87 @@ export default function CrowdsourcingDetailPage() {
                                     </div>
                                 </div>
 
+                                {/* AI analysis sits between what was reported and what the
+                                    community concluded — an evidence layer, not a verdict. */}
+                                <AiVerificationCard
+                                    reportId={report.id}
+                                    initialVerification={report.aiVerification}
+                                    canRequest={isAuthenticated}
+                                    onRequireAuth={handleRequireAuthForAi}
+                                />
+
                                 {/* Verification Timeline */}
                                 <div className="space-y-8">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-2xl font-bold">Community Verification</h3>
-                                        <Dialog open={isVerifying} onOpenChange={setIsVerifying}>
-                                            <DialogTrigger asChild>
-                                                <Button className="rounded-xl">Verify This Report</Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="sm:max-w-md bg-card border-none shadow-2xl rounded-3xl p-8">
-                                                <DialogHeader>
-                                                    <DialogTitle className="text-2xl font-bold">Submit Verification</DialogTitle>
-                                                    <DialogDescription className="text-muted-foreground">
-                                                        Help the community by providing your analysis of this report.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="space-y-6 py-4 text-left">
-                                                    <div className="space-y-2">
-                                                        <Label className="font-bold">Your Verdict</Label>
-                                                        <Select value={verificationStatus} onValueChange={setVerificationStatus}>
-                                                            <SelectTrigger className="rounded-xl py-6">
-                                                                <SelectValue placeholder="Select status" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="TRUE">True / Verified</SelectItem>
-                                                                <SelectItem value="FALSE">False / Misinformation</SelectItem>
-                                                                <SelectItem value="FAKE">Manipulated / Deepfake</SelectItem>
-                                                                <SelectItem value="NEEDS_REVIEW">Needs Further Investigation</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
+                                    <div className="space-y-1">
+                                        <div className="flex flex-wrap items-center justify-between gap-4">
+                                            <h3 className="text-2xl font-bold">Community Verification</h3>
+                                            <Dialog open={isVerifying} onOpenChange={setIsVerifying}>
+                                                <DialogTrigger asChild>
+                                                    <Button className="rounded-xl">Verify This Report</Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-md bg-card border-none shadow-2xl rounded-3xl p-8">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="text-2xl font-bold">Submit Verification</DialogTitle>
+                                                        <DialogDescription className="text-muted-foreground">
+                                                            Help the community by providing your analysis of this report.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="space-y-6 py-4 text-left">
+                                                        <div className="space-y-2">
+                                                            <Label className="font-bold">Your Verdict</Label>
+                                                            <Select value={verificationStatus} onValueChange={setVerificationStatus}>
+                                                                <SelectTrigger className="rounded-xl py-6">
+                                                                    <SelectValue placeholder="Select status" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="TRUE">True / Verified</SelectItem>
+                                                                    <SelectItem value="FALSE">False / Misinformation</SelectItem>
+                                                                    <SelectItem value="FAKE">Manipulated / Deepfake</SelectItem>
+                                                                    <SelectItem value="NEEDS_REVIEW">Needs Further Investigation</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <Label className="font-bold">Confidence Rating (1-5)</Label>
+                                                            <Select value={verificationRating} onValueChange={setVerificationRating}>
+                                                                <SelectTrigger className="rounded-xl py-6">
+                                                                    <SelectValue placeholder="Confidence" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="1">1 - Very Low</SelectItem>
+                                                                    <SelectItem value="2">2 - Low</SelectItem>
+                                                                    <SelectItem value="3">3 - Moderate</SelectItem>
+                                                                    <SelectItem value="4">4 - High</SelectItem>
+                                                                    <SelectItem value="5">5 - expert</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <Label className="font-bold">Reasoning / Comments</Label>
+                                                            <Textarea
+                                                                placeholder="Explain why you chose this status. Provide links or technical details if possible."
+                                                                className="rounded-xl min-h-[120px] bg-secondary/10 border-none focus-visible:ring-primary"
+                                                                value={verificationComment}
+                                                                onChange={(e) => setVerificationComment(e.target.value)}
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div className="space-y-2">
-                                                        <Label className="font-bold">Confidence Rating (1-5)</Label>
-                                                        <Select value={verificationRating} onValueChange={setVerificationRating}>
-                                                            <SelectTrigger className="rounded-xl py-6">
-                                                                <SelectValue placeholder="Confidence" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="1">1 - Very Low</SelectItem>
-                                                                <SelectItem value="2">2 - Low</SelectItem>
-                                                                <SelectItem value="3">3 - Moderate</SelectItem>
-                                                                <SelectItem value="4">4 - High</SelectItem>
-                                                                <SelectItem value="5">5 - expert</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <Label className="font-bold">Reasoning / Comments</Label>
-                                                        <Textarea
-                                                            placeholder="Explain why you chose this status. Provide links or technical details if possible."
-                                                            className="rounded-xl min-h-[120px] bg-secondary/10 border-none focus-visible:ring-primary"
-                                                            value={verificationComment}
-                                                            onChange={(e) => setVerificationComment(e.target.value)}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button
-                                                        onClick={handleSubmitVerification}
-                                                        disabled={isSubmitting}
-                                                        className="w-full rounded-xl py-6 font-bold"
-                                                    >
-                                                        {isSubmitting ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2" size={18} />}
-                                                        Submit Verification
-                                                    </Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                                    <DialogFooter>
+                                                        <Button
+                                                            onClick={handleSubmitVerification}
+                                                            disabled={isSubmitting}
+                                                            className="w-full rounded-xl py-6 font-bold"
+                                                        >
+                                                            {isSubmitting ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2" size={18} />}
+                                                            Submit Verification
+                                                        </Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground">
+                                            What the community concluded — independent of the AI assessment above
+                                        </p>
                                     </div>
 
                                     <div className="space-y-6">

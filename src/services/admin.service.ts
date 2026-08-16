@@ -1,15 +1,30 @@
 import api from './api';
 import type { LanguageCode } from '@/shared/i18n/languages';
+import type { UserRole } from '@/store/auth.store';
+
+/** Mirrors the backend `UserStatus` enum — there is no `INACTIVE`. */
+export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'DEACTIVATED' | 'ANONYMIZED';
 
 export interface User {
     id: string;
     email: string;
     username: string;
     fullName: string;
-    role: string;
-    status: string;
+    role: UserRole;
+    status: UserStatus;
     avatarUrl?: string;
     createdAt: string;
+    lastLoginAt?: string | null;
+}
+
+export interface UserActivityEntry {
+    id: string;
+    action: string;
+    createdAt: string;
+    /** Partial by design — the full IP is only ever stored hashed. */
+    ipAddressPartial?: string | null;
+    userAgent?: string | null;
+    metadata?: Record<string, unknown> | null;
 }
 
 export interface Organization {
@@ -72,15 +87,32 @@ class AdminService {
         return response.data;
     }
 
-    async updateUserStatus(id: string, status: string) {
-        const response = await api.put(`/admin/users/${id}/status`, { status });
+    async getUserById(id: string) {
+        const response = await api.get<User>(`/users/${id}`);
+        return response.data;
+    }
+
+    async getUserActivity(id: string, params?: { page?: number; limit?: number }) {
+        const response = await api.get(`/users/${id}/activity`, { params });
+        return response.data;
+    }
+
+    /** Profile fields, role and status. Role is how moderation access is granted. */
+    async updateUser(id: string, data: Partial<Pick<User, 'fullName' | 'username' | 'email' | 'role' | 'status'>>) {
+        const response = await api.patch<User>(`/users/${id}`, data);
+        return response.data;
+    }
+
+    async updateUserStatus(id: string, status: UserStatus) {
+        const response = await api.put(`/users/${id}/status`, { status });
         return response.data;
     }
 
     async deleteUser(id: string) {
-        const response = await api.delete(`/admin/users/${id}`);
+        const response = await api.delete(`/users/${id}`);
         return response.data;
     }
+
 
     async getOrganizations() {
         const response = await api.get('/admin/organizations');

@@ -201,17 +201,19 @@ describe('adminService — users', () => {
         });
     });
 
+    // Users live under /users, not an /admin/users namespace — the API has no
+    // such controller (only /admin/organizations and /admin/players).
     it('wraps a status change in an object', async () => {
         await adminService.updateUserStatus('u-1', 'SUSPENDED');
 
-        expect(mockApi.put).toHaveBeenCalledWith('/admin/users/u-1/status', {
+        expect(mockApi.put).toHaveBeenCalledWith('/users/u-1/status', {
             status: 'SUSPENDED',
         });
     });
 
-    it('deletes through the admin namespace', async () => {
+    it('deletes through the users namespace', async () => {
         await adminService.deleteUser('u-1');
-        expect(mockApi.delete).toHaveBeenCalledWith('/admin/users/u-1');
+        expect(mockApi.delete).toHaveBeenCalledWith('/users/u-1');
     });
 
     it('reads player profiles', async () => {
