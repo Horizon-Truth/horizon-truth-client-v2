@@ -396,6 +396,73 @@ export default function LandingPage() {
                 </div>
             </section>
 
+            {/* UNICEF Funding Attribution */}
+            <section className="py-24 bg-secondary/5 relative overflow-hidden">
+                {/* Subtle background accents */}
+                <div className="absolute top-0 left-0 w-72 h-72 bg-primary/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 right-0 w-72 h-72 bg-secondary/10 rounded-full blur-[100px] translate-x-1/2 translate-y-1/2" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                        className="max-w-5xl mx-auto"
+                    >
+                        <div className="relative overflow-hidden rounded-[3rem] bg-background border border-primary/10 shadow-xl">
+
+                            {/* Top accent */}
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/60 to-secondary" />
+
+                            <div className="p-8 sm:p-12 md:p-16">
+                                <div className="flex flex-col md:flex-row items-center gap-10 md:gap-14">
+
+                                    {/* UNICEF Logo */}
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.6, delay: 0.15 }}
+                                        className="shrink-0"
+                                    >
+                                        <div className="w-44 h-32 sm:w-52 sm:h-36 rounded-3xl bg-white border border-border shadow-sm flex items-center justify-center p-6">
+                                            <img
+                                                src="/unicef-logo.jpg"
+                                                alt="UNICEF — United Nations Children's Fund"
+                                                className="max-w-full max-h-full object-contain"
+                                            />
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Content */}
+                                    <div className="flex-1 text-center md:text-left">
+                                        <span className="inline-flex items-center gap-2 text-primary font-bold tracking-widest uppercase text-xs sm:text-sm mb-4">
+                                            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                                            {t("landing.fundedBy")}
+                                        </span>
+
+                                        <h3 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight mb-5">
+                                            {t("landing.unicefAttribution")}
+                                        </h3>
+
+                                        <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl">
+                                            This project is made possible through the generous support of UNICEF
+                                            and its commitment to advancing youth digital literacy, online safety,
+                                            and meaningful digital participation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Bottom decorative detail */}
+                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3" />
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Redesigned FAQ Section */}
             <section id="faq" className="py-24 bg-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -33,6 +33,7 @@ export const PublicFooter = () => {
                         <h4 className="font-bold mb-4 text-sm uppercase tracking-wider">{t("footer.legal")}</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li><button onClick={() => navigate("/privacy-policy")} className="hover:text-primary transition-colors">{t("footer.privacy")}</button></li>
+                            <li><button onClick={() => navigate("/data-retention")} className="hover:text-primary transition-colors">{t("footer.dataRetention")}</button></li>
                             <li><button onClick={() => navigate("/terms-of-service")} className="hover:text-primary transition-colors">{t("footer.terms")}</button></li>
                             <li><button onClick={() => navigate("/cookies-policy")} className="hover:text-primary transition-colors">{t("footer.cookies")}</button></li>
                         </ul>

@@ -219,15 +219,23 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                                     </FormControl>
                                     <div className="space-y-1 leading-none">
                                         <FormLabel className="text-[11px] font-medium leading-relaxed text-muted-foreground cursor-pointer select-none">
-                                            By registering, I agree to the collection of my data as outlined in the{" "}
-                                            <button 
+                                            By creating an account, I confirm I am at least 13 years old (and if I am under 18, that a parent or guardian has reviewed this with me), and I agree to the collection and use of my data as described in the{" "}
+                                            <button
                                                 type="button"
                                                 onClick={() => navigate('/privacy-policy')}
                                                 className="text-primary font-bold hover:underline underline-offset-4"
                                             >
                                                 Privacy Policy
+                                            </button>{" "}
+                                            and the{" "}
+                                            <button
+                                                type="button"
+                                                onClick={() => navigate('/terms-of-service')}
+                                                className="text-primary font-bold hover:underline underline-offset-4"
+                                            >
+                                                Terms of Use
                                             </button>
-                                            . I understand my progress and contributions will be stored.
+                                            . I understand my game progress and contributions will be stored.
                                         </FormLabel>
                                         <FormMessage className="text-[10px] font-bold" />
                                     </div>
