@@ -98,6 +98,7 @@ export const om: DeepPartial<TranslationDict> = {
     faq: 'Gaaffilee Yeroo Baayyee',
     contact: 'Nu Quunnamaa',
     privacy: 'Imaammata Dhuunfaa',
+    dataRetention: 'Imaammata Eegumsa Daataa',
     terms: 'Haala Tajaajilaa',
     cookies: 'Imaammata Kukii',
     rights: '© 2026 Horizon Truth. Mirgi seeraan eegamaadha.',
@@ -211,10 +212,12 @@ export const om: DeepPartial<TranslationDict> = {
       'Galmeen kee mirkanaa’eera. Amma kutaa network ittisaa dijitaalaa addunyaa taateetta. Fooyya’iinsa dursa olaanaaf iimeelii kee daawwadhu.',
     newsletterAnother: 'Iimeelii biraa galmeessi',
     newsletterDisclaimer:
-      'Galmaa’uun Imaammata Dhuunfaa keenya ni fudhatta. Spam hin jiru, dhugaa qofa.',
+      'Galmaa\'uun Imaammata Dhuunfaa keenya ni fudhatta. Spam hin jiru, dhugaa qofa.',
     newsletterSuccessToast:
-      'Galmeen Newsletter milkaa’eera! Beeksisa mirkaneessa iimeelii ni argatta.',
-    newsletterErrorToast: 'Galmaa’uun hin milkoofne. Maaloo irra deebi’ii yaali.',
+      'Galmeen Newsletter milkaa\'eera! Beeksisa mirkaneessa iimeelii ni argatta.',
+    newsletterErrorToast: 'Galmaa\'uun hin milkoofne. Maaloo irra deebi\'ii yaali.',
+    fundedBy: 'Fayyadame / Deeggarama',
+    unicefAttribution: 'UNICEF',
   },
 
   about: {
@@ -364,6 +367,40 @@ export const om: DeepPartial<TranslationDict> = {
     welcomeToast: 'Baga nagaan deebite!',
     authFailedToast: 'Mirkaneessuun hin milkoofne',
     loginFailed: 'Seenuun hin milkoofne. Maaloo ragaa kee mirkaneessi.',
+  },
+
+  legal: {
+    privacyPolicy: 'Imaammata Dhuunfaa',
+    dataRetentionPolicy: 'Imaammata Eegumsa Daataa',
+    privacyClausesTitle: 'Meeshaalee Walqunnamtii Dhuunfaa',
+    privacyClausesSubtitle: 'Meeshaalee Dhuunfaa Keessoo/Walqunnamtii fi Qophaa\'ina Walqunnamtii',
+    aboutThisDocument: 'Waa\'ee Kunuun Sanadichaa',
+    privacyPolicyDesc:
+      'Imaammata Dhuunfaa kuni akkamitti Dabbal Software Development PLC pilaatformii Horizon Truth irratti daataa dhuunfaa kee fudhata, fayyadama, fi walitti qabu ibsa gadi fida.',
+    privacyPolicyDesc2:
+      'Imaammata Dhuunfaa kuni Waa\'ee Eegumsa Daataa fi Waa\'ee Kukiin waliin jira. Daataan kee akkamitti fayyadamu hubachuuf sanadawwan sadii kanatti galii.',
+    dataRetentionDesc:
+      'Waa\'ee Eegumsa Daataa kuni qabiyyee daataa dhuunfaa addaa addaa pilaatformii Horizon Truth keessatti hanga yeroo maaliif eegama, fi daataa haquu fi hidda miseensisuun akkamitti hojjatu hubisa.',
+    dataRetentionDesc2:
+      'Waa\'ee Dhuunfaa fi Waa\'ee Kukiin waliin jira.',
+    privacyClausesDesc:
+      'Kun sanadni meeshaalee walqunnamtii keessoo fi Waliigaltee Galee Daataa (DPA) qophaa\'ina walqunnamtii dhuunfaa fi meeshaalee kennitoota waliin fayyadamuuf qophaa\'e. Kun imaammata hawaasaa miti.',
+    privacyClausesNotice:
+      'Kun meeshaa hojii dha, imaammata hawaasaa miti. Meeshaalee Vendor/DPA afaanii fi qophaa\'ina walqunnamtii dhuunfaa sanadawwan keessatti fayyadamu qaba.',
+    internalDocument: 'Sanad Keessoo / Walqunnamtii',
+    version: 'Fooyya\'iinsa',
+    effectiveDate: 'Guyyaa Hojiirra Oolan',
+    format: 'Dhangii',
+    organization: 'Dhaabbala',
+    documentInfo: 'Odeeffannoo Sanadaa',
+    viewPdf: 'PDF Daawwadhu',
+    downloadPdf: 'PDF Fudhadhu',
+    relatedDocuments: 'Sanadota Waliin Jiran',
+    relatedDocumentsDesc: 'Kun sanad kuni imaammata armaan gadii waliin ta\'uu qaba:',
+    type: 'Akaakuu',
+    internalContractual: 'Keessoo / Walqunnamtii',
+    purpose: 'Kabajjii',
+    privacyClausesPurpose: 'Sanadota dhaabbalaa, DPAs fi qophaa\'ina walqunnamtii dhuunfaa',
   },
 
   moderation: {

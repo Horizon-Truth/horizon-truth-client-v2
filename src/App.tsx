@@ -15,6 +15,8 @@ import ContactPage from "./modules/contact/ContactPage";
 import PrivacyPolicyPage from "./modules/legal/PrivacyPolicyPage";
 import TermsOfServicePage from "./modules/legal/TermsOfServicePage";
 import CookiesPolicyPage from "./modules/legal/CookiesPolicyPage";
+import DataRetentionPolicyPage from "./modules/legal/DataRetentionPolicyPage";
+
 import CrowdsourcingListingPage from "./modules/reports/CrowdsourcingListingPage";
 import CrowdsourcingDetailPage from "./modules/reports/CrowdsourcingDetailPage";
 import ReportSubmissionPage from "./modules/reports/ReportSubmissionPage";
@@ -124,8 +126,10 @@ function App() {
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
             <Route path="/terms-of-service" element={<TermsOfServicePage />} />
             <Route path="/cookies-policy" element={<CookiesPolicyPage />} />
+            <Route path="/data-retention" element={<DataRetentionPolicyPage />} />
             <Route path="/crowdsourcing" element={<CrowdsourcingListingPage />} />
             <Route path="/crowdsourcing/submit" element={<ReportSubmissionPage />} />
             <Route path="/crowdsourcing/:id" element={<CrowdsourcingDetailPage />} />

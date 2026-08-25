@@ -99,6 +99,7 @@ export const en = {
     faq: 'FAQ',
     contact: 'Contact',
     privacy: 'Privacy Policy',
+    dataRetention: 'Data Retention Policy',
     terms: 'Terms of Service',
     cookies: 'Cookies Policy',
     rights: '© 2026 Horizon Truth. All rights reserved.',
@@ -216,6 +217,8 @@ export const en = {
     newsletterSuccessToast:
       'Newsletter Subscription Successful! You will receive an email reservation notification.',
     newsletterErrorToast: 'Failed to subscribe. Please try again.',
+    fundedBy: 'Funded / Supported by',
+    unicefAttribution: 'UNICEF',
   },
 
   about: {
@@ -367,6 +370,40 @@ export const en = {
     welcomeToast: 'Welcome back!',
     authFailedToast: 'Authentication failed',
     loginFailed: 'Login failed. Please check your credentials.',
+  },
+
+  legal: {
+    privacyPolicy: 'Privacy Policy',
+    dataRetentionPolicy: 'Data Retention Policy',
+    privacyClausesTitle: 'Privacy Clauses for Agreements',
+    privacyClausesSubtitle: 'Internal/Contractual Privacy Clauses & Agreement Toolkit',
+    aboutThisDocument: 'About This Document',
+    privacyPolicyDesc:
+      'This Privacy Policy describes how Dabbal Software Development PLC collects, uses, and shares your personal information when you use the Horizon Truth platform. It explains your rights regarding your data and how to exercise them.',
+    privacyPolicyDesc2:
+      'The Privacy Policy explicitly sits alongside the Data Retention Policy and Cookies Policy. Please review all three documents for a complete understanding of how your data is handled.',
+    dataRetentionDesc:
+      'This Data Retention Policy explains how long different categories of personal data are retained on the Horizon Truth platform, and how data deletion and anonymization work.',
+    dataRetentionDesc2:
+      'It sits alongside the Privacy Policy and Cookies Policy to provide a complete picture of Horizon Truth\'s data handling practices.',
+    privacyClausesDesc:
+      'This document contains internal contractual privacy clauses and a Data Processing Agreement (DPA) toolkit intended for use in agreements with vendors, partners, and service providers. It is not a public-facing privacy policy.',
+    privacyClausesNotice:
+      'This is a working toolkit, not a public-facing policy. It contains vendor/DPA language and contractual clauses intended for internal and agreement use only.',
+    internalDocument: 'Internal / Contractual Document',
+    version: 'Version',
+    effectiveDate: 'Effective Date',
+    format: 'Format',
+    organization: 'Organization',
+    documentInfo: 'Document Information',
+    viewPdf: 'View PDF',
+    downloadPdf: 'Download PDF',
+    relatedDocuments: 'Related Documents',
+    relatedDocumentsDesc: 'This document should be read alongside the following policies:',
+    type: 'Type',
+    internalContractual: 'Internal / Contractual',
+    purpose: 'Purpose',
+    privacyClausesPurpose: 'Vendor agreements, DPAs, and contractual privacy clauses',
   },
 
   moderation: {

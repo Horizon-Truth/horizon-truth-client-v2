@@ -97,6 +97,7 @@ export const am: DeepPartial<TranslationDict> = {
     faq: 'ተደጋጋሚ ጥያቄዎች',
     contact: 'አግኙን',
     privacy: 'የግላዊነት ፖሊሲ',
+    dataRetention: 'የውሂብ ማስቀመጫ ፖሊሲ',
     terms: 'የአገልግሎት ውል',
     cookies: 'የኩኪ ፖሊሲ',
     rights: '© 2026 Horizon Truth። መብቱ በሕግ የተጠበቀ ነው።',
@@ -213,6 +214,8 @@ export const am: DeepPartial<TranslationDict> = {
     newsletterSuccessToast:
       'የዜና መልዕክት ምዝገባ ተሳክቷል! የኢሜይል ማረጋገጫ ማስታወቂያ ይደርስዎታል።',
     newsletterErrorToast: 'መመዝገብ አልተሳካም። እባክዎ እንደገና ይሞክሩ።',
+    fundedBy: 'የተደገፈ / የሚደግፈው',
+    unicefAttribution: 'ዩኒሴፍ',
   },
 
   about: {
@@ -359,6 +362,40 @@ export const am: DeepPartial<TranslationDict> = {
     welcomeToast: 'እንኳን ደህና ተመለሱ!',
     authFailedToast: 'ማረጋገጥ አልተሳካም',
     loginFailed: 'መግባት አልተሳካም። እባክዎ መረጃዎን ያረጋግጡ።',
+  },
+
+  legal: {
+    privacyPolicy: 'የግላዊነት ፖሊሲ',
+    dataRetentionPolicy: 'የውሂብ ማስቀመጫ ፖሊሲ',
+    privacyClausesTitle: 'ለስምምነቶች የግላዊነት ንዑሶች',
+    privacyClausesSubtitle: 'የውስጥ/የኮንትራክት የግላዊነት ንዑሶች እና የስምምነት መሣሪያ',
+    aboutThisDocument: 'ስለ እዚህ ሰነድ',
+    privacyPolicyDesc:
+      'ይህ የግላዊነት ፖሊሲ Dabbal Software Development PLC በHorizon Truth መድረክ ላይ የግላዊ መረጃዎን እንዴት እንደሚሰበስብ፣ እንዴት እንደሚጠቀም እና እንዴት እንደሚጋራ ያብራራል።',
+    privacyPolicyDesc2:
+      'የግላዊነት ፖሊሲው ከውሂብ ማስቀመጫ ፖሊሲ እና ከኩኪ ፖሊሲ ጋር በተያያዘ ነው። መረጃዎ እንዴት እንደሚታከም ሙሉ ገባታችሁን ለማረጋገጥ እነዚህን ሶስት ሰነዶች ይ伭ogeጡ።',
+    dataRetentionDesc:
+      'ይህ የውሂብ ማስቀመጫ ፖሊሲ በHorizon Truth መድረክ ላይ የተለያዩ ዓይነት የግላዊ መረጃዎች ምን ያህል ጊዜ እንደሚቀመጡ እና የውሂብ ማጥፋት እና ማስፋፊያ እንዴት እንደሚሠራ ያብራራል።',
+    dataRetentionDesc2:
+      'ከግላዊነት ፖሊሲ እና ከኩኪ ፖሊሲ ጋር በተያያዘ ነው።',
+    privacyClausesDesc:
+      'ይህ ሰነድ ከድርጅቶች ጋር በሚደረጉ ስምምነቶች ውስጥ የሚጠቀሙ የውስጥ የኮንትራክት የግላዊነት ንዑሶች እና የውሂብ ማስወንemd ስምምነት (DPA) መሣሪያ ያካትታል። ይህ የህዝብ ፖሊሲ አይደለም።',
+    privacyClausesNotice:
+      'ይህ የስራ መሣሪያ ነው፣ የህዝብ ፖሊሲ አይደለም። ከድርጅቶች ጋር በሚደረጉ ስምምነቶች ውስጥ የሚጠቀሙ የVendor/DPA ቋንቋ እና የኮንትራክት ንዑሶች ያካትታል።',
+    internalDocument: 'የውስጥ / የኮንትራክት ሰነድ',
+    version: 'ስሪት',
+    effectiveDate: 'የተግባር ቀን',
+    format: 'ፎርማት',
+    organization: 'ድርጅት',
+    documentInfo: 'የሰነድ መረጃ',
+    viewPdf: 'ፒዲኤፍ ይመልከቱ',
+    downloadPdf: 'ፒዲኤፍ ያውርዱ',
+    relatedDocuments: 'ተዛabraቸውን ሰነዶች',
+    relatedDocumentsDesc: 'ይህ ሰነድ ከሚከተሉት ፖሊሶች ጋር መዋስ አለበት:',
+    type: 'ዓይነት',
+    internalContractual: 'የውስጥ / የኮንትራክት',
+    purpose: 'አmnare',
+    privacyClausesPurpose: 'የድርጅት ስምምነቶች፣ DPAs እና የኮንትራክት የግላዊነት ንዑሶች',
   },
 
   moderation: {

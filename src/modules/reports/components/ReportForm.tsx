@@ -30,6 +30,9 @@ const reportSchema = z.object({
     reportedContentReference: z.string().optional(),
     evidenceLinks: z.array(z.string()).optional(),
     tagIds: z.array(z.string()).min(1, { message: "Select at least one tag" }),
+    consent: z.boolean().refine(val => val === true, {
+        message: "You must confirm before submitting",
+    }),
 });
 
 interface ReportFormProps {
@@ -83,6 +86,7 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
             reportedContentReference: "",
             evidenceLinks: [],
             tagIds: [],
+            consent: false,
         },
     });
 
@@ -345,6 +349,38 @@ export function ReportForm({ onSuccess, onRequireAuth, onCancel, authResolvedSig
                         )}
                     />
                 </div>
+
+                <FormField
+                    control={form.control}
+                    name="consent"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-2xl border border-border/50 p-4 bg-background/30 backdrop-blur-sm transition-all hover:bg-background/50">
+                            <FormControl>
+                                <div className="flex items-center h-5">
+                                    <input
+                                        type="checkbox"
+                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary cursor-pointer"
+                                        checked={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                </div>
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel className="text-[11px] font-medium leading-relaxed text-muted-foreground cursor-pointer select-none">
+                                    I confirm that this report is based on my genuine belief about the content described, and that any evidence I have attached does not contain other people's personal data without their consent. I understand this report and any attached evidence will be stored and reviewed as described in the{" "}
+                                    <button
+                                        type="button"
+                                        className="text-primary font-bold hover:underline underline-offset-4"
+                                    >
+                                        Privacy Policy
+                                    </button>
+                                    .
+                                </FormLabel>
+                                <FormMessage className="text-[10px] font-bold" />
+                            </div>
+                        </FormItem>
+                    )}
+                />
 
                 <div className="flex flex-col sm:flex-row gap-6 pt-6 border-t border-border/30">
                     <Button
