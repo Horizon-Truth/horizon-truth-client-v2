@@ -45,8 +45,8 @@ export default function NewsletterSubscriptionsPage() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Newsletter Network</h2>
-                <p className="text-sm text-muted-foreground mt-1">Manage the digital defender subscriber base.</p>
+                <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">Newsletter Subscribers</h2>
+                <p className="text-sm text-muted-foreground mt-1">Manage newsletter subscribers.</p>
             </div>
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-card border border-border/50 p-2 sm:p-4 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm">
@@ -78,7 +78,7 @@ export default function NewsletterSubscriptionsPage() {
                                     <td colSpan={4} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Syncing Network Base...</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Loading subscribers...</p>
                                         </div>
                                     </td>
                                 </tr>

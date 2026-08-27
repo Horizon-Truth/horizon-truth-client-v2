@@ -85,7 +85,7 @@ export default function OrganizationDetailPage() {
             <div className="text-center py-20">
                 <p className="text-lg font-bold text-muted-foreground">Entity not found in current sector.</p>
                 <Button variant="link" onClick={() => navigate("/dashboard/organizations")} className="mt-4">
-                    Return to Registry
+                    Return to Organizations
                 </Button>
             </div>
         );
@@ -101,7 +101,7 @@ export default function OrganizationDetailPage() {
                     onClick={() => navigate("/dashboard/organizations")}
                 >
                     <ArrowLeft size={14} />
-                    Back to Registry
+                    Back to Organizations
                 </Button>
 
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -160,7 +160,7 @@ export default function OrganizationDetailPage() {
 
                         <div className="space-y-4 pt-6 border-t border-border/20">
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Registry ID</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Organization ID</span>
                                 <span className="text-[10px] font-mono font-bold text-primary">{organization.id}</span>
                             </div>
                             <div className="flex items-center justify-between">
@@ -207,7 +207,7 @@ export default function OrganizationDetailPage() {
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
                             <div className="bg-card border border-border/50 w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-2xl font-black italic uppercase tracking-tighter underline decoration-primary decoration-4 underline-offset-4">Assign Personnel</h3>
+                                    <h3 className="text-2xl font-black italic uppercase tracking-tighter underline decoration-primary decoration-4 underline-offset-4">Assign User</h3>
                                     <Button variant="ghost" size="icon" onClick={() => setIsAssignModalOpen(false)} className="rounded-full">
                                         <XCircle size={24} />
                                     </Button>
@@ -215,14 +215,14 @@ export default function OrganizationDetailPage() {
 
                                 <form onSubmit={handleAssignAgent} className="space-y-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Select Identity</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Select User</label>
                                         <select
                                             required
                                             className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none cursor-pointer"
                                             value={assignment.userId}
                                             onChange={e => setAssignment({ ...assignment, userId: e.target.value })}
                                         >
-                                            <option value="">Select Personnel...</option>
+                                            <option value="">Select a user...</option>
                                             {allUsers.filter(u => !orgUsers.some(ou => ou.userId === u.id)).map(user => (
                                                 <option key={user.id} value={user.id}>{user.fullName} ({user.email})</option>
                                             ))}
@@ -253,9 +253,9 @@ export default function OrganizationDetailPage() {
                             <table className="w-full border-collapse">
                                 <thead>
                                     <tr className="bg-muted/30 border-b border-border/40">
-                                        <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Node Identity</th>
+                                        <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">User</th>
                                         <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Org Authority</th>
-                                        <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Registry Status</th>
+                                        <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
                                         <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Protocol</th>
                                     </tr>
                                 </thead>
@@ -264,7 +264,7 @@ export default function OrganizationDetailPage() {
                                         <tr>
                                             <td colSpan={4} className="py-20 text-center">
                                                 <UsersIcon size={40} className="mx-auto text-muted-foreground/20 mb-3" />
-                                                <p className="text-sm font-bold text-muted-foreground italic uppercase tracking-wider">No personnel embedded in this unit.</p>
+                                                <p className="text-sm font-bold text-muted-foreground italic uppercase tracking-wider">No users in this organization.</p>
                                             </td>
                                         </tr>
                                     ) : orgUsers.map((item) => (

@@ -64,11 +64,11 @@ export default function ResourceCreatePage() {
     const onSubmit = async (values: ResourceFormValues) => {
         try {
             await adminService.createResource({ ...values, language: values.language as LanguageCode });
-            toast.success("Resource onboarded successfully");
+            toast.success("Resource created successfully");
             navigate("/dashboard/resources/assets");
         } catch (error) {
             console.error("Failed to create resource:", error);
-            toast.error("Failed to onboard resource");
+            toast.error("Failed to create resource");
         }
     };
 
