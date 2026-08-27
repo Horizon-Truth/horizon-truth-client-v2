@@ -132,7 +132,7 @@ export default function BlogManagementPage() {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Retrieving Assets...</p>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Loading blogs...</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -141,7 +141,7 @@ export default function BlogManagementPage() {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <FileText size={40} className="text-muted-foreground/30" />
-                                            <p className="text-sm font-bold text-muted-foreground">No blog records found in the current vector.</p>
+                                            <p className="text-sm font-bold text-muted-foreground">No blogs found.</p>
                                         </div>
                                     </td>
                                 </tr>

@@ -218,7 +218,7 @@ export default function UserManagementPage() {
                         </div>
 
                         {/* Form — scrollable */}
-                        <form onSubmit={handleCreateUser} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+                        <form id="create-user-form" onSubmit={handleCreateUser} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
                             <div className="space-y-1.5">
                                 <label htmlFor="create-name" className="text-sm font-medium">Full Name</label>
                                 <Input
@@ -325,7 +325,6 @@ export default function UserManagementPage() {
                                 form="create-user-form"
                                 className="flex-1 h-11 rounded-xl font-semibold gap-2"
                                 disabled={isCreating}
-                                onClick={handleCreateUser}
                             >
                                 {isCreating ? (
                                     <><Loader2 size={16} className="animate-spin" /> Creating...</>

@@ -203,7 +203,7 @@ export default function FeedbackDashboardPage() {
                                     </div>
                                 ))}
                                 <Button variant="outline" className="w-full rounded-2xl h-12 font-bold border-dashed mt-4">
-                                    View All Feedback Records
+                                    View All Feedback
                                 </Button>
                             </div>
                         )}
@@ -214,7 +214,7 @@ export default function FeedbackDashboardPage() {
                     <Card className="border-none shadow-sm rounded-[2rem] bg-primary text-primary-foreground overflow-hidden relative">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-black uppercase tracking-wider italic">Internal Review</CardTitle>
+                            <CardTitle className="text-xl font-black uppercase tracking-wider italic">Quality Check</CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 pt-0 space-y-4">
                             <p className="text-sm text-primary-foreground/80 font-medium">
@@ -228,7 +228,7 @@ export default function FeedbackDashboardPage() {
                                 <CheckCircle2 size={32} className="opacity-40" />
                             </div>
                             <Button variant="secondary" className="w-full rounded-xl font-black uppercase tracking-widest h-12">
-                                Run Quality Audit
+                                Run Quality Check
                             </Button>
                         </CardContent>
                     </Card>
@@ -258,12 +258,12 @@ export default function FeedbackDashboardPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Search Records</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">Search</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                                     <input
                                         type="text"
-                                        placeholder="Comment keyword..."
+                                        placeholder="Search feedback..."
                                         className="w-full h-11 bg-muted/50 border-none rounded-xl pl-10 pr-4 text-xs focus:ring-1 focus:ring-primary outline-none"
                                     />
                                 </div>
