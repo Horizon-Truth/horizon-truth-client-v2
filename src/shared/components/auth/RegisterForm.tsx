@@ -89,7 +89,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label="Registration form">
                         <FormField
                             control={form.control}
                             name="fullName"
@@ -195,7 +195,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                         </div>
 
                         {error && (
-                            <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1 my-4">
+                            <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1 my-4" role="alert" aria-live="assertive">
                                 <p className="text-xs font-bold text-destructive">
                                     {error}
                                 </p>
@@ -214,6 +214,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
                                                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary cursor-pointer"
                                                 checked={field.value}
                                                 onChange={field.onChange}
+                                                aria-label="I agree to the Privacy Policy and Terms of Use"
                                             />
                                         </div>
                                     </FormControl>

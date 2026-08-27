@@ -74,7 +74,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" aria-label="Login form">
                         <FormField
                             control={form.control}
                             name="email"
@@ -123,7 +123,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                         />
 
                         {error && (
-                            <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1">
+                            <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1" role="alert" aria-live="assertive">
                                 <p className="text-xs font-bold text-destructive flex items-center gap-2">
                                     <LogIn size={14} /> {error}
                                 </p>

@@ -12,7 +12,7 @@ interface PageHeroProps {
 
 export const PageHero = ({ title, subtitle, description, badge, icon, children }: PageHeroProps) => {
     return (
-        <section className="relative pt-32 pb-20 overflow-hidden bg-background">
+        <section className="relative pt-32 pb-20 overflow-hidden bg-background" aria-label={title}>
             {/* Ambient Background Blurs */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
