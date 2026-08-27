@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus, ChevronLeft, ChevronRight, Eye, Pencil, ShieldCheck, X, Clock, RotateCcw } from "lucide-react";
+import { Users, Shield, UserCheck, UserX, Trash2, Search, Filter, MoreVertical, Mail, Calendar, UserPlus, ChevronLeft, ChevronRight, Eye, EyeOff, Pencil, ShieldCheck, X, Clock, RotateCcw, Loader2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
@@ -36,7 +36,9 @@ export default function UserManagementPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [newUser, setNewUser] = useState<{ fullName: string; email: string; username: string; role: UserRole }>({ fullName: '', email: '', username: '', role: 'PLAYER' });
+    const [newUser, setNewUser] = useState<{ fullName: string; email: string; username: string; role: UserRole; password: string }>({ fullName: '', email: '', username: '', role: 'PLAYER', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [detailUser, setDetailUser] = useState<User | null>(null);
     const [activity, setActivity] = useState<UserActivityEntry[] | null>(null);
@@ -67,14 +69,18 @@ export default function UserManagementPage() {
 
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsCreating(true);
         try {
             await adminService.createUser(newUser);
-            toast.success("Personnel onboarded successfully");
+            toast.success("User created successfully");
             setIsCreateModalOpen(false);
-            setNewUser({ fullName: '', email: '', username: '', role: 'PLAYER' });
+            setNewUser({ fullName: '', email: '', username: '', role: 'PLAYER', password: '' });
+            setShowPassword(false);
             fetchUsers();
         } catch (error) {
-            toast.error("Failed to onboard personnel");
+            toast.error(apiMessage(error, "Failed to create user"));
+        } finally {
+            setIsCreating(false);
         }
     };
 
@@ -185,66 +191,77 @@ export default function UserManagementPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight italic uppercase tracking-wider">User Directory</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Manage system accounts and access control parameters.</p>
+                    <p className="text-sm text-muted-foreground mt-1">Manage user accounts and permissions.</p>
                 </div>
                 <Button
                     onClick={() => setIsCreateModalOpen(true)}
                     className="w-full sm:w-auto rounded-2xl h-12 px-6 font-bold gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all border-none bg-foreground text-background"
                 >
                     <UserPlus size={20} />
-                    Onboard New User
+                    Add User
                 </Button>
             </div>
 
             {/* Create User Modal */}
             {isCreateModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-                    <div className="bg-card border border-border/50 w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-3xl font-black italic uppercase tracking-tighter decoration-primary decoration-4 underline-offset-8 underline">Embed Personnel</h3>
-                            <Button variant="ghost" size="icon" onClick={() => setIsCreateModalOpen(false)} className="rounded-full">
-                                <UserX size={24} />
+                    <div className="bg-card border border-border/50 w-full max-w-lg rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+                        {/* Header — fixed */}
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-border/50">
+                            <div>
+                                <h3 className="text-lg font-bold">New User</h3>
+                                <p className="text-sm text-muted-foreground">Create an account and set their role.</p>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => setIsCreateModalOpen(false)} className="rounded-full" aria-label="Close">
+                                <X size={20} />
                             </Button>
                         </div>
 
-                        <form onSubmit={handleCreateUser} className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Identity Full Name</label>
+                        {/* Form — scrollable */}
+                        <form onSubmit={handleCreateUser} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+                            <div className="space-y-1.5">
+                                <label htmlFor="create-name" className="text-sm font-medium">Full Name</label>
                                 <Input
+                                    id="create-name"
                                     required
-                                    className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                    className="h-11 rounded-xl"
                                     value={newUser.fullName}
                                     onChange={e => setNewUser({ ...newUser, fullName: e.target.value })}
-                                    placeholder="e.g. CASPIAN MILLER"
+                                    placeholder="e.g. Sarah Chen"
+                                    autoFocus
                                 />
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Comms Email</label>
-                                    <Input
-                                        required
-                                        type="email"
-                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
-                                        value={newUser.email}
-                                        onChange={e => setNewUser({ ...newUser, email: e.target.value })}
-                                        placeholder="miller@truthwatch.io"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Registry Handle</label>
-                                    <Input
-                                        required
-                                        className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
-                                        value={newUser.username}
-                                        onChange={e => setNewUser({ ...newUser, username: e.target.value })}
-                                        placeholder="caspian_88"
-                                    />
-                                </div>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="create-email" className="text-sm font-medium">Email</label>
+                                <Input
+                                    id="create-email"
+                                    required
+                                    type="email"
+                                    className="h-11 rounded-xl"
+                                    value={newUser.email}
+                                    onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+                                    placeholder="sarah@example.com"
+                                />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Clearance Protocol</label>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="create-username" className="text-sm font-medium">Username</label>
+                                <Input
+                                    id="create-username"
+                                    required
+                                    className="h-11 rounded-xl"
+                                    value={newUser.username}
+                                    onChange={e => setNewUser({ ...newUser, username: e.target.value })}
+                                    placeholder="sarah_chen"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="create-role" className="text-sm font-medium">Role</label>
                                 <select
-                                    className="w-full h-14 rounded-2xl bg-muted/30 border-none px-4 font-bold italic outline-none appearance-none cursor-pointer"
+                                    id="create-role"
+                                    className="w-full h-11 rounded-xl bg-muted/50 border border-border px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
                                     value={newUser.role}
                                     onChange={e => setNewUser({ ...newUser, role: e.target.value as UserRole })}
                                 >
@@ -252,17 +269,71 @@ export default function UserManagementPage() {
                                         <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
                                 </select>
-                                <p className="text-[11px] text-muted-foreground px-1">
+                                <p className="text-xs text-muted-foreground">
                                     {ROLE_OPTIONS.find(r => r.value === newUser.role)?.hint}
                                 </p>
                             </div>
-                            <p className="text-[10px] font-medium italic text-muted-foreground px-1">
-                                Note: Initial authentication credentials will be dispatched to the provided communications channel upon verification.
-                            </p>
-                            <Button type="submit" className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
-                                Authenticate and Embed
-                            </Button>
+
+                            <div className="space-y-1.5">
+                                <label htmlFor="create-password" className="text-sm font-medium">Password</label>
+                                <div className="relative">
+                                    <Input
+                                        id="create-password"
+                                        required
+                                        type={showPassword ? "text" : "password"}
+                                        minLength={8}
+                                        className="h-11 rounded-xl pr-10"
+                                        value={newUser.password}
+                                        onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+                                        placeholder="At least 8 characters"
+                                    />
+                                    <button
+                                        type="button"
+                                        tabIndex={-1}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Must be 8+ characters with uppercase, lowercase, number, and special character.
+                                </p>
+                            </div>
+
+                            <div className="rounded-xl bg-muted/50 border border-border/50 px-4 py-3">
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    <strong>Note:</strong> Share the password securely with the user. They can change it after first login.
+                                </p>
+                            </div>
                         </form>
+
+                        {/* Footer — fixed */}
+                        <div className="px-6 py-4 border-t border-border/50 flex gap-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1 h-11 rounded-xl font-semibold"
+                                onClick={() => setIsCreateModalOpen(false)}
+                                disabled={isCreating}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                form="create-user-form"
+                                className="flex-1 h-11 rounded-xl font-semibold gap-2"
+                                disabled={isCreating}
+                                onClick={handleCreateUser}
+                            >
+                                {isCreating ? (
+                                    <><Loader2 size={16} className="animate-spin" /> Creating...</>
+                                ) : (
+                                    <><UserPlus size={16} /> Create User</>
+                                )}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -271,7 +342,7 @@ export default function UserManagementPage() {
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                     <Input
-                        placeholder="Search personnel..."
+                        placeholder="Search by name, email, or username..."
                         className="pl-12 h-12 rounded-xl bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -297,11 +368,11 @@ export default function UserManagementPage() {
                     <table className="w-full border-collapse min-w-[800px]">
                         <thead>
                             <tr className="bg-muted/30 border-b border-border/50">
-                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">User Profile</th>
-                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Access Level</th>
+                                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">User</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Role</th>
                                 <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
-                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Verified Since</th>
-                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Protocol</th>
+                                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-muted-foreground">Joined</th>
+                                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/50">
@@ -310,7 +381,7 @@ export default function UserManagementPage() {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Accessing Mainframe...</p>
+                                            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Loading users...</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -319,7 +390,7 @@ export default function UserManagementPage() {
                                     <td colSpan={5} className="py-20 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <Users size={40} className="text-muted-foreground/30" />
-                                            <p className="text-sm font-bold text-muted-foreground">No personnel records found in this vector.</p>
+                                            <p className="text-sm font-bold text-muted-foreground">No users found.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -572,7 +643,7 @@ export default function UserManagementPage() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
                     <div className="bg-card border border-border/50 w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-2xl font-black italic uppercase tracking-tighter">Edit personnel</h3>
+                            <h3 className="text-2xl font-black italic uppercase tracking-tighter">Edit User</h3>
                             <Button variant="ghost" size="icon" onClick={() => setEditUser(null)} className="rounded-full" aria-label="Close">
                                 <X size={22} />
                             </Button>
