@@ -14,6 +14,7 @@ import {
     LogOut,
     HelpCircle,
     BookOpen,
+    MoreHorizontal,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { ScenarioList } from '../engine/components/ScenarioList';
@@ -131,65 +132,159 @@ export default function GamePage() {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex lg:flex-col items-center lg:items-end justify-between gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
-                            <div className="flex items-center gap-1">
-                                <Button
-                                    onClick={() => navigate('/dashboard/manual')}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-xl font-bold gap-2 text-primary hover:text-primary hover:bg-primary/10"
-                                >
-                                    <BookOpen size={16} aria-hidden /> Field Manual
-                                    <span className="px-1.5 py-0.5 rounded-md bg-primary/15 text-[10px] font-black tabular-nums">
-                                        {unlockedArticleCount}/{MANUAL_ARTICLES.length}
-                                    </span>
-                                </Button>
-                                <Button
-                                    onClick={() => navigate('/dashboard/achievements')}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <Trophy size={16} aria-hidden /> Achievements
-                                </Button>
-                                <Button
-                                    onClick={() => setIsGuideOpen(true)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <HelpCircle size={16} aria-hidden /> How to play
-                                </Button>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <Button
-                                    onClick={() => setIsFeedbackOpen(true)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <MessageSquare size={15} aria-hidden /> Feedback
-                                </Button>
-                                <Button
-                                    onClick={() => navigate('/crowdsourcing/submit')}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <Megaphone size={15} aria-hidden /> Report misinfo
-                                </Button>
-                                <Button
-                                    onClick={() => logout()}
-                                    variant="ghost"
-                                    size="sm"
-                                    aria-label="Log out"
-                                    className="rounded-xl font-bold gap-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10"
-                                >
-                                    <LogOut size={15} aria-hidden />
-                                </Button>
-                            </div>
-                        </div>
-                    </section>
+                        {/* Actions */}
+<div className="flex items-center justify-end lg:flex-col lg:items-end gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
+
+    {/* Mobile actions */}
+    <details className="relative lg:hidden">
+        <summary
+            className="list-none cursor-pointer flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors [&::-webkit-details-marker]:hidden"
+        >
+            <MoreHorizontal size={18} aria-hidden />
+            <span>More</span>
+        </summary>
+
+        <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-border bg-card p-1.5 shadow-lg">
+
+            <button
+                type="button"
+                onClick={() => navigate('/dashboard/manual')}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <BookOpen size={17} className="shrink-0 text-primary" aria-hidden />
+
+                <span className="flex-1 text-left">
+                    Field Manual
+                </span>
+
+                <span className="px-1.5 py-0.5 rounded-md bg-primary/15 text-[10px] font-black tabular-nums text-primary">
+                    {unlockedArticleCount}/{MANUAL_ARTICLES.length}
+                </span>
+            </button>
+
+            <button
+                type="button"
+                onClick={() => navigate('/dashboard/achievements')}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <Trophy size={17} className="shrink-0" aria-hidden />
+                <span>Achievements</span>
+            </button>
+
+            <button
+                type="button"
+                onClick={() => setIsGuideOpen(true)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <HelpCircle size={17} className="shrink-0" aria-hidden />
+                <span>How to play</span>
+            </button>
+
+            <div className="my-1.5 border-t border-border" />
+
+            <button
+                type="button"
+                onClick={() => setIsFeedbackOpen(true)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <MessageSquare size={17} className="shrink-0" aria-hidden />
+                <span>Feedback</span>
+            </button>
+
+            <button
+                type="button"
+                onClick={() => navigate('/crowdsourcing/submit')}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <Megaphone size={17} className="shrink-0" aria-hidden />
+                <span>Report misinfo</span>
+            </button>
+
+            <div className="my-1.5 border-t border-border" />
+
+            <button
+                type="button"
+                onClick={() => logout()}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-500/10 transition-colors"
+            >
+                <LogOut size={17} className="shrink-0" aria-hidden />
+                <span>Log out</span>
+            </button>
+        </div>
+    </details>
+
+    {/* Desktop actions */}
+    <div className="hidden lg:flex lg:flex-col items-end gap-1">
+
+        <div className="flex items-center gap-1">
+            <Button
+                onClick={() => navigate('/dashboard/manual')}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-primary hover:text-primary hover:bg-primary/10"
+            >
+                <BookOpen size={16} aria-hidden />
+                Field Manual
+                <span className="px-1.5 py-0.5 rounded-md bg-primary/15 text-[10px] font-black tabular-nums">
+                    {unlockedArticleCount}/{MANUAL_ARTICLES.length}
+                </span>
+            </Button>
+
+            <Button
+                onClick={() => navigate('/dashboard/achievements')}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+            >
+                <Trophy size={16} aria-hidden />
+                Achievements
+            </Button>
+
+            <Button
+                onClick={() => setIsGuideOpen(true)}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+            >
+                <HelpCircle size={16} aria-hidden />
+                How to play
+            </Button>
+        </div>
+
+        <div className="flex items-center gap-1">
+            <Button
+                onClick={() => setIsFeedbackOpen(true)}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+            >
+                <MessageSquare size={15} aria-hidden />
+                Feedback
+            </Button>
+
+            <Button
+                onClick={() => navigate('/crowdsourcing/submit')}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+            >
+                <Megaphone size={15} aria-hidden />
+                Report misinfo
+            </Button>
+
+            <Button
+                onClick={() => logout()}
+                variant="ghost"
+                size="sm"
+                aria-label="Log out"
+                className="rounded-xl font-bold gap-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10"
+            >
+                <LogOut size={15} aria-hidden />
+            </Button>
+        </div>
+    </div>
+</div>
+                         </section>
 
                     {/* Stats */}
                     <section aria-label="Your stats" className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-in fade-in slide-in-from-top-4 duration-700">
