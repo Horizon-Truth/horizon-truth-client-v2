@@ -36,7 +36,7 @@ export default function UserManagementPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [newUser, setNewUser] = useState<{ fullName: string; email: string; username: string; role: UserRole }>({ fullName: '', email: '', username: '', role: 'PLAYER' });
+    const [newUser, setNewUser] = useState<{ fullName: string; email: string; username: string; role: UserRole; password: string }>({ fullName: '', email: '', username: '', role: 'PLAYER', password: '' });
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const [detailUser, setDetailUser] = useState<User | null>(null);
     const [activity, setActivity] = useState<UserActivityEntry[] | null>(null);
@@ -71,7 +71,7 @@ export default function UserManagementPage() {
             await adminService.createUser(newUser);
             toast.success("Personnel onboarded successfully");
             setIsCreateModalOpen(false);
-            setNewUser({ fullName: '', email: '', username: '', role: 'PLAYER' });
+            setNewUser({ fullName: '', email: '', username: '', role: 'PLAYER', password: '' });
             fetchUsers();
         } catch (error) {
             toast.error("Failed to onboard personnel");
@@ -256,8 +256,23 @@ export default function UserManagementPage() {
                                     {ROLE_OPTIONS.find(r => r.value === newUser.role)?.hint}
                                 </p>
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Access Key</label>
+                                <Input
+                                    required
+                                    type="password"
+                                    minLength={8}
+                                    className="h-14 rounded-2xl bg-muted/30 border-none font-bold italic"
+                                    value={newUser.password}
+                                    onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+                                    placeholder="Min 8 chars, upper+lower+digit+special"
+                                />
+                                <p className="text-[11px] text-muted-foreground px-1">
+                                    Must include uppercase, lowercase, number, and special character.
+                                </p>
+                            </div>
                             <p className="text-[10px] font-medium italic text-muted-foreground px-1">
-                                Note: Initial authentication credentials will be dispatched to the provided communications channel upon verification.
+                                Share the access key securely with the new personnel through a trusted channel.
                             </p>
                             <Button type="submit" className="w-full h-14 rounded-full font-black uppercase tracking-widest shadow-xl shadow-primary/20">
                                 Authenticate and Embed

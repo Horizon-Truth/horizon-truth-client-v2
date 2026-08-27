@@ -3,6 +3,9 @@ import { ThemeProvider } from "./shared/components/theme-provider";
 import { I18nProvider } from "./shared/i18n/I18nProvider";
 import { MainLayout } from "./shared/layouts/MainLayout";
 import DashboardPage from "./modules/analytics/DashboardPage";
+import SystemAdminDashboardPage from "./modules/analytics/SystemAdminDashboardPage";
+import OrgAdminDashboardPage from "./modules/analytics/OrgAdminDashboardPage";
+import ModeratorDashboardPage from "./modules/analytics/ModeratorDashboardPage";
 import SystemHealthPage from "./modules/analytics/SystemHealthPage";
 import LandingPage from "./modules/landing/LandingPage";
 import AboutPage from "./modules/about/AboutPage";
@@ -164,6 +167,9 @@ function App() {
                           <Route index element={
                             user?.role === 'PLAYER'
                               ? (user?.onboardingCompleted ? <Navigate to="/dashboard/game" replace /> : <Navigate to="/onboarding" replace />)
+                              : user?.role === 'SYSTEM_ADMIN' ? <SystemAdminDashboardPage />
+                              : user?.role === 'ORG_ADMIN' ? <OrgAdminDashboardPage />
+                              : isModerationStaff ? <ModeratorDashboardPage />
                               : <DashboardPage />
                           } />
                           <Route path="organizations" element={user?.role === 'SYSTEM_ADMIN' ? <OrganizationManagementPage /> : <Navigate to="/dashboard" replace />} />
@@ -171,15 +177,15 @@ function App() {
                           <Route path="users" element={user?.role === 'SYSTEM_ADMIN' ? <UserManagementPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="players" element={user?.role === 'SYSTEM_ADMIN' ? <PlayerManagementPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="players/avatars" element={user?.role === 'SYSTEM_ADMIN' ? <AvatarManagementPage /> : <Navigate to="/dashboard" replace />} />
-                          <Route path="resources/blogs" element={<BlogManagementPage />} />
-                          <Route path="resources/blogs/create" element={<BlogCreatePage />} />
-                          <Route path="resources/blogs/edit/:id" element={<BlogEditPage />} />
-                          <Route path="resources/library" element={<ResourceManagementPage />} />
-                          <Route path="resources/library/create" element={<ResourceCreatePage />} />
-                          <Route path="resources/library/edit/:id" element={<ResourceEditPage />} />
+                          <Route path="resources/blogs" element={user?.role === 'SYSTEM_ADMIN' ? <BlogManagementPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="resources/blogs/create" element={user?.role === 'SYSTEM_ADMIN' ? <BlogCreatePage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="resources/blogs/edit/:id" element={user?.role === 'SYSTEM_ADMIN' ? <BlogEditPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="resources/library" element={user?.role === 'SYSTEM_ADMIN' ? <ResourceManagementPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="resources/library/create" element={user?.role === 'SYSTEM_ADMIN' ? <ResourceCreatePage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="resources/library/edit/:id" element={user?.role === 'SYSTEM_ADMIN' ? <ResourceEditPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="gamification" element={<div>Gamification Page</div>} />
-                          <Route path="engine" element={user?.role !== 'PLAYER' ? <ScenarioManagementPage /> : <Navigate to="/dashboard/game" replace />} />
-                          <Route path="engine/:id" element={user?.role !== 'PLAYER' ? <ScenarioDetailPage /> : <Navigate to="/dashboard/game" replace />} />
+                          <Route path="engine" element={user?.role === 'SYSTEM_ADMIN' ? <ScenarioManagementPage /> : <Navigate to="/dashboard" replace />} />
+                          <Route path="engine/:id" element={user?.role === 'SYSTEM_ADMIN' ? <ScenarioDetailPage /> : <Navigate to="/dashboard" replace />} />
                           <Route path="analytics" element={user?.role !== 'PLAYER' ? <GameAnalyticsPage /> : <Navigate to="/dashboard/game" replace />} />
                           <Route path="health" element={user?.role === 'SYSTEM_ADMIN' ? <SystemHealthPage /> : <Navigate to="/dashboard" replace />} />
                           {/* Q2M2A3 — moderation. `isModerationStaff` gates the
