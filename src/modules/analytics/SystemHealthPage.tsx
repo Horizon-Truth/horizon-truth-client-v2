@@ -30,7 +30,7 @@ export default function SystemHealthPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                <p className="text-sm font-black uppercase tracking-widest text-muted-foreground animate-pulse">Scanning Bio-Digital Systems...</p>
+                <p className="text-sm font-black uppercase tracking-widest text-muted-foreground animate-pulse">Loading system health...</p>
             </div>
         );
     }
@@ -42,10 +42,10 @@ export default function SystemHealthPage() {
                     <AlertTriangle size={48} />
                 </div>
                 <div className="space-y-2">
-                    <h3 className="text-2xl font-black italic uppercase">Telemetry Failure</h3>
-                    <p className="text-muted-foreground max-w-md font-medium">Unable to establish connection with the core mainframe. System status unknown.</p>
+                    <h3 className="text-2xl font-black italic uppercase">Connection Failed</h3>
+                    <p className="text-muted-foreground max-w-md font-medium">Unable to reach the server. System status is unknown.</p>
                 </div>
-                <Button onClick={() => refetch()} className="rounded-xl font-bold px-8">Re-establish Link</Button>
+                <Button onClick={() => refetch()} className="rounded-xl font-bold px-8">Retry</Button>
             </div>
         );
     }
@@ -73,10 +73,10 @@ export default function SystemHealthPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600 uppercase italic">
-                        System Diagnostics
+                        System Health
                     </h2>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic">
-                        Live telemetry from the Horizon Truth core infrastructure.
+                        Live server status and performance metrics.
                     </p>
                 </div>
                 <Button
@@ -89,7 +89,7 @@ export default function SystemHealthPage() {
                     disabled={isFetching}
                 >
                     <RefreshCw size={16} className={isFetching ? "animate-spin" : ""} />
-                    Refresh Protocol
+                    Refresh
                 </Button>
             </div>
 
@@ -104,7 +104,7 @@ export default function SystemHealthPage() {
                             <Zap size={40} className={health?.status === 'HEALTHY' ? 'animate-pulse' : ''} />
                         </div>
                         <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Primary Node Status</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Server Status</p>
                             <h3 className={`text-5xl font-black italic tracking-tighter uppercase ${health?.status === 'HEALTHY' ? 'text-emerald-500' : 'text-destructive'}`}>
                                 {health?.status}
                             </h3>
@@ -128,7 +128,7 @@ export default function SystemHealthPage() {
                         <div className="p-3 bg-blue-500/10 rounded-2xl text-blue-500">
                             <Cpu size={24} />
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Memory Buffer</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Memory Usage</p>
                     </div>
                     <div className="space-y-4">
                         <div className="flex items-end justify-between">
@@ -138,7 +138,7 @@ export default function SystemHealthPage() {
                         <div className="space-y-1.5">
                             <Progress value={((health?.memory.heapUsed || 0) / (health?.memory.heapTotal || 1)) * 100} className="h-2 bg-blue-500/10" />
                             <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-50">
-                                <span>Heap Utilization</span>
+                                <span>Usage</span>
                                 <span>{Math.round(((health?.memory.heapUsed || 0) / (health?.memory.heapTotal || 1)) * 100)}%</span>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ export default function SystemHealthPage() {
                         <div className="p-3 bg-indigo-500/10 rounded-2xl text-indigo-500">
                             <Database size={24} />
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Database Core</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Database</p>
                     </div>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
@@ -161,11 +161,11 @@ export default function SystemHealthPage() {
                             <Activity size={24} className={health?.database === 'UP' ? 'text-emerald-500' : 'text-destructive'} />
                         </div>
                         <p className="text-[10px] text-muted-foreground font-medium italic leading-relaxed">
-                            Relational truth repository connectivity established via secure persistent tunnel.
+                            Database connection is active and responding.
                         </p>
                         <div className="pt-2 flex items-center gap-2">
                             <div className={`w-2 h-2 rounded-full ${health?.database === 'UP' ? 'bg-emerald-500 animate-pulse' : 'bg-destructive'}`} />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Encryption Active</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Secure Connection</span>
                         </div>
                     </div>
                 </motion.div>
@@ -176,7 +176,7 @@ export default function SystemHealthPage() {
                         <div className="p-3 bg-purple-500/10 rounded-2xl text-purple-500">
                             <HardDrive size={24} />
                         </div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Process RSS</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Memory (RSS)</p>
                     </div>
                     <div className="space-y-4">
                         <div className="flex items-end justify-between">
@@ -194,10 +194,9 @@ export default function SystemHealthPage() {
             </div>
 
             <motion.div variants={itemVariants} className="p-8 bg-primary/5 border border-primary/20 rounded-[2.5rem] text-center space-y-4">
-                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] italic">Telemetry Timestamp: {health?.timestamp ? new Date(health.timestamp).toLocaleString() : 'N/A'}</p>
+                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] italic">Last checked: {health?.timestamp ? new Date(health.timestamp).toLocaleString() : 'N/A'}</p>
                 <p className="text-[10px] text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                    This terminal displays real-time performance metrics for the Horizon Truth application engine.
-                    Bio-digital synchronization is maintained via the 5s refresh protocol.
+                    Server health data refreshes automatically every 5 seconds.
                 </p>
             </motion.div>
         </motion.div>

@@ -17,19 +17,62 @@ import { useAuthStore } from '@/store/auth.store';
 import { User, Lock, AtSign, Sparkles, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
-const registerSchema = z.object({
-    fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
-    username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
-    email: z.string().email({ message: 'Enter a valid email address' }),
-    password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-    confirmPassword: z.string(),
-    consent: z.boolean().refine(val => val === true, {
-        message: "You must agree to the privacy policy to continue",
-    }),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-});
+const normalizeForGuessCheck = (pw: string) =>
+    pw
+        .toLowerCase()
+        .replace(/@/g, 'a')
+        .replace(/\$/g, 's')
+        .replace(/!/g, 'i')
+        .replace(/0/g, 'o')
+        .replace(/3/g, 'e')
+        .replace(/[^a-z0-9]/g, '');
+
+const registerSchema = z
+    .object({
+        fullName: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
+        username: z.string().min(3, { message: 'Username must be at least 3 characters' }),
+        email: z.string().email({ message: 'Enter a valid email address' }),
+        password: z
+            .string()
+            .min(8, { message: 'Password must be at least 8 characters' })
+            .regex(/[a-z]/, 'Must include a lowercase letter')
+            .regex(/[A-Z]/, 'Must include an uppercase letter')
+            .regex(/[0-9]/, 'Must include a number')
+            .regex(/[^a-zA-Z0-9]/, 'Must include a special character')
+            .refine((value) => !normalizeForGuessCheck(value).includes('password'), {
+                message: 'This password is too common and easy to guess. Choose something unique.',
+            }),
+        confirmPassword: z.string(),
+        consent: z.boolean().refine(val => val === true, {
+            message: "You must agree to the privacy policy to continue",
+        }),
+    })
+    .superRefine((data, ctx) => {
+        if (data.password !== data.confirmPassword) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Passwords don't match",
+                path: ["confirmPassword"],
+            });
+        }
+        const normalized = normalizeForGuessCheck(data.password);
+        const hints = [
+            data.username.toLowerCase(),
+            data.email.split('@')[0].toLowerCase(),
+            ...data.fullName.toLowerCase().split(/\s+/),
+        ].filter((h) => h.length >= 4);
+        if (
+            hints.some(
+                (h) => normalized.includes(h) || normalized.includes([...h].reverse().join('')),
+            )
+        ) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'This password is too similar to your name, email, or username. Choose something unrelated.',
+                path: ["password"],
+            });
+        }
+    });
 
 export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
     const navigate = useNavigate();

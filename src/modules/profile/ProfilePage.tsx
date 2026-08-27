@@ -289,7 +289,7 @@ const ProfilePage = () => {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <h4 className="font-bold text-sm">Two-Factor Authentication</h4>
-                                        <p className="text-xs text-muted-foreground mt-1">Enhance your account security with 2FA protocol.</p>
+                                        <p className="text-xs text-muted-foreground mt-1">Add extra security to your account with two-factor authentication.</p>
                                     </div>
                                     <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors">
                                         <Edit2 size={16} className="text-primary" />

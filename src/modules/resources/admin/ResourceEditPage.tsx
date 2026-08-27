@@ -210,7 +210,7 @@ export default function ResourceEditPage() {
                                     <FormItem>
                                         <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 ml-1">Access Level (Badge)</FormLabel>
                                         <FormControl>
-                                            <Input {...field} placeholder="e.g. Clearance Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
+                                            <Input {...field} placeholder="e.g. Level 1" className="h-11 rounded-xl bg-muted/30 border-none" />
                                         </FormControl>
                                         <FormMessage className="text-[10px]" />
                                     </FormItem>

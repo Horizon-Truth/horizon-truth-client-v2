@@ -643,9 +643,9 @@ export default function SceneEditor({ scenarioId }: SceneEditorProps) {
                                 <Plus size={48} className="text-primary/50 group-hover:text-primary transition-colors" />
                             </div>
                             <div className="space-y-1">
-                                <h5 className="text-xl font-black uppercase tracking-tighter italic">No Operational Stages Found</h5>
+                                <h5 className="text-xl font-black uppercase tracking-tighter italic">No Events Found</h5>
                                 <p className="text-sm text-muted-foreground font-medium max-w-sm mx-auto opacity-70">
-                                    This mission currently has no events. Initialize the first protocol to begin building the experience.
+                                    This mission has no events yet. Add the first event to begin building the experience.
                                 </p>
                             </div>
                         </div>

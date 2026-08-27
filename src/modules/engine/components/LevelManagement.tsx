@@ -96,7 +96,7 @@ export default function LevelManagement({ onClose }: LevelManagementProps) {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h3 className="text-2xl font-black uppercase tracking-wider italic">Game Level Architecture</h3>
-                    <p className="text-sm text-muted-foreground mt-1">Define the progression structure for mission protocols.</p>
+                    <p className="text-sm text-muted-foreground mt-1">Define the progression structure for mission levels.</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button 
