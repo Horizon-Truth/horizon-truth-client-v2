@@ -298,7 +298,7 @@ export default function UserManagementPage() {
                                     </button>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    Must be 8+ characters with uppercase, lowercase, number, and special character.
+                                    Must be 8+ characters with uppercase, lowercase, number, and special character. Avoid common passwords like "Password@123".
                                 </p>
                             </div>
 

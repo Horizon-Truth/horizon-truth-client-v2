@@ -222,7 +222,7 @@ export default function OrganizationManagementPage() {
                                             {showAdminPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
                                     </div>
-                                    <p className="text-xs text-muted-foreground">Must be 8+ characters with uppercase, lowercase, number, and special character.</p>
+                                    <p className="text-xs text-muted-foreground">Must be 8+ characters with uppercase, lowercase, number, and special character. Avoid common passwords like "Password@123".</p>
                                 </div>
                             </div>
                         </form>
