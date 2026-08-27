@@ -24,13 +24,12 @@ export const PublicNavbar = () => {
     };
 
     return (
-        <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b">
+        <nav aria-label="Main navigation" className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
+                    <button className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")} aria-label="Horizon Truth - Go to homepage">
                         <Logo variant="right" className="h-10 w-auto" />
-                        {/* <span className="text-xl font-bold tracking-tight">HORIZON TRUTH</span> */}
-                    </div>
+                    </button>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-8">
@@ -85,7 +84,7 @@ export const PublicNavbar = () => {
                     <div className="md:hidden flex items-center">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button variant="ghost" size="icon" aria-label="Open navigation menu">
                                     <Menu className="w-6 h-6" />
                                 </Button>
                             </SheetTrigger>
