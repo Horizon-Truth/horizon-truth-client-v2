@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/shared/components/ui/button";
 import {
     Shield, Inbox, AlertTriangle, Clock, CheckCircle,
-    Loader2, TrendingUp, FileText, BarChart3
+    Loader2, FileText, BarChart3
 } from "lucide-react";
 import { useModerationDashboard } from "@/shared/hooks/useModeration";
+import type { DashboardOverview } from "@/services/moderation.service";
 import { motion } from "framer-motion";
 import { useDevice } from "@/shared/hooks/useDevice";
 
@@ -31,15 +32,17 @@ export default function ModeratorDashboardPage() {
         );
     }
 
-    const stats = dashboard?.stats || {};
-    const recentCases = dashboard?.recentCases || [];
+    const d: DashboardOverview = dashboard || {} as DashboardOverview;
 
     const cards = [
-        { title: "Open Cases", value: stats.openCases ?? stats.totalCases ?? 0, icon: Inbox, color: "text-orange-500", bg: "bg-orange-50/50" },
-        { title: "Pending Review", value: stats.pendingReview ?? 0, icon: Clock, color: "text-yellow-500", bg: "bg-yellow-50/50" },
-        { title: "Resolved Today", value: stats.resolvedToday ?? 0, icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50/50" },
-        { title: "New Reports", value: stats.newReports ?? stats.totalCases ?? 0, icon: FileText, color: "text-blue-500", bg: "bg-blue-50/50" },
-        { title: "Escalated", value: stats.escalated ?? 0, icon: AlertTriangle, color: "text-red-500", bg: "bg-red-50/50" },
+        { title: "Pending Reports", value: d.pendingReports ?? 0, icon: Inbox, color: "text-orange-500", bg: "bg-orange-50/50" },
+        { title: "Awaiting Review", value: d.awaitingReview ?? 0, icon: Clock, color: "text-yellow-500", bg: "bg-yellow-50/50" },
+        { title: "Resolved Today", value: d.resolvedToday ?? 0, icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50/50" },
+        { title: "Reports This Week", value: d.reportsThisWeek ?? 0, icon: FileText, color: "text-blue-500", bg: "bg-blue-50/50" },
+        { title: "Escalated", value: d.escalated ?? 0, icon: AlertTriangle, color: "text-red-500", bg: "bg-red-50/50" },
+        { title: "Flagged Content", value: d.flaggedContent ?? 0, icon: Shield, color: "text-purple-500", bg: "bg-purple-50/50" },
+        { title: "Open Appeals", value: d.openAppeals ?? 0, icon: BarChart3, color: "text-indigo-500", bg: "bg-indigo-50/50" },
+        { title: "Active Moderators", value: d.activeModerators ?? 0, icon: Shield, color: "text-teal-500", bg: "bg-teal-50/50" },
     ];
 
     const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: isLowEndDevice ? 0 : 0.08 } } };
@@ -64,7 +67,7 @@ export default function ModeratorDashboardPage() {
             </div>
 
             {/* Stat Cards */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
                 {cards.map((card) => (
                     <motion.div key={card.title} variants={item}
                         className="group relative overflow-hidden rounded-2xl border bg-card p-5 shadow-sm hover:shadow-md transition-all"
@@ -76,7 +79,7 @@ export default function ModeratorDashboardPage() {
                             <card.icon className="h-5 w-5" />
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{card.title}</p>
-                        <div className="text-2xl font-black mt-0.5">{card.value ?? 0}</div>
+                        <div className="text-2xl font-black mt-0.5">{card.value}</div>
                     </motion.div>
                 ))}
             </div>
@@ -112,42 +115,6 @@ export default function ModeratorDashboardPage() {
                     <p className="text-xs text-muted-foreground">Your personal moderation history and decisions.</p>
                 </Link>
             </motion.div>
-
-            {/* Recent Cases */}
-            {recentCases.length > 0 && (
-                <motion.div variants={item} className="rounded-2xl border bg-card p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold flex items-center gap-2">
-                            <Clock className="h-5 w-5 text-muted-foreground" />Recent Cases
-                        </h3>
-                        <Button asChild variant="ghost" size="sm" className="rounded-xl font-bold">
-                            <Link to="/dashboard/moderation/queue">View All</Link>
-                        </Button>
-                    </div>
-                    <div className="space-y-3">
-                        {recentCases.slice(0, 5).map((c: any) => (
-                            <Link key={c.id} to={`/dashboard/moderation/cases/${c.id}`}
-                                className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors group"
-                            >
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                        c.severity === 'CRITICAL' ? 'bg-red-500' :
-                                        c.severity === 'HIGH' ? 'bg-orange-500' :
-                                        c.severity === 'MEDIUM' ? 'bg-yellow-500' : 'bg-blue-500'
-                                    }`} />
-                                    <div className="min-w-0">
-                                        <p className="text-sm font-bold truncate group-hover:text-primary transition-colors">{c.title || `Case ${c.id.slice(0, 8)}`}</p>
-                                        <p className="text-xs text-muted-foreground">{c.status?.replace(/_/g, ' ')}</p>
-                                    </div>
-                                </div>
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex-shrink-0 ml-4">
-                                    {c.severity || 'LOW'}
-                                </span>
-                            </Link>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
         </motion.div>
     );
 }
