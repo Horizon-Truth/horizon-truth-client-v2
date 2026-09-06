@@ -107,7 +107,7 @@ export function impactVerdict(impact: MissionImpact): { tone: 'good' | 'mixed' |
     if (impact.reached > 0) {
         return {
             tone: 'bad',
-            text: `Misinformation you amplified reached roughly ${formatPeople(impact.reached)} people${impact.reshares > 0 ? ` and was reshared ${impact.reshares.toLocaleString()} times` : ''}. Every share was a person deciding to trust it.`,
+            text: `Misinformation you amplified reached roughly ${formatPeople(impact.reached)} people${impact.reshares > 0 ? ` and was reshared ${impact.reshares?.toLocaleString() ?? "—"} times` : ''}. Every share was a person deciding to trust it.`,
         };
     }
     return { tone: 'mixed', text: 'A quiet mission — no measurable spread either way.' };
