@@ -105,7 +105,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
                                             <Lock size={12} /> {t('auth.password')}
                                         </FormLabel>
-                                        <button type="button" className="text-[10px] font-bold text-primary hover:underline">{t('auth.forgot')}</button>
+                                        <button type="button" onClick={() => navigate('/forgot-password')} className="text-[10px] font-bold text-primary hover:underline">{t('auth.forgot')}</button>
                                     </div>
                                     <FormControl>
                                         <div className="group relative">
