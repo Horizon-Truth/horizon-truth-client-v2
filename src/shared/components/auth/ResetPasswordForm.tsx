@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,7 +14,7 @@ import {
 } from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
 import { authService } from '@/services/auth.service';
-import { Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Lock, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const resetSchema = z.object({
@@ -35,7 +35,7 @@ const resetSchema = z.object({
 type ResetFormValues = z.infer<typeof resetSchema>;
 
 export function ResetPasswordForm() {
-    const navigate = useNavigate();
+    // navigate not used
     const [searchParams] = useSearchParams();
     const urlToken = searchParams.get('token') ?? '';
     const [success, setSuccess] = useState(false);

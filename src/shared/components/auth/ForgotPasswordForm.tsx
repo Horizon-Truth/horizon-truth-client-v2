@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -17,16 +17,16 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
 import { Mail, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useTranslation } from '@/shared/i18n/useTranslation';
+// useTranslation removed
 
 const forgotSchema = z.object({
     email: z.string().email({ message: 'Enter a valid email address' }),
 });
 
 export function ForgotPasswordForm() {
-    const navigate = useNavigate();
+    // navigate not used
     const { setLoading, error, setError } = useAuthStore();
-    const { t } = useTranslation();
+    // t not used
     const [sent, setSent] = useState(false);
 
     const form = useForm<z.infer<typeof forgotSchema>>({
