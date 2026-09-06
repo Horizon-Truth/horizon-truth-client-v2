@@ -18,5 +18,15 @@ export const authService = {
     async initGuestSession(sessionId: string, userId: string) {
         const response = await api.post('/guest/session', { sessionId, userId });
         return response.data;
+    },
+
+    async forgotPassword(email: string) {
+        const response = await api.post('/auth/forgot-password', { email });
+        return response.data;
+    },
+
+    async resetPassword(token: string, newPassword: string) {
+        const response = await api.post('/auth/reset-password', { token, new_password: newPassword });
+        return response.data;
     }
 };
