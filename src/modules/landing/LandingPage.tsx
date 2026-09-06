@@ -151,7 +151,7 @@ export default function LandingPage() {
             .catch((error) => console.error("Failed to load public stats:", error));
     }, []);
 
-    const formatCount = (value: number) => `${value.toLocaleString()}+`;
+    const formatCount = (value?: number) => (value != null ? `${value.toLocaleString()}+` : "—");
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -376,9 +376,9 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 text-center">
                         {[
-                            { label: t("landing.statActiveUsers"), value: stats ? formatCount(stats.activeUsers) : "—" },
-                            { label: t("landing.statReportsDebunked"), value: stats ? formatCount(stats.reportsDebunked) : "—" },
-                            { label: t("landing.statVerifiers"), value: stats ? formatCount(stats.verifiers) : "—" },
+                            { label: t("landing.statActiveUsers"), value: stats?.activeUsers != null ? formatCount(stats.activeUsers) : "—" },
+                            { label: t("landing.statReportsDebunked"), value: stats?.reportsDebunked != null ? formatCount(stats.reportsDebunked) : "—" },
+                            { label: t("landing.statVerifiers"), value: stats?.verifiers != null ? formatCount(stats.verifiers) : "—" },
                             { label: t("landing.statAccuracy"), value: stats ? `${stats.accuracyRate}%` : "—" }
                         ].map((stat, i) => (
                             <motion.div

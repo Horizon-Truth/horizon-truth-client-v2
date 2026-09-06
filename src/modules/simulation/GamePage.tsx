@@ -107,10 +107,10 @@ export default function GamePage() {
                         {/* Rank progress */}
                         <div className="flex-1 flex flex-col justify-center gap-2 lg:max-w-sm">
                             <div className="flex items-center justify-between text-xs font-bold">
-                                <span className="text-muted-foreground">{stats.experience.toLocaleString()} XP</span>
+                                <span className="text-muted-foreground">{stats?.experience?.toLocaleString() ?? "—"} XP</span>
                                 {nextRank ? (
                                     <span className={nextRank.color}>
-                                        {xpToNextRank(stats.experience).toLocaleString()} XP to {nextRank.emoji} {nextRank.name}
+                                        {xpToNextRank(stats?.experience)?.toLocaleString() ?? "—"} XP to {nextRank?.emoji} {nextRank?.name}
                                     </span>
                                 ) : (
                                     <span className={rank.color}>Max rank reached</span>

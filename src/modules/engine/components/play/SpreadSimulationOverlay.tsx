@@ -33,7 +33,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
 
     return (
         <span className="tabular-nums">
-            {current.toLocaleString()}{suffix}
+            {current?.toLocaleString() ?? "—"}{suffix}
         </span>
     );
 }
