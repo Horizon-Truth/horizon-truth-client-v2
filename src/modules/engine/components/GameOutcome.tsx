@@ -162,9 +162,9 @@ export function GameOutcome() {
 
                     <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs font-bold">
-                            <span className="text-muted-foreground">{xpNow.toLocaleString()} XP total</span>
+                            <span className="text-muted-foreground">{xpNow?.toLocaleString() ?? '—'} XP total</span>
                             {nextRank ? (
-                                <span className={nextRank.color}>{xpToNextRank(xpNow).toLocaleString()} XP to {nextRank.emoji} {nextRank.name}</span>
+                                <span className={nextRank.color}>{xpToNextRank(xpNow)?.toLocaleString() ?? '—'} XP to {nextRank?.emoji} {nextRank?.name}</span>
                             ) : (
                                 <span className={rank.color}>Max rank!</span>
                             )}
@@ -239,7 +239,7 @@ export function GameOutcome() {
                             </div>
                             <div className="rounded-2xl border border-border bg-muted/50 p-5 text-center space-y-1">
                                 <Share2 size={18} className="text-muted-foreground mx-auto" aria-hidden />
-                                <p className="text-2xl font-black tabular-nums">{impact.reshares.toLocaleString()}</p>
+                                <p className="text-2xl font-black tabular-nums">{impact.reshares?.toLocaleString() ?? "—"}</p>
                                 <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground leading-snug">Reshares your choices triggered</p>
                             </div>
                             <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-5 text-center space-y-1">

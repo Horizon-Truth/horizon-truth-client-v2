@@ -224,7 +224,7 @@ function AchievementCard({ achievement }: { achievement: EvaluatedAchievement })
                         <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${pct}%` }} />
                     </div>
                     <p className="text-[10px] font-bold text-muted-foreground tabular-nums text-right">
-                        {current.toLocaleString()} / {target.toLocaleString()}
+                        {current?.toLocaleString() ?? '—'} / {target?.toLocaleString() ?? '—'}
                     </p>
                 </div>
             )}
