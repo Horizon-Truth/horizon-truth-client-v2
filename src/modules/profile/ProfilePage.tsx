@@ -33,7 +33,8 @@ import {
     Lock,
     Globe
 } from 'lucide-react';
-import { AnonymizeConfirmModal } from '@/shared/components/modals/AnonymizeConfirmModal';
+import { DeleteAccountConfirmModal } from '@/shared/components/modals/DeleteAccountConfirmModal';
+import { toast } from 'sonner';
 import { LanguageSwitcher } from '@/shared/i18n/components/LanguageSwitcher';
 import { useTranslation } from '@/shared/i18n/useTranslation';
 
@@ -47,7 +48,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const [isAnonymizeModalOpen, setIsAnonymizeModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { user, updateUser, logout } = useAuthStore();
@@ -89,8 +90,10 @@ const ProfilePage = () => {
         setSuccess(null);
     };
 
-    const handleAnonymize = async () => {
-        await userService.anonymizeAccount();
+    const handleDeleteAccount = async () => {
+        const { deletionScheduledAt } = await userService.requestAccountDeletion();
+        const date = new Date(deletionScheduledAt).toLocaleDateString(undefined, { dateStyle: 'long' });
+        toast.success(`Your account will be deleted on ${date}. Sign in before then to restore it.`, { duration: 10000 });
         logout();
         navigate('/');
     };
@@ -313,7 +316,7 @@ const ProfilePage = () => {
                                 Danger Zone
                             </CardTitle>
                             <CardDescription className="text-destructive/70">
-                                Irreversible actions related to your account and personal data.
+                                Actions that remove your account and personal data.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -324,17 +327,17 @@ const ProfilePage = () => {
                                         Delete My Account & Personal Data
                                     </h4>
                                     <p className="text-xs text-destructive/80 max-w-md">
-                                        All your personally identifiable information will be permanently removed. 
-                                        You will lose access to this account immediately.
+                                        Your account is locked immediately and permanently deleted after 30 days.
+                                        Sign in within that time to restore it.
                                     </p>
                                 </div>
                                 <Button 
                                     variant="destructive" 
                                     size="sm"
                                     className="w-full sm:w-auto font-bold shadow-lg shadow-destructive/20 rounded-xl"
-                                    onClick={() => setIsAnonymizeModalOpen(true)}
+                                    onClick={() => setIsDeleteModalOpen(true)}
                                 >
-                                    Delete My Data
+                                    Delete My Account
                                 </Button>
                             </div>
                         </CardContent>
@@ -342,10 +345,10 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <AnonymizeConfirmModal 
-                isOpen={isAnonymizeModalOpen}
-                onClose={() => setIsAnonymizeModalOpen(false)}
-                onConfirm={handleAnonymize}
+            <DeleteAccountConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteAccount}
             />
         </div>
 

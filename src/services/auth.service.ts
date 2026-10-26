@@ -6,6 +6,12 @@ export const authService = {
         return response.data;
     },
 
+    /** Cancels a pending account deletion and signs in. */
+    async restoreAccount(credentials: { email: string; password: string }) {
+        const response = await api.post('/auth/restore-account', credentials);
+        return response.data;
+    },
+
     async register(data: any) {
         const response = await api.post('/auth/register', data);
         return response.data;
