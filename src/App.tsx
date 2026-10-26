@@ -28,6 +28,7 @@ import { ScrollToTop } from "./shared/components/layout/ScrollToTop";
 import { LoginForm } from "./shared/components/auth/LoginForm";
 import { RegisterForm } from "./shared/components/auth/RegisterForm";
 import { ForgotPasswordForm } from "./shared/components/auth/ForgotPasswordForm";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { PrivateRoute } from "./shared/components/auth/PrivateRoute";
 import { MODERATION_ROLES, useAuthStore } from "./store/auth.store";
 import ProfilePage from "./modules/profile/ProfilePage";
@@ -143,6 +144,7 @@ function App() {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
             </Route>
 
             <Route path="/onboarding" element={

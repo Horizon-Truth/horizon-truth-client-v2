@@ -1,0 +1,54 @@
+name: Feature request
+description: Suggest an idea or improvement for the Horizon Client (React + Vite)
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Please search [existing issues](https://github.com/Horizon-Truth/horizon-truth-client-v2/issues) first, and check the project charter to see if the idea fits Horizon's mission.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Game / simulation
+        - Authentication / onboarding
+        - Dashboard / analytics / reports
+        - Resources / blogs / public pages
+        - Admin / organizations
+        - Internationalization (en / am / om)
+        - Accessibility
+        - Design / UI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What problem does this solve, and who benefits?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like to see.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Mockups, links, references.
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to implement this feature

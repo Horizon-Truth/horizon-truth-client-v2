@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,9 +15,14 @@ import {
 import { Input } from '@/shared/components/ui/input';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/auth.store';
-import { Lock, User as UserIcon, LogIn, Sparkles } from 'lucide-react';
+import { Lock, User as UserIcon, LogIn, Sparkles, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from '@/shared/i18n/useTranslation';
+
+type LoginValues = { email: string; password: string };
+
+/** Credentials that were accepted for an account pending deletion. */
+type PendingDeletion = { credentials: LoginValues; deletionScheduledAt: string | null };
 
 const loginSchema = z.object({
     email: z.string().min(3, { message: 'Enter a valid email or username' }),
@@ -36,25 +42,60 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
         },
     });
 
+    const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion | null>(null);
+    const [restoring, setRestoring] = useState(false);
+
+    function completeSignIn(data: any, welcome: string) {
+        setAuth(data.user, data.access_token);
+        toast.success(welcome);
+        if (onSuccess) {
+            onSuccess();
+        } else {
+            navigate(data.user.role === 'PLAYER' ? '/dashboard/game' : '/dashboard');
+        }
+    }
+
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         setLoading(true);
         setError(null);
+        setPendingDeletion(null);
         try {
             const data = await authService.login(values);
-            setAuth(data.user, data.access_token);
-            toast.success(t('auth.welcomeToast'));
-            if (onSuccess) {
-                onSuccess();
-            } else {
-                navigate(data.user.role === 'PLAYER' ? '/dashboard/game' : '/dashboard');
-            }
+            completeSignIn(data, t('auth.welcomeToast'));
         } catch (err: any) {
-            setError(err.response?.data?.message || t('auth.loginFailed'));
+            const body = err.response?.data;
+            if (body?.code === 'ACCOUNT_PENDING_DELETION') {
+                setPendingDeletion({
+                    credentials: values,
+                    deletionScheduledAt: body.details?.deletionScheduledAt ?? null,
+                });
+                return;
+            }
+            setError(body?.message || t('auth.loginFailed'));
             toast.error(t('auth.authFailedToast'));
         } finally {
             setLoading(false);
         }
     }
+
+    async function onRestore() {
+        if (!pendingDeletion) return;
+        setRestoring(true);
+        setError(null);
+        try {
+            const data = await authService.restoreAccount(pendingDeletion.credentials);
+            setPendingDeletion(null);
+            completeSignIn(data, t('auth.accountRestoredToast'));
+        } catch (err: any) {
+            setError(err.response?.data?.message || t('auth.restoreFailed'));
+        } finally {
+            setRestoring(false);
+        }
+    }
+
+    const deletionDate = pendingDeletion?.deletionScheduledAt
+        ? new Date(pendingDeletion.deletionScheduledAt).toLocaleDateString(undefined, { dateStyle: 'long' })
+        : null;
 
     return (
         <div className="relative p-8 md:p-12 overflow-hidden">
@@ -121,6 +162,29 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
                                 </FormItem>
                             )}
                         />
+
+                        {pendingDeletion && (
+                            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-3 animate-in fade-in slide-in-from-top-1" role="alert" aria-live="assertive">
+                                <div className="space-y-1">
+                                    <p className="text-sm font-bold text-foreground">{t('auth.pendingDeletionTitle')}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {deletionDate
+                                            ? t('auth.pendingDeletionBody').replace('{date}', deletionDate)
+                                            : t('auth.pendingDeletionBodyNoDate')}
+                                    </p>
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={onRestore}
+                                    disabled={restoring}
+                                    className="w-full h-11 rounded-xl font-bold"
+                                >
+                                    <RotateCcw size={16} className="mr-2" />
+                                    {restoring ? t('auth.restoringAccount') : t('auth.restoreAccount')}
+                                </Button>
+                            </div>
+                        )}
 
                         {error && (
                             <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/10 animate-in fade-in slide-in-from-top-1" role="alert" aria-live="assertive">
