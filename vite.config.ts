@@ -25,7 +25,7 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
-      reporter: ['text-summary', 'json-summary', 'html', 'lcov'],
+      reporter: ['text-summary', 'json-summary', 'html', 'lcov', 'cobertura'],
       reportsDirectory: './coverage',
       // Measure the whole source tree, not just files a test happens to
       // import — otherwise untested modules are silently omitted and the
