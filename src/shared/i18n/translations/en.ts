@@ -370,6 +370,15 @@ export const en = {
     welcomeToast: 'Welcome back!',
     authFailedToast: 'Authentication failed',
     loginFailed: 'Login failed. Please check your credentials.',
+    pendingDeletionTitle: 'This account is scheduled for deletion',
+    pendingDeletionBody:
+      'It will be permanently deleted on {date}. Restore it now to keep your progress and sign in.',
+    pendingDeletionBodyNoDate:
+      'It will be permanently deleted soon. Restore it now to keep your progress and sign in.',
+    restoreAccount: 'Restore my account',
+    restoringAccount: 'Restoring...',
+    accountRestoredToast: 'Your account has been restored. Welcome back!',
+    restoreFailed: 'We could not restore this account.',
   },
 
   legal: {

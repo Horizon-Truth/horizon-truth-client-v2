@@ -50,6 +50,19 @@ export const userService = {
         return response.data;
     },
 
+    /**
+     * Soft-deletes the account. It is locked immediately and erased after the
+     * recovery window unless restored by signing in again.
+     */
+    async requestAccountDeletion(): Promise<{
+        message: string;
+        deletionScheduledAt: string;
+        recoveryDays: number;
+    }> {
+        const response = await api.delete('/users/me');
+        return response.data;
+    },
+
     async anonymizeAccount() {
         const response = await api.post('/users/me/anonymize');
         return response.data;

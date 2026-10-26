@@ -15,6 +15,7 @@ import {
     HelpCircle,
     BookOpen,
     MoreHorizontal,
+    UserCog,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { ScenarioList } from '../engine/components/ScenarioList';
@@ -204,6 +205,15 @@ export default function GamePage() {
 
             <button
                 type="button"
+                onClick={() => navigate('/dashboard/profile')}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+            >
+                <UserCog size={17} className="shrink-0" aria-hidden />
+                <span>Account &amp; privacy</span>
+            </button>
+
+            <button
+                type="button"
                 onClick={() => logout()}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-500/10 transition-colors"
             >
@@ -270,6 +280,16 @@ export default function GamePage() {
             >
                 <Megaphone size={15} aria-hidden />
                 Report misinfo
+            </Button>
+
+            <Button
+                onClick={() => navigate('/dashboard/profile')}
+                variant="ghost"
+                size="sm"
+                className="rounded-xl font-bold gap-2 text-muted-foreground hover:text-foreground"
+            >
+                <UserCog size={15} aria-hidden />
+                Account
             </Button>
 
             <Button

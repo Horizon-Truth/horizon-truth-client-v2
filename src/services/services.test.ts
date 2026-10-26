@@ -187,6 +187,11 @@ describe('userService', () => {
         });
     });
 
+    it('requests account deletion with a DELETE on /users/me', async () => {
+        await userService.requestAccountDeletion();
+        expect(mockApi.delete).toHaveBeenCalledWith('/users/me');
+    });
+
     it('anonymizes the account with a POST and no body', async () => {
         await userService.anonymizeAccount();
         expect(mockApi.post).toHaveBeenCalledWith('/users/me/anonymize');
